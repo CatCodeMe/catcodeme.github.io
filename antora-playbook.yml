@@ -1,7 +1,7 @@
 site:
   url: https://catcode.me
   title: 🎉catcodeme's blog
-  start_path: ./start.adoc
+  start_page: docs/modules/start/start.adoc
 
 content:
   branches: [HEAD]
@@ -11,14 +11,14 @@ content:
       start-path: docs
 
 ui:
-  bundle:
+ bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
-   supplemental_files:
-   - path: ui.yml
-       contents: |
-         static_files: [ .nojekyll ]
-   - path: .nojekyll
+ supplemental_files:
+  - path: ui.yml
+    contents: |
+        static_files: [ .nojekyll ]
+  - path: .nojekyll
 
 runtime:
   fetch: true
