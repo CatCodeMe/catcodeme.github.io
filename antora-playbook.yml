@@ -1,7 +1,7 @@
 site:
   url: https://catcode.me
   title: 🎉catcodeme's blog
-  start_page: docs/modules/start/start.adoc
+  #start_page: start/start.adoc
 
 content:
   branches: [HEAD]
