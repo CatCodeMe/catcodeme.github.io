@@ -11,7 +11,7 @@ export const SyntaxHighlighting: QuartzTransformerPlugin = () => ({
           keepBackground: false,
           theme: {
             dark: "github-dark",
-            light: "github-light",
+            light: "github-light"
           },
         } satisfies Partial<CodeOptions>,
       ],
