@@ -513,7 +513,7 @@ export async function handleSync(argv) {
     }
   }
 
-  await stashContentFolder(contentFolder)
+  // await stashContentFolder(contentFolder)
 
   if (argv.pull) {
     console.log(
