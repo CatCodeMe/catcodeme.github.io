@@ -509,7 +509,7 @@ export async function handleSync(argv) {
 
     if (contentStat.isSymbolicLink()) {
       // put symlink back
-      await popContentFolder(contentFolder)
+      // await popContentFolder(contentFolder)
     }
   }
 
