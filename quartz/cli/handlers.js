@@ -516,7 +516,6 @@ export async function handleSync(argv) {
   await stashContentFolder(contentFolder)
 
   if (argv.pull) {
-    console.log("xxxxx")
     console.log(
       "Pulling updates from your repository. You may need to resolve some `git` conflicts if you've made changes to components or plugins.",
     )
