@@ -513,7 +513,7 @@ export async function handleSync(argv) {
     }
   }
 
-  // await stashContentFolder(contentFolder)
+  await stashContentFolder(contentFolder)
 
   if (argv.pull) {
     console.log(
@@ -528,7 +528,7 @@ export async function handleSync(argv) {
     }
   }
 
-  // await popContentFolder(contentFolder)
+  await popContentFolder(contentFolder)
   if (argv.push) {
     console.log("Pushing your changes")
     const res = spawnSync("git", ["push", "-uf", ORIGIN_NAME, QUARTZ_SOURCE_BRANCH], {
