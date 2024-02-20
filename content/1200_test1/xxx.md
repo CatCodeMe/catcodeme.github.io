@@ -1,5 +1,5 @@
 ---
-{"publish":true,"path":"1200_test1/xxx.md","permalink":"/1200-test1/xxx/"}
+{"publish":true,"path":"1200_test1/xxx.md","permalink":"/1200-test1/xxx/","tags":["1BRC"]}
 ---
 
 
@@ -13,6 +13,6 @@
 ## 2
 
 |  |  |  |  |
-| ---- | ---- | ---- | ---- |
+| ---- | ---: | ---- | ---- |
 | *123* | **4142** |  |  |
 | ~~23~~ |  |  |  |
