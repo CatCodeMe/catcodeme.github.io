@@ -154,6 +154,7 @@
           font-weight: $normalWeight;
           overflow-y: auto;
           padding: 0 2rem;
+          flex: auto;
 
           & .preview-inner {
             margin: 0 auto;
