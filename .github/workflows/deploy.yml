@@ -5,6 +5,8 @@ on:
   repository_dispatch:
     types: [build]
   workflow_dispatch:
+  workflow_run:
+    branches: [v4]
 
 permissions:
   contents: read
