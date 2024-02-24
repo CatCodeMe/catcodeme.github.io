@@ -6,6 +6,9 @@ on:
     types: [build]
   workflow_dispatch:
   workflow_run:
+    workflows:
+      - build
+      - deploy
     branches: [v4]
 
 permissions:
