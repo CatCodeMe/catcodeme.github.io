@@ -1,3 +1,23 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+
+#quartz-root::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+  /**/
+}
+#quartz-root::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+#quartz-root::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+#quartz-root::-webkit-scrollbar-thumb:hover{
+  background: #333;
+}
+#quartz-root::-webkit-scrollbar-corner{
+  background: #179a16;
+}
