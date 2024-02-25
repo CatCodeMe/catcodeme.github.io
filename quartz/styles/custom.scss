@@ -2,6 +2,23 @@
 
 // put your custom CSS here!
 
+//左侧目录滚动条
 #explorer-ul{
    scrollbar-width: thin;
 }
+
+//搜索结果，左侧标题滚动条
+#results-container {
+   scrollbar-width: none;
+}
+
+//搜索结果，右侧内容预览滚动条
+#preview-container {
+   scrollbar-width: none;
+}
+
+//引用块样式优化
+blockquote.transclude {
+   border-left: 3px dashed;
+}
+
