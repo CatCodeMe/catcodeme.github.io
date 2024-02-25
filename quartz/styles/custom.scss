@@ -2,22 +2,22 @@
 
 // put your custom CSS here!
 
-#explorer-content::-webkit-scrollbar{
+#explorer-ul::-webkit-scrollbar{
   width:10px;
   height:10px;
   /**/
 }
-#explorer-content::-webkit-scrollbar-track{
+#explorer-ul::-webkit-scrollbar-track{
   background: rgb(239, 239, 239);
   border-radius:2px;
 }
-#explorer-content::-webkit-scrollbar-thumb{
+#explorer-ul::-webkit-scrollbar-thumb{
   background: #bfbfbf;
   border-radius:10px;
 }
-#explorer-content::-webkit-scrollbar-thumb:hover{
+#explorer-ul::-webkit-scrollbar-thumb:hover{
   background: #333;
 }
-#explorer-content::-webkit-scrollbar-corner{
+#explorer-ul::-webkit-scrollbar-corner{
   background: #179a16;
 }
