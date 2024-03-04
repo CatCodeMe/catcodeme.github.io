@@ -18,7 +18,8 @@
     "test": "tsx ./quartz/util/path.test.ts && tsx ./quartz/depgraph.test.ts",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1",
     "sync": "npx quartz sync",
-    "update": "npx quartz update"
+    "update": "npx quartz update",
+    "build_local": "npx quartz build --serve --fastRebuild"
   },
   "engines": {
     "npm": ">=9.3.1",
