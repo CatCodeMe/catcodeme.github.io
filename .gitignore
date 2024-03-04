@@ -10,4 +10,4 @@ private/
 .replit
 replit.nix
 .idea
-docs/*
+docs
