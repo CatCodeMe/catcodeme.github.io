@@ -22,3 +22,33 @@ blockquote.transclude {
    border-left: 3px dashed;
 }
 
+//页面顶部阅读进度条
+body {
+   position: relative;
+}
+
+.page-bar {
+   position: absolute;
+   top: 0;
+   right: 0;
+   left: 0;
+   bottom: 0;
+   z-index: -1;
+   pointer-events: none;
+   mix-blend-mode: darken;
+
+   background-image: linear-gradient(to right top, #ffcc00 50%, #eee 50%);
+   background-size: 100% calc(100% - 100vh + 3px);
+   background-repeat: no-repeat;
+}
+
+.page-bar::after {
+   content: '';
+   position: fixed;
+   top: 3px;
+   bottom: 0;
+   right: 0;
+   left: 0;
+   background: #fff;
+   z-index: -1;
+}
