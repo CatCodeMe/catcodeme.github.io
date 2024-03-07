@@ -214,31 +214,32 @@ export function renderPage(
     <html lang={lang}>
       <Head {...componentData} />
       <body data-slug={slug}>
-        <div id="quartz-root" class="page">
-          <Body {...componentData}>
-            {LeftComponent}
-            <div class="center">
-              <div class="page-header">
-                <Header {...componentData}>
-                  {header.map((HeaderComponent) => (
+      <div className="page-bar"></div>
+      <div id="quartz-root" class="page">
+        <Body {...componentData}>
+          {LeftComponent}
+          <div class="center">
+            <div class="page-header">
+              <Header {...componentData}>
+                {header.map((HeaderComponent) => (
                     <HeaderComponent {...componentData} />
-                  ))}
-                </Header>
-                <div class="popover-hint">
-                  {beforeBody.map((BodyComponent) => (
+                ))}
+              </Header>
+              <div class="popover-hint">
+                {beforeBody.map((BodyComponent) => (
                     <BodyComponent {...componentData} />
-                  ))}
-                </div>
+                ))}
               </div>
-              <Content {...componentData} />
             </div>
-            {RightComponent}
-          </Body>
-          <Footer {...componentData} />
-        </div>
+            <Content {...componentData} />
+          </div>
+          {RightComponent}
+        </Body>
+        <Footer {...componentData} />
+      </div>
       </body>
       {pageResources.js
-        .filter((resource) => resource.loadTime === "afterDOMReady")
+          .filter((resource) => resource.loadTime === "afterDOMReady")
         .map((res) => JSResourceToScriptElement(res))}
     </html>
   )
