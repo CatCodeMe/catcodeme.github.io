@@ -1,18 +1,34 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+:root{
+   --gird-width:30px;
+   --gird-height:30px;
+   --line-color: #e5e3e3;
+   --dot-color:#ccc;
+   --dot-size:2px;
+   --point-gap-width:calc(var(--gird-width) * 4);
+   --point-gap-height:calc(var(--gird-height) * 4);
+   // 顶部滚动通知高度
+   --top-scroll-height: 30px;
+   //有通知栏
+   --body-height-min: calc(100vh - var(--top-scroll-height));
+   //无通知栏
+   --body-height-max: 100vh;
+
+}
 
 //左侧目录滚动条
 #explorer-ul{
    scrollbar-width: thin;
 }
 
-//搜索结果，左侧标题滚动条
+//搜索结果弹窗，左侧标题滚动条
 #results-container {
    scrollbar-width: none;
 }
 
-//搜索结果，右侧内容预览滚动条
+//搜索结果弹窗，右侧内容预览滚动条
 #preview-container {
    scrollbar-width: none;
 }
@@ -22,33 +38,133 @@ blockquote.transclude {
    border-left: 3px dashed;
 }
 
-//页面顶部阅读进度条
-body {
-   position: relative;
+//顶部滚动通知
+.marquee {
+   background-color: #DA59597F;
+   overflow: hidden;
+   width: 100%;
+   font-family: var(--bodyFont);
+   white-space: nowrap;
+   height: var(--top-scroll-height);
+
+   display: flex;
+   justify-content: center; /* 水平居中 */
+   align-items: center; /* 垂直居中 */
 }
 
-.page-bar {
+.marquee p {
+   color: white;
+   font-weight: 700;
+   animation: loopText 10s infinite linear;
+   line-height: unset;
+   text-align: center;
+
    position: absolute;
-   top: 0;
-   right: 0;
-   left: 0;
-   bottom: 0;
-   z-index: 1;
-   pointer-events: none;
-   mix-blend-mode: darken;
-
-   background-image: linear-gradient(to right top, #ffcc00 50%, #eee 50%);
-   background-size: 100% calc(100% - 100vh + 3px);
-   background-repeat: no-repeat;
+   left: 0; /* 初始位置左侧 */
 }
 
-.page-bar::after {
-   content: '';
-   position: fixed;
-   top: 3px;
-   bottom: 0;
-   right: 0;
-   left: 0;
-   background: #fff;
+@keyframes loopText {
+   from {
+      transform: translateX(-100%);
+   }
+
+   to {
+      transform: translateX(100vw);
+   }
+}
+
+//格子背景高度,有顶部滚动通知
+body[data-topbar-has-content="1"] {
+
+   height: var(--body-height-min);
+
+   >.ba-grid {
+      width: 100%;
+      overflow: hidden;
+      height: var(--body-height-min);
+   }
+}
+
+//格子背景高度,没有顶部滚动通知
+body[data-topbar-has-content="0"] {
+
+   height: var(--body-height-max);
+
+   >.ba-grid {
+      width: 100%;
+      overflow: hidden;
+      height: var(--body-height-max);
+   }
+}
+
+.ba-grid{
+   position: relative;
+   z-index: 1;
+}
+
+.ba-grid:before,
+.ba-grid:after,
+.inner:before,
+.inner:after{
+   content:'';
+   position: absolute;
    z-index: -1;
+   top:0;
+   bottom:0;
+   left:0;
+   right:0;
+}
+
+.ba-grid:before{
+   background-image:
+           linear-gradient(var(--line-color), transparent 1px),
+           linear-gradient(to right, var(--line-color), transparent 1px);
+   background-size:
+           100% var(--gird-height),
+           var(--gird-width) 100%;
+}
+
+.ba-grid:after{
+   background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+   background-size: var(--point-gap-width) var(--point-gap-height);
+   background-position: calc(var(--point-gap-width) / 2) calc(var(--point-gap-height) / 2);
+}
+
+.inner:before,
+.inner:after{
+   background-image: radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
+   background-size: var(--point-gap-width) var(--point-gap-height);
+   background-position: calc(var(--point-gap-width) / 2) calc(var(--point-gap-height) / 2);
+}
+
+.anim:after{
+   animation: 6.4s linear move infinite;
+}
+
+@keyframes move{
+   0%{
+      background-position:calc(var(--point-gap-width) / 2) calc(var(--point-gap-height) / 2);
+   }
+   100%{
+      background-position:calc(var(--point-gap-width) / 2) calc(var(--point-gap-height) / 2 * -1);
+   }
+}
+
+// 配合格子背景，文章内容区设置滚动
+.center >.popover-hint {
+   max-height: 55vh;
+   overflow-y: scroll;
+   scrollbar-width: thin;
+}
+
+//文章header部分上移
+.page .page-header {
+   margin: 4rem auto 0;
+}
+
+//搜索区域文字不换行，显示省略号
+ul.content>li {
+   white-space: nowrap; /* 不换行 */
+   overflow: hidden; /* 溢出部分隐藏 */
+   text-overflow: ellipsis; /* 溢出显示为省略号 */
 }

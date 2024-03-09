@@ -213,12 +213,19 @@ export function renderPage(
   const doc = (
     <html lang={lang}>
       <Head {...componentData} />
-      <body data-slug={slug}>
-      <div className="page-bar"></div>
-      <div id="quartz-root" class="page">
+      <body data-slug={slug} data-topbar-has-content="0">
+      {/*顶部滚动条,data-topbar-has-content控制body高度,0,1*/}
+      {/*<div className="marquee">*/}
+      {/*  <p >*/}
+      {/*    123123131312*/}
+      {/*    123123123*/}
+      {/*    12312*/}
+      {/*  </p>*/}
+      {/*</div>*/}
+      <div id="quartz-root" class="page page grid-bg ba-grid anim">
         <Body {...componentData}>
           {LeftComponent}
-          <div class="center">
+          <div class="center inner">
             <div class="page-header">
               <Header {...componentData}>
                 {header.map((HeaderComponent) => (
