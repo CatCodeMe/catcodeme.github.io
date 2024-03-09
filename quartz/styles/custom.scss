@@ -80,7 +80,7 @@ body[data-topbar-has-content="1"] {
 
    >.ba-grid {
       width: 100%;
-      overflow: hidden;
+      overflow-y: scroll;
       height: var(--body-height-min);
    }
 }
@@ -92,7 +92,7 @@ body[data-topbar-has-content="0"] {
 
    >.ba-grid {
       width: 100%;
-      overflow: hidden;
+      overflow-y: scroll;
       height: var(--body-height-max);
    }
 }
