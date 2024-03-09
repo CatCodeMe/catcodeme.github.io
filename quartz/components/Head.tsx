@@ -14,8 +14,9 @@ export default (() => {
     const path = url.pathname as FullSlug
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
 
-    const iconPath = joinSegments(baseDir, "static/icon.png")
-    const ogImagePath = `https://${cfg.baseUrl}/static/og-image.png`
+    const iconPath = joinSegments(baseDir, "static/icon.png");
+    const ogImagePath = `https://${cfg.baseUrl}/static/og-image.png`;
+    const ogUrl = `${url}${fileData.filePath?.replace("content/","").replace(".md","")}`;
 
     return (
         <head>
@@ -30,18 +31,26 @@ export default (() => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             <meta property="og:title" content={title}/>
             <meta property="og:type" content="article"/>
-            <meta property="og:url" content={path}/>
+            <meta property="og:url" content={ogUrl}/>
             <meta property="og:description" content={description}/>
             {cfg.baseUrl && <meta property="og:image" content={ogImagePath}/>}
             <meta property="og:width" content="1200"/>
             <meta property="og:height" content="675"/>
+            <meta name="twitter:card" content="summary"/>
+            <meta name="twitter:image" content={ogImagePath}/>
+            <meta name="twitter:title" content={title}/>
+            <meta name="twitter:description" content={description}/>
+            <meta name="twitter:creator" content="@hulj13"/>
+            <meta name="twitter:site" content="@catcodeme.github.io"/>
+
+            <meta name="description" content={description}/>
+            <meta name="generator" content="Quartz"/>
             <link rel="icon" href={iconPath}/>
+            <link rel="canonical" href={ogUrl}/>
             <link rel="stylesheet"
                   href="https://cdn.bootcdn.net/ajax/libs/lxgw-wenkai-screen-webfont/1.7.0/style.min.css" spa-preserve/>
             <link rel="stylesheet"
                   href="https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css" spa-preserve/>
-            <meta name="description" content={description}/>
-            <meta name="generator" content="Quartz"/>
             {css.map((href) => (
                 <link key={href} href={href} rel="stylesheet" type="text/css" spa-preserve/>
             ))}
