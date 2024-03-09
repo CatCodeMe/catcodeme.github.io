@@ -160,3 +160,8 @@ ul.content>li {
    overflow: hidden; /* 溢出部分隐藏 */
    text-overflow: ellipsis; /* 溢出显示为省略号 */
 }
+
+//图片宽度调整
+img {
+   width: min(45vw, 100%);
+}
