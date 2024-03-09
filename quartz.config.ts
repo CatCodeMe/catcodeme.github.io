@@ -23,7 +23,7 @@ const config: QuartzConfig = {
       typography: {
         header: "LXGW WenKai Screen",
         body: "LXGW WenKai Screen",
-        code: "IBM Plex Mono",
+        code: "Fire Code",
       },
       colors: {
         lightMode: {
@@ -73,7 +73,7 @@ const config: QuartzConfig = {
     filters: [Plugin.RemoveDrafts()],
     emitters: [
       Plugin.AliasRedirects(),
-      Plugin.ComponentResources({ fontOrigin: "googleFonts" }),
+      Plugin.ComponentResources({ fontOrigin: "local" }),
       Plugin.ContentPage(),
       Plugin.FolderPage(),
       Plugin.TagPage(),
