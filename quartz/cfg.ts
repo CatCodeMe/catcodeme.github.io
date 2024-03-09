@@ -25,6 +25,10 @@ export type Analytics =
       host?: string
       scriptSrc?: string
     }
+  | {
+      provider: "clarity"
+    }
+
 
 export interface GlobalConfiguration {
   pageTitle: string

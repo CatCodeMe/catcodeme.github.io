@@ -12,7 +12,7 @@ const config: QuartzConfig = {
     enableSPA: true,
     enablePopovers: true,
     analytics: {
-      provider: "plausible",
+      provider: "clarity",
     },
     locale: "en-US",
     baseUrl: "catcodeme.github.io",
