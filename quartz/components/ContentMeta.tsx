@@ -36,14 +36,14 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
                 if (fileData.dates.created) {
                     segments.push(
                         <span>
-              🐣 Create@ <TimeMeta value={fileData.dates.created}/>
+              🌱 Create@ <TimeMeta value={fileData.dates.created}/>
             </span>,
                     )
                 }
                 if (fileData.dates.modified) {
                     segments.push(
                         <span>
-              🐓 Update@ <TimeMeta value={fileData.dates.modified}/>
+              🌴 Update@ <TimeMeta value={fileData.dates.modified}/>
             </span>,
                     )
                 }
@@ -52,7 +52,7 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
             // Display reading time if enabled
             if (options.showReadingTime) {
                 const {minutes, words: _words} = readingTime(text)
-                segments.push(<span>⏲ {Math.ceil(minutes)}min, {_words}words</span>)
+                segments.push(<span>⌛️ {Math.ceil(minutes)}min, {_words}words</span>)
             }
 
             segments.push(
