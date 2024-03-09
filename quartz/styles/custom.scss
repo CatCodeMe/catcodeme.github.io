@@ -150,13 +150,6 @@ body[data-topbar-has-content="0"] {
    }
 }
 
-// 配合格子背景，文章内容区设置滚动
-.center >.popover-hint {
-   max-height: 55vh;
-   overflow-y: scroll;
-   scrollbar-width: thin;
-}
-
 //文章header部分上移
 .page .page-header {
    margin: 4rem auto 0;
