@@ -183,7 +183,6 @@ img {
       border: dot-dash;
    }
 
-
    & thead {
       th {
          background-color: var(--lightgray);
@@ -194,6 +193,7 @@ img {
       tr {
          &:hover {
             background-color: var(--highlight);
+            border-left: 3px solid var(--secondary);
          }
       }
       td {
