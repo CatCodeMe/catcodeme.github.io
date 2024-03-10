@@ -179,13 +179,13 @@ img {
 
    & th, td {
       padding: 15px;
-      background-color: var(--body-text-color);
-      border: dot-dash;
    }
+
 
    & thead {
       th {
          background-color: var(--lightgray);
+         color: var(--secondary);
       }
    }
 
@@ -193,22 +193,19 @@ img {
       tr {
          &:hover {
             background-color: var(--highlight);
-            border-left: 3px solid var(--secondary);
          }
       }
       td {
          position: relative;
-         &:hover {
-            &:before {
-               content: "";
-               position: absolute;
-               left: 0;
-               right: 0;
-               top: -9999px;
-               bottom: -9999px;
-               background-color: var(--highlight);
-               z-index: -1;
-            }
+         &:hover::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -9999px;
+            bottom: -9999px;
+            background-color: var(--highlight);
+            z-index: -1;
          }
       }
    }
