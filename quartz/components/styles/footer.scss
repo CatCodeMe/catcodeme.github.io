@@ -1,18 +1,28 @@
 footer {
   text-align: left;
   margin-bottom: 4rem;
-  opacity: 0.7;
+  opacity: 0.8;
 
-  & ul {
+  & ul:not(.note-end) {
     list-style: none;
-    margin: 0;
     padding: 0;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1rem;
-    margin-top: -1rem;
+    margin: 3rem 0 0;
+
   }
+
+  & .note-end {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1rem;
+    text-decoration: var(--secondary) wavy underline 2px;
+  }
+
 
   & hr {
     color: var(--gray);
@@ -20,7 +30,6 @@ footer {
     border: none;
     border-color: var(--gray);
     width: 100%;
-    //margin: 4em auto;
     padding: 0;
     overflow: visible;
   }
@@ -29,7 +38,6 @@ footer {
     content: "* * *";
     background: var(--light);
     margin: -1em 0 .5em;
-    //padding: .5em 1em;
     font-size: 1.5em;
     display: inline-block;
   }

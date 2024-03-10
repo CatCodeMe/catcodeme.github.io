@@ -25,9 +25,9 @@ export default (() => {
             <meta charSet="utf-8"/>
             {cfg.theme.cdnCaching && cfg.theme.fontOrigin === "googleFonts" && (
                 <>
-                    <link rel="preconnect" href="https://fonts.googleapis.com" />
-                    <link rel="preconnect" href="https://fonts.gstatic.com" />
-                    <link rel="stylesheet" href={googleFontHref(cfg.theme)} />
+                    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+                    <link rel="stylesheet" href={googleFontHref(cfg.theme)}/>
                 </>
             )}
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -59,9 +59,10 @@ export default (() => {
             {js
                 .filter((resource) => resource.loadTime === "beforeDOMReady")
                 .map((res) => JSResourceToScriptElement(res, true))}
+            <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
         </head>
     )
   }
 
-  return Head
+    return Head
 }) satisfies QuartzComponentConstructor
