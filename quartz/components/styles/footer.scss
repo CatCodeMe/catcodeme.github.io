@@ -13,4 +13,24 @@ footer {
     gap: 1rem;
     margin-top: -1rem;
   }
+
+  & hr {
+    color: var(--gray);
+    text-align: center;
+    border: none;
+    border-color: var(--gray);
+    width: 100%;
+    //margin: 4em auto;
+    padding: 0;
+    overflow: visible;
+  }
+
+  & hr::after {
+    content: "* * *";
+    background: var(--light);
+    margin: -1em 0 .5em;
+    //padding: .5em 1em;
+    font-size: 1.5em;
+    display: inline-block;
+  }
 }
