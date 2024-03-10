@@ -20,15 +20,17 @@ export default ((opts?: Options) => {
                 <hr/>
                 <ul>
                     <li>
-                        <a href="https://obsidian.md" title="obsidian">
-                            <iconify-icon icon="skill-icons:obsidian-light" style="font-size: 18px"
+                        <a href="https://catcodeme.github.io/index.xml" title="rss">
+                            <iconify-icon icon="mdi:rss-box" style="color: #ff8a05;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
+
                     <li>
                         <iconify-icon icon="gg:format-slash" style="color: black;font-size: 18px"
                                       height="2em"></iconify-icon>
                     </li>
+
                     <li>
                         <a href="https://catcodeme.bsky.social" title="bluesky">
                             <iconify-icon icon="ri:bluesky-fill" style="color: #017bf8;font-size: 18px"
@@ -48,15 +50,17 @@ export default ((opts?: Options) => {
                         </a>
                     </li>
                     <li>
-                        <a href="https://catcodeme.github.io/index.xml" title="rss">
-                            <iconify-icon icon="mdi:rss-box" style="color: #ff8a05;font-size: 18px"
+                        <a href="https://obsidian.md" title="obsidian">
+                            <iconify-icon icon="skill-icons:obsidian-light" style="font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
+
                     <li>
                         <iconify-icon icon="gg:format-slash" style="color: black;font-size: 18px"
                                       height="2em"></iconify-icon>
                     </li>
+
                     <li>
                         <iconify-icon icon="mdi:creative-commons" style="font-size: 18px"
                                       height="2em"></iconify-icon>
