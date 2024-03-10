@@ -165,3 +165,59 @@ ul.content>li {
 img {
    width: min(45vw, 100%);
 }
+
+//表格样式调整
+.table-container {
+   & table {
+      width: max(45vw,100%);
+      border-collapse: collapse;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      margin: auto;
+      border-bottom: solid var(--lightgray);
+   }
+
+   & th, td {
+      padding: 15px;
+      background-color: var(--body-text-color);
+      border: dot-dash;
+   }
+
+
+   & thead {
+      th {
+         background-color: var(--lightgray);
+      }
+   }
+
+   & tbody {
+      tr {
+         &:hover {
+            background-color: var(--highlight);
+         }
+      }
+      td {
+         position: relative;
+         &:hover {
+            &:before {
+               content: "";
+               position: absolute;
+               left: 0;
+               right: 0;
+               top: -9999px;
+               bottom: -9999px;
+               background-color: var(--highlight);
+               z-index: -1;
+            }
+         }
+      }
+   }
+}
+
+//加粗字体样式
+strong {
+   font-weight: 600;
+   background-color: var(--highlight);
+   border-bottom: 3px solid var(--secondary);
+   border-radius: 3px;
+}
