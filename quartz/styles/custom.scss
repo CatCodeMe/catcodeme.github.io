@@ -170,7 +170,7 @@ img {
 //表格样式调整
 .table-container {
    & table {
-      width: max(45vw,100%);
+      width: min(45vw,100%);
       border-collapse: collapse;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -181,7 +181,6 @@ img {
    & th, td {
       padding: 15px;
    }
-
 
    & thead {
       th {
