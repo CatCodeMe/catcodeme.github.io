@@ -15,7 +15,8 @@
    --body-height-min: calc(100vh - var(--top-scroll-height));
    //无通知栏
    --body-height-max: 100vh;
-
+   //加粗字体、代码块高亮色
+   --custom-highlight: #bb72133d
 }
 
 //左侧目录滚动条
@@ -214,7 +215,7 @@ img {
 //加粗字体样式
 strong {
    font-weight: 600;
-   background-color: #bb721326;
+   background-color: var(--custom-highlight);
    border-bottom: 3px solid var(--secondary);
    border-radius: 3px;
 }
@@ -222,4 +223,14 @@ strong {
 //footnotes透明背景
 .footnotes {
    background-color: initial;
+}
+
+//代码块样式调整
+pre>code [data-highlighted-chars] {
+   background-color: var(--custom-highlight);
+   border-radius: 5px;
+}
+
+pre>code>[data-line][data-highlighted-line] {
+   background-color: var(--custom-highlight);
 }
