@@ -17,6 +17,36 @@ export default ((opts?: Options) => {
                 <hr/>
                 <ul>
                     <li>
+                        <a href="https://obsidian.md" title="obsidian">
+                            <iconify-icon icon="skill-icons:obsidian-light" style="font-size: 18px"
+                                          height="2em"></iconify-icon>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://quartz.jzhao.xyz" title="quartz">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" height="2em" width="2em"
+                                 id="Decoration-Crystals--Streamline-Ultimate">
+                                <desc>{"Decoration Crystals Streamline Icon: https://streamlinehq.com"}</desc>
+                                <path d="m20.25 2.25 3 0" fill="none" stroke="#000000" strokeLinecap="round"
+                                      strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m21.75 0.75 0 3" fill="none" stroke="#000000" strokeLinecap="round"
+                                      strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m0.75 8.25 3 0" fill="none" stroke="#000000" strokeLinecap="round"
+                                      strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m2.25 6.75 0 3" fill="none" stroke="#000000" strokeLinecap="round"
+                                      strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m17.25 23.25 -3 0 0 -12.75 3 -3 3 3 -3 12.75z" fill="none" stroke="#000000"
+                                      strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="M15.464 9.286 15.75 6 12 0.75 8.25 6l0.643 7.394" fill="none" stroke="#000000"
+                                      strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m7.5 23.25 2.25 0 0 -9 -3 -3 -3 3.75 3.75 8.25z" fill="none" stroke="#000000"
+                                      strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}/>
+                                <path d="m9.75 23.25 4.5 0" fill="none" stroke="#000000" strokeLinecap="round"
+                                      strokeLinejoin="round" strokeWidth={1.5}/>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
                         <a href="https://catcodeme.github.io/index.xml" title="rss">
                             <iconify-icon icon="mdi:rss-box" style="color: #ff8a05;font-size: 18px"
                                           height="2em"></iconify-icon>
@@ -43,12 +73,6 @@ export default ((opts?: Options) => {
                     <li>
                         <a href="https://github.com/CatCodeMe" title="github">
                             <iconify-icon icon="openmoji:github" style="font-size: 18px"
-                                          height="2em"></iconify-icon>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://obsidian.md" title="obsidian">
-                            <iconify-icon icon="skill-icons:obsidian-light" style="font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
