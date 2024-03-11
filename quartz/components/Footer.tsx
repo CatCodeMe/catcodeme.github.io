@@ -1,6 +1,6 @@
 import {QuartzComponent, QuartzComponentConstructor} from "./types"
 import style from "./styles/footer.scss"
-import { version } from "../../package.json"
+import {version} from "../../package.json"
 
 interface Options {
     links: Record<string, string>
@@ -9,14 +9,11 @@ interface Options {
 export default ((opts?: Options) => {
     const Footer: QuartzComponent = () => {
         const year = new Date().getFullYear()
-        // @ts-ignore
         return (
             <footer>
                 <div className="note-end">
                     <a href="https://quartz.jzhao.xyz/">🖋 Quartz v{version} ©{year}</a>
                 </div>
-                <hr/>
-                <div className="giscus"></div>
                 <hr/>
                 <ul>
                     <li>
@@ -78,6 +75,8 @@ export default ((opts?: Options) => {
                                       height="2em"></iconify-icon>
                     </li>
                 </ul>
+                <hr/>
+                <div className="giscus"></div>
             </footer>
         )
     }
