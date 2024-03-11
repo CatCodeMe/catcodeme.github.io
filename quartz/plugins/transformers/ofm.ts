@@ -176,13 +176,16 @@ export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options> 
           const anchor = rawHeader?.trim().replace(/^#+/, "")
           const blockRef = Boolean(anchor?.startsWith("^")) ? "^" : ""
           const displayAnchor = anchor ? `#${blockRef}${slugAnchor(anchor)}` : ""
-          const displayAlias = rawAlias ?? rawHeader?.replace("#", "|") ?? ""
+          let displayAlias = rawAlias ?? rawHeader?.replace("#", "|") ?? ""
           const embedDisplay = value.startsWith("!") ? "!" : ""
 
           if (rawFp?.match(externalLinkRegex)) {
             return `${embedDisplay}[${displayAlias.replace(/^\|/, "")}](${rawFp})`
           }
 
+          if(rawHeader){
+            displayAlias = `\\${displayAlias}`;
+          }
           return `${embedDisplay}[[${fp}${displayAnchor}${displayAlias}]]`
         })
       }
