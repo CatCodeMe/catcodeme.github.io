@@ -6,7 +6,7 @@ import type {JSX} from "preact"
 
 const TimeMeta = ({value}: { value: Date }) => (
     <time dateTime={formatISO(value)} title={formatDateFn(value, "ccc w")}>
-        {formatDateFn(value, "yyyy/LL/dd")}
+        {formatDateFn(value, "yyyy/LL/dd HH:mm")}
     </time>
 )
 
@@ -36,14 +36,14 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
                 if (fileData.dates.created) {
                     segments.push(
                         <span>
-              🌱 Create@ <TimeMeta value={fileData.dates.created}/>
+              🌱 <TimeMeta value={fileData.dates.created}/>
             </span>,
                     )
                 }
                 if (fileData.dates.modified) {
                     segments.push(
                         <span>
-              🌴 Update@ <TimeMeta value={fileData.dates.modified}/>
+              🌴 <TimeMeta value={fileData.dates.modified}/>
             </span>,
                     )
                 }
