@@ -38,7 +38,7 @@ export default (() => {
             {cfg.baseUrl && <meta property="og:image" content={ogImagePath}/>}
             <meta property="og:width" content="1200"/>
             <meta property="og:height" content="675"/>
-            <meta name="twitter:card" content="summary"/>
+            <meta name="twitter:card" content="summary_large_image"/>
             <meta name="twitter:image" content={ogImagePath}/>
             <meta name="twitter:title" content={title}/>
             <meta name="twitter:description" content={description}/>
@@ -59,7 +59,7 @@ export default (() => {
             {js
                 .filter((resource) => resource.loadTime === "beforeDOMReady")
                 .map((res) => JSResourceToScriptElement(res, true))}
-            <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.0.0/dist/iconify-icon.min.js"></script>
         </head>
     )
   }
