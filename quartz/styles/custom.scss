@@ -165,11 +165,17 @@ ul.content>li {
 //表格样式
 .table-container {
    & table {
-      width: min(45vw, 90%);
+      //width: min(45vw, 100%);
+      //border-collapse: collapse;
+      //overflow: hidden;
+      //box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      //margin: auto;
+      //border-bottom: solid var(--lightgray);
+      min-width: min(45vw,90%);
       border-collapse: collapse;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      margin-left: 0;
+      margin: auto;
       border-bottom: solid var(--lightgray);
    }
 
