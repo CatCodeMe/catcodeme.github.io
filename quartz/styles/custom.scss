@@ -162,23 +162,23 @@ ul.content>li {
    text-overflow: ellipsis; /* 溢出显示为省略号 */
 }
 
-//图片宽度调整
-img {
-   width: min(45vw, 100%);
-}
-
-//表格样式调整
+//表格样式
 .table-container {
    & table {
-      width: min(45vw,100%);
+      width: min(45vw, 90%);
       border-collapse: collapse;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      margin-left: 0;
       border-bottom: solid var(--lightgray);
    }
 
    & th, td {
       padding: 15px;
+   }
+
+   & tr:last-child {
+      border-bottom: 5px solid var(--secondary);
    }
 
    & thead {
@@ -232,3 +232,8 @@ pre>code [data-highlighted-chars] {
 pre>code>[data-line][data-highlighted-line] {
    background-color: var(--custom-highlight);
 }
+
+span.highlight {
+   background-color: var(--custom-highlight);
+}
+
