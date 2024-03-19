@@ -12,7 +12,7 @@ export default ((opts?: Options) => {
         return (
             <footer>
                 <div className="note-end">
-                    <a href="https://quartz.jzhao.xyz/">🖋 Quartz v{version} ©{year}</a>
+                    <a href="#">🖋 Quartz v{version} ©{year}</a>
                 </div>
                 <hr/>
                 <ul>
