@@ -66,7 +66,13 @@ export default ((opts?: Options) => {
                     </li>
                     <li>
                         <a href="https://twitter.com/hulj13" title="twitter">
-                            <iconify-icon icon="arcticons:x-twitter" style="color: black;font-size: 18px"
+                            <iconify-icon icon="fa6-brands:square-x-twitter" style="color: black;font-size: 18px"
+                                          height="2em"></iconify-icon>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://@catcodeme@sigmoid.social" title="mastodon">
+                            <iconify-icon icon="ion:logo-mastodon" style="color: #7817d9;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
