@@ -17,13 +17,13 @@ export default ((opts?: Options) => {
                 <hr/>
                 <ul>
                     <li>
-                        <a href="https://obsidian.md" title="obsidian">
+                        <a href="https://obsidian.md" target="_blank" title="obsidian">
                             <iconify-icon icon="skill-icons:obsidian-light" style="font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
                     <li>
-                        <a href="https://quartz.jzhao.xyz" title="quartz">
+                        <a href="https://quartz.jzhao.xyz" target="_blank" title="quartz">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" height="2em" width="2em"
                                  id="Decoration-Crystals--Streamline-Ultimate">
                                 <desc>{"Decoration Crystals Streamline Icon: https://streamlinehq.com"}</desc>
@@ -47,7 +47,7 @@ export default ((opts?: Options) => {
                         </a>
                     </li>
                     <li>
-                        <a href="https://catcodeme.github.io/index.xml" title="rss">
+                        <a href="https://catcodeme.github.io/index.xml" target="_blank" title="rss">
                             <iconify-icon icon="mdi:rss-box" style="color: #ff8a05;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
@@ -59,25 +59,25 @@ export default ((opts?: Options) => {
                     </li>
 
                     <li>
-                        <a href="https://catcodeme.bsky.social" title="bluesky">
+                        <a href="https://catcodeme.bsky.social" target="_blank" title="bluesky">
                             <iconify-icon icon="ri:bluesky-fill" style="color: #017bf8;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
                     <li>
-                        <a href="https://twitter.com/hulj13" title="twitter">
+                        <a href="https://twitter.com/hulj13" target="_blank" title="twitter">
                             <iconify-icon icon="fa6-brands:square-x-twitter" style="color: black;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
                     <li>
-                        <a href="https://@catcodeme@sigmoid.social" title="mastodon">
+                        <a href="https://@catcodeme@sigmoid.social" target="_blank" title="mastodon">
                             <iconify-icon icon="ion:logo-mastodon" style="color: #7817d9;font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
                     </li>
                     <li>
-                        <a href="https://github.com/CatCodeMe" title="github">
+                        <a href="https://github.com/CatCodeMe" target="_blank" title="github">
                             <iconify-icon icon="openmoji:github" style="font-size: 18px"
                                           height="2em"></iconify-icon>
                         </a>
