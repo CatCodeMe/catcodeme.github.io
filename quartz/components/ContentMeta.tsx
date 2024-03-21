@@ -29,6 +29,10 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
         const text = fileData.text
         const fileRelativePath = fileData.filePath?.replace("content/", "");
 
+        if (fileRelativePath === "") {
+            return null
+        }
+
         if (text) {
             const segments: JSX.Element[] = []
 
