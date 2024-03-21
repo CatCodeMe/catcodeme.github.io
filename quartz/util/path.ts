@@ -290,3 +290,7 @@ function _addRelativeToStart(s: string): string {
 
   return s
 }
+
+export function isHomePage(s: string): boolean {
+  return s === "content/index.md";
+}

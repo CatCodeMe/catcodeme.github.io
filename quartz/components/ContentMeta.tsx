@@ -29,7 +29,7 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
         const text = fileData.text
         const fileRelativePath = fileData.filePath?.replace("content/", "");
 
-        if (fileRelativePath === "") {
+        if (fileRelativePath === "index.md") {
             return null
         }
 

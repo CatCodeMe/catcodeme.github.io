@@ -1,19 +1,25 @@
-import {QuartzComponent, QuartzComponentConstructor} from "./types"
+import {QuartzComponent, QuartzComponentConstructor, QuartzComponentProps} from "./types"
 import style from "./styles/footer.scss"
 import {version} from "../../package.json"
+import {isHomePage} from "../util/path";
 
 interface Options {
     links: Record<string, string>
 }
 
 export default ((opts?: Options) => {
-    const Footer: QuartzComponent = () => {
+    const Footer: QuartzComponent = ({fileData}: QuartzComponentProps) => {
         const year = new Date().getFullYear()
         return (
             <footer>
-                <div className="note-end">
-                    <a href="#">🖋 Quartz v{version} ©{year}</a>
-                </div>
+                {
+                    isHomePage(fileData.filePath || "") ? "" :
+                        (
+                            <div className="note-end">
+                                <a href="https://quartz.jzhao.xyz">🖋 Quartz v{version} ©{year}</a>
+                            </div>
+                        )
+                }
                 <hr/>
                 <ul>
                     <li>
