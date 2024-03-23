@@ -65,24 +65,6 @@ export default ((opts?: Options) => {
                     </li>
 
                     <li>
-                        <a href="https://catcodeme.bsky.social" target="_blank" title="bluesky">
-                            <iconify-icon icon="ri:bluesky-fill" style="color: #017bf8;font-size: 18px"
-                                          height="2em"></iconify-icon>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://twitter.com/hulj13" target="_blank" title="twitter">
-                            <iconify-icon icon="fa6-brands:square-x-twitter" style="color: black;font-size: 18px"
-                                          height="2em"></iconify-icon>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://@catcodeme@sigmoid.social" target="_blank" title="mastodon">
-                            <iconify-icon icon="ion:logo-mastodon" style="color: #7817d9;font-size: 18px"
-                                          height="2em"></iconify-icon>
-                        </a>
-                    </li>
-                    <li>
                         <a href="https://github.com/CatCodeMe" target="_blank" title="github">
                             <iconify-icon icon="openmoji:github" style="font-size: 18px"
                                           height="2em"></iconify-icon>
