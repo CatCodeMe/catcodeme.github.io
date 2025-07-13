@@ -60,9 +60,6 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      - name: Run Development Build
-        run: bun dev
-
       - name: Build Production
         run: bun build
 
