@@ -5,7 +5,6 @@ import config from 'virtual:config'
 
 import { Icon } from '../user'
 
-const year = new Date().getFullYear()
 const footerConf = config.footer
 let social = footerConf.social || {}
 
@@ -97,7 +96,7 @@ const version = pkg.version
 
       {/* Social Brands */}
       <div class='flex items-center gap-x-4'>
-        &#8721; views: <span class='vercount-pv'></span>
+        &#8721; views: <span class='vercount_value_site_pv'></span>
         {
           footerConf.social &&
             Object.entries(footerConf.social).map(([platform, { label, url }]) => (

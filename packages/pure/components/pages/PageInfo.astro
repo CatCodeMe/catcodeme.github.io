@@ -7,6 +7,6 @@ const path = Astro.url.pathname
 ---
 
 <div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
-  <span class="vercount-pv" data-path={path}></span> views
-  <span class="vercount-uv" data-path={path} style="margin-left: 8px;"></span> visitors
+  <span class='vercount_value_page_pv' data-path={path}></span> views
+  <!-- <span class='vercount-uv' data-path={path} style='margin-left: 8px;'></span> visitors -->
 </div>
