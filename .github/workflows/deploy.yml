@@ -1,0 +1,82 @@
+name: Deploy Astro site to GitHub Pages
+
+on:
+  push:
+    branches: [ astro-pure-v4_0_3 ]
+  workflow_dispatch:
+  workflow_run:
+    workflows: [build, deploy]
+    branches: [astro-pure-v4_0_3]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.gh_action_token_PAT }}
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Fetch submodules
+        continue-on-error: true
+        run: |
+          git submodule update --init --recursive --checkout -f --remote -- "content"
+          git config --global user.name "GitHub Action"
+          git config --global user.email "noreply@github.com"
+          git commit -am "chore(update): fetch submodule" || echo "No changes to commit"
+          git push || echo "Nothing to push"
+
+  build:
+    needs: setup
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.gh_action_token_PAT }}
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run Development Build
+        run: bun dev
+
+      - name: Build Production
+        run: bun build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
