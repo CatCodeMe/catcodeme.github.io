@@ -25,21 +25,21 @@ jobs:
         with:
           token: ${{ secrets.gh_action_token_PAT }}
           fetch-depth: 0
-          submodules: 'recursive'
+#          submodules: 'recursive'
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
-      - name: Fetch submodules
-        continue-on-error: true
-        run: |
-          git submodule update --init --recursive --checkout -f --remote -- "content"
-          git config --global user.name "GitHub Action"
-          git config --global user.email "noreply@github.com"
-          git commit -am "chore(update): fetch submodule" || echo "No changes to commit"
-          git push || echo "Nothing to push"
+#      - name: Fetch submodules
+#        continue-on-error: true
+#        run: |
+#          git submodule update --init --recursive --checkout -f --remote -- "content"
+#          git config --global user.name "GitHub Action"
+#          git config --global user.email "noreply@github.com"
+#          git commit -am "chore(update): fetch submodule" || echo "No changes to commit"
+#          git push || echo "Nothing to push"
 
   build:
     needs: setup
