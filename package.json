@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
-    "build": "astro-pure check && astro check && astro build",
+    "build": "bunx astro-pure check && bunx astro check && bunx astro build",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
@@ -40,7 +40,7 @@
     "remark-breaks": "^4.0.0",
     "remark-math": "^6.0.0",
     "sharp": "^0.33.5",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

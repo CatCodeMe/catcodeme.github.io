@@ -61,12 +61,12 @@ jobs:
         run: bun install
 
       - name: Build Production
-        run: bun build
+        run: bun run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     needs: build
