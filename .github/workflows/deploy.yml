@@ -34,6 +34,7 @@ jobs:
 
 #      - name: Fetch submodules
 #        continue-on-error: true
+#
 #        run: |
 #          git submodule update --init --recursive --checkout -f --remote -- "content"
 #          git config --global user.name "GitHub Action"
