@@ -1,0 +1,32 @@
+---
+//https://github.com/chiffonng/blog-astro/blob/a9f55ce2aa11ffb7d7b50cb13cb58f5f0e707ced/src/components/base/IconRenderer.astro
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+import { Svg } from 'astro-pure/user'
+
+function isImageMetadata(obj: unknown): obj is ImageMetadata {
+  return !!(obj && typeof obj === 'object' && 'src' in obj)
+}
+
+const { icon, alt, className = '' } = Astro.props
+
+// Check if it's a CSS icon class (starts with 'i-')
+const isCssIcon = typeof icon === 'string' && icon.startsWith('i-')
+---
+
+{
+  isCssIcon ? (
+    <div class:list={['size-10 rounded-lg bg-primary-foreground p-2', className]}>
+      <span class:list={[icon, 'h-full w-full inline-block']} aria-label={alt} />
+    </div>
+  ) : isImageMetadata(icon) ? (
+    <div class:list={['size-10 rounded-lg bg-primary-foreground p-2', className]}>
+      <Image src={icon} alt={alt} class='h-full w-full object-contain' />
+    </div>
+  ) : (
+    <Svg
+      src={icon}
+      class:list={['size-10 rounded-lg bg-primary-foreground fill-foreground p-2', className]}
+    />
+  )
+}

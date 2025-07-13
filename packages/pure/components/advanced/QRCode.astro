@@ -1,0 +1,212 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import config from 'virtual:config'
+
+import avatar from '@/assets/avatar.jpeg'
+
+interface Props {
+  content?: string
+  class?: string
+  circular?: boolean
+  remarkPluginFrontmatter?: Record<string, unknown>
+}
+
+const {
+  content,
+  class: className,
+  circular = true,
+  remarkPluginFrontmatter,
+  ...props
+} = Astro.props
+const redirect_from = remarkPluginFrontmatter?.redirect_from as string | string[] | undefined
+---
+
+<!-- 添加一个遮罩层用于点击关闭 -->
+<div id='qrcode-overlay' class='fixed inset-0 z-[4] hidden'></div>
+<div id='qrcode-container' class={className} {...props}></div>
+
+<script define:vars={{ content, avatarUrl: avatar.src, circular, redirect_from }}>
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = src
+      script.onload = resolve
+      script.onerror = reject
+      document.head.appendChild(script)
+    })
+  }
+
+  function getQRCodeContent() {
+    // 如果提供了明确的 content，优先使用
+    if (content) return content
+
+    // 如果有 redirect_from，使用它构建短链接
+    if (redirect_from) {
+      const redirectUrl = Array.isArray(redirect_from) ? redirect_from[0] : redirect_from
+      // 如果是完整 URL，直接使用
+      if (redirectUrl.startsWith('http')) {
+        return redirectUrl
+      }
+      // 否则，构建完整 URL
+      const baseUrl = window.location.origin
+      return `${baseUrl}${redirectUrl.startsWith('/') ? '' : '/'}${redirectUrl}`
+    }
+
+    // 如果都没有，使用当前页面 URL
+    return window.location.href
+  }
+
+  async function processImage(url, makeCircular) {
+    if (!makeCircular) return url
+
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.src = url
+
+    await new Promise((resolve, reject) => {
+      img.onload = resolve
+      img.onerror = reject
+    })
+
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const size = Math.min(img.width, img.height)
+    canvas.width = size
+    canvas.height = size
+
+    ctx.beginPath()
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2, true)
+    ctx.closePath()
+    ctx.clip()
+
+    const x = (size - img.width) / 2
+    const y = (size - img.height) / 2
+    ctx.drawImage(img, x, y, img.width, img.height)
+
+    ctx.strokeStyle = '#ffffff'
+    ctx.lineWidth = size * 0.02
+    ctx.stroke()
+
+    return canvas.toDataURL()
+  }
+
+  async function initQRCode() {
+    try {
+      await loadScript(
+        'https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.min.js'
+      )
+
+      const qrcodeContainer = document.getElementById('qrcode-container')
+      const qrcodeOverlay = document.getElementById('qrcode-overlay')
+      if (!qrcodeContainer) throw new Error('qrcode container not found')
+      if (!qrcodeOverlay) throw new Error('qrcode overlay not found')
+
+      // 添加点击遮罩层关闭二维码的功能
+      qrcodeOverlay.addEventListener('click', (e) => {
+        if (e.target === qrcodeOverlay) {
+          qrcodeContainer.ariaExpanded = 'false'
+          qrcodeOverlay.classList.add('hidden')
+        }
+      })
+
+      const MIN_SIZE = 150
+      const DEFAULT_SIZE = 300
+
+      // 处理图片
+      const processedImage = await processImage(avatarUrl, circular)
+
+      const qrCode = new QRCodeStyling({
+        width: DEFAULT_SIZE,
+        height: DEFAULT_SIZE,
+        type: 'svg',
+        data: getQRCodeContent(),
+        image: processedImage,
+        dotsOptions: {
+          color: '#000000',
+          type: 'rounded',
+          gradient: {
+            type: 'radial',
+            rotation: 0,
+            colorStops: [
+              { offset: 0, color: '#000000' },
+              { offset: 1, color: '#000000' }
+            ]
+          }
+        },
+        cornersSquareOptions: {
+          type: 'extra-rounded',
+          color: '#000000'
+        },
+        cornersDotOptions: {
+          type: 'dot',
+          color: '#000000'
+        },
+        backgroundOptions: {
+          color: 'transparent'
+        },
+        imageOptions: {
+          crossOrigin: 'anonymous',
+          margin: 0, // 减小边距
+          imageSize: 0.3, // 增大图片尺寸
+          hideBackgroundDots: false, // 显示背景点
+          margin4: true, // 使用4个单位的边距
+          crossOrigin: 'anonymous'
+        },
+        qrOptions: {
+          errorCorrectionLevel: 'H',
+          maskPattern: 0 // 尝试不同的遮罩模式以获得更好的圆形效果
+        }
+      })
+
+      qrcodeContainer.innerHTML = ''
+      qrCode.append(qrcodeContainer)
+
+      const resizeQR = () => {
+        const container = qrcodeContainer.parentElement
+        if (container) {
+          const containerWidth = container.clientWidth
+          const containerHeight = container.clientHeight
+          const size = Math.max(MIN_SIZE, Math.min(containerWidth, containerHeight))
+
+          qrCode.update({
+            width: size,
+            height: size
+          })
+        }
+      }
+
+      qrcodeContainer.style.minWidth = `${MIN_SIZE}px`
+      qrcodeContainer.style.minHeight = `${MIN_SIZE}px`
+
+      setTimeout(resizeQR, 0)
+      window.addEventListener('resize', resizeQR)
+    } catch (error) {
+      console.error('Error initializing QR code:', error)
+    }
+  }
+
+  initQRCode()
+</script>
+
+<style>
+  #qrcode-overlay {
+    background-color: transparent;
+  }
+
+  #qrcode-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 0.5rem;
+  }
+
+  #qrcode-container svg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 0;
+  }
+</style>

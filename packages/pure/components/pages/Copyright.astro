@@ -1,0 +1,200 @@
+---
+import { Image } from 'astro:assets'
+import type { CollectionKey, InferEntrySchema } from 'astro:content'
+import config from 'virtual:config'
+
+import avatar from '@/assets/avatar.jpeg' // 根据实际路径调整
+
+import { cn, getFormattedDate, showToast } from '../../utils'
+import { QRCode } from '../advanced'
+import { Icon } from '../user'
+
+interface Props<T extends CollectionKey> {
+  data: InferEntrySchema<T> & {
+    redirect_from?: string | string[]
+  }
+  remarkPluginFrontmatter: Record<string, unknown>
+  class?: string
+}
+
+const {
+  data: { heroImage, title, publishDate },
+  remarkPluginFrontmatter,
+  class: className
+} = Astro.props
+
+const redirect_from = remarkPluginFrontmatter?.redirect_from
+
+const image = typeof heroImage?.src === 'string' ? heroImage?.src : (heroImage?.src?.src ?? '')
+
+const shares = {
+  weibo: {
+    link: `http://service.weibo.com/share/share.php?url=${Astro.url}&title=${title}&pic=${image}`
+  },
+  x: {
+    link: `https://x.com/intent/tweet?text='${title}'&url='${Astro.url}'&via='${config.author}'`
+  },
+  bluesky: {
+    link: `https://bsky.app/intent/compose?text=${title}%0A${Astro.url}`
+  }
+} as const
+
+// 将 showToast 函数传递给客户端脚本
+const showToastStr = showToast.toString()
+---
+
+<div
+  class={cn(
+    'relative flex flex-col gap-y-2 rounded-xl border px-3 sm:px-4 py-2 sm:py-3',
+    className
+  )}
+>
+  <Icon class='absolute end-4 top-4 size-20 opacity-10' name='copyright' />
+
+  {/* title & link */}
+  <div class='flex flex-col'>
+    <div class='font-medium text-foreground'>{title}</div>
+    <div class='text-sm'>{Astro.url}</div>
+  </div>
+
+  {/* common info */}
+  <div class='flex flex-row flex-wrap justify-start gap-x-5 gap-y-1 sm:gap-x-8'>
+    <div class='flex items-center gap-x-2 sm:flex-col'>
+      <div class='relative group h-12 sm:min-w-16'>
+        <Image
+          src={avatar}
+          alt={config.author}
+          class='absolute size-12 rounded-full object-cover border transition-all duration-300 ease-in-out group-hover:translate-y-full group-hover:opacity-0'
+          loading='lazy'
+          width={48}
+          height={48}
+          alt='avatar'
+        />
+        <div
+          class='flex flex-col absolute start-0 -translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out whitespace-nowrap'
+        >
+          <span>Author</span>
+          <span class='text-sm text-foreground'>{config.author}</span>
+        </div>
+      </div>
+    </div>
+
+    {
+      publishDate && (
+        <div class='flex gap-x-2 sm:min-w-16 sm:flex-col'>
+          <span>Published at</span>
+          <span class='text-sm text-foreground max-sm:place-self-center'>
+            {getFormattedDate(publishDate, {
+              month: 'long'
+            })}
+          </span>
+        </div>
+      )
+    }
+    <div class='flex gap-x-2 sm:flex-col'>
+      <span>Copyright</span>
+      <a
+        class='text-sm text-foreground max-sm:place-self-center'
+        href='https://creativecommons.org/licenses/by/4.0/'
+        target='_blank'
+      >
+        CC BY-NC-SA 4.0
+      </a>
+    </div>
+  </div>
+
+  {/* functions */}
+  <div class='relative'>
+    <div class='flex flex-row gap-3'>
+      <button
+        id='copy-link'
+        aria-label='Copy article link'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='link' />
+      </button>
+      <button
+        id='get-qrcode'
+        aria-label='Show QR code'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='qrcode' />
+      </button>
+      {
+        config.content.share.map((share) => (
+          <a
+            href={shares[share].link}
+            target='_blank'
+            id={`share-${share}`}
+            aria-label={`Share on ${share}`}
+            class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+          >
+            <Icon class='size-5' name={share} />
+          </a>
+        ))
+      }
+    </div>
+    <QRCode
+      aria-label='QR code for this page'
+      aria-expanded='false'
+      class='absolute z-[5] -mt-2 box-content max-h-0 max-w-44 overflow-hidden rounded-xl border bg-muted p-4 opacity-0 transition-all duration-300 ease-in-out aria-expanded:max-h-44 aria-expanded:translate-y-4 aria-expanded:opacity-100 pointer-events-none aria-expanded:pointer-events-auto'
+      remarkPluginFrontmatter={remarkPluginFrontmatter}
+    />
+  </div>
+</div>
+
+<div class='mx-6 rounded-b-xl border border-t-0 px-3 pb-1.5 pt-1 sm:mx-8 sm:px-4'>
+  <a
+    href='/projects#sponsorship'
+    class='flex items-center justify-between text-muted-foreground no-underline'
+    target='_blank'
+  >
+    <span>Buy me a cup of coffee ☕.</span>
+    <Icon class='box-content size-5 p-1' name='receive-money' />
+  </a>
+</div>
+
+<script define:vars={{ redirect_from, showToastStr }}>
+  // 在客户端重建 showToast 函数
+  const showToast = new Function(`return ${showToastStr}`)()
+
+  // Copy link
+  const copyLink = document.getElementById('copy-link')
+  copyLink?.addEventListener('click', () => {
+    let linkToCopy = window.location.href
+
+    // 如果存在 redirect_from，使用第一个值
+    if (redirect_from) {
+      const redirectUrl = Array.isArray(redirect_from) ? redirect_from[0] : redirect_from
+
+      // 确保链接是完整的 URL
+      if (redirectUrl.startsWith('http')) {
+        linkToCopy = redirectUrl
+      } else {
+        // 如果是相对路径，转换为完整 URL
+        const baseUrl = window.location.origin
+        linkToCopy = `${baseUrl}${redirectUrl.startsWith('/') ? '' : '/'}${redirectUrl}`
+      }
+    }
+
+    navigator.clipboard.writeText(linkToCopy)
+    showToast({ message: 'Link copied!' })
+  })
+
+  // QRCode
+  const getQRCode = document.getElementById('get-qrcode')
+  const qrcodeContainer = document.getElementById('qrcode-container')
+  const qrcodeOverlay = document.getElementById('qrcode-overlay')
+  if (!qrcodeContainer) throw new Error('qrcode container not found')
+  if (!qrcodeOverlay) throw new Error('qrcode overlay not found')
+
+  getQRCode?.addEventListener('click', () => {
+    if (qrcodeContainer.ariaExpanded === 'true') {
+      qrcodeContainer.ariaExpanded = 'false'
+      qrcodeOverlay.classList.add('hidden')
+    } else {
+      qrcodeContainer.ariaExpanded = 'true'
+      qrcodeOverlay.classList.remove('hidden')
+    }
+  })
+</script>

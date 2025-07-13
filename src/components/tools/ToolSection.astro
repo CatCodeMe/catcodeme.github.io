@@ -1,0 +1,25 @@
+---
+import type { ToolProps } from './Tool.astro'
+import Tool from './Tool.astro'
+
+interface Props {
+  class?: string
+  title: string
+  tools: ToolProps[]
+}
+
+const { class: className, title, tools, ...props } = Astro.props
+---
+
+<div
+  class:list={[
+    'not-prose flex flex-col rounded-xl border py-3 px-3 gap-y-3 sm:gap-y-4 mb-5',
+    className
+  ]}
+  {...props}
+>
+  <div class='m-0 px-2 text-lg font-medium'>{title}</div>
+  <div class='grid grid-cols-1 gap-x-2 gap-y-2 sm:grid-cols-2'>
+    {tools.map((tool) => <Tool {...tool} />)}
+  </div>
+</div>

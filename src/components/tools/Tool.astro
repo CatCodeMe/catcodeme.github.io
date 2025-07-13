@@ -1,0 +1,70 @@
+---
+//github.com/chiffonng/blog-astro/blob/a9f55ce2aa11ffb7d7b50cb13cb58f5f0e707ced/src/components/tools/Tool.astro
+import type { ImageMetadata } from 'astro'
+import IconRenderer from '@/components/base/IconRenderer.astro'
+
+export enum ToolTag {
+  OpenSource = 'oss',
+  SelfHosted = 'self-hosted',
+  Favorite = '♥️',
+  Free = 'free',
+  Paid = 'paid',
+  Gifted = 'gifted',
+  Subscription = 'subscription',
+  Organization = 'org',
+  Bundle = 'bundle',
+  SecondHand = 'second-hand',
+  Web = 'web',
+  Mobile = 'mobile',
+  Desktop = 'desktop'
+}
+
+const tagStyles: Record<ToolTag, string> = {
+  [ToolTag.OpenSource]: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
+  [ToolTag.SelfHosted]: 'bg-green-500/20 text-green-600 dark:text-green-400',
+  [ToolTag.Favorite]: 'bg-light-blue-500/20 text-light-blue-600 dark:text-light-blue-400',
+  [ToolTag.Free]: 'bg-muted text-muted-foreground',
+  [ToolTag.Gifted]: 'bg-muted text-muted-foreground',
+  [ToolTag.SecondHand]: 'bg-destructive/80 text-destructive-foreground',
+  [ToolTag.Paid]: 'bg-destructive/80 text-destructive-foreground',
+  [ToolTag.Subscription]: 'bg-primary text-primary-foreground',
+  [ToolTag.Organization]: 'bg-primary text-primary-foreground',
+  [ToolTag.Bundle]: 'bg-primary text-primary-foreground',
+  [ToolTag.Web]: 'bg-blue-500/20 text-blue-600 dark:text-blue-400',
+  [ToolTag.Mobile]: 'bg-green-500/20 text-green-600 dark:text-green-400',
+  [ToolTag.Desktop]: 'bg-purple-500/20 text-purple-600 dark:text-purple-400'
+}
+
+export interface ToolProps {
+  name: string
+  description: string
+  href: string
+  icon: string | Promise<typeof import('*.svg?raw')> | ImageMetadata
+  tags?: ToolTag[]
+}
+
+const { name, description, href, icon, tags } = Astro.props
+---
+
+<a class='group relative text-sm leading-normal no-underline' href={href} id={name} target='_blank'>
+  <div
+    class='flex items-center gap-x-3 rounded-lg border border-transparent px-1.5 py-1 transition-colors hover:border-border hover:bg-muted'
+  >
+    <IconRenderer icon={icon} alt={name} />
+    <div class='z-20 flex flex-col'>
+      <div class='flex items-center gap-2'>
+        <div class='font-medium text-foreground'>{name}</div>
+        <div class='flex gap-1'>
+          {
+            tags
+              ?.filter((tag: ToolTag) => Object.values(ToolTag).includes(tag))
+              .map((tag: ToolTag) => (
+                <span class:list={['text-xs px-1.5 py-0.5 rounded', tagStyles[tag]]}>{tag}</span>
+              ))
+          }
+        </div>
+      </div>
+      <div class='font-normal'>{description}</div>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,40 @@
+--- 
+import { Mermaid } from '@/custom/components/advanced'
+import { Footer, Header, ThemeProvider } from '@/custom/components/basic'
+
+import BaseHead from '@/components/BaseHead.astro'
+import config from '@/site-config'
+
+// Import the global.css file here so that it is included on
+// all pages through the use of the <BaseLayout /> component.
+import '@/assets/styles/app.css'
+import '@/assets/styles/callout.css'
+import '@/assets/styles/expressive-code.css'
+import '@/assets/styles/inner-link.css'
+import '@/assets/styles/external-link.css'
+
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = config.description } = Astro.props
+---
+
+<html lang={config.locale.lang}>
+  <head>
+    <BaseHead description={description} title={title} />
+    <ThemeProvider />
+  </head>
+
+  <body class="bg-background text-foreground">
+    <div class="w-full mx-auto px-4 sm:px-7 lg:px-10">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <Mermaid />
+  </body>
+</html>

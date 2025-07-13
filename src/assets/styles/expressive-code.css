@@ -1,0 +1,30 @@
+@import 'app.css';
+
+.expressive-code {
+        padding: 0.5em 0;
+
+        span {
+                cursor: var(--cursor-text), text !important;
+        }
+
+        /* 终端仿 mac 的 3 个红点*/
+        .frame.is-terminal {
+                /* .header {
+                        background: linear-gradient(to top, transparent 1.5px, transparent 1.5px), linear-gradient(#f3f3f3, #f3f3f3) !important;
+                } */
+
+                .header::before {
+                        opacity: unset !important;
+                        background: linear-gradient(to right, #fc625d 33.33%, #fdbc40 33.33% 66.66%, #35cd4b 66.66%);
+                }
+
+                .header::after {
+                        border: 0 !important;
+                }
+        }
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) .title {
+        /* copy from expressive border css*/
+        border-bottom: var(--ec-brdWd) solid var(--ec-frm-edActTabBrdCol) !important;
+}

@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets'
+
+import type { iconsType } from 'astro-pure/types'
+import { Button, Collapse, Icon } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+import Sponsors from '@/components/projects/Sponsors.astro'
+import alipay from '@/assets/alipay-qrcode.jpg'
+import wechat from '@/assets/wechat-qrcode.jpg'
+import config from '@/site-config'
+
+const headings = [
+  { depth: 2, slug: 'theme', text: 'Theme' },
+  { depth: 2, slug: 'others', text: 'Others' },
+  { depth: 2, slug: 'sponsorship', text: 'Sponsorship' }
+]
+---
+
+<PageLayout title='Projects' {headings} info={{ slug: '/projects', hideComment: true }}>
+  <p>Github Activities:</p>
+  <p>
+    <img
+      class="hidden dark:block"
+      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg"
+      alt="github contribution snake dark"
+      loading="lazy"
+    />
+    <img
+      class="block dark:hidden"
+      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg"
+      alt="github contribution snake light"
+      loading="lazy"
+    />
+  </p>
+  <p>
+    If you think it would be useful or interesting to collaborate on a project, you can donate to
+    support my work or contact me to discuss a project.
+  </p>
+  <Button title='Checkout sponsorship' class='w-fit' href='#sponsorship'>
+    <Icon class='size-5' name='receive-money' slot='before' />
+  </Button>
+
+  <h2 id='theme'>Theme</h2>
+  <ProjectSection
+    project={[
+      {
+        name: '🍭 Astro-theme-pure',
+        description: 'A simple, clean but powerful blog theme build by astro.',
+        links: [
+          { type: 'github', href: 'https://github.com/cworld1/astro-theme-pure' },
+          { type: 'site', href: 'https://github.com/cworld1/astro-theme-pure' },
+          {
+            type: 'doc',
+            href: 'https://github.com/cworld1/astro-theme-pure/blob/main/src/content/blog/customize/index.md'
+          }
+        ]
+      }
+    ]}
+  />
+
+  <h2 id='others'>Others</h2>
+  <ProjectSection
+    project={[
+      {
+        name: 'CCM',
+        description: "CCM's Github",
+        links: [{ type: 'github', href: 'https://github.com/catcodeme' }]
+      }
+    ]}
+  />
+
+  <!-- sponsorship -->
+  <h2 id='sponsorship'>Sponsorship</h2>
+  <p>Please leave a message or contact me proactively after sponsorship.</p>
+  <div class='flex flex-col justify-center gap-4 sm:flex-row'>
+    {
+      [
+        { name: 'WeChat', icon: 'wechat-pay', image: wechat, color: 'text-[#07C160]' },
+        { name: 'Alipay', icon: 'alipay', image: alipay, color: 'text-[#1677FF]' }
+      ].map((item) => (
+        <div class='group relative justify-center overflow-hidden rounded-xl border bg-white'>
+          <div class='absolute bottom-0 end-0 start-0 top-0 flex items-center justify-center transition-opacity group-hover:opacity-0'>
+            <Icon class={`size-20 ${item.color}`} name={item.icon as iconsType} />
+          </div>
+          <Image
+            class='mx-auto my-0 max-w-60 opacity-30 blur-sm transition-opacity group-hover:opacity-100 group-hover:blur-none'
+            src={item.image}
+            alt={item.name}
+            loading='lazy'
+          />
+        </div>
+      ))
+    }
+  </div>
+</PageLayout>

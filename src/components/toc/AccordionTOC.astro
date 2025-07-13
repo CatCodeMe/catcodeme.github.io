@@ -1,0 +1,535 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+  position?: 'left' | 'right'
+  class?: string
+}
+
+const { headings, position = 'left', class: className } = Astro.props
+---
+
+<div class:list={['toc-accordion', className, position]} id='toc'>
+  <div class='toc-lines' id='toc-lines'></div>
+  <div class='toc-full-menu' id='toc-full-menu'>
+    <div class='toc-full-menu-content' id='toc-full-menu-content'></div>
+  </div>
+</div>
+
+<style is:global>
+  /* 支持主题色自适应，默认深色，浅色主题自动变浅色 */
+  :root {
+    --toc-menu-bg: rgba(30, 30, 30, 0.95);
+    --toc-menu-color: #fff;
+    --toc-menu-border: rgba(255, 255, 255, 0.1);
+    --toc-menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --toc-menu-active-bg: rgba(59, 130, 246, 0.3);
+    --toc-menu-active-color: #fff;
+  }
+  :root[data-theme='light'],
+  :root[data-theme='system'] {
+    --toc-menu-bg: rgba(255, 255, 255, 0.98);
+    --toc-menu-color: #222;
+    --toc-menu-border: #e5e7eb;
+    --toc-menu-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --toc-menu-active-bg: rgba(59, 130, 246, 0.08);
+    --toc-menu-active-color: #2563eb;
+  }
+
+  :root:is([data-theme='light'], [data-theme='system']) .toc-full-menu{
+    color: #222 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  :root:is([data-theme='light'], [data-theme='system']) .toc-menu-item.active{
+    background: rgba(59, 130, 246, 0.08) !important;
+    border-left: 3px solid #3b82f6 !important;
+    color: #2563eb !important;
+  }
+
+  .toc-accordion {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: block !important;
+    border-radius: 12px;
+    padding: 8px 0;
+  }
+
+  .toc-accordion.left {
+    left: 1rem;
+  }
+
+  .toc-accordion.right {
+    right: 1rem;
+  }
+
+  .toc-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 0;
+    background: transparent;
+    min-width: 44px;
+    min-height: 120px;
+  }
+
+  .toc-accordion.right .toc-lines {
+    align-items: flex-end;
+  }
+
+  /* 优化 toc-line 样式为原型效果，h1~h4 匹配 menu 圆点色 */
+  .toc-line{
+    position: relative;
+    height: 2px;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.6;
+    margin: 2px 0;
+    background: #cbd5e0;
+  }
+  .toc-line[data-level='1']{
+    width: 40px;
+    background: #3b82f6;
+  }
+  .toc-line[data-level='2']{
+    width: 30px;
+    background: #10b981;
+  }
+  .toc-line[data-level='3']{
+    width: 22px;
+    background: #f59e0b;
+  }
+  .toc-line[data-level='4']{
+    width: 14px;
+    background: #ef4444;
+  }
+  .toc-line[data-level='5']{
+    width: 10px;
+    background: #9ca3af;
+  }
+  .toc-line[data-level='6']{
+    width: 8px;
+    background: #6b7280;
+  }
+  .toc-line:hover{
+    opacity: 1;
+    background: #3b82f6;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  /* 波动动画：active 时宽度延长并有动画 */
+  @keyframes tocLineWave {
+    0% {
+      transform: scaleY(3) scaleX(1);
+    }
+    40% {
+      transform: scaleY(3) scaleX(1.8);
+    }
+    60% {
+      transform: scaleY(3) scaleX(1.4);
+    }
+    100% {
+      transform: scaleY(3) scaleX(1);
+    }
+  }
+  .toc-line.active{
+    opacity: 1;
+    transform: scaleY(3) scaleX(1);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    animation: tocLineWave 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .toc-full-menu{
+    position: absolute !important;
+    left: calc(100% + 20px) !important;
+    top: 0 !important;
+    background: var(--toc-menu-bg, rgba(30, 30, 30, 0.95)) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(20px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    min-width: 200px !important;
+    max-width: 300px !important;
+    max-height: 60vh !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    z-index: 100 !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important;
+    /* font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB',
+      'Microsoft YaHei', sans-serif !important; */
+    word-break: break-all !important;
+  }
+  .toc-full-menu-content{
+    padding: 24px 12px 24px 0 !important; /* 右边距12px，左边距0，内容更贴近左侧 */
+  }
+  .toc-accordion.right .toc-full-menu-content{
+    padding: 24px 0 24px 12px !important; /* 右侧模式，左边距12px，右边距0 */
+  }
+  .toc-full-menu::-webkit-scrollbar {
+    width: 6px;
+  }
+  .toc-full-menu::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .toc-full-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+  .toc-full-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .toc-full-menu::after {
+    content: '';
+    position: absolute;
+    left: 100%;
+    top: 20px;
+    border: 8px solid transparent;
+    border-left-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
+  }
+  .toc-accordion.right .toc-full-menu{
+    left: auto !important;
+    right: calc(100% + 20px) !important;
+    transform: translateX(-20px) !important;
+  }
+  .toc-accordion.right .toc-full-menu::after {
+    left: auto;
+    right: 100%;
+    border-left-color: transparent;
+    border-right-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
+  }
+  .toc-accordion:hover .toc-full-menu{
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+  }
+  .toc-menu-item{
+    padding: 6px 8px !important;
+    margin: 1px 0 !important;
+    border-radius: 4px !important;
+    transition: background 0.18s, color 0.18s;
+    box-sizing: border-box;
+  }
+  .toc-menu-item:hover{
+    background: rgba(59,130,246,0.10) !important;
+    color: #2563eb !important;
+    /* 无边框无阴影 */
+  }
+  .toc-menu-item.active{
+    background: var(--toc-menu-active-bg) !important;
+    border-left: 3px solid #3b82f6 !important;
+    color: var(--toc-menu-active-color) !important;
+  }
+  .toc-menu-item.level-1{
+    font-weight: 600 !important;
+    margin-left: 0 !important;
+  }
+  .toc-menu-item.level-2{
+    margin-left: 15px !important;
+    font-size: 12px !important;
+  }
+  .toc-menu-item.level-3{
+    margin-left: 30px !important;
+    font-size: 11px !important;
+    opacity: 0.9 !important;
+  }
+  .toc-menu-item.level-4{
+    margin-left: 45px !important;
+    font-size: 11px !important;
+    opacity: 0.8 !important;
+  }
+  .toc-menu-item.level-5{
+    margin-left: 60px !important;
+    font-size: 10px !important;
+    opacity: 0.7 !important;
+  }
+  .toc-menu-item.level-6{
+    margin-left: 75px !important;
+    font-size: 10px !important;
+    opacity: 0.6 !important;
+  }
+  .toc-menu-level-indicator{
+    display: inline-block !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    margin-right: 8px !important;
+    flex-shrink: 0 !important;
+  }
+  .toc-menu-item.level-1 .toc-menu-level-indicator{
+    background: #3b82f6 !important;
+  }
+  .toc-menu-item.level-2 .toc-menu-level-indicator{
+    background: #10b981 !important;
+  }
+  .toc-menu-item.level-3 .toc-menu-level-indicator{
+    background: #f59e0b !important;
+  }
+  .toc-menu-item.level-4 .toc-menu-level-indicator{
+    background: #ef4444 !important;
+  }
+  .toc-menu-item.level-5 .toc-menu-level-indicator{
+    background: #9ca3af !important;
+  }
+  .toc-menu-item.level-6 .toc-menu-level-indicator{
+    background: #6b7280 !important;
+  }
+  /* 响应式隐藏 */
+  @media (max-width: 1023px) {
+    .toc-accordion {
+      display: none !important;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
+
+<script define:vars={{ headings }}>
+  class AccordionTOC {
+    constructor(headingsData) {
+      this.toc = document.getElementById('toc')
+      this.tocLines = document.getElementById('toc-lines')
+      this.tocFullMenu = document.getElementById('toc-full-menu')
+      this.tocFullMenuContent = document.getElementById('toc-full-menu-content')
+      this.headingsData = headingsData
+      this.headings = []
+      this.currentActiveIndex = -1
+      this.isMenuVisible = false
+      this.init()
+    }
+    init() {
+      this.collectHeadings()
+      if (this.headings.length === 0) {
+        if (this.toc) this.toc.style.display = 'none'
+        return
+      }
+      this.generateTOC()
+      this.bindEvents()
+      this.updateActiveState()
+    }
+    collectHeadings() {
+      // 输出正文所有 h1~h6 的 innerText 及 slug（改为 #content）
+      const headingEls = Array.from(
+        document.querySelectorAll(
+          '#content h1, #content h2, #content h3, #content h4, #content h5, #content h6'
+        )
+      )
+
+      // 用 headingsData 作为源，宽容化 text 匹配
+      this.headings = this.headingsData.map((heading, idx) => {
+        let el = document.getElementById(heading.slug)
+        if (!el) {
+          // 宽容化 text 匹配：去除所有空白、符号、大小写
+          const normText = heading.text.replace(/\s+/g, '').replace(/\W/g, '').toLowerCase()
+          el = headingEls.find(
+            (e) =>
+              (e.innerText || e.textContent)
+                .replace(/\s+/g, '')
+                .replace(/\W/g, '')
+                .toLowerCase() === normText && parseInt(e.tagName[1]) === heading.depth
+          )
+          if (el) el.id = heading.slug
+        }
+        return {
+          element: el,
+          level: heading.depth,
+          text: heading.text,
+          id: heading.slug || `heading-${idx}`,
+          top: el ? el.offsetTop : 0
+        }
+      })
+    }
+    generateTOC() {
+      this.tocLines.innerHTML = ''
+      // 支持 h1~h4 横线，颜色与 menu 圆点一致
+      this.headings.forEach((heading) => {
+        if (!heading.element) return
+        if (heading.level > 4) return
+        const line = document.createElement('div')
+        line.className = 'toc-line'
+        line.setAttribute('data-level', heading.level)
+        line.setAttribute('data-target', heading.id)
+        this.tocLines.appendChild(line)
+      })
+      this.generateFullMenu()
+    }
+    generateFullMenu() {
+      this.tocFullMenuContent.innerHTML = ''
+      this.headings.forEach((heading, index) => {
+        if (!heading.element) return // 跳过未匹配到的 heading
+        const menuItem = document.createElement('div')
+        menuItem.className = `toc-menu-item level-${heading.level}`
+        menuItem.setAttribute('data-target', heading.id)
+        menuItem.setAttribute('data-index', index)
+        menuItem.innerHTML = `<span class="toc-menu-level-indicator"></span> <span class="toc-menu-text">${heading.text}</span>`
+        this.tocFullMenuContent.appendChild(menuItem)
+      })
+      // 事件只绑定一次
+      if (!this._menuClickBound) {
+        this.tocFullMenuContent.addEventListener('click', (e) => {
+          const menuItem = e.target.closest('.toc-menu-item')
+          if (menuItem) {
+            const targetId = menuItem.getAttribute('data-target')
+            const targetElement = document.getElementById(targetId)
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+          }
+        })
+        this._menuClickBound = true
+      }
+    }
+    bindEvents() {
+      this.tocLines.addEventListener('click', (e) => {
+        const line = e.target.closest('.toc-line')
+        if (line) {
+          const targetId = line.getAttribute('data-target')
+          const targetElement = document.getElementById(targetId)
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            setTimeout(() => {
+              this.recalculatePositions()
+              this.updateActiveState()
+            }, 400)
+          }
+        }
+      })
+      // 支持“锁定”menu，点击 toc-accordion 区域可锁定/解锁
+      this.menuLocked = false
+      this.toc.addEventListener('mouseenter', () => {
+        if (!this.menuLocked) {
+          this.isMenuVisible = true
+          this.tocFullMenu.classList.add('show')
+          this.scrollToActiveItem()
+        }
+      })
+      // 移除 menu hover 消失逻辑，确保点击后不会因 hover 离开而消失
+      // this.toc.addEventListener('mouseleave', ...)
+      // this.tocFullMenu.addEventListener('mouseleave', ...)
+      this.toc.addEventListener('click', (e) => {
+        if (e.target.closest('.toc-full-menu')) return
+        this.menuLocked = !this.menuLocked
+        this.isMenuVisible = this.menuLocked || this.isMenuVisible
+        if (this.menuLocked) this.scrollToActiveItem()
+        if (!this.menuLocked) this.tocFullMenu.classList.remove('show')
+      })
+      document.addEventListener('click', (e) => {
+        if (!this.toc.contains(e.target)) {
+          this.menuLocked = false
+          this.isMenuVisible = false
+          this.tocFullMenu.classList.remove('show')
+        }
+      })
+      let ticking = false
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              this.updateActiveState()
+              ticking = false
+            })
+            ticking = true
+          }
+        },
+        { passive: true }
+      )
+      window.addEventListener('resize', () => {
+        this.recalculatePositions()
+      })
+    }
+    updateActiveState() {
+      // 获取所有可见 heading 的 top
+      const offset = 100
+      let activeIndex = 0
+      let minDelta = Infinity
+      for (let i = 0; i < this.headings.length; i++) {
+        if (!this.headings[i].element) continue
+        // 计算 heading 距离视口顶部的距离
+        const rect = this.headings[i].element.getBoundingClientRect()
+        const delta = Math.abs(rect.top - offset)
+        // 只考虑在视口顶部及以上的 heading，且距离最小
+        if (rect.top - offset <= 0 && delta < minDelta) {
+          minDelta = delta
+          activeIndex = i
+        }
+      }
+      if (activeIndex !== this.currentActiveIndex) {
+        const lines = this.tocLines.querySelectorAll('.toc-line')
+        lines.forEach((line, index) => {
+          line.classList.toggle('active', index === activeIndex)
+        })
+        const menuItems = this.tocFullMenuContent.querySelectorAll('.toc-menu-item')
+        menuItems.forEach((item, index) => {
+          item.classList.toggle('active', index === activeIndex)
+        })
+        this.currentActiveIndex = activeIndex
+        if (this.isMenuVisible || this.menuLocked) {
+          this.scrollToActiveItem()
+        }
+      }
+    }
+    scrollToActiveItem() {
+      // 只滚动 menu 区域，不滚动正文
+      if (this.currentActiveIndex >= 0 && (this.isMenuVisible || this.menuLocked)) {
+        const activeMenuItem = this.tocFullMenuContent.children[this.currentActiveIndex]
+        if (activeMenuItem) {
+          const menuHeight = this.tocFullMenu.clientHeight
+          const itemTop = activeMenuItem.offsetTop
+          const itemHeight = activeMenuItem.clientHeight
+          const idealScrollTop = itemTop - menuHeight / 2 + itemHeight / 2
+          const maxScrollTop = this.tocFullMenuContent.scrollHeight - menuHeight
+          const scrollTop = Math.max(0, Math.min(idealScrollTop, maxScrollTop))
+          this.tocFullMenu.scrollTop = scrollTop
+        }
+      }
+    }
+    recalculatePositions() {
+      this.headings.forEach((heading) => {
+        const element = document.getElementById(heading.id)
+        if (element) {
+          heading.top = element.offsetTop
+        }
+      })
+      this.updateActiveState()
+    }
+  }
+  function waitForArticleContentAndInit(headingsData) {
+    const tryInit = () => {
+      const article = document.querySelector('#content')
+      if (article && article.querySelector('h1, h2, h3, h4, h5, h6')) {
+        setTimeout(() => new AccordionTOC(headingsData), 120) // 延迟确保 DOM 已渲染
+        return true
+      }
+      return false
+    }
+    if (!tryInit()) {
+      const observer = new MutationObserver(() => {
+        if (tryInit()) observer.disconnect()
+      })
+      observer.observe(document.body, { childList: true, subtree: true })
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => waitForArticleContentAndInit(headings))
+  } else {
+    waitForArticleContentAndInit(headings)
+  }
+</script>

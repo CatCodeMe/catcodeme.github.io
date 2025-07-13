@@ -1,0 +1,32 @@
+--- 
+import InteractiveBentoGallery from '@/components/InteractiveBentoGallery.astro';
+import { cats } from '@/assets/cats/config/data';
+import GalleryLayout from '@/layouts/GalleryLayout.astro';
+
+import type { MediaItem } from '@/components/InteractiveBentoGallery.astro';
+
+const spans = [
+    'md:col-span-2 md:row-span-2',
+    'md:col-span-1 md:row-span-1',
+    'md:col-span-1 md:row-span-2',
+    'md:col-span-2 md:row-span-1',
+];
+
+const mediaItems: MediaItem[] = cats.map((cat, index) => ({
+    ...cat,
+    id: index,
+    type: (typeof cat.image === 'object' && cat.image.src.endsWith('.mp4')) ? 'video' : 'image',
+    url: (typeof cat.image === 'object' && cat.image.src.endsWith('.mp4')) ? cat.image.src : cat.image,
+    title: cat.name || cat.desc || 'Cat Photo',
+    span: spans[index % spans.length],
+}));
+
+---
+
+<GalleryLayout title='Cat Gallery'>
+    <InteractiveBentoGallery 
+        mediaItems={mediaItems}
+        title="Gallery Shots Collection"
+        description="A collection of cat photos."
+    />
+</GalleryLayout>

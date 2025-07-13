@@ -1,0 +1,484 @@
+---
+import { Image } from 'astro:assets'
+
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button, Card, Icon, Label } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import Section from '@/components/home/Section.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import avatar from '@/assets/avatar.jpeg'
+import config from '@/site-config'
+
+const languages = [
+  { name: 'Java', icon: 'devicon:java' },
+  { name: 'Zig', icon: 'devicon:zig' },
+  { name: 'Python', icon: 'devicon:python' },
+  { name: 'Shell', icon: 'devicon:bash' }
+]
+
+const backend = [
+  { name: 'Spring', icon: 'devicon:spring' },
+  { name: 'Redis', icon: 'devicon:redis' },
+  { name: 'ClickHouse', icon: 'devicon:clickhouse' },
+  { name: 'Mysql', icon: 'devicon:mysql' },
+  { name: 'Apache Spark', icon: 'devicon:apachespark' }
+]
+
+// const ide = [
+//   { name: 'VSCode', icon: 'devicon:vscode' },
+//   { name: 'IntelliJ IDEA', icon: 'devicon:intellij' }
+// ]
+
+const MAX_POSTS = 10
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+---
+
+<PageLayout meta={{ title: 'Home' }} highlightColor='#da9d0c'>
+  <main class='flex w-full flex-col'>
+    <!-- 第一屏 -->
+    <section class='relative min-h-screen w-full'>
+      <!-- 网格背景 -->
+      <div class='grid-background absolute inset-0 z-0'></div>
+
+      <!-- 主要内容 - 调整垂直位置 -->
+      <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
+        <div class='mx-auto w-full max-w-7xl'>
+          <!-- 个人信息 -->
+          <div class='flex items-center gap-16'>
+            <!-- 左侧大头像 -->
+            <div class='avatar-container relative shrink-0'>
+              <!-- 装饰星星 -->
+              <div class='stars'>
+                <!-- 上方星星 -->
+                <span class='star' style='--delay: 0s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 2s; --offset: -15px'>✨</span>
+                <!-- 右侧星星 -->
+                <span class='star' style='--delay: 1s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 1s; --offset: -15px'>✨</span>
+                <!-- 下方星星 -->
+                <span class='star' style='--delay: 2s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 2.5s; --offset: -15px'>✨</span>
+                <!-- 左侧星星 -->
+                <span class='star' style='--delay: 3s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 1.5s; --offset: -15px'>✨</span>
+              </div>
+
+              <div class='avatar-wrapper relative'>
+                <Image
+                  src={avatar}
+                  alt='profile'
+                  class='size-64 rounded-full border-2 border-border object-cover shadow-lg transition-all duration-300 hover:grayscale'
+                  loading='eager'
+                />
+                <div class='avatar-message'>
+                  <p><span class='speaker'></span>2016 - 2024.10.29</p>
+                  <p><span class='speaker'>小花:</span>I miss you, CCM...</p>
+                  <p><span class='speaker'>CCM:</span>I miss you too, 小花.</p>
+                  <p><span class='speaker'></span>You will live forever on the internet,</p>
+                  <p><span class='speaker'></span>and forever in my heart...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧内容 -->
+            <div class='flex flex-col gap-8'>
+              <!-- 标题区域 -->
+              <div class='flex items-center gap-3'>
+                <h1 class='text-3xl font-bold'>
+                  Welcome to my blog, this is <span
+                    class='author-name cursor-help'
+                    data-tooltip='cat & code & me'>{config.author}</span
+                  >
+                  <span class='waving-hand text-3xl'>👋</span>
+                </h1>
+              </div>
+
+              <!-- 个人简介 -->
+              <div class='flex flex-col gap-3 text-lg text-muted-foreground'>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm a software engineer based in <Icon
+                    name='location'
+                    class='size-6 inline-block align-text-bottom text-muted-foreground'
+                  /> Beijing, China.
+                </p>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm passionate about programming and open-source.
+                </p>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm currently working on a few projects and learning new things every day.
+                </p>
+              </div>
+
+              <!-- 社交媒体图标 -->
+              <div class='flex gap-4'>
+                <Label
+                  title='GitHub'
+                  as='a'
+                  href='https://github.com/your-github'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='github' class='size-6' slot='icon' />
+                </Label>
+                <Label
+                  title='twitter'
+                  as='a'
+                  href='https://twitter.com/your-handle'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='x' class='size-6' slot='icon' />
+                </Label>
+                <Label
+                  title='Bilibili'
+                  as='a'
+                  href='https://space.bilibili.com/your-id'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='bilibili' class='size-6' slot='icon' />
+                </Label>
+              </div>
+
+              <!-- 按钮组 -->
+              <div class='flex gap-4'>
+                <Button title='About Me' href='/about' style='ahead' />
+                <Button title='View Blog' href='/blog' style='ahead' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 格言 - 调整位置到内容下方 -->
+      <div class='absolute bottom-[30%] left-1/2 -translate-x-1/2'>
+        <div
+          class='flex items-center gap-x-3 rounded-full border bg-background/80 px-4 py-2 text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
+        >
+          <span class='relative flex items-center justify-center'>
+            <span
+              class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+            ></span>
+            <span class='size-2 rounded-full bg-green-400'></span>
+          </span>
+          <p class='font-medium text-muted-foreground'>五帝三皇神圣事，骗了无涯过客</p>
+        </div>
+      </div>
+
+      <!-- 向下滚动指示器 - 调整位置并加强动画 -->
+      <div class='absolute bottom-[15%] left-1/2 -translate-x-1/2'>
+        <span class='inline-block animate-bounce text-3xl text-muted-foreground'>⌄</span>
+      </div>
+    </section>
+
+    <!-- 第二屏：博客文章和技能 -->
+    <section class='w-full py-20'>
+      <div class='mx-auto max-w-4xl px-4'>
+        <!-- 博客文章部分 -->
+        <Section title='Latest Posts'>
+          {
+            allPostsByDate.length > 0 && (
+              <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+                {allPostsByDate.map((p) => (
+                  <li class='flex flex-col gap-x-2 sm:flex-row'>
+                    <PostPreview post={p} />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
+        </Section>
+
+        <!-- 技能部分 -->
+        <Section title='Skills' class='mt-20'>
+          <SkillLayout title='Languages' skills={languages} />
+          <SkillLayout title='Backend' skills={backend} />
+          <!-- <SkillLayout title='IDE' skills={ide} /> -->
+        </Section>
+
+        <!-- GitHub 活动图 -->
+        <Section title='GH-Activities' class='mt-20'>
+          <img
+            class='hidden w-full dark:block'
+            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
+            alt='github contribution snake dark'
+            loading='lazy'
+          />
+          <img
+            class='block w-full dark:hidden'
+            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
+            alt='github contribution snake light'
+            loading='lazy'
+          />
+        </Section>
+      </div>
+    </section>
+  </main>
+</PageLayout>
+
+<style>
+  /* 网格背景 */
+  .grid-background {
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: linear-gradient(to bottom, transparent, 15%, white, 85%, transparent);
+  }
+
+  :root {
+    --grid-color: rgba(218, 157, 12, 0.1);
+  }
+
+  /* 招手动画 */
+  .waving-hand {
+    display: inline-block;
+    animation: wave 2.5s infinite;
+    transform-origin: 70% 70%;
+    font-size: 1.5em;
+  }
+
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  /* 工具提示样式 */
+  [data-tooltip] {
+    position: relative;
+  }
+
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.4em 0.4em;
+    background: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    font-size: 0.875rem;
+    border-radius: 0.4rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  [data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+  }
+
+  /* 标记高亮效果 */
+  .marker-highlight {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 50%,
+      hsl(var(--primary) / 0.2) 50%,
+      hsl(var(--primary) / 0.2) 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    transition: background-position 0.3s ease;
+    padding: 0.1em 0.2em;
+    border-radius: 0.2em;
+  }
+
+  .marker-highlight:hover {
+    background-position: 0 0;
+  }
+
+  .author-name {
+    position: relative;
+    color: var(--highlightColor, hsl(var(--primary)));
+  }
+
+  .author-name::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 8px;
+    background: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    font-size: 0.75rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid hsl(var(--border));
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  .author-name:hover::before {
+    opacity: 1;
+  }
+
+  .avatar-container {
+    --star-duration: 6s;
+  }
+
+  .stars {
+    position: absolute;
+    inset: -25px;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: float-star var(--star-duration) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+
+  /* 上方星星 */
+  .star:nth-child(1) {
+    top: var(--offset);
+    left: 35%;
+  }
+  .star:nth-child(2) {
+    top: var(--offset);
+    left: 65%;
+  }
+
+  /* 右侧星星 */
+  .star:nth-child(3) {
+    top: 35%;
+    right: var(--offset);
+  }
+  .star:nth-child(4) {
+    top: 65%;
+    right: var(--offset);
+  }
+
+  /* 下方星星 */
+  .star:nth-child(5) {
+    bottom: var(--offset);
+    left: 35%;
+  }
+  .star:nth-child(6) {
+    bottom: var(--offset);
+    left: 65%;
+  }
+
+  /* 左侧星星 */
+  .star:nth-child(7) {
+    top: 35%;
+    left: var(--offset);
+  }
+  .star:nth-child(8) {
+    top: 65%;
+    left: var(--offset);
+  }
+
+  @keyframes float-star {
+    0%,
+    100% {
+      transform: translate(var(--tx, 0), var(--ty, 0)) scale(0.5);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
+      opacity: 1;
+    }
+    75% {
+      opacity: 1;
+    }
+  }
+
+  /* 为每个星星设置不同的浮动方向 */
+  .star:nth-child(odd) {
+    --tx: -10px;
+    --ty: -10px;
+  }
+  .star:nth-child(even) {
+    --tx: 10px;
+    --ty: 10px;
+  }
+
+  .curved-arrow {
+    animation: arrow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes arrow-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  /* 新的头像消息样式 */
+  .avatar-wrapper {
+    position: relative;
+    cursor: none; /* 隐藏默认光标 */
+  }
+
+  .avatar-message {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%) translateY(calc(100% + 1rem));
+    width: max-content;
+    color: hsl(var(--muted-foreground) / 0.6);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .avatar-message p {
+    margin: 0.2em 0;
+    display: flex;
+    gap: 0.5em;
+    align-items: baseline;
+  }
+
+  .avatar-message .speaker {
+    min-width: 3em;
+    text-align: right;
+  }
+  .avatar-wrapper:hover .avatar-message {
+    opacity: 1;
+  }
+</style>

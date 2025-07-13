@@ -1,0 +1,110 @@
+---
+import { Icon } from '../user'
+
+const { header: headerName, content: contentName, needPercent = true } = Astro.props
+---
+
+<div
+  class='z-10 group fixed bottom-8 end-4 transition-all flex flex-col gap-y-4 sm:end-8'
+  id='action-buttons'
+>
+  <slot name='other-icons' />
+  <button
+    aria-label='Back to Top'
+    class='relative size-10 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 sm:size-12 opacity-0'
+    id='to-top-btn'
+  >
+    <div
+      class='top-text absolute bottom-0 end-0 start-0 top-0 flex items-center justify-center group-[.ended]:opacity-0'
+    >
+      <span class='text'>10</span>
+      <span class='text-xs'>%</span>
+    </div>
+    <Icon name='up' class='top-icon group-[.ended]:opacity-100' />
+  </button>
+</div>
+
+<script is:inline define:vars={{ headerName, contentName, needPercent }}>
+  const actionBtns = document.getElementById('action-buttons')
+  const scrollBtn = document.getElementById('to-top-btn')
+  const scrollPercentEl = scrollBtn.children[0].children[0]
+  const targetHeader = document.getElementById(headerName)
+  const articleElement = document.getElementById(contentName)
+
+  // scroll to top
+  function callback(entries) {
+    entries.forEach((entry) => {
+      // only show the action buttons when the heading is out of view
+      actionBtns.classList.toggle('show', !entry.isIntersecting)
+    })
+  }
+  scrollBtn.addEventListener('click', () => {
+    document.documentElement.scrollTo({ behavior: 'smooth', top: 0 })
+  })
+  if (targetHeader) {
+    const observer = new IntersectionObserver(callback)
+    observer.observe(targetHeader)
+  } else {
+    console.error(`Element with ID ${headerName} not found.`)
+  }
+  if (needPercent) {
+    // scroll percentage
+    const scrollHeight = articleElement.scrollHeight // total height
+    const articleTop = articleElement.offsetTop // article top
+    const clientHeight = document.documentElement.clientHeight // client height
+
+    function calculateScrollPercent() {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+      if (scrollTop < articleTop) return
+      return Math.round(((scrollTop - articleTop) / (scrollHeight - clientHeight)) * 100)
+    }
+
+    document.addEventListener('scroll', () => {
+      const scrollPercent = calculateScrollPercent()
+      if (scrollPercent === undefined) return
+      scrollPercentEl.innerText = scrollPercent.toString()
+
+      // If percent is 100, percent won't need to show
+      actionBtns.classList.toggle('ended', scrollPercent > 100)
+    })
+  } else {
+    actionBtns.classList.add('ended')
+  }
+</script>
+
+<style>
+  #action-buttons {
+    transform: translateY(4rem);
+    &.show {
+      transform: translateY(0);
+      & #to-top-btn {
+        opacity: 1;
+      }
+    }
+
+    /* To top button status change */
+    & #to-top-btn {
+      & .top-text,
+      & .top-icon {
+        transition-property: opacity;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+      & .top-text {
+        opacity: 1;
+      }
+      & .top-icon {
+        opacity: 0;
+      }
+    }
+    &.ended #to-top-btn,
+    & #to-top-btn:hover {
+      & .top-text {
+        opacity: 0;
+      }
+      & .top-icon {
+        opacity: 1;
+      }
+    }
+  }
+</style>

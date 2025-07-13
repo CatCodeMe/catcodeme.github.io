@@ -1,0 +1,84 @@
+.container {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        border-radius: 8px;
+        margin: 10px 0;
+}
+
+/* 两张卡片每行 */
+.two_per_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+}
+
+.two_per_row :global(.cards-container) {
+        flex: 0 0 calc(50% - 5px);
+        margin: 0;
+}
+
+.two_per_row :global(.cards-container img) {
+        width: 100%;
+        height: auto;
+}
+
+/* 三张卡片每行 */
+.three_per_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+}
+
+.three_per_row :global(.cards-container) {
+        flex: 0 0 calc(33.333% - 7px);
+}
+
+/* 四张卡片每行 */
+.four_per_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+}
+
+.four_per_row :global(.cards-container) {
+        flex: 0 0 calc(25% - 8px);
+        margin: 0;
+}
+
+.four_per_row :global(.cards-container img) {
+        width: 100%;
+        height: auto;
+}
+
+/* 五张卡片每行 */
+.five_per_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+}
+
+.five_per_row :global(.cards-container) {
+        flex: 0 0 calc(20% - 8px);
+}
+
+/* 六张卡片每行 */
+.six_per_row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+}
+
+.six_per_row :global(.cards-container) {
+        flex: 0 0 calc(16.666% - 9px);
+        margin: 0;
+}
+
+.six_per_row :global(.cards-container img) {
+        width: 100%;
+        height: auto;
+}

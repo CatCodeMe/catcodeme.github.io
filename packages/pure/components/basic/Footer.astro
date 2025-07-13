@@ -1,0 +1,116 @@
+---
+import pkg from '@root/package.json'
+import { Icon as DevIcon } from 'astro-icon/components'
+import config from 'virtual:config'
+
+import { Icon } from '../user'
+
+const year = new Date().getFullYear()
+const footerConf = config.footer
+let social = footerConf.social || {}
+
+// If the list does not contain rss, add it
+social.rss = {
+  label: 'RSS',
+  url: '/rss.xml'
+}
+
+const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
+const version = pkg.version
+---
+
+<footer class='mx-auto mb-5 mt-16'>
+  <div class='border-t pt-5'>
+    <div class='flex items-center gap-y-3 max-sm:flex-col sm:justify-between sm:gap-y-0'>
+      <div
+        class='flex items-center gap-x-4 gap-y-2 text-muted-foreground max-sm:flex-col [&_a]:text-foreground'
+      >
+        {/* Position 1 */}
+        {
+          footerLink1.length > 0 && (
+            <div>
+              {footerLink1.map(({ title, link, style }, index) => (
+                <span>
+                  <a href={link} target='_blank' class={style}>
+                    {title}
+                  </a>
+                  {index < footerLink1.length - 1 && ' • '}
+                </span>
+              ))}
+            </div>
+          )
+        }
+        {/* Position 2 */}
+        <div>
+          {config.footer.year}
+          {config.author}
+          {
+            footerConf.links && footerConf.links.length > 0 && (
+              <span>
+                {footerConf.links
+                  .filter(({ pos }) => pos === 2)
+                  .map(({ title, link, style }) => (
+                    <span>
+                      <a
+                        href={link}
+                        target='_blank'
+                        class:list={['underline underline-offset-4 hover:text-primary', style]}
+                      >
+                        {title}
+                      </a>
+                    </span>
+                  ))}
+              </span>
+            )
+          }
+        </div>
+        {
+          footerConf.credits && (
+            <span class='inline-flex items-center gap-x-2'>
+              <a
+                href='https://github.com/withastro/astro'
+                target='_blank'
+                class='inline-flex items-center gap-x-1 underline underline-offset-4 hover:text-primary external-link'
+              >
+                {/* {Astro.generator}  */}
+                <DevIcon name='devicon:astro' class='size-4' />
+                Astro
+              </a>
+              <span>&</span>
+              <a
+                href='https://github.com/cworld1/astro-theme-pure'
+                target='_blank'
+                class='underline underline-offset-4 hover:text-primary external-link'
+              >
+                Pure theme v{version}
+              </a>
+              <span class='inline-flex items-center gap-x-1'>
+                <Icon name='heart' class='size-4' />
+                powered
+              </span>
+            </span>
+          )
+        }
+      </div>
+
+      {/* Version */}
+
+      {/* Social Brands */}
+      <div class='flex items-center gap-x-4'>
+        &#8721; views: <span class='vercount-pv'></span>
+        {
+          footerConf.social &&
+            Object.entries(footerConf.social).map(([platform, { label, url }]) => (
+              <a
+                class='inline-block text-muted-foreground transition-all hover:text-muted-foreground/75'
+                href={url}
+                aria-label={label}
+              >
+                <Icon name={platform as keyof typeof footerConf.social} />
+              </a>
+            ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>
