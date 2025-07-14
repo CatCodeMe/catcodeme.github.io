@@ -93,22 +93,24 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     {
       // Tags
       !!tags?.length && (
-        <span class='flex items-center gap-1'>
-          <Icon name='tag-2' class='size-5' />
-          {tags.map((tag: string, i: number) => (
-            <div>
-              <a
-                aria-label={`View more blogs with the tag ${tag}`}
-                class='hover:underline hover:underline-offset-4 inner-link'
-                data-pagefind-filter='tag'
-                href={`/tags/${tag}`}
-              >
-                {tag}
-              </a>
-              {i < tags.length - 1 && '/'}
-            </div>
-          ))}
-        </span>
+        <div class='flex items-center gap-1'>
+          <Icon name='tag-2' class='size-5 flex-shrink-0' />
+          <div class='flex flex-wrap items-center gap-x-1'>
+            {tags.map((tag: string, i: number) => (
+              <div class='flex items-center'>
+                <a
+                  aria-label={`View more blogs with the tag ${tag}`}
+                  class='hover:underline hover:underline-offset-4 sm:inner-link'
+                  data-pagefind-filter='tag'
+                  href={`/tags/${tag}`}
+                >
+                  {tag}
+                </a>
+                {i < tags.length - 1 && <span class='ml-1 mr-1'>/</span>}
+              </div>
+            ))}
+          </div>
+        </div>
       )
     }
   </div>
