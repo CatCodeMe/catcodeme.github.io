@@ -54,13 +54,16 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
   highlightColor={primaryColor}
   back='/blog'
 >
-  {/* 手风琴目录专用 slot，支持贴边布局 */}
+  {/* 大屏幕：手风琴目录专用 slot，支持贴边布局 (仅在大屏幕显示) */}
   {!!headings.length && headings.length > 4 && (
-    <AccordionTOC headings={headings} position='right' slot='handletoc' />
+    <AccordionTOC headings={headings} position='right' slot='handletoc' class='hidden lg:block' />
   )}
-  {/* 右侧 sidebar 只显示普通 TOC */}
-  {!!headings.length && headings.length <= 4 && (
-    <TOC {headings} slot='sidebar' />
+  
+  {/* 右侧 sidebar TOC：小屏幕显示所有目录，大屏幕只显示 <= 4 项的目录 */}
+  {!!headings.length && (
+    <TOC {headings} slot='sidebar' class={
+      headings.length > 4 ? 'lg:hidden' : ''
+    } />
   )}
 
   <Hero {data} {remarkPluginFrontmatter} slot='header' />

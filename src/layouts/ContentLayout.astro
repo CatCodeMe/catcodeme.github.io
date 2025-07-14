@@ -2,7 +2,7 @@
 import BackToTop from '@/custom/components/pages/BackToTop.astro'
 
 import type { SiteMeta } from 'astro-pure/types'
-import { Button } from 'astro-pure/user'
+import { Button, Icon } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
@@ -74,5 +74,96 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
     </div>
   </div>
 
-  <BackToTop header='content-header' content='content' />
+  <BackToTop header='content-header' content='content'>
+    <button
+      slot='other-icons'
+      aria-label='Toggle sidebar'
+      class='size-10 flex items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground duration-300 hover:border-border/75 md:hidden sm:size-12'
+      id='sidebar-btn'
+    >
+      <Icon name='list' />
+    </button>
+  </BackToTop>
 </PageLayout>
+
+<script>
+  // Toggle sidebar visibility on button click
+  const sidebarButton = document.getElementById('sidebar-btn')
+  const sidebar = document.getElementById('sidebar')
+  const sidebarShade = document.getElementById('sidebar-shade') as HTMLElement
+
+  if (sidebarShade) {
+    sidebarShade.addEventListener('click', () => {
+      toggleSidebar()
+    })
+  }
+
+  function toggleSidebar() {
+    if (sidebar && sidebar.classList.contains('show')) {
+      sidebar.classList.remove('show')
+      sidebarShade.style.display = 'none'
+    } else if (sidebar) {
+      sidebar.classList.add('show')
+      sidebarShade.style.display = 'block'
+    } else {
+      console.error('Sidebar element not found.')
+    }
+  }
+
+  sidebarButton?.addEventListener('click', () => {
+    toggleSidebar()
+  })
+</script>
+<style>
+  @media (min-width: 769px) {
+    #sidebar-shade {
+      display: none !important;
+    }
+  }
+  @media (max-width: 769px) {
+    aside.show {
+      display: block !important;
+      opacity: 1;
+    }
+
+    @keyframes fade-in-side {
+      0% {
+        transform: translateX(50%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    aside {
+      animation: 300ms fade-in-side !important;
+      animation-fill-mode: forwards;
+      right: 0;
+      top: 0 !important;
+      height: 100vh !important;
+      min-width: 40vw !important;
+      max-width: 75vw !important;
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      padding-top: 1.5rem !important;
+      padding-bottom: 1.5rem !important;
+    }
+    #sidebar-shade {
+      animation: 300ms fade-in;
+    }
+  }
+  @media (max-width: 640px) {
+    aside {
+      min-width: 55vw !important;
+    }
+  }
+</style>
