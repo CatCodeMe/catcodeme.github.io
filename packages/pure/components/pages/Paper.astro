@@ -293,21 +293,10 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     .top-right-rating {
       display: none !important;
     }
-  }
-  
-  @media (max-width: 640px) {
+    
+    /* 强制隐藏倾斜卡片 */
     .paper-card-icon-preview {
-      right: 0.3rem;
-      bottom: 0.3rem;
-      width: 4.2rem;
-      height: 2.8rem;
-    }
-    .paper-preview_container {
-      padding: 0.1rem 0.2rem 0.2rem 0.2rem;
-    }
-    .paper-icon {
-      width: 1.5rem;
-      height: 1.5rem;
+      display: none !important;
     }
   }
 </style>
