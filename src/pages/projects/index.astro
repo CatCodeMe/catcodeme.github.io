@@ -2,13 +2,11 @@
 import { Image } from 'astro:assets'
 
 import type { iconsType } from 'astro-pure/types'
-import { Button, Collapse, Icon } from 'astro-pure/user'
+import { Button, Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import ProjectSection from '@/components/projects/ProjectSection.astro'
-import Sponsors from '@/components/projects/Sponsors.astro'
 import alipay from '@/assets/alipay-qrcode.jpg'
 import wechat from '@/assets/wechat-qrcode.jpg'
-import config from '@/site-config'
 
 const headings = [
   { depth: 2, slug: 'theme', text: 'Theme' },

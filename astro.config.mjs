@@ -4,7 +4,6 @@
 
 import path from 'node:path';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
-import vercel from '@astrojs/vercel';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
