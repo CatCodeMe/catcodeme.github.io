@@ -46,7 +46,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
       <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
         <div class='mx-auto w-full max-w-7xl'>
           <!-- 个人信息 -->
-          <div class='flex items-center gap-16'>
+          <div class='flex flex-col items-center gap-16 lg:flex-row lg:items-center'>
             <!-- 左侧大头像 -->
             <div class='avatar-container relative shrink-0'>
               <!-- 装饰星星 -->
@@ -69,7 +69,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 <Image
                   src={avatar}
                   alt='profile'
-                  class='size-64 rounded-full border-2 border-border object-cover shadow-lg transition-all duration-300 hover:grayscale'
+                  class='size-64 rounded-full border-2 border-border object-cover shadow-lg transition-all duration-300 lg:hover:grayscale'
                   loading='eager'
                 />
                 <div class='avatar-message'>
@@ -83,9 +83,9 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             </div>
 
             <!-- 右侧内容 -->
-            <div class='flex flex-col gap-8'>
+            <div class='flex flex-col gap-8 text-left'>
               <!-- 标题区域 -->
-              <div class='flex items-center gap-3'>
+              <div class='flex items-center gap-3 justify-start'>
                 <h1 class='text-3xl font-bold'>
                   Welcome to my blog, this is <span
                     class='author-name cursor-help'
@@ -115,7 +115,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
               </div>
 
               <!-- 社交媒体图标 -->
-              <div class='flex gap-4'>
+              <div class='flex gap-4 justify-start'>
                 <Label
                   title='GitHub'
                   as='a'
@@ -146,7 +146,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
               </div>
 
               <!-- 按钮组 -->
-              <div class='flex gap-4'>
+              <div class='flex flex-col gap-4 sm:flex-row sm:justify-start'>
                 <Button title='About Me' href='/about' style='ahead' />
                 <Button title='View Blog' href='/blog' style='ahead' />
               </div>
@@ -155,25 +155,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         </div>
       </div>
 
-      <!-- 格言 - 调整位置到内容下方 -->
-      <div class='absolute bottom-[30%] left-1/2 -translate-x-1/2'>
-        <div
-          class='flex items-center gap-x-3 rounded-full border bg-background/80 px-4 py-2 text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
-        >
-          <span class='relative flex items-center justify-center'>
-            <span
-              class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
-            ></span>
-            <span class='size-2 rounded-full bg-green-400'></span>
-          </span>
-          <p class='font-medium text-muted-foreground'>五帝三皇神圣事，骗了无涯过客</p>
-        </div>
-      </div>
-
-      <!-- 向下滚动指示器 - 调整位置并加强动画 -->
-      <div class='absolute bottom-[15%] left-1/2 -translate-x-1/2'>
-        <span class='inline-block animate-bounce text-3xl text-muted-foreground'>⌄</span>
-      </div>
     </section>
 
     <!-- 第二屏：博客文章和技能 -->
@@ -217,6 +198,21 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             loading='lazy'
           />
         </Section>
+
+        <!-- 格言 - 页面底部 -->
+        <div class='mt-5 flex justify-center'>
+          <div
+            class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
+          >
+            <span class='relative flex items-center justify-center shrink-0'>
+              <span
+                class='absolute size-1.5 sm:size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+              ></span>
+              <span class='size-1.5 sm:size-2 rounded-full bg-green-400'></span>
+            </span>
+            <p class='font-medium text-muted-foreground whitespace-nowrap'>五帝三皇神圣事，骗了无涯过客</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -480,5 +476,17 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
   }
   .avatar-wrapper:hover .avatar-message {
     opacity: 1;
+  }
+
+  /* 在小屏幕上禁用头像 hover 效果 */
+  @media (max-width: 1023px) {
+    .avatar-wrapper:hover .avatar-message {
+      opacity: 0;
+    }
+    
+    /* 在小屏幕上禁用头像点击交互 */
+    .avatar-wrapper {
+      pointer-events: none;
+    }
   }
 </style>

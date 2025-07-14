@@ -41,10 +41,10 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     className
   )}
 >
-  {/* Star 评分 - 右上角 + 编号 */}
+  {/* Star 评分 - 右上角 + 编号 (仅在大屏幕显示) */}
   {
     (starCount > 0 || typeof paper.index === 'number') && (
-      <div class='absolute top-4 right-4 flex items-center gap-1 z-20'>
+      <div class='absolute top-4 right-4 items-center gap-1 z-20 hidden md:flex top-right-rating'>
         {starCount > 0 && (
           <div class='flex gap-0.5'>
             {Array.from({ length: 5 }).map((_, i) => (
@@ -67,8 +67,8 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     )
   }
 
-  {/* 右下角倾斜卡片，仅主图标和链接 */}
-  <div class='paper-card-icon-preview'>
+  {/* 右下角倾斜卡片，仅主图标和链接 (仅在大屏幕显示) */}
+  <div class='paper-card-icon-preview hidden md:block'>
     <div class='paper-preview-container'>
       <Icon name={data.isbn ? 'paper_book' : 'paper_article'} class='paper-icon' />
       {
@@ -166,6 +166,54 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
         </div>
       )
     }
+
+    {/* 小屏幕底部信息行 */}
+    <div class='mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between md:hidden'>
+      <div class='flex items-center gap-3'>
+        {/* 论文类型图标 */}
+        <div class='flex items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400'>
+          <Icon name={data.isbn ? 'paper_book' : 'paper_article'} class='size-4' />
+          <span class='text-xs'>{data.isbn ? 'Book' : 'Article'}</span>
+        </div>
+        {/* 论文链接 */}
+        {
+          data.paperUrl && (
+            <a 
+              href={data.paperUrl} 
+              target='_blank' 
+              rel='noopener noreferrer' 
+              class='text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors'
+            >
+              View &gt;&gt;
+            </a>
+          )
+        }
+      </div>
+      
+      {/* 评分和编号 */}
+      <div class='flex items-center gap-2'>
+        {/* 编号 */}
+        {typeof paper.index === 'number' && (
+          <span class='text-xs text-zinc-400 dark:text-zinc-500 font-mono select-none'>
+            No.{String(paper.index).padStart(2, '0')}
+          </span>
+        )}
+        {/* 评分 */}
+        {starCount > 0 && (
+          <div class='flex gap-0.5'>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Icon
+                name='star'
+                class={cn(
+                  'size-3',
+                  i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
+                )}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   </div>
 </Tag>
 
@@ -240,6 +288,13 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     letter-spacing: 0.04em;
     font-weight: 500;
   }
+  /* 确保小屏幕隐藏右上角评分和编号 */
+  @media (max-width: 767px) {
+    .top-right-rating {
+      display: none !important;
+    }
+  }
+  
   @media (max-width: 640px) {
     .paper-card-icon-preview {
       right: 0.3rem;
