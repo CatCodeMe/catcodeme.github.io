@@ -100,14 +100,14 @@ import ToolSection from '@/components/tools/ToolSection.astro'
     tools={[
       {
         name: 'VS Code',
-        description: 'IDE',
+        description: 'powerful code editor',
         href: 'https://code.visualstudio.com/',
         icon: import('@/assets/tools/vscode.svg?raw')
       },
       {
-        name: 'Idea',
-        description: 'Intellij IDEA',
-        href: 'https://nodejs.org/',
+        name: 'Intellij IDEA',
+        description: 'Best Java IDE',
+        href: 'https://www.jetbrains.com/idea/',
         icon: import('@/assets/tools/idea.svg?raw')
       },
       {
@@ -136,7 +136,16 @@ import ToolSection from '@/components/tools/ToolSection.astro'
         link: 'https://github.com/catcodeme',
         text: 'followers',
         api: 'github/catcodeme'
-      }
+      },
+      {
+        platform: 'Bilibili',
+        icon: 'bilibili',
+        link: 'https://space.bilibili.com/19080963',
+        text: 'fans',
+        // api: 'bilibili/19080963',
+        color: '#fe7398',
+        count: 18
+      },
     ]}
   />
 

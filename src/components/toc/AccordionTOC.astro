@@ -48,6 +48,10 @@ const { headings, position = 'left', class: className } = Astro.props
     border-left: 3px solid #3b82f6 !important;
     color: #2563eb !important;
   }
+  :root:is([data-theme='light'], [data-theme='system']) .toc-accordion.right .toc-menu-item.active{
+    border-left: none !important;
+    border-right: 3px solid #3b82f6 !important;
+  }
 
   .toc-accordion {
     position: fixed;
@@ -75,6 +79,16 @@ const { headings, position = 'left', class: className } = Astro.props
     background: transparent;
     min-width: 44px;
     min-height: 120px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+  }
+
+  .toc-lines:hover {
+    background: hsl(var(--primary) / 0.1);
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+    border: 1px solid hsl(var(--primary) / 0.2);
+    transform: scale(1.02);
   }
 
   .toc-accordion.right .toc-lines {
@@ -176,10 +190,7 @@ const { headings, position = 'left', class: className } = Astro.props
     word-break: break-all !important;
   }
   .toc-full-menu-content{
-    padding: 24px 12px 24px 0 !important; /* 右边距12px，左边距0，内容更贴近左侧 */
-  }
-  .toc-accordion.right .toc-full-menu-content{
-    padding: 24px 0 24px 12px !important; /* 右侧模式，左边距12px，右边距0 */
+    padding: 24px 12px 24px 12px !important; /* 两端对齐 */
   }
   .toc-full-menu::-webkit-scrollbar {
     width: 6px;
@@ -213,7 +224,7 @@ const { headings, position = 'left', class: className } = Astro.props
     border-left-color: transparent;
     border-right-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
   }
-  .toc-accordion:hover .toc-full-menu{
+  .toc-full-menu.show{
     opacity: 1 !important;
     transform: translateX(0) !important;
     pointer-events: auto !important;
@@ -235,34 +246,40 @@ const { headings, position = 'left', class: className } = Astro.props
     border-left: 3px solid #3b82f6 !important;
     color: var(--toc-menu-active-color) !important;
   }
+  .toc-accordion.right .toc-menu-item.active{
+    border-left: none !important;
+    border-right: 3px solid #3b82f6 !important;
+  }
   .toc-menu-item.level-1{
     font-weight: 600 !important;
     margin-left: 0 !important;
   }
   .toc-menu-item.level-2{
-    margin-left: 15px !important;
+    margin-left: 10px !important;
     font-size: 12px !important;
   }
   .toc-menu-item.level-3{
-    margin-left: 30px !important;
+    margin-left: 20px !important;
     font-size: 11px !important;
     opacity: 0.9 !important;
   }
   .toc-menu-item.level-4{
-    margin-left: 45px !important;
+    margin-left: 30px !important;
     font-size: 11px !important;
     opacity: 0.8 !important;
   }
   .toc-menu-item.level-5{
-    margin-left: 60px !important;
+    margin-left: 40px !important;
     font-size: 10px !important;
     opacity: 0.7 !important;
   }
   .toc-menu-item.level-6{
-    margin-left: 75px !important;
+    margin-left: 50px !important;
     font-size: 10px !important;
     opacity: 0.6 !important;
   }
+  
+  /* 右侧模式下保持与左侧相同的层级缩进效果 */
   .toc-menu-level-indicator{
     display: inline-block !important;
     width: 8px !important;
@@ -350,7 +367,7 @@ const { headings, position = 'left', class: className } = Astro.props
         return {
           element: el,
           level: heading.depth,
-          text: heading.text,
+          text: heading.text.replace(/#/g, '').trim(),
           id: heading.slug || `heading-${idx}`,
           top: el ? el.offsetTop : 0
         }
@@ -396,7 +413,7 @@ const { headings, position = 'left', class: className } = Astro.props
         this._menuClickBound = true
       }
     }
-    bindEvents() {
+  bindEvents() {
       this.tocLines.addEventListener('click', (e) => {
         const line = e.target.closest('.toc-line')
         if (line) {
@@ -411,32 +428,32 @@ const { headings, position = 'left', class: className } = Astro.props
           }
         }
       })
-      // 支持“锁定”menu，点击 toc-accordion 区域可锁定/解锁
-      this.menuLocked = false
-      this.toc.addEventListener('mouseenter', () => {
-        if (!this.menuLocked) {
-          this.isMenuVisible = true
+
+      // 点击目录按钮区域控制浮窗显示/隐藏
+      this.toc.addEventListener('click', (e) => {
+        // 如果点击的是浮窗内容，不处理
+        if (e.target.closest('.toc-full-menu')) return
+        
+        // 切换浮窗显示状态
+        this.isMenuVisible = !this.isMenuVisible
+        
+        if (this.isMenuVisible) {
           this.tocFullMenu.classList.add('show')
           this.scrollToActiveItem()
+        } else {
+          this.tocFullMenu.classList.remove('show')
         }
       })
-      // 移除 menu hover 消失逻辑，确保点击后不会因 hover 离开而消失
-      // this.toc.addEventListener('mouseleave', ...)
-      // this.tocFullMenu.addEventListener('mouseleave', ...)
-      this.toc.addEventListener('click', (e) => {
-        if (e.target.closest('.toc-full-menu')) return
-        this.menuLocked = !this.menuLocked
-        this.isMenuVisible = this.menuLocked || this.isMenuVisible
-        if (this.menuLocked) this.scrollToActiveItem()
-        if (!this.menuLocked) this.tocFullMenu.classList.remove('show')
-      })
+
+      // 点击外部区域关闭浮窗
       document.addEventListener('click', (e) => {
         if (!this.toc.contains(e.target)) {
-          this.menuLocked = false
           this.isMenuVisible = false
           this.tocFullMenu.classList.remove('show')
         }
       })
+
+      // 滚动时更新活跃状态
       let ticking = false
       window.addEventListener(
         'scroll',
@@ -451,6 +468,8 @@ const { headings, position = 'left', class: className } = Astro.props
         },
         { passive: true }
       )
+
+      // 窗口大小改变时重新计算位置
       window.addEventListener('resize', () => {
         this.recalculatePositions()
       })
@@ -481,14 +500,14 @@ const { headings, position = 'left', class: className } = Astro.props
           item.classList.toggle('active', index === activeIndex)
         })
         this.currentActiveIndex = activeIndex
-        if (this.isMenuVisible || this.menuLocked) {
+        if (this.isMenuVisible) {
           this.scrollToActiveItem()
         }
       }
     }
     scrollToActiveItem() {
       // 只滚动 menu 区域，不滚动正文
-      if (this.currentActiveIndex >= 0 && (this.isMenuVisible || this.menuLocked)) {
+      if (this.currentActiveIndex >= 0 && this.isMenuVisible) {
         const activeMenuItem = this.tocFullMenuContent.children[this.currentActiveIndex]
         if (activeMenuItem) {
           const menuHeight = this.tocFullMenu.clientHeight
