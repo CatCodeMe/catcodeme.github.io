@@ -147,8 +147,8 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
               <!-- 按钮组 -->
               <div class='flex flex-col gap-4 sm:flex-row sm:justify-start'>
-                <Button title='About Me' href='/about' style='ahead' />
-                <Button title='View Blog' href='/blog' style='ahead' />
+                <Button title='About Me' href='/about' style='ahead' class='hero-button w-full sm:w-auto' />
+                <Button title='View Blog' href='/blog' style='ahead' class='hero-button w-full sm:w-auto' />
               </div>
             </div>
           </div>
@@ -487,6 +487,19 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     /* 在小屏幕上禁用头像点击交互 */
     .avatar-wrapper {
       pointer-events: none;
+    }
+  }
+
+  /* Hero按钮的响应式样式 */
+  .hero-button {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+  
+  @media (min-width: 640px) {
+    .hero-button {
+      display: inline-flex !important;
+      justify-content: flex-start !important;
     }
   }
 </style>
