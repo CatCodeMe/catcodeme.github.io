@@ -15,44 +15,13 @@ import rehypeCallouts from 'rehype-callouts';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
-
-
-
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
+import { remarkAiNotice } from './src/plugins/remark-ai-notice.mjs';
 import config from './src/site.config.ts';
-
-
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // https://astro.build/config
 export default defineConfig({
@@ -160,7 +129,8 @@ export default defineConfig({
         },
       }],
       remarkBreaks,
-      remarkMermaid
+      remarkMermaid,
+      remarkAiNotice
     ],
     rehypePlugins: [
       [rehypeKatex, {}],
