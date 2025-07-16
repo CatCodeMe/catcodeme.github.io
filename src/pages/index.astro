@@ -3,11 +3,11 @@ import { Image } from 'astro:assets'
 
 import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button, Card, Icon, Label } from 'astro-pure/user'
+import { Button, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
-import avatar from '@/assets/avatar.jpeg'
+import avatar from '@/assets/avatar.webp'
 import config from '@/site-config'
 
 const languages = [
@@ -119,7 +119,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 <Label
                   title='GitHub'
                   as='a'
-                  href='https://github.com/your-github'
+                  href='https://github.com/catcodeme'
                   target='_blank'
                   class='transition-colors hover:text-primary'
                 >
@@ -128,7 +128,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 <Label
                   title='twitter'
                   as='a'
-                  href='https://twitter.com/your-handle'
+                  href='https://twitter.com/hulj13'
                   target='_blank'
                   class='transition-colors hover:text-primary'
                 >
@@ -137,7 +137,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 <Label
                   title='Bilibili'
                   as='a'
-                  href='https://space.bilibili.com/your-id'
+                  href='https://space.bilibili.com/19080963'
                   target='_blank'
                   class='transition-colors hover:text-primary'
                 >
@@ -147,14 +147,23 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
               <!-- 按钮组 -->
               <div class='flex flex-col gap-4 sm:flex-row sm:justify-start'>
-                <Button title='About Me' href='/about' style='ahead' class='hero-button w-full sm:w-auto' />
-                <Button title='View Blog' href='/blog' style='ahead' class='hero-button w-full sm:w-auto' />
+                <Button
+                  title='About Me'
+                  href='/about'
+                  style='ahead'
+                  class='hero-button w-full sm:w-auto'
+                />
+                <Button
+                  title='View Blog'
+                  href='/blog'
+                  style='ahead'
+                  class='hero-button w-full sm:w-auto'
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </section>
 
     <!-- 第二屏：博客文章和技能 -->
@@ -210,7 +219,9 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
               ></span>
               <span class='size-1.5 sm:size-2 rounded-full bg-green-400'></span>
             </span>
-            <p class='font-medium text-muted-foreground whitespace-nowrap'>五帝三皇神圣事，骗了无涯过客</p>
+            <p class='font-medium text-muted-foreground whitespace-nowrap'>
+              五帝三皇神圣事，骗了无涯过客
+            </p>
           </div>
         </div>
       </div>
@@ -483,7 +494,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     .avatar-wrapper:hover .avatar-message {
       opacity: 0;
     }
-    
+
     /* 在小屏幕上禁用头像点击交互 */
     .avatar-wrapper {
       pointer-events: none;
@@ -495,7 +506,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     display: flex !important;
     justify-content: space-between !important;
   }
-  
+
   @media (min-width: 640px) {
     .hero-button {
       display: inline-flex !important;
