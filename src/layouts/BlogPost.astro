@@ -53,6 +53,7 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
   meta={{ articleDate, description, ogImage: socialImage, title }}
   highlightColor={primaryColor}
   back='/blog'
+  hasToc={!!headings.length}
 >
   {/* 大屏幕：手风琴目录专用 slot，支持贴边布局 (仅在大屏幕显示) */}
   {!!headings.length && headings.length > 4 && (
