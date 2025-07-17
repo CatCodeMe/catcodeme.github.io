@@ -72,11 +72,14 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 }
 
 {/* Twitter */}
-<meta content='summary_large_image' property='twitter:card' />
-<meta content={canonicalURL} property='twitter:url' />
-<meta content={title} property='twitter:title' />
-<meta content={description} property='twitter:description' />
-<meta content={socialImageURL} property='twitter:image' />
+<meta content='summary_large_image' name='twitter:card' />
+<meta content={canonicalURL} name='twitter:url' />
+<meta content={title} name='twitter:title' />
+<meta content={description} name='twitter:description' />
+<meta content={socialImageURL} name='twitter:image' />
+<meta content='welcome to visit 8cat.life' name='twitter:image:alt' />
+<meta content='@hulj13' name='twitter:creator' />
+<meta content='8cat.life' name='twitter:site' />
 
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />
