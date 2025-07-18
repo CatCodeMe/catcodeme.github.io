@@ -297,38 +297,22 @@ async function main() {
           type: 'comment'
         }))
 
-      allComments.push(...topLevelComments)
-
-      // 处理第一层回复
-      for (const comment of discussion.comments.nodes) {
+      // 处理所有嵌套回复
+      const allReplies = discussion.comments.nodes.flatMap((comment) => {
         if (comment.replies && comment.replies.nodes && comment.replies.nodes.length > 0) {
-          const firstLevelReplies = comment.replies.nodes.map((reply) => ({
-            id: reply.id,
-            url: reply.url,
-            createdAt: reply.createdAt,
-            author: reply.author,
-            bodyHTML: reply.bodyHTML,
-            reactionGroups: reply.reactionGroups,
-            isDiscussion: false,
-            title: discussion.title,
-            discussionId: discussion.id,
-            parentId: comment.id,
-            replyToId: reply.replyTo ? reply.replyTo.id : null,
-            replyToAuthor: reply.replyTo ? reply.replyTo.author.login : null,
-            level: 2,
-            type: 'reply'
-          }))
-
-          allComments.push(...firstLevelReplies)
-
-          // 获取更深层的回复
-          for (const reply of comment.replies.nodes) {
-            const deepReplies = await fetchDeepReplies(reply.id, discussion.id, discussion.title, 3)
-            allComments.push(...deepReplies)
-          }
+          return processReplies(
+            comment.replies.nodes,
+            comment.id,
+            discussion.id,
+            discussion.title,
+            2
+          )
         }
-      }
-    }
+        return []
+      })
+
+      return [mainComment, ...topLevelComments, ...allReplies]
+    })
 
     // Sort all comments and replies together by date
     allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
