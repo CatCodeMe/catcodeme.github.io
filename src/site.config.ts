@@ -1,5 +1,12 @@
-import type { CardListData } from 'astro-pure/types'
-import type { ThemeUserConfig,Config,IntegrationUserConfig } from 'packages/pure/types'
+import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
+
+
+
+import type { CardListData } from 'astro-pure/types';
+
+
+
+
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -54,7 +61,8 @@ export const theme: ThemeUserConfig = {
       // { title: 'Projects', link: '/projects' },
       { title: 'Cats', link: '/cats' },
       // { title: 'Links', link: '/links' },
-      { title: 'About', link: '/about' }
+      { title: 'About', link: '/about' },
+      { title: 'GusetBook', link: '/guestbook' },
     ]
   },
 
@@ -160,9 +168,9 @@ export const integ: IntegrationUserConfig = {
   giscus: {
     enable: true,
     repo: 'CatCodeMe/catcodeme.github.io', // 仓库名
-    repoId: 'R_kgDOPOflqw', // 仓库 ID
-    category: 'Announcements', // 分类名
-    categoryId: 'DIC_kwDOPOflq84CtHbc', // 分类 ID
+    repoId: 'R_kgDOLTuIuQ', // 仓库 ID
+    category: 'General', // 分类名
+    categoryId: 'DIC_kwDOLTuIuc4Csz7O',
     mapping: 'og:title', // 评论关联方式
     strict: '0',
     reactionsEnabled: '1',
