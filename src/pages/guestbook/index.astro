@@ -1,6 +1,8 @@
 ---
 import comments from '@/data/comments.json';
 import siteConfig from '@/site.config.ts';
+import BaseHead from '@/components/BaseHead.astro';
+import { Image } from 'astro:assets';
 
 // Define types for comments and reaction groups
 interface ReactionGroup {
@@ -21,10 +23,20 @@ interface Comment {
   };
   bodyHTML: string;
   reactionGroups?: ReactionGroup[]; // Optional as it might not always be present
+  parentId: string | null;
+  replyToId: string | null;
+  replyToAuthor: string | null;
+  level: number;
+  type: string;
+  discussionId: string;
+  isDiscussion: boolean;
+  title: string;
 }
 
 const title = 'Guestbook';
 const description = 'A collection of all comments, styled like VS Code.';
+
+const commentsById = new Map(comments.map((c: Comment) => [c.id, c]));
 
 const discussionsUrl = `https://github.com/${siteConfig.integ.giscus?.repo}/discussions`;
 
@@ -70,11 +82,7 @@ function getReactionEmoji(reaction: string) {
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
+    <BaseHead title={title} description={description} ogImage='/images/guest-book.png' />
     <style>
       :root {
         --accent-color: #0969da;
@@ -117,10 +125,36 @@ function getReactionEmoji(reaction: string) {
         border-right: 1px solid var(--border-color);
         display: flex;
         flex-direction: column;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+
+      .comments-pane::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
       }
 
       .giscus-pane {
         width: 40%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .giscus-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1.5rem; /* Space between image and Giscus */
+      }
+
+      .giscus-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .giscus-comments-container {
+        flex-grow: 1; /* Giscus takes remaining space */
         padding: 1.5rem;
       }
 
@@ -198,6 +232,10 @@ function getReactionEmoji(reaction: string) {
 
       .comment-item:hover::before {
         opacity: 1;
+      }
+
+      .comment-item.highlighted-comment {
+        background: #fffacd; /* A more noticeable light yellow for highlighting */
       }
 
       .line-number {
@@ -307,6 +345,49 @@ function getReactionEmoji(reaction: string) {
         border-color: var(--accent-color);
       }
 
+      .quoted-reply {
+        border-left: 3px solid var(--border-color);
+        padding-left: 12px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: var(--text-secondary-color);
+      }
+      .quoted-reply p {
+        margin-bottom: 4px;
+      }
+      .quoted-reply a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+      .quoted-reply a:hover {
+        text-decoration: underline;
+      }
+      .quoted-reply blockquote {
+        margin: 0;
+        padding: 0;
+        border: none;
+        max-height: 7em; /* Limit height of quoted text */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0.8;
+        position: relative;
+      }
+      .quoted-reply blockquote::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1.5em;
+        background: linear-gradient(to bottom, transparent, var(--bg-color));
+      }
+      .quoted-reply blockquote > *:first-child {
+          margin-top: 0;
+      }
+      .quoted-reply blockquote > *:last-child {
+          margin-bottom: 0;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .guestbook-container {
@@ -366,8 +447,10 @@ function getReactionEmoji(reaction: string) {
         </div>
         <div class="comments-list">
           {
-            comments.map((comment: Comment, index: number) => (
-              <div class="comment-item">
+            comments.map((comment: Comment, index: number) => {
+              const repliedToComment = comment.replyToId ? commentsById.get(comment.replyToId) : null;
+              return (
+              <div class="comment-item" id={comment.id}>
                 <div class="line-number">{comments.length - index}</div>
                 <div class="comment-content-wrapper">
                   <div class="comment-header">
@@ -387,6 +470,14 @@ function getReactionEmoji(reaction: string) {
                       rel="noopener noreferrer">View on GitHub</a
                     >
                   </div>
+                  { repliedToComment && (
+                    <div class="quoted-reply">
+                      <p>
+                        Replying to <a href={`#${repliedToComment.id}`}>@{comment.replyToAuthor}</a>
+                      </p>
+                      <blockquote set:html={repliedToComment.bodyHTML} />
+                    </div>
+                  )}
                   <div class="comment-body" set:html={comment.bodyHTML} />
                   <div class="reactions">
                     {comment.reactionGroups &&
@@ -401,35 +492,82 @@ function getReactionEmoji(reaction: string) {
                   </div>
                 </div>
               </div>
-            ))
+            )})
           }
         </div>
         <div class="see-more-container">
             <a href={discussionsUrl} class="see-more-btn" target="_blank" rel="noopener noreferrer">
-                See more on GitHub  
+                See more on GitHub
             </a>
         </div>
       </div>
 
       <!-- Right Pane: Giscus -->
       <div class="giscus-pane">
-        <script
-          is:inline
-          src="https://giscus.app/client.js"
-          data-repo="CatCodeMe/catcodeme.github.io"
-          data-repo-id="R_kgDOLTuIuQ"
-          data-category="General"
-          data-category-id="DIC_kwDOLTuIuc4Csz7O"
-          data-mapping="og:title"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="top"
-          data-theme="light"
-          data-lang="en"
-          crossorigin="anonymous"
-          async
-        >
+        <div class="giscus-image-container">
+          <Image src="/images/guest-book.png" alt="Guest Book @8cat.life" width={1200} height={630} />
+        </div>
+        <div class="giscus-comments-container">
+          <script
+            is:inline
+            src="https://giscus.app/client.js"
+            data-repo="CatCodeMe/catcodeme.github.io"
+            data-repo-id="R_kgDOLTuIuQ"
+            data-category="General"
+            data-category-id="DIC_kwDOLTuIuc4Csz7O"
+            data-mapping="og:title"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="light"
+            data-lang="en"
+            crossorigin="anonymous"
+            async
+          >
+          </script>
+        </div>
+        <script is:inline>
+          function applyHighlight() {
+            const hash = window.location.hash.substring(1);
+            document.querySelectorAll('.comment-item.highlighted-comment').forEach(el => {
+              el.classList.remove('highlighted-comment');
+            });
+            if (hash) {
+              const targetComment = document.getElementById(hash);
+              if (targetComment) {
+                targetComment.classList.add('highlighted-comment');
+                // Optional: Scroll into view smoothly if not already in view
+                targetComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Remove highlight after a short delay
+                setTimeout(() => {
+                  targetComment.classList.remove('highlighted-comment');
+                }, 2000); // 2 seconds
+              }
+            }
+          }
+
+          // Apply highlight on initial load if hash is present
+          document.addEventListener('DOMContentLoaded', applyHighlight);
+          // Apply highlight when hash changes (e.g., clicking a reply link)
+          window.addEventListener('hashchange', applyHighlight);
+
+          // Listen for clicks on internal anchor links within the comments list
+          document.addEventListener('click', (event) => {
+            const target = event.target;
+            // Check if the clicked element is an anchor tag within a .quoted-reply and its href starts with '#'
+            if (target.tagName === 'A' && target.closest('.quoted-reply') && target.getAttribute('href')?.startsWith('#')) {
+              const hash = target.getAttribute('href');
+              if (hash && window.location.hash !== hash) { // Only update if hash is different to avoid unnecessary history entries
+                event.preventDefault(); // Prevent default browser jump
+                window.location.hash = hash; // Manually update hash, which should trigger hashchange
+              } else if (hash && window.location.hash === hash) {
+                // If clicking the same hash, hashchange won't fire, so manually apply highlight
+                event.preventDefault(); // Prevent default browser jump
+                applyHighlight();
+              }
+            }
+          });
         </script>
       </div>
     </div>
