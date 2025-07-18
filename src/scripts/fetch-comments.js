@@ -5,7 +5,7 @@ const DISCUSSION_CATEGORY_NAME = 'General';
 const REPO_OWNER = 'catcodeme';
 const REPO_NAME = 'catcodeme.github.io';
 
-async function fetchDiscussions() {
+async function fetchDiscussions(categoryId) {
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
@@ -16,41 +16,39 @@ async function fetchDiscussions() {
       query: `
         query($repoOwner: String!, $repoName: String!, $categoryName: String!) {
           repository(owner: $repoOwner, name: $repoName) {
-            discussionCategory(slug: $categoryName) {
-              discussions(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
-                nodes {
-                  id
-                  title
+            discussions(first: 100, categoryId: $categoryName, orderBy: {field: CREATED_AT, direction: DESC}) {
+              nodes {
+                id
+                title
+                url
+                createdAt
+                author {
+                  login
+                  avatarUrl
                   url
-                  createdAt
-                  author {
-                    login
-                    avatarUrl
+                }
+                bodyHTML
+                reactionGroups {
+                  content
+                  users {
+                    totalCount
+                  }
+                }
+                comments(first: 100) {
+                  nodes {
+                    id
                     url
-                  }
-                  bodyHTML
-                  reactionGroups {
-                    content
-                    users {
-                      totalCount
-                    }
-                  }
-                  comments(first: 100) {
-                    nodes {
-                      id
+                    createdAt
+                    author {
+                      login
+                      avatarUrl
                       url
-                      createdAt
-                      author {
-                        login
-                        avatarUrl
-                        url
-                      }
-                      bodyHTML
-                      reactionGroups {
-                        content
-                        users {
-                          totalCount
-                        }
+                    }
+                    bodyHTML
+                    reactionGroups {
+                      content
+                      users {
+                        totalCount
                       }
                     }
                   }
@@ -63,7 +61,7 @@ async function fetchDiscussions() {
       variables: {
         repoOwner: REPO_OWNER,
         repoName: REPO_NAME,
-        categoryName: DISCUSSION_CATEGORY_NAME
+        categoryId: categoryId
       }
     })
   });
@@ -88,8 +86,47 @@ async function fetchDiscussions() {
   return data.data.repository.discussionCategory.discussions.nodes;
 }
 
+async function getDiscussionCategoryId() {
+  const response = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: {
+      'Authorization': `bearer ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: `
+        query($repoOwner: String!, $repoName: String!) {
+          repository(owner: $repoOwner, name: $repoName) {
+            discussionCategories(first: 10) {
+              nodes {
+                id
+                name
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        repoOwner: REPO_OWNER,
+        repoName: REPO_NAME
+      }
+    })
+  });
+  const data = await response.json();
+  if (data.errors) {
+    console.error("GitHub API returned errors while fetching categories:", JSON.stringify(data.errors, null, 2));
+    throw new Error("Failed to fetch discussion categories.");
+  }
+  const category = data.data.repository.discussionCategories.nodes.find(c => c.name === DISCUSSION_CATEGORY_NAME);
+  if (!category) {
+    throw new Error(`Discussion category '${DISCUSSION_CATEGORY_NAME}' not found.`);
+  }
+  return category.id;
+}
+
 async function main() {
-  const discussions = await fetchDiscussions();
+  const categoryId = await getDiscussionCategoryId();
+  const discussions = await fetchDiscussions(categoryId);
   const comments = discussions.flatMap(discussion => {
     return [
       {
@@ -98,6 +135,7 @@ async function main() {
         createdAt: discussion.createdAt,
         author: discussion.author,
         bodyHTML: discussion.bodyHTML,
+        reactionGroups: discussion.reactionGroups,
         isDiscussion: true,
       },
       ...discussion.comments.nodes.map(comment => ({
@@ -106,6 +144,7 @@ async function main() {
         createdAt: comment.createdAt,
         author: comment.author,
         bodyHTML: comment.bodyHTML,
+        reactionGroups: comment.reactionGroups,
         isDiscussion: false,
       }))
     ];
