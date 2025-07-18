@@ -184,7 +184,8 @@
             if (e.ctrlKey || e.metaKey) return
 
             e.preventDefault()
-            window.location.href = href
+            const secureHref = href.replace('http://', 'https://');
+            window.location.href = secureHref;
           },
           { once: true }
         ) // 使用 once 选项确保事件监听器在触发后被移除
