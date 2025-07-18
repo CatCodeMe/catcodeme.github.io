@@ -229,10 +229,11 @@
       if (!href) return
 
       this.clearTimers()
-      this.currentHref = href.replace('http://', 'https://');
+      const secureHref = href.replace('http://', 'https://');
+      this.currentHref = secureHref;
 
       if (this.gotoButton) {
-        this.gotoButton.onclick = () => (window.location.href = href)
+        this.gotoButton.onclick = () => (window.location.href = secureHref)
       }
 
       const title = link.getAttribute('title') || link.textContent || href
@@ -242,10 +243,10 @@
 
       this.showPreviewTimer = setTimeout(async () => {
         try {
-          const isExternalLink = !href.startsWith(window.location.origin) && !href.startsWith('/')
+          const isExternalLink = !secureHref.startsWith(window.location.origin) && !secureHref.startsWith('/')
           if (isExternalLink) return
 
-          const contentHtml = await this.getPreviewContent(href)
+          const contentHtml = await this.getPreviewContent(secureHref)
           if (!contentHtml) return
 
           if (this.currentTarget === link && this.content) {
