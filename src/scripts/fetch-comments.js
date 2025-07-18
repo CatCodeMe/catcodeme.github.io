@@ -1,11 +1,11 @@
 import fs from 'fs';
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN_READ
-const DISCUSSION_CATEGORY_NAME = 'General';
-const REPO_OWNER = 'catcodeme';
+// Correct configuration based on the provided a.json
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN_READ;
+const REPO_OWNER = 'CatCodeMe';
 const REPO_NAME = 'catcodeme.github.io';
 
-async function fetchDiscussions(categoryId) {
+async function fetchAllDiscussions() {
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
@@ -14,9 +14,9 @@ async function fetchDiscussions(categoryId) {
     },
     body: JSON.stringify({
       query: `
-        query($repoOwner: String!, $repoName: String!, $categoryId: ID!) {
+        query($repoOwner: String!, $repoName: String!) {
           repository(owner: $repoOwner, name: $repoName) {
-            discussions(first: 100, categoryId: $categoryId, orderBy: {field: CREATED_AT, direction: DESC}) {
+            discussions(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
               nodes {
                 id
                 title
@@ -61,75 +61,31 @@ async function fetchDiscussions(categoryId) {
       variables: {
         repoOwner: REPO_OWNER,
         repoName: REPO_NAME,
-        categoryId: categoryId
       }
     })
   });
 
   const data = await response.json();
 
-  // Check for API errors in the response
   if (data.errors) {
     console.error("GitHub API returned errors:", JSON.stringify(data.errors, null, 2));
     throw new Error("Failed to fetch discussions due to API errors.");
   }
 
-  // Check for unexpected data structure
-  if (!data.data || !data.data.repository || !data.data.repository.discussionCategory) {
+  if (!data.data || !data.data.repository || !data.data.repository.discussions) {
     console.error("Unexpected data structure from GitHub API:", JSON.stringify(data, null, 2));
-    if (data.data && data.data.repository && !data.data.repository.discussionCategory) {
-        throw new Error(`Could not find the discussion category: '${DISCUSSION_CATEGORY_NAME}'. Please check the name.`);
-    }
-    throw new Error("Unexpected data structure received from GitHub API.");
+    throw new Error("Unexpected data structure. Expected 'data.repository.discussions'.");
   }
 
-  return data.data.repository.discussionCategory.discussions.nodes;
-}
-
-async function getDiscussionCategoryId() {
-  const response = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    headers: {
-      'Authorization': `bearer ${GITHUB_TOKEN}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: `
-        query($repoOwner: String!, $repoName: String!) {
-          repository(owner: $repoOwner, name: $repoName) {
-            discussionCategories(first: 10) {
-              nodes {
-                id
-                name
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        repoOwner: REPO_OWNER,
-        repoName: REPO_NAME
-      }
-    })
-  });
-  const data = await response.json();
-  if (data.errors) {
-    console.error("GitHub API returned errors while fetching categories:", JSON.stringify(data.errors, null, 2));
-    throw new Error("Failed to fetch discussion categories.");
-  }
-  const category = data.data.repository.discussionCategories.nodes.find(c => c.name === DISCUSSION_CATEGORY_NAME);
-  if (!category) {
-    throw new Error(`Discussion category '${DISCUSSION_CATEGORY_NAME}' not found.`);
-  }
-  return category.id;
+  return data.data.repository.discussions.nodes;
 }
 
 async function main() {
-  const categoryId = await getDiscussionCategoryId();
-  const discussions = await fetchDiscussions(categoryId);
-  const comments = discussions.flatMap(discussion => {
-    return [
-      {
+  try {
+    const discussions = await fetchAllDiscussions();
+    const allComments = discussions.flatMap(discussion => {
+      // Map the main discussion post
+      const mainComment = {
         id: discussion.id,
         url: discussion.url,
         createdAt: discussion.createdAt,
@@ -137,20 +93,29 @@ async function main() {
         bodyHTML: discussion.bodyHTML,
         reactionGroups: discussion.reactionGroups,
         isDiscussion: true,
-      },
-      ...discussion.comments.nodes.map(comment => ({
-        id: comment.id,
-        url: comment.url,
-        createdAt: comment.createdAt,
-        author: comment.author,
-        bodyHTML: comment.bodyHTML,
-        reactionGroups: comment.reactionGroups,
-        isDiscussion: false,
-      }))
-    ];
-  });
+        title: discussion.title
+      };
 
-  fs.writeFileSync('src/data/comments.json', JSON.stringify(comments, null, 2));
+      // Map the replies to the discussion
+      const replies = discussion.comments.nodes.map(comment => ({
+        ...comment,
+        isDiscussion: false,
+        title: discussion.title // Carry over title to replies
+      }));
+
+      return [mainComment, ...replies];
+    });
+
+    // Sort all comments and replies together by date
+    allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    fs.writeFileSync('src/data/comments.json', JSON.stringify(allComments, null, 2));
+    console.log(`Successfully fetched and wrote ${allComments.length} comments to src/data/comments.json`);
+
+  } catch (error) {
+    console.error("An error occurred during the fetch process:", error.message);
+    process.exit(1); // Exit with an error code to fail the GitHub Action
+  }
 }
 
 main();
