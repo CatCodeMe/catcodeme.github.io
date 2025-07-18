@@ -3,7 +3,7 @@ import fs from 'fs';
 const GITHUB_TOKEN = process.env.gh_action_token_PAT
 const DISCUSSION_CATEGORY_NAME = 'General';
 const REPO_OWNER = 'catcodeme';
-const REPO_NAME = 'github-discussion';
+const REPO_NAME = 'catcodeme.github.io';
 
 async function fetchDiscussions() {
   const response = await fetch('https://api.github.com/graphql', {
