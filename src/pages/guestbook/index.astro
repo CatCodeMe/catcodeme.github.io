@@ -1,6 +1,29 @@
 ---
 import comments from '@/data/comments.json'
-// import { theme } from '@/site.config.ts'
+import { theme } from '@/site.config.ts'
+
+// Define types for comments and reaction groups
+interface ReactionGroup {
+  content: string
+  users: {
+    totalCount: number
+  }
+}
+
+interface Comment {
+  id: string
+  url: string
+  createdAt: string
+  author: {
+    login: string
+    avatarUrl: string
+    url: string
+  }
+  bodyHTML: string
+  reactionGroups?: ReactionGroup[] // Optional as it might not always be present
+  isDiscussion: boolean
+  title?: string // Optional, added in fetch-comments.js
+}
 
 const title = 'Guestbook'
 const description = 'A collection of all comments.'
@@ -26,7 +49,7 @@ function timeAgo(dateString: string | number | Date) {
   return `${years} years ago`
 }
 
-function getReactionEmoji(reaction: string | number) {
+function getReactionEmoji(reaction: string) {
   const a = {
     THUMBS_UP: '👍',
     THUMBS_DOWN: '👎',
@@ -37,7 +60,8 @@ function getReactionEmoji(reaction: string | number) {
     ROCKET: '🚀',
     EYES: '👀'
   }
-  return a[reaction] || '？'
+  // Type assertion to tell TypeScript that 'reaction' is a valid key
+  return a[reaction as keyof typeof a] || '？'
 }
 ---
 
@@ -497,16 +521,16 @@ function getReactionEmoji(reaction: string | number) {
     </style>
   </head>
   <body>
-    <!-- <header class='floating-header'>
+    <header class='floating-header'>
       <a href='/' class='header-brand'>{theme.title}</a>
       <nav class='header-nav'>
-        {theme.header.menu.map((item) => <a href={item.link}>{item.title}</a>)}
+        {theme.header.menu?.map((item) => <a href={item.link}>{item.title}</a>)}
       </nav>
       <div class='header-actions'>
         <a href='/search' title='Search'>Search</a>
         <button id='toggleDarkMode'>Theme</button>
       </div>
-    </header> -->
+    </header>
 
     <div class='vscode-container'>
       <!-- 侧边栏 -->
@@ -550,7 +574,7 @@ function getReactionEmoji(reaction: string | number) {
 
           <div class='editor-content'>
             {
-              comments.map((comment, index) => (
+              comments.map((comment: Comment, index: number) => (
                 <div class='comment-item'>
                   <div class='line-number'>{index + 1}</div>
                   <div class='comment-content'>
@@ -575,7 +599,7 @@ function getReactionEmoji(reaction: string | number) {
                     <div class='reactions'>
                       {comment.reactionGroups &&
                         comment.reactionGroups.map(
-                          (group: { users: { totalCount: unknown }; content: any }) =>
+                          (group: ReactionGroup) =>
                             group.users.totalCount > 0 && (
                               <div class='reaction'>
                                 {getReactionEmoji(group.content)} {group.users.totalCount}
@@ -609,21 +633,25 @@ function getReactionEmoji(reaction: string | number) {
 
     <script>
       function toggleFolder(element: Element) {
-        const folder = element.parentElement
-        folder.classList.toggle('collapsed')
-        const icon = element.querySelector('.folder-icon')
-        if (folder.classList.contains('collapsed')) {
-          icon.style.transform = 'rotate(-90deg)'
-        } else {
-          icon.style.transform = 'rotate(0deg)'
+        const folder = element.parentElement as HTMLElement | null
+        if (folder) {
+          folder.classList.toggle('collapsed')
+          const icon = element.querySelector('.folder-icon') as HTMLElement | null
+          if (icon) {
+            if (folder.classList.contains('collapsed')) {
+              icon.style.transform = 'rotate(-90deg)'
+            } else {
+              icon.style.transform = 'rotate(0deg)'
+            }
+          }
         }
       }
 
       // Make sidebar functional
       document.addEventListener('DOMContentLoaded', () => {
         const folders = document.querySelectorAll('.folder-header')
-        folders.forEach((folder) => {
-          folder.addEventListener('click', () => toggleFolder(folder))
+        folders.forEach((folderElement) => {
+          folderElement.addEventListener('click', () => toggleFolder(folderElement))
         })
 
         // Dark Mode Toggle
