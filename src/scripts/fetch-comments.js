@@ -210,6 +210,11 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
   const processedReplies = []
 
   for (const reply of replies) {
+    // Filter out bot comments
+    if (reply.author && reply.author.login.endsWith('[bot]')) {
+      continue
+    }
+
     const processedReply = {
       id: reply.id,
       url: reply.url,
@@ -228,6 +233,18 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
     }
 
     processedReplies.push(processedReply)
+
+    // 递归处理子回复
+    if (reply.replies && reply.replies.nodes && reply.replies.nodes.length > 0) {
+      const childReplies = processReplies(
+        reply.replies.nodes,
+        reply.id,
+        discussionId,
+        discussionTitle,
+        level + 1
+      )
+      processedReplies.push(...childReplies)
+    }
   }
 
   return processedReplies
@@ -236,9 +253,12 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
 async function main() {
   try {
     const discussions = await fetchAllDiscussions()
-    const allComments = []
+    const allComments = discussions.flatMap((discussion) => {
+      // Filter out bot discussions if necessary (though Giscus usually comments, not creates discussions)
+      if (discussion.author && discussion.author.login.endsWith('[bot]')) {
+        return []
+      }
 
-    for (const discussion of discussions) {
       // Map the main discussion post
       const mainComment = {
         id: discussion.id,
@@ -257,25 +277,25 @@ async function main() {
         type: 'discussion'
       }
 
-      allComments.push(mainComment)
-
       // 处理顶级评论
-      const topLevelComments = discussion.comments.nodes.map((comment) => ({
-        id: comment.id,
-        url: comment.url,
-        createdAt: comment.createdAt,
-        author: comment.author,
-        bodyHTML: comment.bodyHTML,
-        reactionGroups: comment.reactionGroups,
-        isDiscussion: false,
-        title: discussion.title,
-        discussionId: discussion.id,
-        parentId: discussion.id, // 顶级评论的父级是 discussion
-        replyToId: comment.replyTo ? comment.replyTo.id : null,
-        replyToAuthor: comment.replyTo ? comment.replyTo.author.login : null,
-        level: 1,
-        type: 'comment'
-      }))
+      const topLevelComments = discussion.comments.nodes
+        .filter(comment => !comment.author || !comment.author.login.endsWith('[bot]')) // Filter out bot comments
+        .map((comment) => ({
+          id: comment.id,
+          url: comment.url,
+          createdAt: comment.createdAt,
+          author: comment.author,
+          bodyHTML: comment.bodyHTML,
+          reactionGroups: comment.reactionGroups,
+          isDiscussion: false,
+          title: discussion.title,
+          discussionId: discussion.id,
+          parentId: discussion.id, // 顶级评论的父级是 discussion
+          replyToId: comment.replyTo ? comment.replyTo.id : null,
+          replyToAuthor: comment.replyTo ? comment.replyTo.author.login : null,
+          level: 1,
+          type: 'comment'
+        }))
 
       allComments.push(...topLevelComments)
 

@@ -331,18 +331,53 @@ function getReactionEmoji(reaction: string) {
       .see-more-btn {
         display: inline-block;
         padding: 0.75rem 1.5rem;
-        background-color: var(--bg-secondary-color);
-        color: var(--text-color);
+        background-color: var(--bg-secondary-color); /* Revert background */
+        color: var(--text-color); /* Adjust text color */
         border: 1px solid var(--border-color);
         border-radius: 8px;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.3s ease; /* Smoother transition */
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        position: relative; /* For pseudo-elements */
+        overflow: hidden; /* Hide overflowing pseudo-elements */
+        z-index: 1;
+      }
+
+      .see-more-btn::before,
+      .see-more-btn::after {
+        content: '';
+        position: absolute;
+        background: var(--accent-color); /* Accent color for border animation */
+        transition: all 0.3s ease;
+        z-index: -1;
+      }
+
+      .see-more-btn::before {
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+      }
+
+      .see-more-btn::after {
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 2px;
+      }
+
+      .see-more-btn:hover::before,
+      .see-more-btn:hover::after {
+        width: 100%;
       }
 
       .see-more-btn:hover {
-        background-color: var(--accent-color);
-        color: #ffffff;
-        border-color: var(--accent-color);
+        background-color: var(--bg-secondary-color); /* Keep background same on hover */
+        border-color: var(--accent-color); /* Change border color on hover */
+        transform: translateY(-2px); /* Lift effect on hover */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
       }
 
       .quoted-reply {
