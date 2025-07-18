@@ -161,7 +161,9 @@
     bindEvents() {
       document.addEventListener('mouseover', (e: MouseEvent) => {
         // 检查链接是否在 main 标签内
-        const link = (e.target as HTMLElement)?.closest('article a.inner-link') as HTMLAnchorElement | null
+        const link = (e.target as HTMLElement)?.closest(
+          'article a.inner-link'
+        ) as HTMLAnchorElement | null
         if (!link) return
 
         // 忽略预览窗口内的链接
@@ -227,7 +229,7 @@
       if (!href) return
 
       this.clearTimers()
-      this.currentHref = href
+      this.currentHref = href.replace('http://', 'https://');
 
       if (this.gotoButton) {
         this.gotoButton.onclick = () => (window.location.href = href)
@@ -243,7 +245,7 @@
           const isExternalLink = !href.startsWith(window.location.origin) && !href.startsWith('/')
           if (isExternalLink) return
 
-          let contentHtml = await this.getPreviewContent(href)
+          const contentHtml = await this.getPreviewContent(href)
           if (!contentHtml) return
 
           if (this.currentTarget === link && this.content) {
@@ -425,14 +427,16 @@
 
     setupThemeObserver() {
       // 监听系统主题变化
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e: MediaQueryListEvent) => {
-        if (document.documentElement.dataset.theme === 'system') {
-          await this.initializeMermaid()
-          if (this.content) {
-            await this.renderMermaidDiagrams(this.content)
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', async (e: MediaQueryListEvent) => {
+          if (document.documentElement.dataset.theme === 'system') {
+            await this.initializeMermaid()
+            if (this.content) {
+              await this.renderMermaidDiagrams(this.content)
+            }
           }
-        }
-      })
+        })
 
       // 监听主题切换
       const observer = new MutationObserver(async (mutations: MutationRecord[]) => {
