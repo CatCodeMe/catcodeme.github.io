@@ -26,11 +26,7 @@ interface Comment {
 const title = 'Guestbook';
 const description = 'A collection of all comments, styled like VS Code.';
 
-// Sort comments by date and take the most recent 100
-const sortedComments = comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-const displayedComments = sortedComments.slice(0, 100);
-
-const discussionsUrl = `https://github.com/${siteConfig.integ.giscus.repo}/discussions`;
+const discussionsUrl = `https://github.com/${siteConfig.integ.giscus?.repo}/discussions`;
 
 // Helper function to format time ago
 function timeAgo(dateString: string | number | Date) {
@@ -370,7 +366,7 @@ function getReactionEmoji(reaction: string) {
         </div>
         <div class="comments-list">
           {
-            displayedComments.map((comment: Comment, index: number) => (
+            comments.map((comment: Comment, index: number) => (
               <div class="comment-item">
                 <div class="line-number">{comments.length - index}</div>
                 <div class="comment-content-wrapper">
@@ -418,6 +414,7 @@ function getReactionEmoji(reaction: string) {
       <!-- Right Pane: Giscus -->
       <div class="giscus-pane">
         <script
+          is:inline
           src="https://giscus.app/client.js"
           data-repo="CatCodeMe/catcodeme.github.io"
           data-repo-id="R_kgDOLTuIuQ"
