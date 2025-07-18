@@ -57,7 +57,7 @@ async function fetchAllDiscussions() {
                         login
                       }
                     }
-                    replies(first: 100) {
+                    replies(first: 20) {
                       nodes {
                         id
                         url
@@ -78,31 +78,6 @@ async function fetchAllDiscussions() {
                           id
                           author {
                             login
-                          }
-                        }
-                        replies(first: 100) {
-                          nodes {
-                            id
-                            url
-                            createdAt
-                            author {
-                              login
-                              avatarUrl
-                              url
-                            }
-                            bodyHTML
-                            reactionGroups {
-                              content
-                              users {
-                                totalCount
-                              }
-                            }
-                            replyTo {
-                              id
-                              author {
-                                login
-                              }
-                            }
                           }
                         }
                       }
@@ -136,7 +111,101 @@ async function fetchAllDiscussions() {
   return data.data.repository.discussions.nodes
 }
 
-// 递归函数来处理回复的嵌套结构
+// 分页获取更深层的回复
+async function fetchDeepReplies(replyId, discussionId, discussionTitle, level = 3) {
+  const response = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `bearer ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: `
+        query($replyId: ID!) {
+          node(id: $replyId) {
+            ... on DiscussionComment {
+              replies(first: 20) {
+                nodes {
+                  id
+                  url
+                  createdAt
+                  author {
+                    login
+                    avatarUrl
+                    url
+                  }
+                  bodyHTML
+                  reactionGroups {
+                    content
+                    users {
+                      totalCount
+                    }
+                  }
+                  replyTo {
+                    id
+                    author {
+                      login
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        replyId: replyId
+      }
+    })
+  })
+
+  const data = await response.json()
+
+  if (data.errors) {
+    console.error(`Error fetching deep replies for ${replyId}:`, data.errors)
+    return []
+  }
+
+  if (!data.data?.node?.replies?.nodes) {
+    return []
+  }
+
+  const replies = data.data.node.replies.nodes.map((reply) => ({
+    id: reply.id,
+    url: reply.url,
+    createdAt: reply.createdAt,
+    author: reply.author,
+    bodyHTML: reply.bodyHTML,
+    reactionGroups: reply.reactionGroups,
+    isDiscussion: false,
+    title: discussionTitle,
+    discussionId: discussionId,
+    parentId: replyId,
+    replyToId: reply.replyTo ? reply.replyTo.id : null,
+    replyToAuthor: reply.replyTo ? reply.replyTo.author.login : null,
+    level: level,
+    type: 'reply'
+  }))
+
+  // 递归获取更深层的回复（但限制最大深度）
+  const deepReplies = []
+  if (level < 5) {
+    // 限制最大深度为5层
+    for (const reply of replies) {
+      const childReplies = await fetchDeepReplies(
+        reply.id,
+        discussionId,
+        discussionTitle,
+        level + 1
+      )
+      deepReplies.push(...childReplies)
+    }
+  }
+
+  return [...replies, ...deepReplies]
+}
+
+// 简化的递归函数，不再使用嵌套查询
 function processReplies(replies, parentId, discussionId, discussionTitle, level = 1) {
   const processedReplies = []
 
@@ -159,18 +228,6 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
     }
 
     processedReplies.push(processedReply)
-
-    // 递归处理子回复
-    if (reply.replies && reply.replies.nodes && reply.replies.nodes.length > 0) {
-      const childReplies = processReplies(
-        reply.replies.nodes,
-        reply.id,
-        discussionId,
-        discussionTitle,
-        level + 1
-      )
-      processedReplies.push(...childReplies)
-    }
   }
 
   return processedReplies
@@ -179,7 +236,9 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
 async function main() {
   try {
     const discussions = await fetchAllDiscussions()
-    const allComments = discussions.flatMap((discussion) => {
+    const allComments = []
+
+    for (const discussion of discussions) {
       // Map the main discussion post
       const mainComment = {
         id: discussion.id,
@@ -197,6 +256,8 @@ async function main() {
         level: 0,
         type: 'discussion'
       }
+
+      allComments.push(mainComment)
 
       // 处理顶级评论
       const topLevelComments = discussion.comments.nodes.map((comment) => ({
@@ -216,22 +277,38 @@ async function main() {
         type: 'comment'
       }))
 
-      // 处理所有嵌套回复
-      const allReplies = discussion.comments.nodes.flatMap((comment) => {
-        if (comment.replies && comment.replies.nodes && comment.replies.nodes.length > 0) {
-          return processReplies(
-            comment.replies.nodes,
-            comment.id,
-            discussion.id,
-            discussion.title,
-            2
-          )
-        }
-        return []
-      })
+      allComments.push(...topLevelComments)
 
-      return [mainComment, ...topLevelComments, ...allReplies]
-    })
+      // 处理第一层回复
+      for (const comment of discussion.comments.nodes) {
+        if (comment.replies && comment.replies.nodes && comment.replies.nodes.length > 0) {
+          const firstLevelReplies = comment.replies.nodes.map((reply) => ({
+            id: reply.id,
+            url: reply.url,
+            createdAt: reply.createdAt,
+            author: reply.author,
+            bodyHTML: reply.bodyHTML,
+            reactionGroups: reply.reactionGroups,
+            isDiscussion: false,
+            title: discussion.title,
+            discussionId: discussion.id,
+            parentId: comment.id,
+            replyToId: reply.replyTo ? reply.replyTo.id : null,
+            replyToAuthor: reply.replyTo ? reply.replyTo.author.login : null,
+            level: 2,
+            type: 'reply'
+          }))
+
+          allComments.push(...firstLevelReplies)
+
+          // 获取更深层的回复
+          for (const reply of comment.replies.nodes) {
+            const deepReplies = await fetchDeepReplies(reply.id, discussion.id, discussion.title, 3)
+            allComments.push(...deepReplies)
+          }
+        }
+      }
+    }
 
     // Sort all comments and replies together by date
     allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
