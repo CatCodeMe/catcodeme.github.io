@@ -14,9 +14,9 @@ async function fetchDiscussions(categoryId) {
     },
     body: JSON.stringify({
       query: `
-        query($repoOwner: String!, $repoName: String!, $categoryName: String!) {
+        query($repoOwner: String!, $repoName: String!, $categoryId: ID!) {
           repository(owner: $repoOwner, name: $repoName) {
-            discussions(first: 100, categoryId: $categoryName, orderBy: {field: CREATED_AT, direction: DESC}) {
+            discussions(first: 100, categoryId: $categoryId, orderBy: {field: CREATED_AT, direction: DESC}) {
               nodes {
                 id
                 title
