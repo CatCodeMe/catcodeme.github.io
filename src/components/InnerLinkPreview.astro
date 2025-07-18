@@ -309,6 +309,20 @@
           mainContent.querySelectorAll(selector).forEach((el) => el.remove())
         })
 
+        // Sanitize fetched HTML: replace http:// with https:// for internal links
+        const elementsWithUrls = mainContent.querySelectorAll('[src^="http://"], [href^="http://"]');
+        elementsWithUrls.forEach(el => {
+          if (el instanceof HTMLImageElement || el instanceof HTMLScriptElement) {
+            if (el.src.startsWith('http://') && el.src.includes(window.location.hostname)) {
+              el.src = el.src.replace('http://', 'https://');
+            }
+          } else if (el instanceof HTMLLinkElement || el instanceof HTMLAnchorElement) {
+            if (el.href.startsWith('http://') && el.href.includes(window.location.hostname)) {
+              el.href = el.href.replace('http://', 'https://');
+            }
+          }
+        });
+
         // 转换 mermaid 类名
         mainContent.querySelectorAll('pre.mermaid').forEach((el: Element) => {
           el.classList.remove('mermaid')
