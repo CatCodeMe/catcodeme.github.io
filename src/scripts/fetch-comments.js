@@ -69,6 +69,22 @@ async function fetchDiscussions() {
   });
 
   const data = await response.json();
+
+  // Check for API errors in the response
+  if (data.errors) {
+    console.error("GitHub API returned errors:", JSON.stringify(data.errors, null, 2));
+    throw new Error("Failed to fetch discussions due to API errors.");
+  }
+
+  // Check for unexpected data structure
+  if (!data.data || !data.data.repository || !data.data.repository.discussionCategory) {
+    console.error("Unexpected data structure from GitHub API:", JSON.stringify(data, null, 2));
+    if (data.data && data.data.repository && !data.data.repository.discussionCategory) {
+        throw new Error(`Could not find the discussion category: '${DISCUSSION_CATEGORY_NAME}'. Please check the name.`);
+    }
+    throw new Error("Unexpected data structure received from GitHub API.");
+  }
+
   return data.data.repository.discussionCategory.discussions.nodes;
 }
 
