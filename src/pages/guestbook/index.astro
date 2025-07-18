@@ -1,52 +1,59 @@
 ---
-import comments from '@/data/comments.json'
-import { theme } from '@/site.config.ts'
+import comments from '@/data/comments.json';
+import siteConfig from '@/site.config.ts';
 
 // Define types for comments and reaction groups
 interface ReactionGroup {
-  content: string
+  content: string;
   users: {
-    totalCount: number
-  }
+    totalCount: number;
+  };
 }
 
 interface Comment {
-  id: string
-  url: string
-  createdAt: string
+  id: string;
+  url: string;
+  createdAt: string;
   author: {
-    login: string
-    avatarUrl: string
-    url: string
-  }
-  bodyHTML: string
-  reactionGroups?: ReactionGroup[] // Optional as it might not always be present
-  isDiscussion: boolean
-  title?: string // Optional, added in fetch-comments.js
+    login: string;
+    avatarUrl: string;
+    url: string;
+  };
+  bodyHTML: string;
+  reactionGroups?: ReactionGroup[]; // Optional as it might not always be present
 }
 
-const title = 'Guestbook'
-const description = 'A collection of all comments.'
+const title = 'Guestbook';
+const description = 'A collection of all comments, styled like VS Code.';
+
+// Sort comments by date and take the most recent 100
+const sortedComments = comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+const displayedComments = sortedComments.slice(0, 100);
+
+const discussionsUrl = `https://github.com/${siteConfig.integ.giscus.repo}/discussions`;
 
 // Helper function to format time ago
 function timeAgo(dateString: string | number | Date) {
-  const date = new Date(dateString)
-  const now = new Date()
-  const seconds = Math.round((now.getTime() - date.getTime()) / 1000)
-  const minutes = Math.round(seconds / 60)
-  const hours = Math.round(minutes / 60)
-  const days = Math.round(hours / 24)
-  const weeks = Math.round(days / 7)
-  const months = Math.round(days / 30)
-  const years = Math.round(days / 365)
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now.getTime() - date.getTime()) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
 
-  if (seconds < 60) return `${seconds} seconds ago`
-  if (minutes < 60) return `${minutes} minutes ago`
-  if (hours < 24) return `${hours} hours ago`
-  if (days < 7) return `${days} days ago`
-  if (weeks < 5) return `${weeks} weeks ago`
-  if (months < 12) return `${months} months ago`
-  return `${years} years ago`
+  if (seconds < 60) return `${seconds}s ago`;
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
+}
+
+// Helper function to format date to YYYY-MM-DD
+function formatDate(dateString: string | number | Date) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 function getReactionEmoji(reaction: string) {
@@ -58,21 +65,29 @@ function getReactionEmoji(reaction: string) {
     CONFUSED: '😕',
     HEART: '❤️',
     ROCKET: '🚀',
-    EYES: '👀'
-  }
-  // Type assertion to tell TypeScript that 'reaction' is a valid key
-  return a[reaction as keyof typeof a] || '？'
+    EYES: '👀',
+  };
+  return a[reaction as keyof typeof a] || '？';
 }
 ---
 
-<!doctype html>
-<html lang='zh-CN'>
+<!DOCTYPE html>
+<html lang="zh-CN">
   <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <meta name='description' content={description} />
-    <style is:global>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <style>
+      :root {
+        --accent-color: #0969da;
+        --text-color: #24292f;
+        --text-secondary-color: #656d76;
+        --bg-color: #ffffff;
+        --bg-secondary-color: #f6f8fa;
+        --border-color: #d1d9e0;
+      }
       * {
         margin: 0;
         padding: 0;
@@ -80,238 +95,129 @@ function getReactionEmoji(reaction: string) {
       }
 
       body {
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        background: #1e1e1e;
-        color: #d4d4d4;
-        overflow-x: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--bg-secondary-color);
+        color: var(--text-color);
+        overflow: hidden;
       }
 
-      .vscode-container {
+      .guestbook-container {
         display: flex;
         height: 100vh;
-        background: #252526;
+        width: 100vw;
+        background: var(--bg-color);
       }
 
-      /* 侧边栏 */
-      .sidebar {
-        width: 240px;
-        background: #252526;
-        border-right: 1px solid #3e3e42;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .sidebar-header {
-        padding: 8px 12px;
-        background: #2d2d30;
-        color: #cccccc;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid #3e3e42;
-      }
-
-      .file-tree {
-        flex: 1;
+      .comments-pane,
+      .giscus-pane {
+        height: 100vh;
         overflow-y: auto;
       }
 
-      .folder {
-        user-select: none;
-        cursor: pointer;
-      }
-
-      .folder-header {
-        display: flex;
-        align-items: center;
-        padding: 4px 8px;
-        font-size: 13px;
-        color: #cccccc;
-        transition: background 0.2s;
-      }
-
-      .folder-header:hover {
-        background: #2a2d2e;
-      }
-
-      .folder-icon {
-        margin-right: 6px;
-        font-size: 16px;
-        transition: transform 0.2s;
-      }
-
-      .folder.collapsed .folder-icon {
-        transform: rotate(-90deg);
-      }
-
-      .folder-content {
-        padding-left: 16px;
-        max-height: 300px;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-      }
-
-      .folder.collapsed .folder-content {
-        max-height: 0;
-      }
-
-      .file-item {
-        display: flex;
-        align-items: center;
-        padding: 2px 8px;
-        font-size: 13px;
-        color: #d4d4d4;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .file-item:hover {
-        background: #2a2d2e;
-      }
-
-      .file-item.active {
-        background: #37373d;
-        color: #ffffff;
-      }
-
-      .file-icon {
-        margin-right: 6px;
-        font-size: 16px;
-      }
-
-      .file-name {
-        flex: 1;
-      }
-
-      .comment-count {
-        font-size: 11px;
-        color: #858585;
-        background: #3e3e42;
-        padding: 1px 4px;
-        border-radius: 2px;
-        margin-left: 4px;
-      }
-
-      /* 主内容区域 */
-      .main-content {
-        flex: 1;
+      .comments-pane {
+        width: 60%;
+        padding-top: 1.5rem;
+        border-right: 1px solid var(--border-color);
         display: flex;
         flex-direction: column;
-        background: #1e1e1e;
       }
 
-      .tab-bar {
+      .giscus-pane {
+        width: 40%;
+        padding: 1.5rem;
+      }
+
+      .pane-header {
         display: flex;
-        background: #2d2d30;
-        border-bottom: 1px solid #3e3e42;
-        min-height: 35px;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5rem;
+        margin: 0 1.5rem 1.5rem 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+        gap: 1rem;
       }
 
-      .tab {
+      .pane-header h1 {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+        border: none;
         display: flex;
         align-items: center;
-        padding: 0 12px;
-        background: #2d2d30;
-        color: #969696;
-        font-size: 13px;
-        border-right: 1px solid #3e3e42;
-        cursor: pointer;
+        gap: 0.75rem;
+        flex-shrink: 0;
+      }
+
+      .home-link {
+        font-size: 1.5rem;
+        text-decoration: none;
+        color: var(--text-secondary-color);
+        transition: color 0.2s;
+      }
+
+      .home-link:hover {
+        color: var(--accent-color);
+      }
+
+      .notice-container {
+        flex-grow: 1;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text-secondary-color);
+        font-size: 0.9rem;
+        padding: 0 1rem;
+      }
+
+      .comments-list {
+        flex-grow: 1;
+      }
+
+      .comment-item {
+        display: flex;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-color);
         transition: background 0.2s;
         position: relative;
       }
 
-      .tab.active {
-        background: #1e1e1e;
-        color: #ffffff;
-      }
-
-      .tab:hover {
-        background: #37373d;
-      }
-
-      .tab-icon {
-        margin-right: 6px;
-        font-size: 16px;
-      }
-
-      .tab-close {
-        margin-left: 8px;
-        color: #858585;
-        font-size: 16px;
-        transition: color 0.2s;
-      }
-
-      .tab-close:hover {
-        color: #cccccc;
-      }
-
-      .editor-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .editor-header {
-        display: flex;
-        align-items: center;
-        padding: 8px 16px;
-        background: #1e1e1e;
-        border-bottom: 1px solid #3e3e42;
-        font-size: 13px;
-        color: #cccccc;
-      }
-
-      .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .breadcrumb-item {
-        color: #569cd6;
-        cursor: pointer;
-      }
-
-      .breadcrumb-separator {
-        color: #858585;
-        margin: 0 4px;
-      }
-
-      .editor-content {
-        flex: 1;
-        overflow-y: auto;
-        padding: 0;
-        background: #1e1e1e;
-      }
-
-      /* 评论样式 */
-      .comment-item {
-        display: flex;
-        padding: 12px 16px;
-        border-bottom: 1px solid #2d2d30;
-        transition: background 0.2s;
-      }
-
       .comment-item:hover {
-        background: #252526;
+        background: var(--bg-secondary-color);
+      }
+
+      .comment-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--accent-color);
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .comment-item:hover::before {
+        opacity: 1;
       }
 
       .line-number {
-        width: 40px;
-        color: #858585;
+        width: 50px;
+        color: var(--text-secondary-color);
         font-size: 13px;
         text-align: right;
         margin-right: 20px;
         user-select: none;
         flex-shrink: 0;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+          Consolas, monospace;
       }
 
-      .comment-content {
+      .comment-content-wrapper {
         flex: 1;
-        display: flex;
-        flex-direction: column;
       }
 
       .comment-header {
@@ -319,356 +225,216 @@ function getReactionEmoji(reaction: string) {
         align-items: center;
         margin-bottom: 8px;
         gap: 8px;
+        flex-wrap: wrap;
       }
 
       .user-avatar {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         border-radius: 50%;
       }
 
       .user-name {
-        color: #4ec9b0;
+        color: var(--accent-color);
         font-weight: 600;
-        font-size: 13px;
+        font-size: 14px;
       }
 
       .comment-time {
-        color: #608b4e;
+        color: var(--text-secondary-color);
         font-size: 12px;
+        white-space: nowrap;
       }
 
       .github-link {
-        color: #569cd6;
+        color: var(--text-secondary-color);
         text-decoration: none;
         font-size: 12px;
         margin-left: auto;
+        transition: color 0.2s;
+        white-space: nowrap;
       }
 
       .github-link:hover {
+        color: var(--accent-color);
         text-decoration: underline;
       }
 
       .comment-body {
-        color: #d4d4d4;
-        font-size: 13px;
+        color: var(--text-color);
+        font-size: 14px;
         line-height: 1.6;
-        margin-bottom: 8px;
-      }
-
-      .comment-body code {
-        background: #2d2d30;
-        color: #ce9178;
-        padding: 2px 4px;
-        border-radius: 2px;
-        font-family: inherit;
-      }
-
-      .comment-body pre {
-        background: #2d2d30;
-        padding: 8px;
-        border-radius: 4px;
-        overflow-x: auto;
-        margin: 8px 0;
-        border-left: 3px solid #007acc;
-      }
-
-      .comment-meta {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 12px;
-        color: #858585;
-      }
-
-      .comment-action {
-        color: #569cd6;
-        cursor: pointer;
-        transition: color 0.2s;
-      }
-
-      .comment-action:hover {
-        color: #9cdcfe;
       }
 
       .reactions {
         display: flex;
         gap: 8px;
-        margin-top: 8px;
+        margin-top: 12px;
       }
 
       .reaction {
-        background: #2d2d30;
-        border: 1px solid #3e3e42;
-        border-radius: 12px;
-        padding: 2px 6px;
+        background: var(--bg-secondary-color);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 4px 8px;
         font-size: 12px;
-        color: #d4d4d4;
-        cursor: pointer;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 4px;
         transition: all 0.2s;
       }
 
       .reaction:hover {
-        background: #37373d;
-        border-color: #007acc;
+        border-color: var(--accent-color);
       }
 
-      .reaction.active {
-        background: #1f3a48;
-        border-color: #007acc;
-        color: #9cdcfe;
+      .see-more-container {
+        padding: 2rem;
+        text-align: center;
       }
 
-      /* 状态栏 */
-      .status-bar {
-        height: 24px;
-        background: #007acc;
+      .see-more-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--bg-secondary-color);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      .see-more-btn:hover {
+        background-color: var(--accent-color);
         color: #ffffff;
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        font-size: 12px;
-        gap: 16px;
+        border-color: var(--accent-color);
       }
 
-      .status-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      /* 响应式 */
+      /* Responsive */
       @media (max-width: 768px) {
-        .sidebar {
-          display: none; /* Hide sidebar on smaller screens */
+        .guestbook-container {
+          flex-direction: column;
         }
-
+        .comments-pane,
+        .giscus-pane {
+          width: 100%;
+          height: 50vh; /* Split height on mobile */
+        }
+        .comments-pane {
+          border-right: none;
+          border-bottom: 1px solid var(--border-color);
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        .notice-container { display: none; }
         .comment-item {
-          padding: 8px 12px;
+            padding-left: 0;
+            padding-right: 0;
         }
-
         .line-number {
-          width: 30px;
-          margin-right: 12px;
+            display: none;
         }
       }
 
-      /* 自定义滚动条 */
+      /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
+        height: 8px;
       }
-
       ::-webkit-scrollbar-track {
-        background: #1e1e1e;
+        background: var(--bg-secondary-color);
       }
-
       ::-webkit-scrollbar-thumb {
-        background: #424242;
+        background: #d1d9e0;
         border-radius: 4px;
       }
-
       ::-webkit-scrollbar-thumb:hover {
-        background: #4f4f4f;
-      }
-
-      /* Floating Header */
-      .floating-header {
-        position: fixed;
-        top: 1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.5rem 1rem;
-        background: rgba(45, 45, 48, 0.8);
-        border: 1px solid #3e3e42;
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      }
-      .header-brand {
-        font-weight: 600;
-        color: #cccccc;
-        text-decoration: none;
-      }
-      .header-nav {
-        display: flex;
-        gap: 1rem;
-      }
-      .header-nav a {
-        color: #cccccc;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-      .header-nav a:hover {
-        color: #ffffff;
-      }
-      .header-actions {
-        display: flex;
-        gap: 1rem;
-      }
-      .header-actions a,
-      .header-actions button {
-        color: #cccccc;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: inherit;
+        background: #b1bac4;
       }
     </style>
   </head>
   <body>
-    <header class='floating-header'>
-      <a href='/' class='header-brand'>{theme.title}</a>
-      <nav class='header-nav'>
-        {theme.header.menu?.map((item) => <a href={item.link}>{item.title}</a>)}
-      </nav>
-      <div class='header-actions'>
-        <a href='/search' title='Search'>Search</a>
-        <button id='toggleDarkMode'>Theme</button>
-      </div>
-    </header>
-
-    <div class='vscode-container'>
-      <!-- 侧边栏 -->
-      <div class='sidebar'>
-        <div class='sidebar-header'>📁 Comments Explorer</div>
-        <div class='file-tree'>
-          <div class='folder'>
-            <div class='folder-header'>
-              <span class='folder-icon'>▼</span>
-              <span>All Comments</span>
+    <div class="guestbook-container">
+      <!-- Left Pane: All Comments -->
+      <div class="comments-pane">
+        <div class="pane-header">
+            <h1>
+                <span>🎤</span>
+                <span>Latest Comments ({comments.length})</span>
+            </h1>
+            <div class="notice-container">
+                <p>欢迎留言,您的留言将会在几分钟后出现在留言板～</p>
             </div>
-            <div class='folder-content'>
-              <div class='file-item active'>
-                <span class='file-icon'>💬</span>
-                <span class='file-name'>Guestbook</span>
-                <span class='comment-count'>{comments.length}</span>
-              </div>
-            </div>
-          </div>
+            <a href="/" class="home-link" title="Back to Home">↩️</a>
         </div>
-      </div>
-
-      <!-- 主内容区域 -->
-      <div class='main-content'>
-        <div class='tab-bar'>
-          <div class='tab active'>
-            <span class='tab-icon'>💬</span>
-            <span>Guestbook</span>
-            <span class='tab-close'>×</span>
-          </div>
-        </div>
-
-        <div class='editor-area'>
-          <div class='editor-header'>
-            <div class='breadcrumb'>
-              <span class='breadcrumb-item'>catcodeme.github.io</span>
-              <span class='breadcrumb-separator'>/</span>
-              <span class='breadcrumb-item'>guestbook</span>
-            </div>
-          </div>
-
-          <div class='editor-content'>
-            {
-              comments.map((comment: Comment, index: number) => (
-                <div class='comment-item'>
-                  <div class='line-number'>{index + 1}</div>
-                  <div class='comment-content'>
-                    <div class='comment-header'>
-                      <img
-                        src={comment.author.avatarUrl}
-                        alt={comment.author.login}
-                        class='user-avatar'
-                      />
-                      <span class='user-name'>{comment.author.login}</span>
-                      <span class='comment-time'>{timeAgo(comment.createdAt)}</span>
-                      <a
-                        href={comment.url}
-                        class='github-link'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                      >
-                        View on GitHub
-                      </a>
-                    </div>
-                    <div class='comment-body' set:html={comment.bodyHTML} />
-                    <div class='reactions'>
-                      {comment.reactionGroups &&
-                        comment.reactionGroups.map(
-                          (group: ReactionGroup) =>
-                            group.users.totalCount > 0 && (
-                              <div class='reaction'>
-                                {getReactionEmoji(group.content)} {group.users.totalCount}
-                              </div>
-                            )
-                        )}
-                    </div>
+        <div class="comments-list">
+          {
+            displayedComments.map((comment: Comment, index: number) => (
+              <div class="comment-item">
+                <div class="line-number">{comments.length - index}</div>
+                <div class="comment-content-wrapper">
+                  <div class="comment-header">
+                    <img
+                      src={comment.author.avatarUrl}
+                      alt={comment.author.login}
+                      class="user-avatar"
+                    />
+                    <span class="user-name">{comment.author.login}</span>
+                    <span class="comment-time">
+                      {timeAgo(comment.createdAt)} ({formatDate(comment.createdAt)})
+                    </span>
+                    <a
+                      href={comment.url}
+                      class="github-link"
+                      target="_blank"
+                      rel="noopener noreferrer">View on GitHub</a
+                    >
+                  </div>
+                  <div class="comment-body" set:html={comment.bodyHTML} />
+                  <div class="reactions">
+                    {comment.reactionGroups &&
+                      comment.reactionGroups.map((group: ReactionGroup) =>
+                        group.users.totalCount > 0 ? (
+                          <div class="reaction">
+                            {getReactionEmoji(group.content)}{' '}
+                            <span>{group.users.totalCount}</span>
+                          </div>
+                        ) : null
+                      )}
                   </div>
                 </div>
-              ))
-            }
-          </div>
+              </div>
+            ))
+          }
         </div>
-
-        <div class='status-bar'>
-          <div class='status-item'>
-            <span>🌐</span>
-            <span>Connected to GitHub</span>
-          </div>
-          <div class='status-item'>
-            <span>💬</span>
-            <span>{comments.length} comments</span>
-          </div>
-          <div class='status-item'>
-            <span>🔄</span>
-            <span id='last-updated'>Last updated: just now</span>
-          </div>
+        <div class="see-more-container">
+            <a href={discussionsUrl} class="see-more-btn" target="_blank" rel="noopener noreferrer">
+                See more on GitHub  
+            </a>
         </div>
       </div>
+
+      <!-- Right Pane: Giscus -->
+      <div class="giscus-pane">
+        <script
+          src="https://giscus.app/client.js"
+          data-repo="CatCodeMe/catcodeme.github.io"
+          data-repo-id="R_kgDOLTuIuQ"
+          data-category="General"
+          data-category-id="DIC_kwDOLTuIuc4Csz7O"
+          data-mapping="og:title"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="light"
+          data-lang="en"
+          crossorigin="anonymous"
+          async
+        >
+        </script>
+      </div>
     </div>
-
-    <script>
-      function toggleFolder(element: Element) {
-        const folder = element.parentElement as HTMLElement | null
-        if (folder) {
-          folder.classList.toggle('collapsed')
-          const icon = element.querySelector('.folder-icon') as HTMLElement | null
-          if (icon) {
-            if (folder.classList.contains('collapsed')) {
-              icon.style.transform = 'rotate(-90deg)'
-            } else {
-              icon.style.transform = 'rotate(0deg)'
-            }
-          }
-        }
-      }
-
-      // Make sidebar functional
-      document.addEventListener('DOMContentLoaded', () => {
-        const folders = document.querySelectorAll('.folder-header')
-        folders.forEach((folderElement) => {
-          folderElement.addEventListener('click', () => toggleFolder(folderElement))
-        })
-
-        // Dark Mode Toggle
-        const toggleDarkModeElement = document.getElementById('toggleDarkMode')
-        if (toggleDarkModeElement) {
-          toggleDarkModeElement.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme')
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-            document.documentElement.setAttribute('data-theme', newTheme)
-            localStorage.setItem('theme', newTheme)
-          })
-        }
-
-        // Set initial theme
-        const savedTheme = localStorage.getItem('theme') || 'dark'
-        document.documentElement.setAttribute('data-theme', savedTheme)
-      })
-    </script>
   </body>
 </html>
