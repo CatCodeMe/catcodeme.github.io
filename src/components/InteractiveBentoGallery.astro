@@ -87,7 +87,7 @@ const { mediaItems } = Astro.props;
   }
 </style>
 
-<script define:vars={{ mediaItems }}>
+<script is:inline define:vars={{ mediaItems }}>
   document.addEventListener('DOMContentLoaded', () => {
     const galleryContainer = document.getElementById('bento-gallery-container');
     const modalContainer = document.getElementById('gallery-modal-container');

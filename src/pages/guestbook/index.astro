@@ -1,12 +1,12 @@
 ---
 import comments from '@/data/comments.json'
-import { theme } from '@/site.config.ts'
+// import { theme } from '@/site.config.ts'
 
 const title = 'Guestbook'
 const description = 'A collection of all comments.'
 
 // Helper function to format time ago
-function timeAgo(dateString) {
+function timeAgo(dateString: string | number | Date) {
   const date = new Date(dateString)
   const now = new Date()
   const seconds = Math.round((now.getTime() - date.getTime()) / 1000)
@@ -26,7 +26,7 @@ function timeAgo(dateString) {
   return `${years} years ago`
 }
 
-function getReactionEmoji(reaction) {
+function getReactionEmoji(reaction: string | number) {
   const a = {
     THUMBS_UP: '👍',
     THUMBS_DOWN: '👎',
@@ -575,7 +575,7 @@ function getReactionEmoji(reaction) {
                     <div class='reactions'>
                       {comment.reactionGroups &&
                         comment.reactionGroups.map(
-                          (group) =>
+                          (group: { users: { totalCount: unknown }; content: any }) =>
                             group.users.totalCount > 0 && (
                               <div class='reaction'>
                                 {getReactionEmoji(group.content)} {group.users.totalCount}
@@ -608,7 +608,7 @@ function getReactionEmoji(reaction) {
     </div>
 
     <script>
-      function toggleFolder(element) {
+      function toggleFolder(element: Element) {
         const folder = element.parentElement
         folder.classList.toggle('collapsed')
         const icon = element.querySelector('.folder-icon')

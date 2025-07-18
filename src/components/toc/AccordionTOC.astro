@@ -318,7 +318,7 @@ const { headings, position = 'left', class: className } = Astro.props
   }
 </style>
 
-<script define:vars={{ headings }}>
+<script is:inline define:vars={{ headings }}>
   class AccordionTOC {
     constructor(headingsData) {
       this.toc = document.getElementById('toc')

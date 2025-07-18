@@ -1,5 +1,4 @@
 ---
-import pkg from '@root/package.json'
 import { Icon as DevIcon } from 'astro-icon/components'
 import config from 'virtual:config'
 
@@ -15,7 +14,6 @@ social.rss = {
 }
 
 const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
-const version = pkg.version
 ---
 
 <footer class='mx-auto mb-5 mt-16'>

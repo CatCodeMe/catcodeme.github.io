@@ -429,7 +429,7 @@
       // 监听系统主题变化
       window
         .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', async (e: MediaQueryListEvent) => {
+        .addEventListener('change', async () => {
           if (document.documentElement.dataset.theme === 'system') {
             await this.initializeMermaid()
             if (this.content) {

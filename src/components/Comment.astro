@@ -5,7 +5,7 @@ const giscus = config.integ.giscus;
 
 {giscus && giscus.enable && (
   <div class="giscus-container">
-    <script src="https://giscus.app/client.js"
+    <script is:inline src="https://giscus.app/client.js"
       data-repo={giscus.repo}
       data-repo-id={giscus.repoId}
       data-category={giscus.category}

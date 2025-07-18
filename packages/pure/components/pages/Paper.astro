@@ -27,7 +27,7 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 }
 
 const { as: Tag = 'div', paper, class: className } = Astro.props
-const { id, data, index } = paper
+const { data } = paper
 const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 ---
 
