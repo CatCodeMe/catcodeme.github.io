@@ -160,9 +160,9 @@ export const integ: IntegrationUserConfig = {
   giscus: {
     enable: true,
     repo: 'CatCodeMe/catcodeme.github.io', // 仓库名
-    repoId: 'R_kgDOLTuIuQ', // 仓库 ID
-    category: 'General', // 分类名
-    categoryId: 'DIC_kwDOLTuIuc4Csz7O', // 分类 ID
+    repoId: 'R_kgDOPOflqw', // 仓库 ID
+    category: 'Announcements', // 分类名
+    categoryId: 'DIC_kwDOPOflq84CtHbc', // 分类 ID
     mapping: 'og:title', // 评论关联方式
     strict: '0',
     reactionsEnabled: '1',
