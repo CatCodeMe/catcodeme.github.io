@@ -265,6 +265,21 @@ async function main() {
       `Successfully wrote ${structuredComments.length} structured discussions to src/data/comments-structured.json`
     )
 
+    // --- DEBUG: Log bodyHTML for comments with code blocks ---
+    const commentsWithCode = allComments.filter(comment => comment.bodyHTML.includes('<pre><code'));
+    if (commentsWithCode.length > 0) {
+      console.log('\n--- bodyHTML for comments with code blocks ---');
+      commentsWithCode.forEach((comment, index) => {
+        console.log(`\nComment ID: ${comment.id}`);
+        console.log(`Author: ${comment.author.login}`);
+        console.log(`bodyHTML:\n${comment.bodyHTML}`);
+      });
+      console.log('--------------------------------------------\n');
+    } else {
+      console.log('\nNo comments with code blocks found in fetched data.\n');
+    }
+    // --- END DEBUG ---
+
     // 输出统计信息
     const stats = {
       totalDiscussions: discussions.length,
