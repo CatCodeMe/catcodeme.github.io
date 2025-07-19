@@ -55,14 +55,20 @@ function timeAgo(dateString: string | number | Date) {
   return `${days}d ago`;
 }
 
-// Helper function to format date to YYYY-MM-DD
-function formatDate(dateString: string | number | Date) {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
 }
+
+const totalReplies = comments.filter(c => c.type === 'reply').length;
+const uniqueCommenters = new Set(comments.map(c => c.author.login)).size;
 
 function getReactionEmoji(reaction: string) {
   const a = {
@@ -83,6 +89,8 @@ function getReactionEmoji(reaction: string) {
 <html lang="zh-CN">
   <head>
     <BaseHead title={title} description={description} ogImage='/images/guest-book.png' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
       :root {
         --accent-color: #0969da;
@@ -180,15 +188,42 @@ function getReactionEmoji(reaction: string) {
         flex-shrink: 0;
       }
 
-      .home-link {
-        font-size: 1.5rem;
+      .header-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 13px;
+        color: var(--text-secondary-color);
+      }
+
+      .comment-stats {
+        white-space: nowrap;
+      }
+
+      .sort-by {
+        white-space: nowrap;
+      }
+
+      .sort-by strong {
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      .home-link,
+      .github-discussions-link {
+        font-size: 13px;
         text-decoration: none;
         color: var(--text-secondary-color);
         transition: color 0.2s;
+        border: 1px solid var(--border-color);
+        padding: 4px 8px;
+        border-radius: 6px;
       }
 
-      .home-link:hover {
+      .home-link:hover,
+      .github-discussions-link:hover {
         color: var(--accent-color);
+        border-color: var(--accent-color);
       }
 
       .notice-container {
@@ -204,72 +239,80 @@ function getReactionEmoji(reaction: string) {
 
       .comments-list {
         flex-grow: 1;
+        padding: 1.5rem 1.5rem 0;
       }
 
       .comment-item {
         display: flex;
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--border-color);
-        transition: background 0.2s;
         position: relative;
+        padding-left: 40px; /* Space for avatar */
+        margin-bottom: 1.5rem;
+        transition: box-shadow 0.3s ease;
       }
 
-      .comment-item:hover {
-        background: var(--bg-secondary-color);
+      .comment-item.highlighted-comment .comment-content-wrapper {
+        border: 2px solid var(--accent-color);
       }
 
-      .comment-item::before {
-        content: '';
+      .user-avatar-link {
         position: absolute;
         left: 0;
         top: 0;
-        bottom: 0;
-        width: 3px;
-        background: var(--accent-color);
-        opacity: 0;
-        transition: opacity 0.2s;
+        width: 32px;
+        height: 32px;
       }
 
-      .comment-item:hover::before {
-        opacity: 1;
-      }
-
-      .comment-item.highlighted-comment {
-        background: #fffacd; /* A more noticeable light yellow for highlighting */
-      }
-
-      .line-number {
-        width: 50px;
-        color: var(--text-secondary-color);
-        font-size: 13px;
-        text-align: right;
-        margin-right: 20px;
-        user-select: none;
-        flex-shrink: 0;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
-          Consolas, monospace;
+      .user-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
       }
 
       .comment-content-wrapper {
         flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--bg-color);
       }
 
       .comment-header {
         display: flex;
         align-items: center;
-        margin-bottom: 8px;
+        padding: 8px 12px;
+        background: var(--bg-secondary-color);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 6px 6px 0 0;
         gap: 8px;
         flex-wrap: wrap;
       }
 
-      .user-avatar {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
+      .owner-comment .comment-header {
+        background: #f0f6fc;
+      }
+
+      .owner-comment .user-name,
+      .owner-comment .comment-time,
+      .owner-comment .comment-source a,
+      .owner-comment .github-link {
+        color: var(--text-secondary-color);
+      }
+
+      .owner-comment .user-name {
+        color: var(--text-color);
+      }
+
+      .owner-badge {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-secondary-color);
+        border: 1px solid var(--border-color);
+        padding: 1px 7px;
+        border-radius: 2em;
+        margin-left: 4px;
       }
 
       .user-name {
-        color: var(--accent-color);
+        color: var(--text-color);
         font-weight: 600;
         font-size: 14px;
       }
@@ -278,6 +321,21 @@ function getReactionEmoji(reaction: string) {
         color: var(--text-secondary-color);
         font-size: 12px;
         white-space: nowrap;
+      }
+
+      .comment-source {
+        font-size: 12px;
+        color: var(--text-secondary-color);
+      }
+
+      .comment-source a {
+        color: var(--text-secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .comment-source a:hover {
+        text-decoration: underline;
       }
 
       .github-link {
@@ -295,15 +353,48 @@ function getReactionEmoji(reaction: string) {
       }
 
       .comment-body {
+        padding: 12px;
         color: var(--text-color);
         font-size: 14px;
         line-height: 1.6;
+      }
+
+      .comment-body pre {
+        background-color: var(--bg-secondary-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 16px;
+        overflow-x: auto;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+          Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.45;
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+      .comment-body code {
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+          Consolas, monospace;
+        background: rgba(175, 184, 193, 0.2);
+        padding: .2em .4em;
+        margin: 0;
+        font-size: 85%;
+        border-radius: 6px;
+      }
+      .comment-body pre code {
+        font-size: inherit;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        margin: 0;
       }
 
       .reactions {
         display: flex;
         gap: 8px;
         margin-top: 12px;
+        padding: 0 12px 12px;
       }
 
       .reaction {
@@ -331,59 +422,25 @@ function getReactionEmoji(reaction: string) {
       .see-more-btn {
         display: inline-block;
         padding: 0.75rem 1.5rem;
-        background-color: var(--bg-secondary-color); /* Revert background */
-        color: var(--text-color); /* Adjust text color */
-        border: 1px solid var(--border-color);
+        background-color: var(--accent-color);
+        color: #fff;
+        border: none;
         border-radius: 8px;
         text-decoration: none;
-        transition: all 0.3s ease; /* Smoother transition */
+        transition: background-color 0.3s ease;
         font-size: 1rem;
         font-weight: 600;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        position: relative; /* For pseudo-elements */
-        overflow: hidden; /* Hide overflowing pseudo-elements */
-        z-index: 1;
-      }
-
-      .see-more-btn::before,
-      .see-more-btn::after {
-        content: '';
-        position: absolute;
-        background: var(--accent-color); /* Accent color for border animation */
-        transition: all 0.3s ease;
-        z-index: -1;
-      }
-
-      .see-more-btn::before {
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-      }
-
-      .see-more-btn::after {
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 2px;
-      }
-
-      .see-more-btn:hover::before,
-      .see-more-btn:hover::after {
-        width: 100%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       .see-more-btn:hover {
-        background-color: var(--bg-secondary-color); /* Keep background same on hover */
-        border-color: var(--accent-color); /* Change border color on hover */
-        transform: translateY(-2px); /* Lift effect on hover */
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        background-color: #0759b2;
       }
 
       .quoted-reply {
         border-left: 3px solid var(--border-color);
         padding-left: 12px;
-        margin-bottom: 8px;
+        margin: 12px;
         font-size: 13px;
         color: var(--text-secondary-color);
       }
@@ -407,15 +464,7 @@ function getReactionEmoji(reaction: string) {
         opacity: 0.8;
         position: relative;
       }
-      .quoted-reply blockquote::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1.5em;
-        background: linear-gradient(to bottom, transparent, var(--bg-color));
-      }
+
       .quoted-reply blockquote > *:first-child {
           margin-top: 0;
       }
@@ -439,13 +488,19 @@ function getReactionEmoji(reaction: string) {
           padding-left: 1rem;
           padding-right: 1rem;
         }
-        .notice-container { display: none; }
-        .comment-item {
-            padding-left: 0;
-            padding-right: 0;
+        .comments-list {
+          padding: 0;
         }
+        .notice-container { display: none; }
         .line-number {
             display: none;
+        }
+        .comment-item {
+            padding-left: 35px;
+        }
+        .user-avatar-link {
+            width: 28px;
+            height: 28px;
         }
       }
 
@@ -473,12 +528,16 @@ function getReactionEmoji(reaction: string) {
         <div class="pane-header">
             <h1>
                 <span>🎤</span>
-                <span>Latest Comments ({comments.length})</span>
+                <span>Latest Comments</span>
             </h1>
-            <div class="notice-container">
-                <p>欢迎留言,您的留言将会在几分钟后出现在留言板～</p>
+            <div class="header-meta">
+                <a href="/" class="home-link" title="Back to Home">← Back to Home</a>
+                <span class="comment-stats">
+                    {uniqueCommenters} commenters · {totalReplies} replies
+                </span>
+                <span class="sort-by">Sorted by: <strong>Newest</strong></span>
+                <a href={discussionsUrl} class="github-discussions-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
             </div>
-            <a href="/" class="home-link" title="Back to Home">↩️</a>
         </div>
         <div class="comments-list">
           {
@@ -486,17 +545,25 @@ function getReactionEmoji(reaction: string) {
               const repliedToComment = comment.replyToId ? commentsById.get(comment.replyToId) : null;
               return (
               <div class="comment-item" id={comment.id}>
-                <div class="line-number">{comments.length - index}</div>
-                <div class="comment-content-wrapper">
-                  <div class="comment-header">
+                <a href={comment.author.url} class="user-avatar-link" target="_blank" rel="noopener noreferrer">
                     <img
                       src={comment.author.avatarUrl}
                       alt={comment.author.login}
                       class="user-avatar"
                     />
-                    <span class="user-name">{comment.author.login}</span>
+                </a>
+                <div class={[
+                    "comment-content-wrapper",
+                    comment.author.login === "CatCodeMe" && "owner-comment"
+                  ].filter(Boolean).join(' ')}>
+                  <div class="comment-header">
+                    <a href={comment.author.url} class="user-name" target="_blank" rel="noopener noreferrer">{comment.author.login}</a>
+                    {comment.author.login === "CatCodeMe" && <span class="owner-badge">Admin</span>}
                     <span class="comment-time">
-                      {timeAgo(comment.createdAt)} ({formatDate(comment.createdAt)})
+                      {timeAgo(comment.createdAt)}
+                    </span>
+                    <span class="comment-source">
+                        on <a href={`/blog/${slugify(comment.title)}`} target="_blank">{comment.title}</a>
                     </span>
                     <a
                       href={comment.url}
@@ -514,26 +581,22 @@ function getReactionEmoji(reaction: string) {
                     </div>
                   )}
                   <div class="comment-body" set:html={comment.bodyHTML} />
-                  <div class="reactions">
-                    {comment.reactionGroups &&
-                      comment.reactionGroups.map((group: ReactionGroup) =>
-                        group.users.totalCount > 0 ? (
-                          <div class="reaction">
-                            {getReactionEmoji(group.content)}{' '}
-                            <span>{group.users.totalCount}</span>
-                          </div>
-                        ) : null
-                      )}
-                  </div>
+                  {comment.reactionGroups && comment.reactionGroups.some(g => g.users.totalCount > 0) && (
+                    <div class="reactions">
+                      {comment.reactionGroups.map((group: ReactionGroup) =>
+                          group.users.totalCount > 0 ? (
+                            <div class="reaction">
+                              {getReactionEmoji(group.content)} {' '}
+                              <span>{group.users.totalCount}</span>
+                            </div>
+                          ) : null
+                        )}
+                    </div>
+                  )}
                 </div>
               </div>
             )})
           }
-        </div>
-        <div class="see-more-container">
-            <a href={discussionsUrl} class="see-more-btn" target="_blank" rel="noopener noreferrer">
-                See more on GitHub
-            </a>
         </div>
       </div>
 
@@ -553,7 +616,6 @@ function getReactionEmoji(reaction: string) {
             data-mapping="og:title"
             data-strict="0"
             data-reactions-enabled="1"
-            data-emit-metadata="0"
             data-input-position="top"
             data-theme="light"
             data-lang="en"
@@ -577,7 +639,7 @@ function getReactionEmoji(reaction: string) {
                 // Remove highlight after a short delay
                 setTimeout(() => {
                   targetComment.classList.remove('highlighted-comment');
-                }, 2000); // 2 seconds
+                }, 3000); // 3 seconds
               }
             }
           }
@@ -602,6 +664,13 @@ function getReactionEmoji(reaction: string) {
                 applyHighlight();
               }
             }
+          });
+
+          // Highlight code blocks
+          document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.comment-body pre code').forEach((el) => {
+              hljs.highlightElement(el);
+            });
           });
         </script>
       </div>
