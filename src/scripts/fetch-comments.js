@@ -1,4 +1,8 @@
-import fs from 'fs'
+import fs from 'fs';
+
+
+
+
 
 // Correct configuration based on the provided a.json
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN_READ
@@ -276,6 +280,11 @@ async function main() {
     console.log(
       `Successfully wrote ${structuredComments.length} structured discussions to src/data/comments-structured.json`
     )
+
+    
+    console.log(JSON.stringify(allComments, null, 2))
+    console.log('\n--- Structured Comments ---')
+    console.log(JSON.stringify(structuredComments, null, 2))
 
     // --- DEBUG: Log bodyHTML for comments with code blocks ---
     const commentsWithCode = allComments.filter(comment => comment.bodyHTML.includes('<pre><code'));
