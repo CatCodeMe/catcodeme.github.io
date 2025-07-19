@@ -253,7 +253,7 @@ function getReactionEmoji(reaction: string) {
       .comment-item {
         display: flex;
         position: relative;
-        padding-left: 40px; /* Space for avatar */
+        padding-left: 40px; /* Space for avatar on desktop */
         margin-bottom: 1.5rem;
         transition: box-shadow 0.3s ease;
       }
@@ -268,6 +268,7 @@ function getReactionEmoji(reaction: string) {
         top: 0;
         width: 32px;
         height: 32px;
+        display: block; /* Show on desktop */
       }
 
       .user-avatar {
@@ -294,6 +295,10 @@ function getReactionEmoji(reaction: string) {
         flex-wrap: wrap;
       }
 
+      .comment-header .user-avatar-mobile {
+          display: none; /* Hide on desktop */
+      }
+
       .owner-comment .comment-header {
         background: #e6f2ff; /* Lighter blue for admin */
       }
@@ -317,6 +322,18 @@ function getReactionEmoji(reaction: string) {
         padding: 1px 7px;
         border-radius: 2em;
         margin-left: 4px;
+      }
+
+      @media (max-width: 768px) {
+        .owner-badge {
+          padding: 1px 5px;
+        }
+        .owner-badge::before {
+          content: 'A'; /* Compact admin indicator for mobile */
+        }
+        .owner-badge span {
+          display: none; /* Hide original text */
+        }
       }
 
       .user-name {
@@ -529,13 +546,17 @@ function getReactionEmoji(reaction: string) {
             display: none;
         }
         .comment-item {
-            padding-left: 40px; /* Adjust for avatar inside header */
+            padding-left: 10px; /* Adjust for avatar inside header */
         }
         .user-avatar-link {
-            display: block; /* Show original avatar link */
+            display: none; /* Hide original avatar link */
         }
         .comment-header .user-avatar-mobile {
-            display: none; /* Hide mobile avatar */
+            display: block; /* Show mobile avatar */
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
         .comment-source {
             display: none; /* Hide article source on mobile */
@@ -552,8 +573,8 @@ function getReactionEmoji(reaction: string) {
             margin-left: auto;
         }
         .github-link::before {
-            content: ''; /* No icon */
-            font-size: 0;
+            content: '→'; /* Arrow icon */
+            font-size: 14px;
         }
       }
 
@@ -609,8 +630,13 @@ function getReactionEmoji(reaction: string) {
                 </a>
                 <div class={comment.author.login.toLowerCase() === "catcodeme" ? "comment-content-wrapper owner-comment" : "comment-content-wrapper"}>
                   <div class="comment-header">
+                    <img
+                      src={comment.author.avatarUrl}
+                      alt={comment.author.login}
+                      class="user-avatar-mobile"
+                    />
                     <a href={comment.author.url} class="user-name" target="_blank" rel="noopener noreferrer">{comment.author.login}</a>
-                    {comment.author.login.toLowerCase() === "catcodeme" && <span class="owner-badge">Admin</span>}
+                    {comment.author.login.toLowerCase() === "catcodeme" && <span class="owner-badge"><span>Admin</span></span>}
                     <span class="comment-time">
                       {timeAgo(comment.createdAt)}
                     </span>
