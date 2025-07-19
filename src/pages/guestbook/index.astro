@@ -31,6 +31,7 @@ interface Comment {
   discussionId: string;
   isDiscussion: boolean;
   title: string;
+  sourceUrl: string | null;
 }
 
 const title = 'Guestbook';
@@ -641,7 +642,7 @@ function getReactionEmoji(reaction: string) {
                       {timeAgo(comment.createdAt)}
                     </span>
                     <span class="comment-source">
-                        on <a href={`/blog/${slugify(comment.title)}`} target="_blank">{comment.title}</a>
+                        on <a href={comment.sourceUrl || `/blog/${slugify(comment.title)}`} target="_blank">{comment.title}</a>
                     </span>
                     <a
                       href={comment.url}

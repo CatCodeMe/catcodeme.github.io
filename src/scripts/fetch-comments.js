@@ -112,7 +112,7 @@ async function fetchAllDiscussions() {
 }
 
 // 简化的递归函数，不再使用嵌套查询
-function processReplies(replies, parentId, discussionId, discussionTitle, level = 1) {
+function processReplies(replies, parentId, discussionId, discussionTitle, sourceUrl, level = 1) {
   const processedReplies = []
 
   for (const reply of replies) {
@@ -135,7 +135,8 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
       replyToId: reply.replyTo ? reply.replyTo.id : null, // 引用的评论ID
       replyToAuthor: reply.replyTo ? reply.replyTo.author.login : null, // 引用的评论作者
       level: level, // 嵌套层级
-      type: 'reply'
+      type: 'reply',
+      sourceUrl
     }
 
     processedReplies.push(processedReply)
@@ -147,6 +148,7 @@ function processReplies(replies, parentId, discussionId, discussionTitle, level 
         reply.id,
         discussionId,
         discussionTitle,
+        sourceUrl,
         level + 1
       )
       processedReplies.push(...childReplies)
@@ -165,6 +167,13 @@ async function main() {
         return []
       }
 
+      // Extract source URL from discussion body
+      let sourceUrl = null
+      const match = discussion.bodyHTML.match(/<a href="([^"]+)">/)
+      if (match && match[1]) {
+        sourceUrl = match[1]
+      }
+
       // Map the main discussion post
       const mainComment = {
         id: discussion.id,
@@ -180,7 +189,8 @@ async function main() {
         replyToId: null,
         replyToAuthor: null,
         level: 0,
-        type: 'discussion'
+        type: 'discussion',
+        sourceUrl
       }
 
       // 处理顶级评论
@@ -200,7 +210,8 @@ async function main() {
           replyToId: comment.replyTo ? comment.replyTo.id : null,
           replyToAuthor: comment.replyTo ? comment.replyTo.author.login : null,
           level: 1,
-          type: 'comment'
+          type: 'comment',
+          sourceUrl
         }))
 
       // 处理所有嵌套回复
@@ -211,6 +222,7 @@ async function main() {
             comment.id,
             discussion.id,
             discussion.title,
+            sourceUrl,
             2
           )
         }
