@@ -171,7 +171,7 @@ function getReactionEmoji(reaction: string) {
         justify-content: space-between;
         align-items: center;
         font-size: 1.5rem;
-        margin: 0 1.5rem 1.5rem 1.5rem;
+        margin: 0 1.5rem 0.5rem 1.5rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid var(--border-color);
         gap: 1rem;
@@ -207,6 +207,14 @@ function getReactionEmoji(reaction: string) {
       .sort-by strong {
         color: var(--text-color);
         font-weight: 600;
+      }
+
+      .action-links {
+        display: flex;
+        justify-content: space-between; /* Distribute items to ends */
+        gap: 1rem;
+        padding: 0 1.5rem;
+        margin-bottom: 1.5rem;
       }
 
       .home-link,
@@ -287,7 +295,7 @@ function getReactionEmoji(reaction: string) {
       }
 
       .owner-comment .comment-header {
-        background: #f0f6fc;
+        background: #e6f2ff; /* Lighter blue for admin */
       }
 
       .owner-comment .user-name,
@@ -488,6 +496,31 @@ function getReactionEmoji(reaction: string) {
           padding-left: 1rem;
           padding-right: 1rem;
         }
+        .pane-header {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 1rem;
+        }
+        .pane-header h1 {
+          font-size: 1.2rem;
+        }
+        .header-meta {
+          flex-wrap: wrap;
+          justify-content: center;
+          font-size: 12px;
+        }
+        .action-links {
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0 1rem;
+          margin-bottom: 1rem;
+        }
+        .home-link,
+        .github-discussions-link {
+          font-size: 12px;
+          padding: 3px 6px;
+        }
         .comments-list {
           padding: 0;
         }
@@ -496,11 +529,31 @@ function getReactionEmoji(reaction: string) {
             display: none;
         }
         .comment-item {
-            padding-left: 35px;
+            padding-left: 40px; /* Adjust for avatar inside header */
         }
         .user-avatar-link {
-            width: 28px;
-            height: 28px;
+            display: block; /* Show original avatar link */
+        }
+        .comment-header .user-avatar-mobile {
+            display: none; /* Hide mobile avatar */
+        }
+        .comment-source {
+            display: none; /* Hide article source on mobile */
+        }
+        .github-link {
+            font-size: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            margin-left: auto;
+        }
+        .github-link::before {
+            content: ''; /* No icon */
+            font-size: 0;
         }
       }
 
@@ -531,13 +584,15 @@ function getReactionEmoji(reaction: string) {
                 <span>Latest Comments</span>
             </h1>
             <div class="header-meta">
-                <a href="/" class="home-link" title="Back to Home">← Back to Home</a>
                 <span class="comment-stats">
                     {uniqueCommenters} commenters · {totalReplies} replies
                 </span>
                 <span class="sort-by">Sorted by: <strong>Newest</strong></span>
-                <a href={discussionsUrl} class="github-discussions-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
             </div>
+        </div>
+        <div class="action-links">
+            <a href="/" class="home-link" title="Back to Home">← Back to Home</a>
+            <a href={discussionsUrl} class="github-discussions-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
         </div>
         <div class="comments-list">
           {
@@ -552,13 +607,10 @@ function getReactionEmoji(reaction: string) {
                       class="user-avatar"
                     />
                 </a>
-                <div class={[
-                    "comment-content-wrapper",
-                    comment.author.login === "CatCodeMe" && "owner-comment"
-                  ].filter(Boolean).join(' ')}>
+                <div class={comment.author.login.toLowerCase() === "catcodeme" ? "comment-content-wrapper owner-comment" : "comment-content-wrapper"}>
                   <div class="comment-header">
                     <a href={comment.author.url} class="user-name" target="_blank" rel="noopener noreferrer">{comment.author.login}</a>
-                    {comment.author.login === "CatCodeMe" && <span class="owner-badge">Admin</span>}
+                    {comment.author.login.toLowerCase() === "catcodeme" && <span class="owner-badge">Admin</span>}
                     <span class="comment-time">
                       {timeAgo(comment.createdAt)}
                     </span>

@@ -171,7 +171,7 @@ export const integ: IntegrationUserConfig = {
     repoId: 'R_kgDOLTuIuQ', // 仓库 ID
     category: 'General', // 分类名
     categoryId: 'DIC_kwDOLTuIuc4Csz7O',
-    mapping: 'og:title', // 评论关联方式
+    mapping: 'pathname', // 评论关联方式
     strict: '0',
     reactionsEnabled: '1',
     emitMetadata: '0',
