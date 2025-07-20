@@ -121,7 +121,7 @@ function processReplies(replies, parentId, discussionId, discussionTitle, source
 
   for (const reply of replies) {
     // Filter out bot comments
-    if (reply.author && reply.author.login.endsWith('[bot]')) {
+    if (reply.author && reply.author.login.endsWith('giscus')) {
       continue
     }
 
@@ -171,11 +171,20 @@ async function main() {
         return []
       }
 
-      // Extract source URL from discussion body
+      // Determine source URL for the discussion
       let sourceUrl = null
-      const match = discussion.bodyHTML.match(/<a href="([^"]+)">/)
-      if (match && match[1]) {
-        sourceUrl = match[1]
+      // First, try to find a giscus comment and use its author.url
+      const giscusComment = discussion.comments.nodes.find(
+        (comment) => comment.author && comment.author.login === 'giscus'
+      )
+      if (giscusComment && giscusComment.author && giscusComment.author.url) {
+        sourceUrl = giscusComment.author.url
+      } else {
+        // Fallback: Extract source URL from discussion body
+        const match = discussion.bodyHTML.match(/<a href="([^"]+)">/)
+        if (match && match[1]) {
+          sourceUrl = match[1]
+        }
       }
 
       // Map the main discussion post

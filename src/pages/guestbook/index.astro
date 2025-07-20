@@ -71,6 +71,8 @@ function slugify(text: string) {
 const totalReplies = comments.filter(c => c.type === 'reply').length;
 const uniqueCommenters = new Set(comments.map(c => c.author.login)).size;
 
+console.log("comments", comments);
+
 function getReactionEmoji(reaction: string) {
   const a = {
     THUMBS_UP: '👍',
