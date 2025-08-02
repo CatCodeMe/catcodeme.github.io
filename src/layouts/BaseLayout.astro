@@ -1,5 +1,4 @@
 ---
-import { Mermaid } from '@/custom/components/advanced'
 import { Footer, Header, ThemeProvider } from '@/custom/components/basic'
 
 import type { SiteMeta } from 'astro-pure/types'
@@ -13,6 +12,7 @@ import '@/assets/styles/callout.css'
 import '@/assets/styles/expressive-code.css'
 import '@/assets/styles/inner-link.css'
 import '@/assets/styles/external-link.css'
+import '@/assets/styles/ai-notice.css'
 
 interface Props {
   meta: SiteMeta
@@ -45,7 +45,6 @@ const {
     <div class='w-full max-w-[70rem] px-4 sm:px-7 lg:px-10'>
       <Header />
       <slot />
-      <Mermaid />
       <Footer />
     </div>
 
@@ -61,6 +60,6 @@ const {
         ) !important;
       }
     </style>
-    <script defer src='https://events.vercount.one/js'></script>
+    <script is:inline defer src='https://events.vercount.one/js'></script>
   </body>
 </html>

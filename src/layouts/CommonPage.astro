@@ -18,7 +18,7 @@ interface Props {
 const { title, headings, info, ...props } = Astro.props
 ---
 
-<PageLayout meta={{ title }} {...props}>
+<PageLayout meta={{ title }} {...props} hasToc={!!headings?.length}>
   {headings?.length && <TOC headings={headings} slot='sidebar' />}
 
   <Fragment slot='header'>

@@ -15,6 +15,9 @@
     "strictNullChecks": true,
     // Paths
     "paths": {
+      "@/*": [
+        "src/*"
+      ],
       "@/assets/*": [
         "src/assets/*"
       ],
@@ -41,6 +44,9 @@
       ],
       "@/site-config": [
         "src/site.config.ts"
+      ],
+      "@/data/*": [
+        "src/data/*"
       ],
       "@/custom/components/*": [
         "packages/pure/components/*"

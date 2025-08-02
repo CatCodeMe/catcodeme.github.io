@@ -1,14 +1,15 @@
 .external-link {
   position: relative;
-  color: hsl(var(--primary));
+  /* color: hsl(var(--primary)); */
   display: inline-flex;
   align-items: center;
   gap: 0.2em;
   text-decoration: none;
-  padding: 0.1em 0.3em;
+  /* padding: 0.1em 0.3em;
   margin: -0.1em -0.3em;
-  border-radius: 0.2em;
+  border-radius: 0.2em; */
   transition: all 0.2s ease;
+  border-bottom: dashed;
 }
 
 .external-link::after {
@@ -23,10 +24,10 @@
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
 }
 
-.external-link:hover {
+/* .external-link:hover {
   background-color: hsl(var(--primary) / 0.1);
   box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2);
-}
+} */
 
 /* 特定网站的图标样式保持不变 */
 .external-link[href*="github.com"]::after {

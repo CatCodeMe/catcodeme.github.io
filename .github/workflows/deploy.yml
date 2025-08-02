@@ -7,15 +7,19 @@ on:
   workflow_run:
     workflows: [build, deploy]
     branches: [astro-pure-v4_0_3]
+  discussion:
+    types: [created, edited, deleted]
+  discussion_comment:
+    types: [created, edited, deleted] 
+
+concurrency:
+  group: "pages-deploy"  # 全局统一组名,避免频繁评论频繁触发, 确保同一时间只有一个部署任务运行
+  cancel-in-progress: true  # 新触发时取消旧任务
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   setup:
@@ -59,6 +63,11 @@ jobs:
 
       - name: Install Dependencies
         run: bun install
+
+      - name: Fetch Giscus comments
+        run: node src/scripts/fetch-comments.js
+        env:
+          GITHUB_TOKEN_READ: ${{ secrets.gh_action_token_PAT }}
 
       - name: Build Production
         run: bun run build

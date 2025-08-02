@@ -184,7 +184,7 @@ const showToastStr = showToast.toString()
   </a>
 </div>
 
-<script define:vars={{ redirect_from, showToastStr }}>
+<script is:inline define:vars={{ redirect_from, showToastStr }}>
   // 在客户端重建 showToast 函数
   const showToast = new Function(`return ${showToastStr}`)()
 

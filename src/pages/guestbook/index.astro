@@ -1,0 +1,760 @@
+---
+import comments from '@/data/comments.json';
+import siteConfig from '@/site.config.ts';
+import BaseHead from '@/components/BaseHead.astro';
+import { Image } from 'astro:assets';
+
+// Define types for comments and reaction groups
+interface ReactionGroup {
+  content: string;
+  users: {
+    totalCount: number;
+  };
+}
+
+interface Comment {
+  id: string;
+  url: string;
+  createdAt: string;
+  author: {
+    login: string;
+    avatarUrl: string;
+    url: string;
+  };
+  bodyHTML: string;
+  reactionGroups?: ReactionGroup[]; // Optional as it might not always be present
+  parentId: string | null;
+  replyToId: string | null;
+  replyToAuthor: string | null;
+  level: number;
+  type: string;
+  discussionId: string;
+  isDiscussion: boolean;
+  title: string;
+  sourceUrl: string | null;
+}
+
+const title = 'Guestbook';
+const description = 'A collection of all comments, styled like VS Code.';
+
+const commentsById = new Map(comments.map((c: Comment) => [c.id, c]));
+
+const discussionsUrl = `https://github.com/${siteConfig.integ.giscus?.repo}/discussions`;
+
+// Helper function to format time ago
+function timeAgo(dateString: string | number | Date) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.round((now.getTime() - date.getTime()) / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+
+  if (seconds < 60) return `${seconds}s ago`;
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
+}
+
+
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
+}
+
+const totalReplies = comments.filter(c => c.type === 'reply').length;
+const uniqueCommenters = new Set(comments.map(c => c.author.login)).size;
+
+console.log("comments", comments);
+
+function getReactionEmoji(reaction: string) {
+  const a = {
+    THUMBS_UP: '👍',
+    THUMBS_DOWN: '👎',
+    LAUGH: '😄',
+    HOORAY: '🎉',
+    CONFUSED: '😕',
+    HEART: '❤️',
+    ROCKET: '🚀',
+    EYES: '👀',
+  };
+  return a[reaction as keyof typeof a] || '？';
+}
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={title} description={description} ogImage='/images/guest-book.png' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+      :root {
+        --accent-color: #0969da;
+        --text-color: #24292f;
+        --text-secondary-color: #656d76;
+        --bg-color: #ffffff;
+        --bg-secondary-color: #f6f8fa;
+        --border-color: #d1d9e0;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: var(--bg-secondary-color);
+        color: var(--text-color);
+        overflow: hidden;
+      }
+
+      .guestbook-container {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        background: var(--bg-color);
+      }
+
+      .comments-pane,
+      .giscus-pane {
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .comments-pane {
+        width: 60%;
+        padding-top: 1.5rem;
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+
+      .comments-pane::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
+      }
+
+      .giscus-pane {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .giscus-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1.5rem; /* Space between image and Giscus */
+      }
+
+      .giscus-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .giscus-comments-container {
+        flex-grow: 1; /* Giscus takes remaining space */
+        padding: 1.5rem;
+      }
+
+      .pane-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5rem;
+        margin: 0 1.5rem 0.5rem 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+        gap: 1rem;
+      }
+
+      .pane-header h1 {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-shrink: 0;
+      }
+
+      .header-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 13px;
+        color: var(--text-secondary-color);
+      }
+
+      .comment-stats {
+        white-space: nowrap;
+      }
+
+      .sort-by {
+        white-space: nowrap;
+      }
+
+      .sort-by strong {
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      .action-links {
+        display: flex;
+        justify-content: space-between; /* Distribute items to ends */
+        gap: 1rem;
+        padding: 0 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .home-link,
+      .github-discussions-link {
+        font-size: 13px;
+        text-decoration: none;
+        color: var(--text-secondary-color);
+        transition: color 0.2s;
+        border: 1px solid var(--border-color);
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+
+      .home-link:hover,
+      .github-discussions-link:hover {
+        color: var(--accent-color);
+        border-color: var(--accent-color);
+      }
+
+      .notice-container {
+        flex-grow: 1;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text-secondary-color);
+        font-size: 0.9rem;
+        padding: 0 1rem;
+      }
+
+      .comments-list {
+        flex-grow: 1;
+        padding: 1.5rem 1.5rem 0;
+      }
+
+      .comment-item {
+        display: flex;
+        position: relative;
+        padding-left: 40px; /* Space for avatar on desktop */
+        margin-bottom: 1.5rem;
+        transition: box-shadow 0.3s ease;
+      }
+
+      .comment-item.highlighted-comment .comment-content-wrapper {
+        border: 2px solid var(--accent-color);
+      }
+
+      .user-avatar-link {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        display: block; /* Show on desktop */
+      }
+
+      .user-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      .comment-content-wrapper {
+        flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--bg-color);
+      }
+
+      .comment-header {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--bg-secondary-color);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 6px 6px 0 0;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .comment-header .user-avatar-mobile {
+          display: none; /* Hide on desktop */
+      }
+
+      .owner-comment .comment-header {
+        background: #e6f2ff; /* Lighter blue for admin */
+      }
+
+      .owner-comment .user-name,
+      .owner-comment .comment-time,
+      .owner-comment .comment-source a,
+      .owner-comment .github-link {
+        color: var(--text-secondary-color);
+      }
+
+      .owner-comment .user-name {
+        color: var(--text-color);
+      }
+
+      .owner-badge {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-secondary-color);
+        border: 1px solid var(--border-color);
+        padding: 1px 7px;
+        border-radius: 2em;
+        margin-left: 4px;
+      }
+
+      @media (max-width: 768px) {
+        .owner-badge {
+          padding: 1px 5px;
+        }
+        .owner-badge::before {
+          content: 'A'; /* Compact admin indicator for mobile */
+        }
+        .owner-badge span {
+          display: none; /* Hide original text */
+        }
+      }
+
+      .user-name {
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .comment-time {
+        color: var(--text-secondary-color);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .comment-source {
+        font-size: 12px;
+        color: var(--text-secondary-color);
+      }
+
+      .comment-source a {
+        color: var(--text-secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .comment-source a:hover {
+        text-decoration: underline;
+      }
+
+      .github-link {
+        color: var(--text-secondary-color);
+        text-decoration: none;
+        font-size: 12px;
+        margin-left: auto;
+        transition: color 0.2s;
+        white-space: nowrap;
+      }
+
+      .github-link:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+      }
+
+      .comment-body {
+        padding: 12px;
+        color: var(--text-color);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .comment-body pre {
+        background-color: var(--bg-secondary-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 16px;
+        overflow-x: auto;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+          Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.45;
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+      .comment-body code {
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono',
+          Consolas, monospace;
+        background: rgba(175, 184, 193, 0.2);
+        padding: .2em .4em;
+        margin: 0;
+        font-size: 85%;
+        border-radius: 6px;
+      }
+      .comment-body pre code {
+        font-size: inherit;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        margin: 0;
+      }
+
+      .reactions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 0 12px 12px;
+      }
+
+      .reaction {
+        background: var(--bg-secondary-color);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 4px 8px;
+        font-size: 12px;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+
+      .reaction:hover {
+        border-color: var(--accent-color);
+      }
+
+      .see-more-container {
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .see-more-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--accent-color);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .see-more-btn:hover {
+        background-color: #0759b2;
+      }
+
+      .quoted-reply {
+        border-left: 3px solid var(--border-color);
+        padding-left: 12px;
+        margin: 12px;
+        font-size: 13px;
+        color: var(--text-secondary-color);
+      }
+      .quoted-reply p {
+        margin-bottom: 4px;
+      }
+      .quoted-reply a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+      .quoted-reply a:hover {
+        text-decoration: underline;
+      }
+      .quoted-reply blockquote {
+        margin: 0;
+        padding: 0;
+        border: none;
+        max-height: 7em; /* Limit height of quoted text */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0.8;
+        position: relative;
+      }
+
+      .quoted-reply blockquote > *:first-child {
+          margin-top: 0;
+      }
+      .quoted-reply blockquote > *:last-child {
+          margin-bottom: 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .guestbook-container {
+          flex-direction: column;
+        }
+        .comments-pane,
+        .giscus-pane {
+          width: 100%;
+          height: 50vh; /* Split height on mobile */
+        }
+        .comments-pane {
+          border-right: none;
+          border-bottom: 1px solid var(--border-color);
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        .pane-header {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-bottom: 1rem;
+        }
+        .pane-header h1 {
+          font-size: 1.2rem;
+        }
+        .header-meta {
+          flex-wrap: wrap;
+          justify-content: center;
+          font-size: 12px;
+        }
+        .action-links {
+          flex-direction: column;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0 1rem;
+          margin-bottom: 1rem;
+        }
+        .home-link,
+        .github-discussions-link {
+          font-size: 12px;
+          padding: 3px 6px;
+        }
+        .comments-list {
+          padding: 0;
+        }
+        .notice-container { display: none; }
+        .line-number {
+            display: none;
+        }
+        .comment-item {
+            padding-left: 10px; /* Adjust for avatar inside header */
+        }
+        .user-avatar-link {
+            display: none; /* Hide original avatar link */
+        }
+        .comment-header .user-avatar-mobile {
+            display: block; /* Show mobile avatar */
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .comment-source {
+            display: none; /* Hide article source on mobile */
+        }
+        .github-link {
+            font-size: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            margin-left: auto;
+        }
+        .github-link::before {
+            content: '→'; /* Arrow icon */
+            font-size: 14px;
+        }
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-secondary-color);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d9e0;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #b1bac4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="guestbook-container">
+      <!-- Left Pane: All Comments -->
+      <div class="comments-pane">
+        <div class="pane-header">
+            <h1>
+                <span>🎤</span>
+                <span>Latest Comments</span>
+            </h1>
+            <div class="header-meta">
+                <span class="comment-stats">
+                    {uniqueCommenters} commenters · {totalReplies} replies
+                </span>
+                <span class="sort-by">Sorted by: <strong>Newest</strong></span>
+            </div>
+        </div>
+        <div class="action-links">
+            <a href="/" class="home-link" title="Back to Home">← Back to Home</a>
+            <a href={discussionsUrl} class="github-discussions-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="comments-list">
+          {
+            comments.map((comment: Comment, index: number) => {
+              const repliedToComment = comment.replyToId ? commentsById.get(comment.replyToId) : null;
+              return (
+              <div class="comment-item" id={comment.id}>
+                <a href={comment.author.url} class="user-avatar-link" target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={comment.author.avatarUrl}
+                      alt={comment.author.login}
+                      class="user-avatar"
+                    />
+                </a>
+                <div class={comment.author.login.toLowerCase() === "catcodeme" ? "comment-content-wrapper owner-comment" : "comment-content-wrapper"}>
+                  <div class="comment-header">
+                    <img
+                      src={comment.author.avatarUrl}
+                      alt={comment.author.login}
+                      class="user-avatar-mobile"
+                    />
+                    <a href={comment.author.url} class="user-name" target="_blank" rel="noopener noreferrer">{comment.author.login}</a>
+                    {comment.author.login.toLowerCase() === "catcodeme" && <span class="owner-badge"><span>Admin</span></span>}
+                    <span class="comment-time">
+                      {timeAgo(comment.createdAt)}
+                    </span>
+                    <span class="comment-source">
+                        on <a href={comment.sourceUrl || `/blog/${slugify(comment.title)}`} target="_blank">{comment.title}</a>
+                    </span>
+                    <a
+                      href={comment.url}
+                      class="github-link"
+                      target="_blank"
+                      rel="noopener noreferrer">View on GitHub</a
+                    >
+                  </div>
+                  { repliedToComment && (
+                    <div class="quoted-reply">
+                      <p>
+                        Replying to <a href={`#${repliedToComment.id}`}>@{comment.replyToAuthor}</a>
+                      </p>
+                      <blockquote set:html={repliedToComment.bodyHTML} />
+                    </div>
+                  )}
+                  <div class="comment-body" set:html={comment.bodyHTML} />
+                  {comment.reactionGroups && comment.reactionGroups.some(g => g.users.totalCount > 0) && (
+                    <div class="reactions">
+                      {comment.reactionGroups.map((group: ReactionGroup) =>
+                          group.users.totalCount > 0 ? (
+                            <div class="reaction">
+                              {getReactionEmoji(group.content)} {' '}
+                              <span>{group.users.totalCount}</span>
+                            </div>
+                          ) : null
+                        )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )})
+          }
+        </div>
+      </div>
+
+      <!-- Right Pane: Giscus -->
+      <div class="giscus-pane">
+        <div class="giscus-image-container">
+          <Image src="/images/guest-book.png" alt="Guest Book @8cat.life" width={1200} height={630} />
+        </div>
+        <div class="giscus-comments-container">
+          <script
+            is:inline
+            src="https://giscus.app/client.js"
+            data-repo="CatCodeMe/catcodeme.github.io"
+            data-repo-id="R_kgDOLTuIuQ"
+            data-category="General"
+            data-category-id="DIC_kwDOLTuIuc4Csz7O"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-input-position="top"
+            data-theme="light"
+            data-lang="en"
+            crossorigin="anonymous"
+            async
+          >
+          </script>
+        </div>
+        <script is:inline>
+          function applyHighlight() {
+            const hash = window.location.hash.substring(1);
+            document.querySelectorAll('.comment-item.highlighted-comment').forEach(el => {
+              el.classList.remove('highlighted-comment');
+            });
+            if (hash) {
+              const targetComment = document.getElementById(hash);
+              if (targetComment) {
+                targetComment.classList.add('highlighted-comment');
+                // Optional: Scroll into view smoothly if not already in view
+                targetComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Remove highlight after a short delay
+                setTimeout(() => {
+                  targetComment.classList.remove('highlighted-comment');
+                }, 3000); // 3 seconds
+              }
+            }
+          }
+
+          // Apply highlight on initial load if hash is present
+          document.addEventListener('DOMContentLoaded', applyHighlight);
+          // Apply highlight when hash changes (e.g., clicking a reply link)
+          window.addEventListener('hashchange', applyHighlight);
+
+          // Listen for clicks on internal anchor links within the comments list
+          document.addEventListener('click', (event) => {
+            const target = event.target;
+            // Check if the clicked element is an anchor tag within a .quoted-reply and its href starts with '#'
+            if (target.tagName === 'A' && target.closest('.quoted-reply') && target.getAttribute('href')?.startsWith('#')) {
+              const hash = target.getAttribute('href');
+              if (hash && window.location.hash !== hash) { // Only update if hash is different to avoid unnecessary history entries
+                event.preventDefault(); // Prevent default browser jump
+                window.location.hash = hash; // Manually update hash, which should trigger hashchange
+              } else if (hash && window.location.hash === hash) {
+                // If clicking the same hash, hashchange won't fire, so manually apply highlight
+                event.preventDefault(); // Prevent default browser jump
+                applyHighlight();
+              }
+            }
+          });
+
+          // Highlight code blocks
+          document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.comment-body pre code').forEach((el) => {
+              hljs.highlightElement(el);
+            });
+          });
+        </script>
+      </div>
+    </div>
+  </body>
+</html>

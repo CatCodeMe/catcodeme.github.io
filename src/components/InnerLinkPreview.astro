@@ -161,7 +161,9 @@
     bindEvents() {
       document.addEventListener('mouseover', (e: MouseEvent) => {
         // 检查链接是否在 main 标签内
-        const link = (e.target as HTMLElement)?.closest('article a.inner-link') as HTMLAnchorElement | null
+        const link = (e.target as HTMLElement)?.closest(
+          'article a.inner-link'
+        ) as HTMLAnchorElement | null
         if (!link) return
 
         // 忽略预览窗口内的链接
@@ -182,7 +184,8 @@
             if (e.ctrlKey || e.metaKey) return
 
             e.preventDefault()
-            window.location.href = href
+            const secureHref = href.replace('http://', 'https://');
+            window.location.href = secureHref;
           },
           { once: true }
         ) // 使用 once 选项确保事件监听器在触发后被移除
@@ -227,10 +230,11 @@
       if (!href) return
 
       this.clearTimers()
-      this.currentHref = href
+      const secureHref = href.replace('http://', 'https://');
+      this.currentHref = secureHref;
 
       if (this.gotoButton) {
-        this.gotoButton.onclick = () => (window.location.href = href)
+        this.gotoButton.onclick = () => (window.location.href = secureHref)
       }
 
       const title = link.getAttribute('title') || link.textContent || href
@@ -240,10 +244,10 @@
 
       this.showPreviewTimer = setTimeout(async () => {
         try {
-          const isExternalLink = !href.startsWith(window.location.origin) && !href.startsWith('/')
+          const isExternalLink = !secureHref.startsWith(window.location.origin) && !secureHref.startsWith('/')
           if (isExternalLink) return
 
-          let contentHtml = await this.getPreviewContent(href)
+          const contentHtml = await this.getPreviewContent(secureHref)
           if (!contentHtml) return
 
           if (this.currentTarget === link && this.content) {
@@ -305,6 +309,20 @@
         removeSelectors.forEach((selector) => {
           mainContent.querySelectorAll(selector).forEach((el) => el.remove())
         })
+
+        // Sanitize fetched HTML: replace http:// with https:// for internal links
+        const elementsWithUrls = mainContent.querySelectorAll('[src^="http://"], [href^="http://"]');
+        elementsWithUrls.forEach(el => {
+          if (el instanceof HTMLImageElement || el instanceof HTMLScriptElement) {
+            if (el.src.startsWith('http://') && el.src.includes(window.location.hostname)) {
+              el.src = el.src.replace('http://', 'https://');
+            }
+          } else if (el instanceof HTMLLinkElement || el instanceof HTMLAnchorElement) {
+            if (el.href.startsWith('http://') && el.href.includes(window.location.hostname)) {
+              el.href = el.href.replace('http://', 'https://');
+            }
+          }
+        });
 
         // 转换 mermaid 类名
         mainContent.querySelectorAll('pre.mermaid').forEach((el: Element) => {
@@ -425,14 +443,16 @@
 
     setupThemeObserver() {
       // 监听系统主题变化
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e: MediaQueryListEvent) => {
-        if (document.documentElement.dataset.theme === 'system') {
-          await this.initializeMermaid()
-          if (this.content) {
-            await this.renderMermaidDiagrams(this.content)
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', async () => {
+          if (document.documentElement.dataset.theme === 'system') {
+            await this.initializeMermaid()
+            if (this.content) {
+              await this.renderMermaidDiagrams(this.content)
+            }
           }
-        }
-      })
+        })
 
       // 监听主题切换
       const observer = new MutationObserver(async (mutations: MutationRecord[]) => {
