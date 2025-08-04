@@ -81,7 +81,7 @@ export const IntegrationConfigSchema = () =>
       /** Input position, e.g. 'bottom' */
       inputPosition: z.string().default('bottom'),
       /** Theme, e.g. 'light', 'dark', 'preferred_color_scheme' */
-      theme: z.string().default('preferred_color_scheme'),
+          theme: z.union([z.string(), z.object({ light: z.string(), dark: z.string() })]),
       /** Language, e.g. 'zh-CN' */
       lang: z.string().default('zh-CN')
     }).optional()

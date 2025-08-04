@@ -31,6 +31,7 @@ const createFontSubsetIntegration = () => {
       'astro:build:done': async ({ dir }) => {
         const projectRoot = process.cwd();
         const contentDir = path.join(projectRoot, 'src', 'content');
+        const pagesDir = path.join(projectRoot, 'src', 'pages');
         const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf');
         const outputDir = fileURLToPath(new URL('./fonts', dir));
         const outputPath = path.join(outputDir, 'crjk-subset');
@@ -46,7 +47,7 @@ const createFontSubsetIntegration = () => {
             if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
               arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
             } else {
-              if (file.endsWith('.md') || file.endsWith('.mdx')) {
+              if (file.endsWith('.md') || file.endsWith('.mdx') || file.endsWith('.astro')) {
                 arrayOfFiles.push(path.join(dirPath, file));
               }
             }
@@ -54,8 +55,12 @@ const createFontSubsetIntegration = () => {
           return arrayOfFiles;
         }
 
-        const allFiles = getAllFiles(contentDir);
-        let allText = '';
+        const contentFiles = getAllFiles(contentDir);
+        const pagesFiles = getAllFiles(pagesDir);
+        const allFiles = [...contentFiles, ...pagesFiles];
+
+        const noticeTextForSubsetting = 'AI-Assisted Content This article is AI-assisted, and the author has strived for accuracy. Please use with discretion. Posted today Posted 1 day ago Posted {days} days ago 本文由AI辅助生成，作者已尽力确保内容准确，请谨慎参考 发布于今天 发布于 1 天前 发布于 {days} 天前';
+        let allText = noticeTextForSubsetting;
         allFiles.forEach((file) => {
           allText += fs.readFileSync(file, 'utf-8');
         });
