@@ -1,20 +1,6 @@
 /* Font */
-@font-face {
-  /* 汉仪唐美人*/
-  font-family: HYTMR;
-  font-display: swap;
-  src: url(https://npm.elemecdn.com/fontcdn-ariasaka@1.0.0/HYTangMeiRen55W.woff2) format("woff2")
-}
-
-/* @font-face {
-  font-family: Monaco;
-  font-display: swap;
-  src: url(https://cdn1.tianli0.top/npm/fontcdn-ariasaka@1.0.0/MONACO.TTF) format("truetype")
-} */
-
-
 html {
-  font-family: 'HYTMR', sans-serif;
+  font-family: 'Crjk', sans-serif;
 }
 
 /* Theme */

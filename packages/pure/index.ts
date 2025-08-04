@@ -76,7 +76,7 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         updateConfig({
           vite: {
             // @ts-ignore
-            plugins: [vitePluginUserConfig(userConfig, config)]
+            plugins: [vitePluginUserConfig(userConfig, config), ...config.vite.plugins || []]
           },
           markdown: {
             remarkPlugins,

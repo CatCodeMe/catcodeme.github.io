@@ -176,7 +176,7 @@ export const integ: IntegrationUserConfig = {
     reactionsEnabled: '1',
     emitMetadata: '0',
     inputPosition: 'top',
-    theme: 'preferred_color_scheme', // 可选: light, dark, transparent_dark, preferred_color_scheme
+    theme: 'noborder_light', // 可选: light, dark, transparent_dark, preferred_color_scheme
     lang: 'en'
   }
 }

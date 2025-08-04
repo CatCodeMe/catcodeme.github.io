@@ -1,74 +1,75 @@
 ---
-import config from '../site.config';
-const giscus = config.integ.giscus;
+import config from '../site.config'
+
+const giscus = config.integ.giscus
 ---
 
-{giscus && giscus.enable && (
-  <div class="giscus-container">
-    <script is:inline src="https://giscus.app/client.js"
-      data-repo={giscus.repo}
-      data-repo-id={giscus.repoId}
-      data-category={giscus.category}
-      data-category-id={giscus.categoryId}
-      data-mapping={giscus.mapping || 'pathname'}
-      data-strict={giscus.strict || '0'}
-      data-reactions-enabled={giscus.reactionsEnabled || '1'}
-      data-emit-metadata={giscus.emitMetadata || '0'}
-      data-input-position={giscus.inputPosition || 'top'}
-      data-theme="auto"
-      data-lang={giscus.lang || 'zh-CN'}
-      data-loading="lazy"
-      crossorigin="anonymous"
-      async>
-    </script>
-  </div>
-)}
+{
+  giscus && giscus.enable && (
+    <div class='giscus-container'>
+      <script
+        is:inline
+        src='https://giscus.app/client.js'
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+        data-mapping={giscus.mapping || 'pathname'}
+        data-strict={giscus.strict || '0'}
+        data-reactions-enabled={giscus.reactionsEnabled || '1'}
+        data-emit-metadata={giscus.emitMetadata || '0'}
+        data-input-position={giscus.inputPosition || 'top'}
+        data-theme={giscus.theme || 'auto'}
+        data-lang={giscus.lang || 'zh-CN'}
+        data-loading='lazy'
+        crossorigin='anonymous'
+        async
+      />
+    </div>
+  )
+}
 
 <script is:inline>
   // 可靠的主题同步方案 v2
-  (() => {
+  ;(() => {
     const getEffectiveTheme = () => {
-      const root = document.documentElement;
-      const theme = root.getAttribute('data-theme');
+      const root = document.documentElement
+      const theme = root.getAttribute('data-theme')
 
       if (theme === 'system') {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       }
-      return theme || 'light';
-    };
+      return theme || 'light'
+    }
 
     const updateGiscus = (attempt = 0) => {
-      const iframe = document.querySelector('iframe.giscus-frame');
+      const iframe = document.querySelector('iframe.giscus-frame')
       if (!iframe) {
-        if (attempt < 10) setTimeout(() => updateGiscus(attempt + 1), 300);
-        return;
+        if (attempt < 10) setTimeout(() => updateGiscus(attempt + 1), 300)
+        return
       }
 
       iframe.contentWindow.postMessage(
         { giscus: { setConfig: { theme: getEffectiveTheme() } } },
         'https://giscus.app'
-      );
-    };
+      )
+    }
 
     // 监听 data-theme 变化
-    new MutationObserver(() => updateGiscus())
-      .observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['data-theme']
-      });
+    new MutationObserver(() => updateGiscus()).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    })
 
     // 监听系统主题变化（当 data-theme="system" 时）
-    window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => {
-        if (document.documentElement.getAttribute('data-theme') === 'system') {
-          updateGiscus();
-        }
-      });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (document.documentElement.getAttribute('data-theme') === 'system') {
+        updateGiscus()
+      }
+    })
 
     // 初始化
-    document.addEventListener('DOMContentLoaded', updateGiscus);
-    window.addEventListener('load', updateGiscus);
-  })();
+    document.addEventListener('DOMContentLoaded', updateGiscus)
+    window.addEventListener('load', updateGiscus)
+  })()
 </script>

@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Crjk';
+  src: url('/fonts/crjk-subset.woff2') format('woff2'),
+       url('/fonts/crjk-subset.woff') format('woff'),
+       url('/fonts/crjk-subset.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Animation */
 @keyframes fade-in-up {
   0% {
