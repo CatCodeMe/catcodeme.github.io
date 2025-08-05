@@ -225,7 +225,12 @@
         // Construct a full URL from a relative path, ensuring it uses the page's origin.
         const url = new URL(rawHref, window.location.origin);
         // Force HTTPS protocol to prevent mixed content issues in production.
-        url.protocol = 'https:';
+        url.protocol = 'https';
+
+        // Ensure trailing slash to prevent server-side redirects to http.
+        if (!url.pathname.endsWith('/') && !url.pathname.split('/').pop()?.includes('.')) {
+            url.pathname += '/';
+        }
         
         return url.href;
     }
