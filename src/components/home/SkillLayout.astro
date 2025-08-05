@@ -13,7 +13,6 @@ interface Props {
 
 const { title, skills } = Astro.props
 
-// 处理技能项，支持字符串或对象格式
 const normalizedSkills = skills.map((skill) => {
   if (typeof skill === 'string') {
     return { name: skill, icon: '' }

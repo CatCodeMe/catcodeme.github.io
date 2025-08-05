@@ -1,13 +1,5 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
-
-
-
 import type { CardListData } from 'astro-pure/types';
-
-
-
-
-
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
   /** Title for your website. Will be used in metadata and as browser tab title. */
