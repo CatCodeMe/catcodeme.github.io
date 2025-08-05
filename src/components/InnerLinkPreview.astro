@@ -1,745 +1,497 @@
-<script is:inline src='https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 
 <div
-  id='linkpreview'
-  class='hidden fixed z-50 w-full max-w-2xl bg-background border rounded-lg shadow-lg overflow-hidden'
+  id="linkpreview"
+  class="hidden fixed z-50 w-full max-w-2xl bg-background border rounded-lg shadow-lg overflow-hidden"
 >
-  <div class='preview-header flex items-center justify-between p-2 border-b bg-muted/40'>
-    <div class='preview-title text-sm font-medium flex-1 px-2'></div>
-    <div class='flex gap-4'>
-      <button class='preview-pin p-1 rounded hover:bg-muted' title='Pin preview'>
-        <svg class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+  <div class="preview-header flex items-center justify-between p-2 border-b bg-muted/40">
+    <div class="preview-title text-sm font-medium flex-1 px-2"></div>
+    <div class="flex gap-4">
+      <button class="preview-pin p-1 rounded hover:bg-muted" title="Pin preview">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path
-            d='M12 2L12 16M12 16L7 11M12 16L17 11M22 22H2'
-            stroke-linecap='round'
-            stroke-linejoin='round'></path>
+            d="M12 2L12 16M12 16L7 11M12 16L17 11M22 22H2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
         </svg>
       </button>
-      <button class='preview-goto p-1 rounded hover:bg-muted'>
-        <svg class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
+      <button class="preview-goto p-1 rounded hover:bg-muted" title="Go to link">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path
-            d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3'
-            stroke-linecap='round'
-            stroke-linejoin='round'></path>
+            d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
         </svg>
       </button>
-      <button class='preview-close p-1 rounded hover:bg-muted'>
-        <svg class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
-          <path d='M18 6L6 18M6 6l12 12' stroke-linecap='round' stroke-linejoin='round'></path>
+      <button class="preview-close p-1 rounded hover:bg-muted" title="Close preview">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
       </button>
     </div>
   </div>
-  <div class='preview-content max-h-[70vh] overflow-y-auto p-4'></div>
-  <!-- 右下角拖拽手柄 -->
-  <div class='resize-handle resize-handle-se absolute bottom-0 right-0 w-20 h-6 cursor-se-resize'>
+  <div class="preview-content max-h-[70vh] overflow-y-auto p-4"></div>
+  <!-- Resize Handles -->
+  <div class="resize-handle resize-handle-se absolute bottom-0 right-0 w-20 h-6 cursor-se-resize">
     <svg
-      class='absolute bottom-1 right-1 w-4 h-4'
-      viewBox='0 0 16 16'
-      fill='none'
-      stroke='currentColor'
-      stroke-width='1.5'
+      class="absolute bottom-1 right-1 w-4 h-4"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
     >
-      <path d='M8 8L14 14M14 8L14 14L8 14' stroke-linecap='round' stroke-linejoin='round'></path>
+      <path d="M8 8L14 14M14 8L14 14L8 14" stroke-linecap="round" stroke-linejoin="round"></path>
     </svg>
   </div>
-
-  <!-- 右侧拖拽手柄 -->
   <div
-    class='resize-handle resize-handle-e absolute right-[-8px] top-[10%] w-4 h-[80%] cursor-e-resize'
-  >
-  </div>
+    class="resize-handle resize-handle-e absolute right-[-8px] top-[10%] w-4 h-[80%] cursor-e-resize"
+  ></div>
 </div>
 
 <script>
   declare global {
     interface Window {
-      mermaid: any
+      mermaid: any;
     }
   }
 
   class LinkPreview {
-    private tooltip: HTMLElement | null = null
-    private header: HTMLElement | null = null
-    private content: HTMLElement | null = null
-    private pinButton: HTMLButtonElement | null = null
-    private closeButton: HTMLButtonElement | null = null
-    private gotoButton: HTMLButtonElement | null = null
-    private currentHref: string = ''
-    private showPreviewTimer: ReturnType<typeof setTimeout> | null = null
-    private hidePreviewTimer: ReturnType<typeof setTimeout> | null = null
-    private isPinned: boolean = false
-    private isDragging: boolean = false
-    private dragOffset: { x: number; y: number } = { x: 0, y: 0 }
-    private isResizing: boolean = false
-    private resizeDirection: string = ''
-    private resizeHandles: HTMLElement[] = []
-    private titleElement: HTMLElement | null = null
-    private readonly MAX_CACHE_SIZE: number = 10
-    private cachedContent: Map<string, string> = new Map<string, string>()
-    private currentTarget: HTMLAnchorElement | null = null
-    private mousePosition: { x: number; y: number } = { x: 0, y: 0 }
-    private isMouseOverTooltip: boolean = false
-    private readonly HIDE_THRESHOLD: number = 100 // 鼠标离开链接的阈值距离
+    private tooltip: HTMLElement | null = null;
+    private header: HTMLElement | null = null;
+    private content: HTMLElement | null = null;
+    private pinButton: HTMLButtonElement | null = null;
+    private closeButton: HTMLButtonElement | null = null;
+    private gotoButton: HTMLButtonElement | null = null;
+    private titleElement: HTMLElement | null = null;
+    private resizeHandles: HTMLElement[] = [];
+
+    private currentHref: string = '';
+    private currentTarget: HTMLAnchorElement | null = null;
+    private showPreviewTimer: ReturnType<typeof setTimeout> | null = null;
+    private hidePreviewTimer: ReturnType<typeof setTimeout> | null = null;
+
+    private isPinned: boolean = false;
+    private isDragging: boolean = false;
+    private dragOffset = { x: 0, y: 0 };
+    private isResizing: boolean = false;
+    private resizeDirection: string = '';
+
+    private readonly MAX_CACHE_SIZE: number = 10;
+    private cachedContent: Map<string, string> = new Map<string, string>();
 
     constructor() {
-      if (window.matchMedia('(max-width: 768px)').matches) return
+      if (window.matchMedia('(max-width: 768px)').matches) return;
 
-      // 移除滚动条宽度计算相关代码
-      this.initializeElements()
-      this.bindEvents()
-      this.setupControls()
-      this.setupDragging()
-      this.setupResize()
-      this.setupThemeObserver()
-      this.initializeMermaid()
+      this.initializeElements();
+      this.bindEvents();
+      this.setupControls();
+      this.setupDragging();
+      this.setupResize();
+      this.setupThemeObserver();
+      this.initializeMermaid();
     }
 
-    initializeElements() {
-      this.tooltip = document.querySelector('#linkpreview')
-      if (!this.tooltip) return
+    private initializeElements() {
+      this.tooltip = document.querySelector('#linkpreview');
+      if (!this.tooltip) return;
 
-      this.header = this.tooltip.querySelector('.preview-header')
-      this.content = this.tooltip.querySelector('.preview-content')
-      this.pinButton = this.tooltip.querySelector('.preview-pin')
-      this.closeButton = this.tooltip.querySelector('.preview-close')
-      this.gotoButton = this.tooltip.querySelector('.preview-goto')
-      this.resizeHandles = Array.from(this.tooltip.querySelectorAll('.resize-handle'))
-      this.titleElement = this.tooltip.querySelector('.preview-title')
+      this.header = this.tooltip.querySelector('.preview-header');
+      this.content = this.tooltip.querySelector('.preview-content');
+      this.pinButton = this.tooltip.querySelector('.preview-pin');
+      this.closeButton = this.tooltip.querySelector('.preview-close');
+      this.gotoButton = this.tooltip.querySelector('.preview-goto');
+      this.titleElement = this.tooltip.querySelector('.preview-title');
+      this.resizeHandles = Array.from(this.tooltip.querySelectorAll('.resize-handle'));
 
-      // 添加预览窗口的鼠标进入/离开事件
-      this.tooltip.addEventListener('mouseenter', () => {
-        this.isMouseOverTooltip = true
-      })
-
-      this.tooltip.addEventListener('mouseleave', () => {
-        this.isMouseOverTooltip = false
-        this.checkShouldHide()
-      })
+      this.tooltip.addEventListener('mouseenter', () => this.clearTimers());
+      this.tooltip.addEventListener('mouseleave', () => this.hidePreview());
     }
 
-    checkShouldHide() {
-      if (this.isPinned) return
-      if (!this.currentTarget) return
-      if (!this.tooltip || this.tooltip.classList.contains('hidden')) return
-
-      const targetRect = this.currentTarget.getBoundingClientRect()
-      const tooltipRect = this.tooltip.getBoundingClientRect()
-
-      // 检查鼠标是否在原始链接的范围内
-      const isOverTarget =
-        this.mousePosition.x >= targetRect.left &&
-        this.mousePosition.x <= targetRect.right &&
-        this.mousePosition.y >= targetRect.top &&
-        this.mousePosition.y <= targetRect.bottom
-
-      // 检查鼠标是否在预览窗口的范围内
-      const isOverTooltip =
-        this.mousePosition.x >= tooltipRect.left &&
-        this.mousePosition.x <= tooltipRect.right &&
-        this.mousePosition.y >= tooltipRect.top &&
-        this.mousePosition.y <= tooltipRect.bottom
-
-      // 计算鼠标到原始链接中心的距离
-      const targetCenter = {
-        x: targetRect.left + targetRect.width / 2,
-        y: targetRect.top + targetRect.height / 2
-      }
-
-      const distance = Math.sqrt(
-        Math.pow(this.mousePosition.x - targetCenter.x, 2) +
-          Math.pow(this.mousePosition.y - targetCenter.y, 2)
-      )
-
-      // 只有当鼠标既不在原始链接上，也不在预览窗口上，
-      // 且距离原始链接中心超过阈值时，才隐藏预览
-      if (!isOverTarget && !isOverTooltip && distance > this.HIDE_THRESHOLD) {
-        this.hidePreview()
-      }
-    }
-
-    bindEvents() {
+    private bindEvents() {
       document.addEventListener('mouseover', (e: MouseEvent) => {
-        // 检查链接是否在 main 标签内
         const link = (e.target as HTMLElement)?.closest(
           'article a.inner-link'
-        ) as HTMLAnchorElement | null
-        if (!link) return
+        ) as HTMLAnchorElement | null;
 
-        // 忽略预览窗口内的链接
-        if (this.tooltip && this.tooltip.contains(link)) return
+        if (!link || (this.tooltip && this.tooltip.contains(link))) return;
+        if (!this.isPinned && link === this.currentTarget) return;
 
-        // 非 pin 状态下，相同链接不重复显示
-        if (!this.isPinned && link === this.currentTarget) return
+        const href = this._getSafeUrl(link);
+        if (!href) return;
 
-        // 忽略外部链接
-        const href = link.href
-        if (!href || (!href.startsWith(window.location.origin) && !href.startsWith('/'))) return
+        this.currentTarget = link;
+        this.currentHref = href;
 
-        // 阻止默认的链接点击行为
-        link.addEventListener(
-          'click',
-          (e: MouseEvent) => {
-            // 如果按住了 Ctrl/Command 键，使用默认行为（新标签页打开）
-            if (e.ctrlKey || e.metaKey) return
+        this.clearTimers();
+        this.showPreviewTimer = setTimeout(() => this.showLinkPreview(e), 200);
+      });
 
-            e.preventDefault()
-            const secureHref = href.replace('http://', 'https://');
-            window.location.href = secureHref;
-          },
-          { once: true }
-        ) // 使用 once 选项确保事件监听器在触发后被移除
-
-        this.currentTarget = link
-        this.showLinkPreview(e)
-      })
+      document.addEventListener('mouseout', (e: MouseEvent) => {
+        const link = (e.target as HTMLElement)?.closest('article a.inner-link');
+        if (link && link === this.currentTarget) {
+          this.hidePreview();
+        }
+      });
     }
 
-    setupControls() {
+    private setupControls() {
       this.pinButton?.addEventListener('click', () => {
-        this.isPinned = !this.isPinned
-        this.pinButton?.classList.toggle('text-primary', this.isPinned)
-        this.tooltip?.classList.toggle('pinned', this.isPinned)
-      })
+        this.isPinned = !this.isPinned;
+        this.pinButton?.classList.toggle('text-primary', this.isPinned);
+        this.tooltip?.classList.toggle('pinned', this.isPinned);
+      });
 
       this.closeButton?.addEventListener('click', () => {
-        this.tooltip?.classList.add('hidden')
-        this.currentTarget = null
-        this.isPinned = false
-        this.tooltip?.classList.remove('pinned')
-        this.pinButton?.classList.remove('text-primary')
-      })
+        this.tooltip?.classList.add('hidden');
+        this.currentTarget = null;
+        this.isPinned = false;
+        this.tooltip?.classList.remove('pinned');
+        this.pinButton?.classList.remove('text-primary');
+      });
 
       this.gotoButton?.addEventListener('click', () => {
         if (this.currentHref) {
-          window.location.href = this.currentHref
+          window.location.href = this.currentHref;
         }
-      })
+      });
     }
 
-    clearTimers() {
-      if (this.showPreviewTimer) clearTimeout(this.showPreviewTimer)
-      if (this.hidePreviewTimer) clearTimeout(this.hidePreviewTimer)
+    private clearTimers() {
+      if (this.showPreviewTimer) clearTimeout(this.showPreviewTimer);
+      if (this.hidePreviewTimer) clearTimeout(this.hidePreviewTimer);
     }
 
-    async showLinkPreview(e: MouseEvent) {
-      const link = this.currentTarget
-      if (!link) return
+    private async showLinkPreview(e: MouseEvent) {
+      if (!this.currentTarget) return;
 
-      const href = link.href
-      if (!href) return
-
-      this.clearTimers()
-      const secureHref = href.replace('http://', 'https://');
-      this.currentHref = secureHref;
-
-      if (this.gotoButton) {
-        this.gotoButton.onclick = () => (window.location.href = secureHref)
-      }
-
-      const title = link.getAttribute('title') || link.textContent || href
+      const title = this.currentTarget.getAttribute('title') || this.currentTarget.textContent || this.currentHref;
       if (this.titleElement) {
-        this.titleElement.textContent = title
+        this.titleElement.textContent = title;
       }
 
-      this.showPreviewTimer = setTimeout(async () => {
-        try {
-          const isExternalLink = !secureHref.startsWith(window.location.origin) && !secureHref.startsWith('/')
-          if (isExternalLink) return
+      try {
+        const contentHtml = await this.getPreviewContent(this.currentHref);
+        if (!contentHtml || !this.content) return;
 
-          const contentHtml = await this.getPreviewContent(secureHref)
-          if (!contentHtml) return
+        // Only show if the mouse is still over the same link
+        if (this.currentTarget === e.target) {
+            this.content.style.opacity = '0';
+            this.content.innerHTML = contentHtml;
 
-          if (this.currentTarget === link && this.content) {
-            this.content.style.opacity = '0'
-            this.content.innerHTML = contentHtml
-
-            this.tooltip?.classList.remove('hidden')
-            // 移除 preview-active 类的添加
+            this.tooltip?.classList.remove('hidden');
             if (!this.isPinned) {
-              this.positionPreview(e.target as HTMLElement)
+              this.positionPreview(e.target as HTMLElement);
             }
 
-            // 初始化并渲染 mermaid 图表
-            await this.initializeMermaid()
-            await this.renderMermaidDiagrams(this.content)
+            await this.initializeMermaid();
+            await this.renderMermaidDiagrams(this.content);
 
             requestAnimationFrame(() => {
-              if (this.content) {
-                this.content.style.opacity = '1'
-              }
-            })
-          }
-        } catch (error) {
-          console.error('Failed to load preview:', error)
+              if (this.content) this.content.style.opacity = '1';
+            });
         }
-      }, 200)
+      } catch (error) {
+        console.error('Failed to load preview:', error);
+      }
     }
 
-    hidePreview() {
-      if (this.isPinned) return
+    private hidePreview() {
+      if (this.isPinned) return;
 
-      this.clearTimers()
+      this.clearTimers();
       this.hidePreviewTimer = setTimeout(() => {
-        this.tooltip?.classList.add('hidden')
-        // 移除 preview-active 类的移除
-        this.currentTarget = null
-        this.isMouseOverTooltip = false
-      }, 100)
+        if (this.tooltip?.matches(':hover')) return;
+        this.tooltip?.classList.add('hidden');
+        this.currentTarget = null;
+      }, 100);
+    }
+
+    /**
+     * Gets the original href and constructs a full URL with HTTPS protocol.
+     * This is the key fix for the mixed content issue.
+     */
+    private _getSafeUrl(link: HTMLAnchorElement): string | null {
+        const rawHref = link.getAttribute('href');
+        if (!rawHref) return null;
+
+        // For external links, return as is.
+        if (rawHref.startsWith('http')) {
+            // You might want to add logic here to decide if you preview external links
+            return rawHref;
+        }
+
+        // Construct a full URL from a relative path, ensuring it uses the page's origin.
+        const url = new URL(rawHref, window.location.origin);
+        // Force HTTPS protocol to prevent mixed content issues in production.
+        url.protocol = 'https:';
+        
+        return url.href;
     }
 
     private async getPreviewContent(href: string): Promise<string | null> {
-      // 检查缓存
       if (this.cachedContent.has(href)) {
-        // 移动到缓存末尾（最近使用）
-        const content = this.cachedContent.get(href) as string
-        this.cachedContent.delete(href)
-        this.cachedContent.set(href, content)
-        return content
+        const content = this.cachedContent.get(href)!;
+        this.cachedContent.delete(href);
+        this.cachedContent.set(href, content);
+        return content;
       }
 
-      const response = await fetch(href)
-      const html = await response.text()
-      const doc = new DOMParser().parseFromString(html, 'text/html')
-      const mainContent = doc.querySelector('main')
+      try {
+        const response = await fetch(href);
+        if (!response.ok) return null;
 
-      if (mainContent) {
-        // 移除不需要的元素
-        const removeSelectors = ['#sidebar']
-        removeSelectors.forEach((selector) => {
-          mainContent.querySelectorAll(selector).forEach((el) => el.remove())
-        })
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const mainContent = doc.querySelector('main');
 
-        // Sanitize fetched HTML: replace http:// with https:// for internal links
-        const elementsWithUrls = mainContent.querySelectorAll('[src^="http://"], [href^="http://"]');
-        elementsWithUrls.forEach(el => {
-          if (el instanceof HTMLImageElement || el instanceof HTMLScriptElement) {
-            if (el.src.startsWith('http://') && el.src.includes(window.location.hostname)) {
-              el.src = el.src.replace('http://', 'https://');
-            }
-          } else if (el instanceof HTMLLinkElement || el instanceof HTMLAnchorElement) {
-            if (el.href.startsWith('http://') && el.href.includes(window.location.hostname)) {
-              el.href = el.href.replace('http://', 'https://');
-            }
+        if (mainContent) {
+          mainContent.querySelectorAll('#sidebar, .page-header, .page-footer').forEach((el) => el.remove());
+
+          mainContent.querySelectorAll('pre.mermaid').forEach((el: Element) => {
+            el.classList.remove('mermaid');
+            el.classList.add('popover-mermaid');
+          });
+
+          const contentHtml = mainContent.innerHTML;
+
+          if (this.cachedContent.size >= this.MAX_CACHE_SIZE) {
+            const oldestKey = this.cachedContent.keys().next().value;
+            this.cachedContent.delete(oldestKey);
           }
-        });
-
-        // 转换 mermaid 类名
-        mainContent.querySelectorAll('pre.mermaid').forEach((el: Element) => {
-          el.classList.remove('mermaid')
-          el.classList.add('popover-mermaid')
-          const wrapper = el.closest('.mermaid-wrapper')
-          if (wrapper) {
-            wrapper.replaceWith(el)
-          }
-        })
-
-        const contentHtml = mainContent.innerHTML
-
-        // 检查缓存大小，如果达到最大值则删除最旧的条目
-        if (this.cachedContent.size >= this.MAX_CACHE_SIZE) {
-          const firstKey = this.cachedContent.keys().next().value
-          if (firstKey) {
-            this.cachedContent.delete(firstKey)
-          }
+          this.cachedContent.set(href, contentHtml);
+          return contentHtml;
         }
-
-        // 添加新内容到缓存
-        this.cachedContent.set(href, contentHtml)
-        return contentHtml
+      } catch (error) {
+          console.error(`Failed to fetch content from ${href}`, error);
+          return `<p class="text-red-500">Failed to load preview.</p>`;
       }
 
-      return null
+
+      return null;
     }
 
     private positionPreview(target: HTMLElement) {
-      if (!this.tooltip) return
-      const rect = target.getBoundingClientRect()
-      const tooltipRect = this.tooltip.getBoundingClientRect()
+      if (!this.tooltip) return;
+      const rect = target.getBoundingClientRect();
+      const tooltipRect = this.tooltip.getBoundingClientRect();
 
-      let x = rect.left
-      let y = rect.bottom + 10
+      let x = rect.left;
+      let y = rect.bottom + 10;
 
-      // 确保预览窗口在视口内
       if (x + tooltipRect.width > window.innerWidth) {
-        x = window.innerWidth - tooltipRect.width - 10
+        x = window.innerWidth - tooltipRect.width - 10;
       }
       if (y + tooltipRect.height > window.innerHeight) {
-        y = rect.top - tooltipRect.height - 10
+        y = rect.top - tooltipRect.height - 10;
       }
 
-      x = Math.max(10, x)
-      y = Math.max(10, y)
-
-      Object.assign(this.tooltip.style, {
-        left: `${x}px`,
-        top: `${y}px`
-      })
+      this.tooltip.style.left = `${Math.max(10, x)}px`;
+      this.tooltip.style.top = `${Math.max(10, y)}px`;
     }
 
-    setupDragging() {
+    private setupDragging() {
       this.header?.addEventListener('mousedown', (e: MouseEvent) => {
-        if (e.button !== 0) return
-        this.isDragging = true
-        const rect = this.tooltip?.getBoundingClientRect()
+        if (e.button !== 0) return;
+        this.isDragging = true;
+        const rect = this.tooltip?.getBoundingClientRect();
         if (rect) {
-          this.dragOffset = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-          }
+          this.dragOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
         }
-        if (this.header) {
-          this.header.style.cursor = 'grabbing'
-        }
-      })
+        if (this.header) this.header.style.cursor = 'grabbing';
+      });
 
       document.addEventListener('mousemove', (e: MouseEvent) => {
-        if (!this.isDragging || !this.tooltip) return
-        const x = e.clientX - this.dragOffset.x
-        const y = e.clientY - this.dragOffset.y
-        Object.assign(this.tooltip.style, { left: `${x}px`, top: `${y}px` })
-      })
+        if (!this.isDragging || !this.tooltip) return;
+        const x = e.clientX - this.dragOffset.x;
+        const y = e.clientY - this.dragOffset.y;
+        this.tooltip.style.left = `${x}px`;
+        this.tooltip.style.top = `${y}px`;
+      });
 
       document.addEventListener('mouseup', () => {
-        this.isDragging = false
-        if (this.header) {
-          this.header.style.cursor = 'grab'
-        }
-      })
+        this.isDragging = false;
+        if (this.header) this.header.style.cursor = 'grab';
+      });
     }
 
-    setupResize() {
+    private setupResize() {
       this.resizeHandles.forEach((handle: HTMLElement) => {
         handle.addEventListener('mousedown', (e: MouseEvent) => {
-          if (e.button !== 0) return
-          e.preventDefault()
-          this.isResizing = true
-          this.resizeDirection = handle.className.includes('se')
-            ? 'se'
-            : handle.className.includes('e')
-              ? 'e'
-              : 's'
-        })
-      })
+          if (e.button !== 0) return;
+          e.preventDefault();
+          this.isResizing = true;
+          this.resizeDirection = handle.className.includes('se') ? 'se' : 'e';
+        });
+      });
 
       document.addEventListener('mousemove', (e: MouseEvent) => {
-        if (!this.isResizing || !this.tooltip) return
-        const rect = this.tooltip.getBoundingClientRect()
+        if (!this.isResizing || !this.tooltip) return;
+        const rect = this.tooltip.getBoundingClientRect();
 
         if (this.resizeDirection.includes('e')) {
-          const width = e.clientX - rect.left
-          this.tooltip.style.width = `${Math.max(200, width)}px`
+          const width = e.clientX - rect.left;
+          this.tooltip.style.width = `${Math.max(300, width)}px`;
         }
         if (this.resizeDirection.includes('s')) {
-          const height = e.clientY - rect.top
-          this.tooltip.style.height = `${Math.max(100, height)}px`
+          const height = e.clientY - rect.top;
+          this.tooltip.style.height = `${Math.max(200, height)}px`;
         }
-      })
+      });
 
-      document.addEventListener('mouseup', () => {
-        this.isResizing = false
-      })
+      document.addEventListener('mouseup', () => (this.isResizing = false));
     }
 
-    setupThemeObserver() {
-      // 监听系统主题变化
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', async () => {
-          if (document.documentElement.dataset.theme === 'system') {
-            await this.initializeMermaid()
-            if (this.content) {
-              await this.renderMermaidDiagrams(this.content)
-            }
-          }
-        })
-
-      // 监听主题切换
-      const observer = new MutationObserver(async (mutations: MutationRecord[]) => {
-        for (const mutation of mutations) {
-          if (mutation.attributeName === 'data-theme') {
-            await this.initializeMermaid()
-            if (this.content) {
-              await this.renderMermaidDiagrams(this.content)
-            }
-          }
+    private setupThemeObserver() {
+      const themeObserver = new MutationObserver(async (mutations) => {
+        if (mutations.some((m) => m.attributeName === 'data-theme')) {
+          await this.initializeMermaid();
+          if (this.content) await this.renderMermaidDiagrams(this.content);
         }
-      })
-
-      observer.observe(document.documentElement, {
+      });
+      themeObserver.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ['data-theme']
-      })
+        attributeFilter: ['data-theme'],
+      });
     }
 
-    async initializeMermaid() {
+    private async initializeMermaid() {
       if (window.mermaid) {
-        const theme = document.documentElement.dataset.theme
-        const isDark =
-          theme === 'system'
-            ? window.matchMedia('(prefers-color-scheme: dark)').matches
-            : theme === 'dark'
-
+        const theme = document.documentElement.dataset.theme;
+        const isDark = theme === 'system' ? window.matchMedia('(prefers-color-scheme: dark)').matches : theme === 'dark';
         await window.mermaid.initialize({
           startOnLoad: false,
           theme: isDark ? 'dark' : 'default',
-          darkMode: isDark
-        })
+        });
       }
     }
 
-    async renderMermaidDiagrams(container: HTMLElement) {
-      if (!window.mermaid) return
-
-      const diagrams = container.querySelectorAll('pre.popover-mermaid')
+    private async renderMermaidDiagrams(container: HTMLElement) {
+      if (!window.mermaid) return;
+      const diagrams = container.querySelectorAll('pre.popover-mermaid');
       for (const element of Array.from(diagrams)) {
         try {
-          // 检查元素是否已经被渲染成 SVG
-          if (element.querySelector('svg')) {
-            // 如果已经是 SVG，清除内容重新渲染
-            element.innerHTML = element.getAttribute('data-diagram') || element.textContent || ''
-          } else {
-            // 存储原始图表定义
-            element.setAttribute('data-diagram', element.textContent || '')
+          const diagramContent = element.getAttribute('data-diagram') || element.textContent || '';
+          if (!diagramContent) continue;
+          
+          // Store original content if not already stored
+          if (!element.hasAttribute('data-diagram')) {
+              element.setAttribute('data-diagram', diagramContent);
           }
+          
+          // Clear previous render and restore original text content
+          element.innerHTML = diagramContent;
+          element.removeAttribute('data-processed');
 
-          // 移除之前的处理标记
-          element.removeAttribute('data-processed')
-          // 运行 mermaid 渲染
-          await window.mermaid.run({
-            nodes: [element]
-          })
+          await window.mermaid.run({ nodes: [element] });
         } catch (error) {
-          console.error('Mermaid rendering error:', error)
-          // 渲染失败时恢复原始内容
-          element.innerHTML = element.getAttribute('data-diagram') || element.textContent || ''
+          console.error('Mermaid rendering error:', error);
+          // Restore original content on failure
+          element.innerHTML = element.getAttribute('data-diagram') || '';
         }
       }
     }
   }
 
-  // 初始化
-  new LinkPreview()
-
-  // 添加相应的 CSS
-  const style = document.createElement('style')
-  style.textContent = `
-    #linkpreview {
-      transition: opacity 0.2s ease;
-    }
-    
-    #linkpreview .preview-content {
-      transition: opacity 0.2s ease;
-    }
-
-    #linkpreview.pinned {
-      box-shadow: 0 0 0 2px hsl(var(--primary));
-    }
-  `
-  document.head.appendChild(style)
+  new LinkPreview();
 </script>
 
 <style>
-  .preview-header {
-    cursor: move;
+  /* --- Base Styles --- */
+  #linkpreview {
+    transition: opacity 0.2s ease;
+  }
+  #linkpreview .preview-content {
+    transition: opacity 0.2s ease;
+  }
+  #linkpreview.pinned {
+    box-shadow: 0 0 0 2px hsl(var(--primary));
+    z-index: 51;
   }
 
+  /* --- Header & Controls --- */
+  .preview-header {
+    cursor: grab;
+  }
+  .preview-pin {
+    transition: transform 0.2s ease;
+  }
+  .preview-pin.text-primary {
+    transform: rotate(45deg);
+  }
+  .preview-pin.text-primary svg {
+    stroke: hsl(var(--primary));
+    fill: hsl(var(--primary));
+  }
+
+  /* --- Resize Handles --- */
   .resize-handle {
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease-in-out;
+    position: absolute;
   }
-
-  .resize-handle-se {
-    opacity: 1;
-    transition: background-color 0.2s;
-  }
-
-  #linkpreview:hover .resize-handle {
-    opacity: 1;
-  }
-
-  .resize-handle-e {
-    background-color: hsl(var(--background));
-    border: 1px solid hsl(var(--border));
-    border-left: none;
-    border-radius: 0 4px 4px 0;
-  }
-
-  .resize-handle-se:hover {
-    background-color: rgb(0 0 0 / 0.1);
-  }
-
-  .resize-handle-se svg {
-    color: hsl(var(--muted-foreground));
-  }
-
-  /* 右下角拖拽区域的hover效果 */
-  .resize-handle-se:hover {
-    background: linear-gradient(
-      135deg,
-      transparent 0%,
-      transparent 75%,
-      hsl(var(--muted) / 0.1) 75%,
-      hsl(var(--muted) / 0.1) 100%
-    );
-  }
-
   #linkpreview:hover .resize-handle {
     opacity: 0.5;
   }
-
   .resize-handle:hover {
     opacity: 1 !important;
   }
-
-  .resize-handle::after {
-    content: '';
+  .resize-handle-se {
+    cursor: se-resize;
+    width: 20px;
+    height: 20px;
+    bottom: 0;
+    right: 0;
+  }
+  .resize-handle-se svg {
+    color: hsl(var(--muted-foreground));
     position: absolute;
-    background: currentColor;
-    opacity: 0.5;
+    bottom: 2px;
+    right: 2px;
+    width: 1rem;
+    height: 1rem;
   }
-
-  .resize-handle-e::after {
-    left: 50%;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    transform: translateX(-50%);
-  }
-
-  /* .resize-handle-se::after {
-    left: 50%;
-    top: 50%;
+  .resize-handle-e {
+    cursor: e-resize;
     width: 8px;
-    height: 8px;
-    transform: translate(-50%, -50%) rotate(45deg);
-  } */
-
-  /* .preview-content :global(.mermaid-wrapper) {
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.5rem;
-    margin: 1rem 0;
-  } */
-
-  .preview-content :global(.mermaid-container) {
-    padding: 1rem;
+    height: 80%;
+    top: 10%;
+    right: -4px;
+    border-right: 2px solid hsl(var(--border));
   }
 
-  /* 添加 Mermaid 预览样式 */
-  #linkpreview :global(.popover-mermaid) {
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow: hidden;
-  }
-
-  #linkpreview :global(.popover-mermaid svg) {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* 添加预览内容的滚动样式 */
-  .preview-content {
-    max-height: calc(80vh - 3rem); /* 预留标题栏高度 */
-    overflow-y: auto;
-    padding: 1rem;
-  }
-
-  /* 当预览窗口显示时禁用背景滚动 */
-  :global(body.preview-active) {
-    overflow: hidden;
-  }
-
-  /* 防止滚动条导致页面抖动 */
-  :global(html) {
-    scrollbar-gutter: stable;
-  }
-
-  /* 当预览窗口显示时禁用背景滚动，但保持滚动条位置 */
-  :global(body.preview-active) {
-    overflow: hidden;
-    /* 移除 padding-right: var(--scrollbar-width) */
-  }
-
-  /* 添加平滑过渡效果 */
-  :global(body) {
-    transition: padding-right 0.2s ease;
-  }
-
-  /* 优化预览窗口边框 */
-  #linkpreview {
-    border: 1px solid hsl(var(--border));
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
-  }
-
-  /* 优化预览内容区域 */
+  /* --- Content & Scrollbar --- */
   .preview-content {
     max-height: calc(80vh - 3rem);
     overflow-y: auto;
     padding: 1rem;
-    /* 自定义滚动条样式 */
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted-foreground)) transparent;
   }
-
   .preview-content::-webkit-scrollbar {
     width: 6px;
   }
-
   .preview-content::-webkit-scrollbar-track {
     background: transparent;
   }
-
   .preview-content::-webkit-scrollbar-thumb {
     background-color: hsl(var(--muted-foreground));
     border-radius: 3px;
   }
 
-  /* Pin 按钮激活状态 */
-  .preview-pin.text-primary svg {
-    fill: hsl(var(--primary));
+  /* --- Mermaid Diagram Styles --- */
+  #linkpreview :global(.popover-mermaid) {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow: auto;
   }
-
-  /* 当预览窗口显示且非 pin 状态时添加遮罩层 */
-  :global(body.preview-active::after) {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: transparent;
-    z-index: 49; /* 比预览窗口低一级 */
-    pointer-events: auto; /* 拦截所有点击事件 */
-  }
-
-  /* pin 状态时的样式 */
-  #linkpreview.pinned {
-    box-shadow: 0 0 0 2px hsl(var(--primary));
-    z-index: 51; /* 确保在遮罩层之上 */
-  }
-
-  /* 预览窗口基础样式 */
-  #linkpreview {
-    z-index: 50;
-    transition: opacity 0.2s ease;
-  }
-
-  /* Pin 按钮样式优化 */
-  .preview-pin {
-    transition: transform 0.2s ease;
-  }
-
-  .preview-pin.text-primary {
-    transform: rotate(180deg);
-  }
-
-  .preview-pin.text-primary svg {
-    stroke: hsl(var(--primary));
+  #linkpreview :global(.popover-mermaid svg) {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
   }
 </style>
