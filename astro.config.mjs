@@ -5,7 +5,6 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
-import redircetFrom from 'astro-redirect-from';
 import { defineConfig } from 'astro/config';
 import fontCarrier from 'font-carrier';
 
@@ -104,22 +103,22 @@ export default defineConfig({
   },
 
   integrations: [
-    redircetFrom({
-      contentDir: './src/content',
-      getSlug: (filePath) => {
-        const parsedPath = path.parse(filePath)
-        let slug
-        // construct slug as full path from either:
-        // - folder name if file name is index.md, or
-        // - file name
-        if (parsedPath.base === 'index.md' || parsedPath.base === 'index.mdx') {
-          slug = `${parsedPath.dir}`
-        } else {
-          slug = `${parsedPath.dir}/${parsedPath.name}`
-        }
-        return slug
-      }
-    }),
+    // redircetFrom({
+    //   contentDir: './src/content',
+    //   getSlug: (filePath) => {
+    //     const parsedPath = path.parse(filePath)
+    //     let slug
+    //     // construct slug as full path from either:
+    //     // - folder name if file name is index.md, or
+    //     // - file name
+    //     if (parsedPath.base === 'index.md' || parsedPath.base === 'index.mdx') {
+    //       slug = `${parsedPath.dir}`
+    //     } else {
+    //       slug = `${parsedPath.dir}/${parsedPath.name}`
+    //     }
+    //     return slug
+    //   }
+    // }),
     expressiveCode(),
     icon({
       include: {
