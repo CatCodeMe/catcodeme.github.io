@@ -258,7 +258,9 @@
 
           if (this.cachedContent.size >= this.MAX_CACHE_SIZE) {
             const oldestKey = this.cachedContent.keys().next().value;
-            this.cachedContent.delete(oldestKey);
+            if (oldestKey) {
+              this.cachedContent.delete(oldestKey);
+            }
           }
           this.cachedContent.set(href, contentHtml);
           return contentHtml;
