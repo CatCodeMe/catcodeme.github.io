@@ -45,15 +45,11 @@ export function setTheme(theme?: string, save = false) {
   }
 
   // The View Transitions API is used here to animate the theme change.
-  // @ts-expect-error: The View Transitions API is not yet in the default TypeScript library.
   if (document.startViewTransition) {
     const x = window.innerWidth // Start from top-right corner
     const y = 0 // Start from top-right corner
     const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
-
-    // @ts-expect-error: The View Transitions API is not yet in the default TypeScript library.
     const transition = document.startViewTransition(applyTheme)
-
     transition.ready.then(() => {
       document.documentElement.animate(
         {
