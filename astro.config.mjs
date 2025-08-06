@@ -3,15 +3,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
-import expressiveCode from 'astro-expressive-code';
+// import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import fontCarrier from 'font-carrier';
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
-import rehypeKatex from 'rehype-katex'
-import remarkBreaks from 'remark-breaks'
+import rehypeKatex from 'rehype-katex';
+import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
+
+
 
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
@@ -19,6 +21,8 @@ import AstroPureIntegration from './packages/pure/index.ts';
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 import { remarkAiNotice } from './src/plugins/remark-ai-notice.mjs';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
+// Shiki
+import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
 
 
@@ -27,70 +31,71 @@ const createFontSubsetIntegration = () => {
     name: 'font-subset-integration',
     hooks: {
       'astro:server:start': () => {
-        const projectRoot = process.cwd();
-        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf');
-        const outputDir = path.join(projectRoot, 'public', 'fonts');
-        const outputPath = path.join(outputDir, 'crjk-subset.ttf');
+        const projectRoot = process.cwd()
+        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf')
+        const outputDir = path.join(projectRoot, 'public', 'fonts')
+        const outputPath = path.join(outputDir, 'crjk-subset.ttf')
 
         // To avoid slow startup, only copy the .ttf file in dev mode if it doesn't exist.
         // The browser will show 404s for woff/woff2 but will fall back to the ttf.
         if (fs.existsSync(outputPath)) {
-          return;
+          return
         }
 
         if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true });
+          fs.mkdirSync(outputDir, { recursive: true })
         }
 
-        fs.copyFileSync(fontPath, outputPath);
-        console.log('Development font .ttf copied to public/fonts!');
+        fs.copyFileSync(fontPath, outputPath)
+        console.log('Development font .ttf copied to public/fonts!')
       },
       'astro:build:done': async ({ dir }) => {
-        const projectRoot = process.cwd();
-        const contentDir = path.join(projectRoot, 'src', 'content');
-        const pagesDir = path.join(projectRoot, 'src', 'pages');
-        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf');
-        const outputDir = fileURLToPath(new URL('./fonts', dir));
-        const outputPath = path.join(outputDir, 'crjk-subset');
+        const projectRoot = process.cwd()
+        const contentDir = path.join(projectRoot, 'src', 'content')
+        const pagesDir = path.join(projectRoot, 'src', 'pages')
+        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf')
+        const outputDir = fileURLToPath(new URL('./fonts', dir))
+        const outputPath = path.join(outputDir, 'crjk-subset')
 
         if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true });
+          fs.mkdirSync(outputDir, { recursive: true })
         }
 
         function getAllFiles(dirPath, arrayOfFiles) {
-          const files = fs.readdirSync(dirPath);
-          arrayOfFiles = arrayOfFiles || [];
+          const files = fs.readdirSync(dirPath)
+          arrayOfFiles = arrayOfFiles || []
           files.forEach(function (file) {
             if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
-              arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+              arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles)
             } else {
               if (file.endsWith('.md') || file.endsWith('.mdx') || file.endsWith('.astro')) {
-                arrayOfFiles.push(path.join(dirPath, file));
+                arrayOfFiles.push(path.join(dirPath, file))
               }
             }
-          });
-          return arrayOfFiles;
+          })
+          return arrayOfFiles
         }
 
-        const contentFiles = getAllFiles(contentDir);
-        const pagesFiles = getAllFiles(pagesDir);
-        const allFiles = [...contentFiles, ...pagesFiles];
+        const contentFiles = getAllFiles(contentDir)
+        const pagesFiles = getAllFiles(pagesDir)
+        const allFiles = [...contentFiles, ...pagesFiles]
 
-        const noticeTextForSubsetting = 'AI-Assisted Content This article is AI-assisted, and the author has strived for accuracy. Please use with discretion. Posted today Posted 1 day ago Posted {days} days ago 本文由AI辅助生成，作者已尽力确保内容准确，请谨慎参考 发布于今天 发布于 1 天前 发布于 {days} 天前';
-        let allText = noticeTextForSubsetting;
+        const noticeTextForSubsetting =
+          'AI-Assisted Content This article is AI-assisted, and the author has strived for accuracy. Please use with discretion. Posted today Posted 1 day ago Posted {days} days ago 本文由AI辅助生成，作者已尽力确保内容准确，请谨慎参考 发布于今天 发布于 1 天前 发布于 {days} 天前'
+        let allText = noticeTextForSubsetting
         allFiles.forEach((file) => {
-          allText += fs.readFileSync(file, 'utf-8');
-        });
+          allText += fs.readFileSync(file, 'utf-8')
+        })
 
-        const font = fontCarrier.transfer(fontPath);
-        font.min(allText);
-        font.output({ path: outputPath });
+        const font = fontCarrier.transfer(fontPath)
+        font.min(allText)
+        font.output({ path: outputPath })
 
-        console.log('Font subset created successfully in dist/fonts!');
-      },
-    },
-  };
-};
+        console.log('Font subset created successfully in dist/fonts!')
+      }
+    }
+  }
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -137,14 +142,14 @@ export default defineConfig({
     //     return slug
     //   }
     // }),
-    expressiveCode(),
+    // expressiveCode(),
     icon({
       include: {
         devicon: ['*']
       }
     }),
     AstroPureIntegration(config),
-    createFontSubsetIntegration(),
+    createFontSubsetIntegration()
   ],
   // root: './my-project-directory',
 
@@ -204,8 +209,23 @@ export default defineConfig({
           properties: { className: ['anchor'] },
           content: { type: 'text', value: '#' }
         }
-      ],
-    ]
+      ]
+    ],
+    // https://docs.astro.build/en/guides/syntax-highlighting/
+    shikiConfig: {
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark'
+      },
+      transformers: [
+        transformerNotationDiff(),
+        transformerNotationHighlight(),
+        updateStyle(),
+        addTitle(),
+        addLanguage(),
+        addCopyButton(2000)
+      ]
+    }
   },
   experimental: {
     svg: true,
@@ -219,7 +239,7 @@ export default defineConfig({
       //   })
     ],
     server: {
-      host: true,
+      host: true
       // https: {
       //   key: fs.readFileSync('./localhost+2-key.pem'),
       //   cert: fs.readFileSync('./localhost+2.pem')

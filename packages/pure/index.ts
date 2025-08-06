@@ -80,11 +80,11 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
           },
           markdown: {
             remarkPlugins,
-            rehypePlugins
+            rehypePlugins,
             // rehypePlugins: [rehypeRtlCodeSupport()],
-            // shikiConfig:
+            shikiConfig:
             // Configure Shiki theme if the user is using the default github-dark theme.
-            //   config.markdown.shikiConfig.theme !== 'github-dark' ? {} : { theme: 'css-variables' }
+              config.markdown.shikiConfig.theme !== 'github-dark' ? {} : { theme: 'css-variables' }
           },
           scopedStyleStrategy: 'where',
           // If not already configured, default to prefetching all links on hover.
