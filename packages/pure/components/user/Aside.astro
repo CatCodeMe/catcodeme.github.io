@@ -2,9 +2,13 @@
 import { AstroError } from 'astro/errors'
 
 import Icon from './Icon.astro'
+import { Icons } from '../../libs/icons'
 
 const asideVariants = ['important', 'info', 'note', 'tip', 'warning', 'caution'] as const
-const icons = {
+
+type IconName = keyof typeof Icons;
+
+const defaultIcons: Record<typeof asideVariants[number], IconName> = {
   important: 'important',
   info: 'callout_info',
   note: 'note',
@@ -16,9 +20,10 @@ const icons = {
 interface Props {
   type?: (typeof asideVariants)[number]
   title?: string
+  icon?: string
 }
 
-let { type = 'note', title } = Astro.props
+let { type = 'note', title, icon } = Astro.props
 
 if (!asideVariants.includes(type)) {
   throw new AstroError(
@@ -31,14 +36,51 @@ if (!asideVariants.includes(type)) {
 if (!title) {
   title = type.toUpperCase()
 }
+
+// Determine the icon to render
+let iconToRender: IconName | undefined
+let isEmoji = false
+
+if (icon) {
+  // Check if the provided icon is an emoji
+  const emojiRegex = /\p{Emoji}/u; // Unicode property escape for emoji
+  if (emojiRegex.test(icon)) {
+    iconToRender = undefined // Set to undefined if it's an emoji, handled by isEmoji
+    isEmoji = true
+  } else if (icon in Icons) {
+    iconToRender = icon as IconName
+  } else {
+    // Fallback to default icon if provided icon name is not found in Icons
+    console.warn(`Icon "${icon}" not found in icons.ts. Falling back to default icon for type "${type}".`);
+    iconToRender = defaultIcons[type] as IconName;
+  }
+} else {
+  iconToRender = defaultIcons[type] as IconName;
+}
 ---
 
 <aside aria-label={title} class={`aside aside-${type}`}>
   <p class='aside-title'>
-    <Icon name={icons[type]} />
+    {isEmoji ? (
+      <span class="aside-icon-emoji">{icon}</span>
+    ) : (
+      <Icon name={iconToRender!} />
+    )}
     <span>{title}</span>
   </p>
   <div class='aside-content'>
     <slot />
   </div>
 </aside>
+
+<style>
+  .aside-icon-emoji {
+    font-size: 1.5em; /* Adjust size to match SVG icons */
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+

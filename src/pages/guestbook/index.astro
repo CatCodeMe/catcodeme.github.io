@@ -619,7 +619,7 @@ function getReactionEmoji(reaction: string) {
         </div>
         <div class="comments-list">
           {
-            comments.map((comment: Comment, index: number) => {
+            comments.map((comment: Comment) => {
               const repliedToComment = comment.replyToId ? commentsById.get(comment.replyToId) : null;
               return (
               <div class="comment-item" id={comment.id}>
@@ -747,7 +747,7 @@ function getReactionEmoji(reaction: string) {
           });
 
           // Highlight code blocks
-          document.addEventListener('DOMContentLoaded', (event) => {
+          document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.comment-body pre code').forEach((el) => {
               hljs.highlightElement(el);
             });
