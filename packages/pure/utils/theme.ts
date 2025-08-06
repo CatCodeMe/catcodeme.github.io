@@ -30,17 +30,50 @@ export function setTheme(theme?: string, save = false) {
     listenThemeChange(theme)
   }
 
-  // Set theme
-  document.documentElement.classList.toggle('dark', targetTheme === 'dark')
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', targetTheme === 'dark' ? '#0B0B10' : '#FCFCFD')
+  const applyTheme = () => {
+    // Set theme
+    document.documentElement.classList.toggle('dark', targetTheme === 'dark')
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', targetTheme === 'dark' ? '#0B0B10' : '#FCFCFD')
 
-  // 强制更新 expressive-code 主题
-  const codeBlocks = document.querySelectorAll('.expressive-code');
-  codeBlocks.forEach((block) => {
-    block.setAttribute('data-theme', targetTheme === 'dark' ? 'github-dark' : 'github-light');
-  });
+    // 强制更新 expressive-code 主题
+    const codeBlocks = document.querySelectorAll('.expressive-code')
+    codeBlocks.forEach((block) => {
+      block.setAttribute('data-theme', targetTheme === 'dark' ? 'github-dark' : 'github-light')
+    })
+  }
+
+  // The View Transitions API is used here to animate the theme change.
+  // @ts-expect-error: The View Transitions API is not yet in the default TypeScript library.
+  if (document.startViewTransition) {
+    const x = window.innerWidth // Start from top-right corner
+    const y = 0 // Start from top-right corner
+    const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
+
+    // @ts-expect-error: The View Transitions API is not yet in the default TypeScript library.
+    const transition = document.startViewTransition(applyTheme)
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0 at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 800,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)',
+        },
+      )
+    }).then(() => {
+      document.dispatchEvent(new CustomEvent('theme-transition-complete'))
+    })
+  } else {
+    applyTheme()
+  }
 
   return theme
 }

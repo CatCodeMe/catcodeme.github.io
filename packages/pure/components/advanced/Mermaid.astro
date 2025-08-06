@@ -471,26 +471,9 @@ import config from 'virtual:config'
     await renderMermaidDiagrams()
   })()
 
-  // 监听主题切换
-  const observer = new MutationObserver(async (mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.attributeName === 'data-theme') {
-        await initializeMermaid()
-        await renderMermaidDiagrams()
-        break
-      }
-    }
-  })
-
-  observer.observe(document.documentElement, {
-    attributes: true
-  })
-
-  // 监听系统主题变化
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
-    if (document.documentElement.dataset.theme === 'system') {
-      await initializeMermaid()
-      await renderMermaidDiagrams()
-    }
+  // 监听主题切换完成事件
+  document.addEventListener('theme-transition-complete', async () => {
+    await initializeMermaid()
+    await renderMermaidDiagrams()
   })
 </script>

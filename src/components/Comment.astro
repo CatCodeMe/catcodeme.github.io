@@ -60,21 +60,11 @@ const giscus = config.integ.giscus
       );
     }
 
-    // 监听 data-theme 变化
-    new MutationObserver(() => updateGiscus()).observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    });
-
-    // 监听系统主题变化（当 data-theme="system" 时）
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      if (document.documentElement.getAttribute('data-theme') === 'system') {
-        updateGiscus();
-      }
-    });
-
     // 初始化
     document.addEventListener('DOMContentLoaded', updateGiscus);
     window.addEventListener('load', updateGiscus);
+
+    // 监听主题切换完成事件
+    document.addEventListener('theme-transition-complete', updateGiscus);
   })();
 </script>
