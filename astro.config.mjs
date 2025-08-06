@@ -7,12 +7,10 @@ import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import fontCarrier from 'font-carrier';
-
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
-import rehypeCallouts from 'rehype-callouts';
-import rehypeKatex from 'rehype-katex';
-import remarkBreaks from 'remark-breaks';
+import rehypeKatex from 'rehype-katex'
+import remarkBreaks from 'remark-breaks'
 import remarkMath from 'remark-math';
 
 import AstroPureIntegration from './packages/pure/index.ts';
@@ -23,10 +21,30 @@ import { remarkAiNotice } from './src/plugins/remark-ai-notice.mjs';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
 import config from './src/site.config.ts';
 
+
 const createFontSubsetIntegration = () => {
   return {
     name: 'font-subset-integration',
     hooks: {
+      'astro:server:start': () => {
+        const projectRoot = process.cwd();
+        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf');
+        const outputDir = path.join(projectRoot, 'public', 'fonts');
+        const outputPath = path.join(outputDir, 'crjk-subset.ttf');
+
+        // To avoid slow startup, only copy the .ttf file in dev mode if it doesn't exist.
+        // The browser will show 404s for woff/woff2 but will fall back to the ttf.
+        if (fs.existsSync(outputPath)) {
+          return;
+        }
+
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        fs.copyFileSync(fontPath, outputPath);
+        console.log('Development font .ttf copied to public/fonts!');
+      },
       'astro:build:done': async ({ dir }) => {
         const projectRoot = process.cwd();
         const contentDir = path.join(projectRoot, 'src', 'content');
@@ -187,14 +205,6 @@ export default defineConfig({
           content: { type: 'text', value: '#' }
         }
       ],
-      [
-        rehypeCallouts,
-        {
-          props: {
-            containerProps: { class: ['callout', 'not-prose'] }
-          }
-        }
-      ]
     ]
   },
   experimental: {

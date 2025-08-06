@@ -1,8 +1,70 @@
-@import 'rehype-callouts/theme/obsidian';
+/* Inspired by VuePress Theme Hope - Solid Background Style */
 
-.callout-content {
-        padding: .5rem .5rem;
-        margin: .5rem .1rem;
-        border-radius: inherit;
-        background: hsl(var(--callout-background)) !important;
+/* Base container style */
+.aside {
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border: none; /* Ensure no borders */
+}
+
+/* Title style */
+.aside .aside-container p:first-child {
+    font-weight: 600;
+    margin-bottom: -0.4rem;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Content style */
+.aside .aside-content {
+    margin-top: 1rem;
+}
+
+.aside .aside-content p {
+    line-height: 1.6;
+}
+
+/* --- Light Mode --- */
+.aside.aside-note {
+    background-color: #e7f3fe;
+    color: #30588c;
+}
+
+.aside.aside-tip {
+    background-color: #e6f6e6;
+    color: #2d6b4e;
+}
+
+.aside.aside-caution {
+    background-color: #fff8e6;
+    color: #8c6d30;
+}
+
+.aside.aside-danger {
+    background-color: #fde7e9;
+    color: #8c3030;
+}
+
+/* --- Dark Mode --- */
+html.dark .aside.aside-note {
+    background-color: #2f3e55;
+    color: #a8b1ff;
+}
+
+html.dark .aside.aside-tip {
+    background-color: #2a4f44;
+    color: #80c8a5;
+}
+
+html.dark .aside.aside-caution {
+    background-color: #554a2f;
+    color: #e7c000;
+}
+
+html.dark .aside.aside-danger {
+    background-color: #553030;
+    color: #ff9999;
 }

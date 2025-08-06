@@ -30,7 +30,6 @@ const giscus = config.integ.giscus
 }
 
 <script is:inline>
-  // 可靠的主题同步方案 v5 - 最终版
   ;(() => {
     const getEffectiveTheme = () => {
       const root = document.documentElement
@@ -50,7 +49,6 @@ const giscus = config.integ.giscus
         return;
       }
 
-      const initialTheme = giscusScript.dataset.theme;
       const effectiveTheme = getEffectiveTheme();
       
       // 始终使用 noborder 主题
