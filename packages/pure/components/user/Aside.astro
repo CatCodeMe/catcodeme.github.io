@@ -1,15 +1,16 @@
 ---
-// https://github.com/withastro/starlight/blob/main/packages/starlight/user-components/Aside.astro
 import { AstroError } from 'astro/errors'
 
 import Icon from './Icon.astro'
 
-const asideVariants = ['note', 'tip', 'caution', 'danger'] as const
+const asideVariants = ['important', 'info', 'note', 'tip', 'warning', 'caution'] as const
 const icons = {
-  note: 'info',
-  tip: 'bulb',
-  caution: 'alert',
-  danger: 'octangon'
+  important: 'important',
+  info: 'callout_info',
+  note: 'note',
+  tip: 'tip',
+  warning: 'warning',
+  caution: 'caution'
 } as const
 
 interface Props {
@@ -23,8 +24,7 @@ if (!asideVariants.includes(type)) {
   throw new AstroError(
     'Invalid `type` prop passed to the `<Aside>` component.\n',
     `Received: ${JSON.stringify(type)}
-` +
-      `Expected one of ${asideVariants.map((i) => JSON.stringify(i)).join(', ')}`
+` + `Expected one of ${asideVariants.map((i) => JSON.stringify(i)).join(', ')}`
   )
 }
 
@@ -34,13 +34,11 @@ if (!title) {
 ---
 
 <aside aria-label={title} class={`aside aside-${type}`}>
-  <div class="aside-container">
-    <p class="aside-title">
-      <Icon name={icons[type]} />
-      <span>{title}</span>
-    </p>
-    <div class="aside-content">
-      <slot />
-    </div>
+  <p class='aside-title'>
+    <Icon name={icons[type]} />
+    <span>{title}</span>
+  </p>
+  <div class='aside-content'>
+    <slot />
   </div>
 </aside>

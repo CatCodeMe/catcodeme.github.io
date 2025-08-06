@@ -1,70 +1,120 @@
-/* Inspired by VuePress Theme Hope - Solid Background Style */
+/* callout.css - VuePress Theme Hope Style - Corrected Layout */
 
-/* Base container style */
 .aside {
-    padding: 1rem 1.5rem;
-    margin: 1rem 0;
-    border-radius: 8px;
-    border: none; /* Ensure no borders */
+  border-radius: 8px;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid transparent;
 }
 
-/* Title style */
-.aside .aside-container p:first-child {
-    font-weight: 600;
-    margin-bottom: -0.4rem;
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.aside .aside-title {
+  font-weight: 700;
+  margin: 0;
+  margin-bottom: -0.4rem; /* Negative margin to pull content up */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Content style */
+.aside .aside-title svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
 .aside .aside-content {
-    margin-top: 1rem;
+  margin-top: 1rem; /* Counteract the negative margin */
+  color: inherit;
 }
 
-.aside .aside-content p {
-    line-height: 1.6;
+.aside .aside-content > :first-child {
+  margin-top: 0;
+}
+.aside .aside-content > :last-child {
+  margin-bottom: 0;
 }
 
 /* --- Light Mode --- */
 .aside.aside-note {
-    background-color: #e7f3fe;
-    color: #30588c;
+  background-color: rgb(142 150 170 / 14%);
+}
+.aside.aside-note .aside-title {
+  color: #656869;
 }
 
 .aside.aside-tip {
-    background-color: #e6f6e6;
-    color: #2d6b4e;
+  background-color: rgb(16 185 129 / 14%);
+}
+.aside.aside-tip .aside-title {
+  color: #18794e;
+}
+
+.aside.aside-info {
+  background-color: rgb(27 178 229 / 14%);
+}
+.aside.aside-info .aside-title {
+  color: #2888a7;
+}
+
+.aside.aside-warning {
+  background-color: rgb(234 179 8 / 14%);
+}
+.aside.aside-warning .aside-title {
+  color: #915930;
 }
 
 .aside.aside-caution {
-    background-color: #fff8e6;
-    color: #8c6d30;
+  background-color: rgb(244 63 94 / 14%);
+}
+.aside.aside-caution .aside-title {
+  color: #b8272c;
 }
 
-.aside.aside-danger {
-    background-color: #fde7e9;
-    color: #8c3030;
+.aside.aside-important {
+  background-color: rgb(159 122 234 / 14%);
+}
+.aside.aside-important .aside-title {
+  color: #6f42c1;
 }
 
 /* --- Dark Mode --- */
 html.dark .aside.aside-note {
-    background-color: #2f3e55;
-    color: #a8b1ff;
+  background-color: rgb(142 150 170 / 14%);
+}
+html.dark .aside.aside-note .aside-title {
+  color: #e4e4e9;
 }
 
 html.dark .aside.aside-tip {
-    background-color: #2a4f44;
-    color: #80c8a5;
+  background-color: rgb(16 185 129 / 16%);
+}
+html.dark .aside.aside-tip .aside-title {
+  color: #3dd68c;
+}
+
+html.dark .aside.aside-info {
+  background-color: rgb(27 178 229 / 16%);
+}
+html.dark .aside.aside-info .aside-title {
+  color: #43bde2;
+}
+
+html.dark .aside.aside-warning {
+  background-color: rgb(234 179 8 / 16%);
+}
+html.dark .aside.aside-warning .aside-title {
+  color: #e6b30a;
 }
 
 html.dark .aside.aside-caution {
-    background-color: #554a2f;
-    color: #e7c000;
+  background-color: rgb(244 63 94 / 16%);
+}
+html.dark .aside.aside-caution .aside-title {
+  color: #ff7875;
 }
 
-html.dark .aside.aside-danger {
-    background-color: #553030;
-    color: #ff9999;
+html.dark .aside.aside-important {
+  background-color: rgb(159 122 234 / 16%);
+}
+html.dark .aside.aside-important .aside-title {
+  color: #b392f0;
 }
