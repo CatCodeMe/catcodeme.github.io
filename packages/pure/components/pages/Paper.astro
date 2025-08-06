@@ -17,6 +17,7 @@ type Paper = {
     star?: number
     tags?: string[]
     paperUrl?: string // 新增论文链接字段
+    author?: string
   }
   index?: number
 }
@@ -41,56 +42,47 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     className
   )}
 >
-  {/* Star 评分 - 右上角 + 编号 (仅在大屏幕显示) */}
-  {
-    (starCount > 0 || typeof paper.index === 'number') && (
-      <div class='absolute top-4 right-4 items-center gap-1 z-20 hidden md:flex top-right-rating'>
-        {starCount > 0 && (
-          <div class='flex gap-0.5'>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Icon
-                name='star'
-                class={cn(
-                  'size-4',
-                  i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
-                )}
-              />
-            ))}
-          </div>
-        )}
-        {typeof paper.index === 'number' && (
-          <span class='ml-2 text-xs text-zinc-300 dark:text-zinc-600 font-mono select-none'>
-            No.{String(paper.index).padStart(2, '0')}
-          </span>
-        )}
+  {/*主内容区*/}
+  <div class='flex flex-col flex-1 min-w-0 z-10'>
+    {/* 标题与右上角信息容器 */}
+    <div class='flex justify-between items-center'>
+      {/* 标题区域 */}
+      <div class='space-y-1 flex-1 min-w-0 pr-4'>
+        <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-tight m-0'>
+          {data.title}
+        </h3>
+        {
+          data.subTitle && (
+            <p class='text-sm text-zinc-600 dark:text-zinc-400 leading-normal m-0'>
+              {data.subTitle}
+            </p>
+          )
+        }
       </div>
-    )
-  }
 
-  {/* 右下角倾斜卡片，仅主图标和链接 (仅在大屏幕显示) */}
-  <div class='paper-card-icon-preview hidden md:block'>
-    <div class='paper-preview-container'>
-      <Icon name={data.isbn ? 'paper_book' : 'paper_article'} class='paper-icon' />
+      {/* Star 评分 - 右上角 + 编号 (仅在大屏幕显示) */}
       {
-        data.paperUrl && (
-          <a href={data.paperUrl} target='_blank' rel='noopener noreferrer' class='paper-link'>
-            View &gt;&gt;
-          </a>
-        )
-      }
-    </div>
-  </div>
-
-  {/* 主内容区 */}
-  <div class='flex flex-col flex-1 min-w-0 z-10 pr-0 md:pr-20'>
-    {/* 标题区域 */}
-    <div class='space-y-1'>
-      <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-tight m-0'>
-        {data.title}
-      </h3>
-      {
-        data.subTitle && (
-          <p class='text-sm text-zinc-600 dark:text-zinc-400 leading-normal m-0'>{data.subTitle}</p>
+        (starCount > 0 || typeof paper.index === 'number') && (
+          <div class='flex items-center gap-1 z-20 hidden md:flex top-right-rating large-screen-stars'>
+            {starCount > 0 && (
+              <div class='flex gap-0.5'>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Icon
+                    name='star'
+                    class={cn(
+                      'size-4',
+                      i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+            {typeof paper.index === 'number' && (
+              <span class='ml-2 text-xs text-zinc-300 dark:text-zinc-600 font-mono select-none'>
+                No.{String(paper.index).padStart(2, '0')}
+              </span>
+            )}
+          </div>
         )
       }
     </div>
@@ -168,7 +160,9 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     }
 
     {/* 小屏幕底部信息行 */}
-    <div class='mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between md:hidden'>
+    <div
+      class='mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between md:hidden'
+    >
       <div class='flex items-center gap-3'>
         {/* 论文类型图标 */}
         <div class='flex items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400'>
@@ -178,10 +172,10 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
         {/* 论文链接 */}
         {
           data.paperUrl && (
-            <a 
-              href={data.paperUrl} 
-              target='_blank' 
-              rel='noopener noreferrer' 
+            <a
+              href={data.paperUrl}
+              target='_blank'
+              rel='noopener noreferrer'
               class='text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors'
             >
               View &gt;&gt;
@@ -189,114 +183,132 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
           )
         }
       </div>
-      
+
       {/* 评分和编号 */}
       <div class='flex items-center gap-2'>
         {/* 编号 */}
-        {typeof paper.index === 'number' && (
-          <span class='text-xs text-zinc-400 dark:text-zinc-500 font-mono select-none'>
-            No.{String(paper.index).padStart(2, '0')}
-          </span>
-        )}
+        {
+          typeof paper.index === 'number' && (
+            <span class='text-xs text-zinc-400 dark:text-zinc-500 font-mono select-none'>
+              No.{String(paper.index).padStart(2, '0')}
+            </span>
+          )
+        }
         {/* 评分 */}
-        {starCount > 0 && (
-          <div class='flex gap-0.5'>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Icon
-                name='star'
-                class={cn(
-                  'size-3',
-                  i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
-                )}
-              />
-            ))}
-          </div>
-        )}
+        {
+          starCount > 0 && (
+            <div class='flex gap-0.5'>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Icon
+                  name='star'
+                  class={cn(
+                    'size-3',
+                    i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
+                  )}
+                />
+              ))}
+            </div>
+          )
+        }
       </div>
     </div>
   </div>
+
+  <!-- 浮动卡片链接 -->
+  {
+    data.paperUrl && (
+      <a
+        href={data.paperUrl}
+        target='_blank'
+        rel='noopener noreferrer'
+        class='paper-card-link-wrapper hidden md:flex'
+        aria-label={`View paper: ${data.title}`}
+      >
+        <div class='paper-preview-container'>
+          <Icon name={data.isbn ? 'paper_book' : 'paper_article'} class='paper-icon' />
+          <span class='paper-link-text'>View</span>
+        </div>
+      </a>
+    )
+  }
 </Tag>
 
 <style>
-  .paper-card-icon-preview {
-    position: absolute;
-    right: 1.2rem;
-    bottom: 1.2rem;
-    width: 6.5rem;
-    height: 5.2rem;
-    display: flex;
-    align-items: flex-end;
-    z-index: 15;
-    pointer-events: none;
-  }
-  .paper-preview-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    border-radius: var(--radius);
-    border: 1px solid #e2e8f0; /* 亮色下深灰 */
-    background: var(--background);
-    user-select: none;
-    transform: scale(1) rotate(0.18rad) translateY(30%);
-    transition: transform 300ms ease-out;
-    will-change: transform;
-    backface-visibility: hidden;
-    padding: 0.25rem 0.5rem 0.5rem 0.5rem;
-    pointer-events: auto;
-    overflow: hidden;
-  }
-  .dark .paper-preview-container {
-    background: var(--background);
-    border-color: #f3f4f6; /* 暗色下浅灰 */
-  }
-  .group:hover .paper-preview-container {
-    transform: scale(1.04) rotate(0) translateY(15%);
-    transition: transform 400ms cubic-bezier(0, 0.9, 0.5, 1.35);
-  }
-  .paper-icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    color: var(--muted-foreground);
-    margin-bottom: 0.15rem;
-    z-index: 2;
-  }
-  .paper-link {
-    display: flex;
-    align-items: center;
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-    margin-top: 0.15rem;
-    text-decoration: none;
-    pointer-events: auto;
-    transition: color 0.2s;
-    z-index: 2;
-  }
-  .paper-link:hover {
-    color: var(--foreground);
-  }
-  /* 编号右上角淡色小号字体，主题色自适应 */
-  .paper-index-no {
-    margin-left: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--muted-foreground);
-    font-family: var(--font-mono, monospace);
-    user-select: none;
-    letter-spacing: 0.04em;
-    font-weight: 500;
-  }
   /* 确保小屏幕隐藏右上角评分和编号 */
   @media (max-width: 767px) {
     .top-right-rating {
       display: none !important;
     }
-    
-    /* 强制隐藏倾斜卡片 */
-    .paper-card-icon-preview {
-      display: none !important;
-    }
+  }
+
+  /* 浮动卡片链接容器 */
+  .paper-card-link-wrapper {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 0;
+    z-index: 10;
+    transform: translateY(35%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+  }
+
+  .group:hover .paper-card-link-wrapper {
+    transform: translateY(-10%) scale(1.03);
+  }
+
+  /* 卡片视觉样式 */
+  .paper-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    padding-bottom: 0.25rem;
+    border-radius: var(--radius);
+    border: 1px solid rgb(226, 232, 240);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    transition: border-color 0.3s;
+  }
+
+  .dark .paper-preview-container {
+    border-color: rgb(39, 39, 42);
+  }
+
+  .group:hover .paper-preview-container {
+    border-color: rgb(203, 213, 225);
+  }
+
+  .dark .group:hover .paper-preview-container {
+    border-color: rgb(63, 63, 70);
+  }
+
+  .paper-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--muted-foreground);
+    transition: color 0.3s;
+  }
+
+  .group:hover .paper-icon {
+    color: var(--foreground);
+  }
+
+  .paper-link-text {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+      opacity 0.2s ease-out 0.1s,
+      transform 0.2s ease-out 0.1s,
+      color 0.3s;
+  }
+
+  .group:hover .paper-link-text {
+    opacity: 1;
+    transform: translateY(0);
+    color: var(--foreground);
   }
 </style>
