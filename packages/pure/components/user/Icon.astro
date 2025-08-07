@@ -11,6 +11,23 @@ interface Props {
 
 const { name, label, size = '1em', color, class: className, ...props } = Astro.props
 const a11yAttrs = label ? ({ 'aria-label': label } as const) : ({ 'aria-hidden': 'true' } as const)
+
+let svgContent = Icons[name];
+let viewBox = '0 0 24 24'; // Default viewBox
+
+// Check if the SVG content starts with an <svg> tag
+if (typeof svgContent === 'string' && svgContent.trim().startsWith('<svg')) {
+  const viewBoxMatch = svgContent.match(/viewBox="([^"]*)"/);
+  if (viewBoxMatch && viewBoxMatch[1]) {
+    viewBox = viewBoxMatch[1];
+  }
+
+  // Extract content inside the <svg> tags
+  const contentMatch = svgContent.match(/<svg[^>]*>(.*?)<\/svg>/s);
+  if (contentMatch && contentMatch[1]) {
+    svgContent = contentMatch[1];
+  }
+}
 ---
 
 <svg
@@ -18,9 +35,9 @@ const a11yAttrs = label ? ({ 'aria-label': label } as const) : ({ 'aria-hidden':
   class={className}
   width='22'
   height='22'
-  viewBox='0 0 24 24'
+  viewBox={viewBox}
   fill='currentColor'
-  set:html={Icons[name]}
+  set:html={svgContent}
   {...props}
 />
 
