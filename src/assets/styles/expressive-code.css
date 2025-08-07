@@ -28,3 +28,10 @@
         /* copy from expressive border css*/
         border-bottom: var(--ec-brdWd) solid var(--ec-frm-edActTabBrdCol) !important;
 }
+
+/* 修复 details 样式冲突, 未知 css 来源 */
+.prose :where(details):not(:where(.not-prose, .not-prose *)) {
+        margin: 0 !important;
+        padding: 0 !important;
+        /* background: var(--un-prose-bg-soft);*/
+}

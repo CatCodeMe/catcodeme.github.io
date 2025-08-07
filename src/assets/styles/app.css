@@ -80,64 +80,7 @@ a {
 }
 
 /* Details/Summary Styles */
-details {
-  border-radius: 8px;
-  margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--muted) / var(--un-bg-opacity, 1)) !important;
-  transition: background-color 0.2s ease, border-color 0.2s ease; 
-}
 
-details summary {
-  font-weight: 700;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  list-style: none;
-  color: hsl(var(--foreground));
-  transition: color 0.2s ease;
-}
-
-details summary::-webkit-details-marker {
-  display: none;
-}
-
-details summary::before {
-  content: ''; /* No character content */
-  display: inline-block;
-  width: 1em; /* Adjust size as needed */
-  height: 1em; /* Adjust size as needed */
-  margin-right: 0.5rem;
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='hsl(240 10% 3.9%)' d='m8.177.677 2.896 2.896a.25.25 0 0 1-.177.427H8.75v1.25a.75.75 0 0 1-1.5 0V4H5.104a.25.25 0 0 1-.177-.427L7.823.677a.25.25 0 0 1 .354 0ZM7.25 10.75a.75.75 0 0 1 1.5 0V12h2.146a.25.25 0 0 1 .177.427l-2.896 2.896a.25.25 0 0 1-.354 0l-2.896-2.896A.25.25 0 0 1 5.104 12H7.25v-1.25Zm-5-2a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5ZM6 8a.75.75 0 0 1-.75.75h-.5a.75.75 0 0 1 0-1.5h.5A.75.75 0 0 1 6 8Zm2.25.75a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5ZM12 8a.75.75 0 0 1-.75.75h-.5a.75.75 0 0 1 0-1.5h.5A.75.75 0 0 1 12 8Zm2.25.75a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5Z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  transition: background-image 0.2s ease;
-}
-
-html.dark details summary::before {
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='hsl(0 0% 98%)' d='m8.177.677 2.896 2.896a.25.25 0 0 1-.177.427H8.75v1.25a.75.75 0 0 1-1.5 0V4H5.104a.25.25 0 0 1-.177-.427L7.823.677a.25.25 0 0 1 .354 0ZM7.25 10.75a.75.75 0 0 1 1.5 0V12h2.146a.25.25 0 0 1 .177.427l-2.896 2.896a.25.25 0 0 1-.354 0l-2.896-2.896A.25.25 0 0 1 5.104 12H7.25v-1.25Zm-5-2a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5ZM6 8a.75.75 0 0 1-.75.75h-.5a.75.75 0 0 1 0-1.5h.5A.75.75 0 0 1 6 8Zm2.25.75a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5ZM12 8a.75.75 0 0 1-.75.75h-.5a.75.75 0 0 1 0-1.5h.5A.75.75 0 0 1 12 8Zm2.25.75a.75.75 0 0 0 0-1.5h-.5a.75.75 0 0 0 0 1.5h.5Z'/></svg>");
-}
-
-
-details[open] summary::before {
-  transform: none;
-}
-
-details .details-content {
-  margin-top: 1rem;
-  color: hsl(var(--muted-foreground));
-}
-
-details .details-content > :first-child {
-  margin-top: 0;
-}
-details .details-content > :last-child {
-  margin-bottom: 0;
-}
 
 /* inline code css*/
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
