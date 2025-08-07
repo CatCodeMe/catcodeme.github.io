@@ -17,7 +17,7 @@ type Paper = {
     star?: number
     tags?: string[]
     paperUrl?: string // 新增论文链接字段
-    author?: string
+    author?: string[]
   }
   index?: number
 }
@@ -98,6 +98,14 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
           <span class='flex items-center gap-1.5'>
             <Icon name='citation' class='size-4' />
             {data.citations.toLocaleString()} citations
+          </span>
+        )
+      }
+      {
+        Array.isArray(data.author) && data.author.length > 0 && (
+          <span class='flex items-center gap-1.5'>
+            <Icon name='brain' class='size-4' />
+            {data.author.map((author: string) => author.trim()).join(', ')}
           </span>
         )
       }
@@ -268,7 +276,9 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     padding-bottom: 0.25rem;
     border-radius: var(--radius);
     border: 1px solid rgb(226, 232, 240);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.05),
+      0 2px 4px -2px rgb(0 0 0 / 0.05);
     transition: border-color 0.3s;
   }
 
