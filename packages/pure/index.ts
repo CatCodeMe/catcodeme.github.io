@@ -8,7 +8,7 @@ import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import rehypeExternalLinks from 'rehype-external-links'
 import UnoCSS from 'unocss/astro'
-
+import rehypeTable from './plugins/rehype-table'
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
 import { vitePluginUserConfig } from './plugins/virtual-user-config'
 import { UserConfigSchema, type UserInputConfig } from './types/user-config'
@@ -23,12 +23,14 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
     hooks: {
       'astro:config:setup': async ({ config, updateConfig }) => {
         let userConfig = parseWithFriendlyErrors(
+          // @ts-ignore
           UserConfigSchema,
           opts,
           'Invalid config passed to astro-pure integration'
         )
 
-        // Add built-in integrations
+        // Add built-in integrations only if they are not already added by the user through the
+        // config or by a plugin.
         const allIntegrations = [...config.integrations, ...integrations]
         if (!allIntegrations.find(({ name }) => name === '@astrojs/sitemap')) {
           integrations.push(sitemap())
@@ -49,9 +51,9 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         rehypePlugins.push([
           rehypeExternalLinks,
           {
-            content: { 
-              type: 'text', 
-              value: userConfig.content.externalLinksContent 
+            content: {
+              type: 'text',
+              value: userConfig.content.externalLinks.content || ''
             },
             contentProperties: {
               className: ['external-link-icon']
@@ -63,6 +65,7 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
             rel: ['nofollow', 'noopener', 'noreferrer'],
           }
         ])
+        rehypePlugins.push(rehypeTable)
         // Add Starlight directives restoration integration at the end of the list so that remark
         // plugins injected by Starlight plugins through Astro integrations can handle text and
         // leaf directives before they are transformed back to their original form.
@@ -76,15 +79,15 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         updateConfig({
           vite: {
             // @ts-ignore
-            plugins: [vitePluginUserConfig(userConfig, config), ...config.vite.plugins || []]
+            plugins: [vitePluginUserConfig(userConfig, config)]
           },
           markdown: {
             remarkPlugins,
-            rehypePlugins,
+            rehypePlugins
             // rehypePlugins: [rehypeRtlCodeSupport()],
-            shikiConfig:
+            // shikiConfig:
             // Configure Shiki theme if the user is using the default github-dark theme.
-              config.markdown.shikiConfig.theme !== 'github-dark' ? {} : { theme: 'css-variables' }
+            //   config.markdown.shikiConfig.theme !== 'github-dark' ? {} : { theme: 'css-variables' }
           },
           scopedStyleStrategy: 'where',
           // If not already configured, default to prefetching all links on hover.
