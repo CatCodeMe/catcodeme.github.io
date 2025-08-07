@@ -6,7 +6,7 @@ tags:
   - data-structure
   - algorithm
   - bloom-filter
-  - probability
+  - deep-search
 language: '中文'
 ai-model:
   - gemini-2.5-pro
@@ -15,9 +15,253 @@ heroImage:
   color: '#047677'
 ---
 
+import Paper from '@/custom/components/pages/Paper.astro'
+
+import { Steps, Timeline } from 'astro-pure/user'
+
 > [!quote] Bloom Filter 简介
 > 布隆过滤器(Bloom Filter)是一种开创性的概率型数据结构,其核心价值在于提供了一种在空间和时间上都极具效率的近似集合成员关系测试方法。
 > 自问世以来，它已成为处理大规模数据集时不可或缺的工具。本文旨在深入探讨布隆过滤器的原理、实现方式以及在实际应用中的优势和局限性。
+
+## 演变历程
+
+<Timeline
+  events={[
+    {
+      date: '1970s',
+      content: 'Burton Howard Bloom 提出了布隆过滤器的概念。'
+    },
+    {
+      date: '1990s',
+      content: '布隆过滤器开始被广泛应用于缓存系统和网络协议中。'
+    },
+    {
+      date: '2000s',
+      content: '布隆过滤器的变种和优化算法陆续被提出，如计数布隆过滤器、分布式布隆过滤器等。'
+    },
+    {
+      date: '2010s',
+      content:
+        '布隆过滤器在大数据处理、机器学习等领域得到了更广泛的应用，如 Apache Hadoop、Apache Spark 等大数据框架中都集成了布隆过滤器。'
+    },
+    {
+      date: '2020s',
+      content:
+        '随着云计算和边缘计算的发展，布隆过滤器在分布式系统中的应用越来越普遍，成为处理大规模数据集时的重要工具。'
+    }
+  ]}
+/>
+
+## 历史背景
+
+> 硬件发展驱动软件, 软件设计反作用于硬件
+
+在1960 年代, 所有程序员不得不面对两个现实:
+
+- 内存（核心存储器）极其宝贵
+- 磁盘访问速度极慢
+
+所以, 工程师们必须想尽一切办法来减少对磁盘的访问，并最大限度地节省宝贵的内存资源。
+
+<Aside type='note' icon='heart' title='野史/沉浸式胡说八道'>
+
+1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
+2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
+3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
+
+</Aside>
+
+<Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+<Aside type="info" >这是一个带有灯泡图标的信息框。</Aside>
+<Aside type="info" icon="up">up</Aside>
+
+> [!TIP] 野史/沉浸式胡说八道
+>
+> 1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
+> 2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
+> 3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
+
+
+```ansi
+[1;4mStandard ANSI colors:[0m
+- Dimmed:     [2;30m Black [2;31m Red [2;32m Green [2;33m Yellow [2;34m Blue [2;35m Magenta [2;36m Cyan [2;37m White [0m
+- Foreground: [30m Black [31m Red [32m Green [33m Yellow [34m Blue [35m Magenta [36m Cyan [37m White [0m
+- Background: [40m Black [41m Red [42m Green [43m Yellow [44m Blue [45m Magenta [46m Cyan [47m White [0m
+- Reversed:   [7;30m Black [7;31m Red [7;32m Green [7;33m Yellow [7;34m Blue [7;35m Magenta [7;36m Cyan [7;37m White [0m
+
+[1;4m8-bit colors (showing colors 160-171 as an example):[0m
+- Dimmed:     [2;38;5;160m 160 [2;38;5;161m 161 [2;38;5;162m 162 [2;38;5;163m 163 [2;38;5;164m 164 [2;38;5;165m 165 [2;38;5;166m 166 [2;38;5;167m 167 [2;38;5;168m 168 [2;38;5;169m 169 [2;38;5;170m 170 [2;38;5;171m 171 [0m
+- Foreground: [38;5;160m 160 [38;5;161m 161 [38;5;162m 162 [38;5;163m 163 [38;5;164m 164 [38;5;165m 165 [38;5;166m 166 [38;5;167m 167 [38;5;168m 168 [38;5;169m 169 [38;5;170m 170 [38;5;171m 171 [0m
+- Background: [48;5;160m 160 [48;5;161m 161 [48;5;162m 162 [48;5;163m 163 [48;5;164m 164 [48;5;165m 165 [48;5;166m 166 [48;5;167m 167 [48;5;168m 168 [48;5;169m 169 [48;5;170m 170 [48;5;171m 171 [0m
+- Reversed:   [7;38;5;160m 160 [7;38;5;161m 161 [7;38;5;162m 162 [7;38;5;163m 163 [7;38;5;164m 164 [7;38;5;165m 165 [7;38;5;166m 166 [7;38;5;167m 167 [7;38;5;168m 168 [7;38;5;169m 169 [7;38;5;170m 170 [7;38;5;171m 171 [0m
+
+[1;4m24-bit colors (full RGB):[0m
+- Dimmed:     [2;38;2;34;139;34m ForestGreen - RGB(34,139,34) [2;38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
+- Foreground: [38;2;34;139;34m ForestGreen - RGB(34,139,34) [38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
+- Background: [48;2;34;139;34m ForestGreen - RGB(34,139,34) [48;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
+- Reversed:   [7;38;2;34;139;34m ForestGreen - RGB(34,139,34) [7;38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
+
+[1;4mFont styles:[0m
+- Default
+- [1mBold[0m
+- [2mDimmed[0m
+- [3mItalic[0m
+- [4mUnderline[0m
+- [7mReversed[0m
+- [9mStrikethrough[0m
+```
+
+
+import Aside from '@/custom/components/user/Aside.astro'
+
+import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
+
+Components let you easily reuse a piece of UI or styling consistently. You can use them not just in `.astro` files, but also in `.mdx` files.
+
+<Aside type='note' icons='caution' title='自定义信息'>
+1. [MDX](https://mdxjs.com/) is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways.
+2. 1
+3. 4
+
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+</Aside>
+
+<Aside type='note' icons='caution' title='自定义信息'>
+1. [MDX](https://mdxjs.com/) is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways.
+2. 1
+3. 4
+
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+</Aside>
+
+//['important', 'info', 'note', 'tip', 'warning', 'caution']
+
+<Aside type='important' icons='important' title='自定义信息'>
+  1
+</Aside>
+<Aside type='info' icons='info' title='自定义信息'>
+2
+</Aside>
+<Aside type='note' icons='note' title='自定义信息'>
+3
+</Aside>
+<Aside type='tip' icons='tip' title='自定义信息'>
+4
+</Aside>
+<Aside type='warning' icons='warning' title='自定义信息'>
+5
+</Aside>
+<Aside type='caution' icons='caution' title='自定义信息'>
+6
+</Aside>
+
+```ts
+import LinkPreview from '@/components/LinkPreview.astro' // [!code --]
+import { LinkPreview } from 'astro-pure/advanced' // [!code ++]
+
+<LinkPreview href='https://www.baidu.com/' />
+```
+
+import { LinkPreview } from 'astro-pure/advanced' // [!code ++]
+
+<LinkPreview href='https://www.baidu.com/' />
+
+import { GithubCard } from 'astro-pure/advanced'
+import { Button } from 'astro-pure/user'
+
+The astro-theme-pure theme is open source under the [Apache 2.0](https://github.com/cworld1/astro-theme-pure/blob/main/LICENSE) license. Please abide by this license for any further development.
+
+
+
+基于这样的条件限制, 又加上对现实世界的观察: `绝大多数的查询都是针对那些根本不存在于集合中的元素`.
+1970年，布隆过滤器由 `Burton Howard Bloom` 提出，旨在解决大规模数据集中的集合成员关系测试问题。随着互联网和大数据技术的发展，布隆过滤器逐渐被广泛应用于缓存系统、数据库、网络安全等领域。
+
+<Paper
+  paper={{
+    id: 'Space/Time Trade-offs in Hash Coding with Allowable Errors',
+    data: {
+      title: 'Space/Time Trade-offs in Hash Coding with Allowable Errors',
+      publishDate: '01 July 1970',
+      doi: '10.1145/362686.362692',
+      citations: 5642,
+      paperUrl: 'https://dl.acm.org/doi/10.1145/362686.362692',
+      star: 5,
+      tags: ['Bloom Filter', 'Data Structure', 'Algorithm'],
+      author: ['Burton Howard Bloom']
+    },
+    index: 1
+  }}
+/>
+
+<Paper
+  paper={{
+    id: 'Space/Time Trade-offs in Hash Coding with Allowable Errors',
+    data: {
+      title: 'Space/Time Trade-offs in Hash Coding with Allowable Errors',
+      publishDate: '01 July 1970',
+      isbn: '10.1145/362686.362692',
+      citations: 5642,
+      paperUrl: 'https://dl.acm.org/doi/10.1145/362686.362692',
+      star: 5,
+      tags: ['Bloom Filter', 'Data Structure', 'Algorithm'],
+      author: ['上野千鹤子', '山田太郎']
+    },
+    index: 1
+  }}
+/>
+
+1. 为什么布隆过滤器会被发明？
+
+- 在处理大规模数据集时，传统的集合数据结构（如哈希表、树等）在空间和时间上都存在一定的局限性。布隆过滤器通过使用多个哈希函数和位数组来实现高效的集合成员关系测试。
+
+2. 布隆过滤器的核心思想是什么？
+
+- 布隆过滤器的核心思想是使用多个哈希函数将元素映射到一个位数组中，通过检查位数组中的位来判断元素是否在集合中。
+
+3. 布隆过滤器的主要应用场景有哪些？
+
+- 布隆过滤器广泛应用于缓存系统、数据库、网络安全、分布式系统等领域，尤其是在处理大规模数据集时，可以显著提高空间效率和查询速度。
+
+4. 布隆过滤器的局限性是什么？
+
+- 布隆过滤器的主要局限性在于它允许一定的误判率，即可能会错误地判断一个元素在集合中，但绝不会漏掉一个实际存在的元素。
+- 此外，布隆过滤器无法删除元素，因为删除操作可能会导致误判率增加。
+
+5. 布隆过滤器的变种有哪些？
+
+- 布隆过滤器有多种变种，如计数布隆过滤器（支持删除操作）、分布式布隆过滤器（适用于分布式系统）等。这些变种在原有布隆过滤器的基础上进行了优化和扩展。
+
+6. 布隆过滤器在实际应用中有哪些优势？
+
+- 布隆过滤器在实际应用中具有以下优势：
+  - **空间效率高**：相比于传统的集合数据结构，布隆过滤器使用更少的内存来存储相同数量的元素。
+  - **查询速度快**：布隆过滤器的查询操作非常快速，通常是常数时间复杂度。
+  - **适用于大规模数据集**：布隆过滤器特别适合处理大规模数据集，可以显著提高查询效率和空间利用率。
+
+7. 布隆过滤器的未来发展方向是什么？
+
+- 随着大数据和云计算技术的发展，布隆过滤器的应用领域将继续扩展。未来的研究可能集中在以下几个方面：
+  - **误判率优化**：研究如何降低布隆过滤器的误判率，提高查询准确性。
+  - **动态调整**：开发动态调整布隆过滤器大小和哈希函数数量的算法，以适应数据集的变化。
+  - **分布式应用**：研究如何在分布式系统中高效地实现布隆过滤器，以支持大规模数据处理和查询。
+
+8. 布隆过滤器在机器学习中的应用有哪些？
+
+- 在机器学习中，布隆过滤器可以用于特征选择、数据预处理等任务。例如，在处理大规模文本数据时，可以使用布隆过滤器来快速判断某个词是否在特定的词汇表中，从而提高特征提取的
 
 ## 什么是 Bloom Filter
 
@@ -25,3 +269,85 @@ heroImage:
 
 - **空间效率高**：相比于传统的集合数据结构，布隆过滤器使用更少的内存来存储相同数量的元素。
 - **查询速度快**：布隆过滤器的查询操作非常快速，通常是常数时间复杂度。
+
+
+```js collapse={1-5, 12-14, 21-24} showLineNumbers
+// All this boilerplate setup code will be collapsed
+import { someBoilerplateEngine } from '@example/some-boilerplate'
+import { evenMoreBoilerplate } from '@example/even-more-boilerplate'
+
+const engine = someBoilerplateEngine(evenMoreBoilerplate())
+
+// This part of the code will be visible by default
+engine.doSomething(1, 2, 3, calcFn)
+
+function calcFn() {
+  // You can have multiple collapsed sections
+  const a = 1
+  const b = 2
+  const c = a + b
+
+  // This will remain visible
+  console.log(`Calculation result: ${a} + ${b} = ${c}`)
+  return c
+}
+
+// All this code until the end of the block will be collapsed again
+engine.closeConnection()
+engine.freeMemory()
+engine.shutdown({ reason: 'End of example boilerplate code' })
+```
+
+```js {1, 4, 7-8}
+// Line 1 - targeted by line number
+// Line 2
+// Line 3
+// Line 4 - targeted by line number
+// Line 5
+// Line 6
+// Line 7 - targeted by range "7-8"
+// Line 8 - targeted by range "7-8"
+```
+
+```jsx {"1":5} del={"2":7-8} ins={"3":10-12} showLineNumbers /button/
+// labeled-line-markers.jsx
+<button
+  role="button"
+  {...props}
+  value={value}
+  className={buttonClassName}
+  disabled={disabled}
+  active={active}
+>
+  {children &&
+    !active &&
+    (typeof children === 'string' ? <span>{children}</span> : children)}
+</button>
+```
+
+```js showLineNumbers
+// This code block will show line numbers
+console.log('Greetings from line 2!')
+console.log('I am on line 3')
+```
+
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
+
+<Tabs>
+<TabItem label='Astro'>
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
+</TabItem>
+<TabItem label='MDX'>
+```tsx
+import { MdxRepl } from 'astro-pure/user'
+```
+</TabItem>
+</Tabs>
