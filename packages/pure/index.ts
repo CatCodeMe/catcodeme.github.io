@@ -6,8 +6,9 @@ import type { AstroIntegration, RehypePlugins, RemarkPlugins } from 'astro'
 // Integrations
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
-import rehypeExternalLinks from 'rehype-external-links'
 import UnoCSS from 'unocss/astro'
+
+import rehypeExternalLinks from './plugins/rehype-external-links'
 import rehypeTable from './plugins/rehype-table'
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
 import { vitePluginUserConfig } from './plugins/virtual-user-config'
