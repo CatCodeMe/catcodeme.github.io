@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
-// import expressiveCode from 'astro-expressive-code';
+import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 import fontCarrier from 'font-carrier';
@@ -22,7 +22,7 @@ import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 import { remarkAiNotice } from './src/plugins/remark-ai-notice.mjs';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
 // Shiki
-import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
+// import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
 
 
@@ -142,7 +142,7 @@ export default defineConfig({
     //     return slug
     //   }
     // }),
-    // expressiveCode(),
+    expressiveCode(),
     icon({
       include: {
         devicon: ['*']
@@ -212,20 +212,20 @@ export default defineConfig({
       ]
     ],
     // https://docs.astro.build/en/guides/syntax-highlighting/
-    shikiConfig: {
-      themes: {
-        light: 'github-light',
-        dark: 'github-dark'
-      },
-      transformers: [
-        transformerNotationDiff(),
-        transformerNotationHighlight(),
-        updateStyle(),
-        addTitle(),
-        addLanguage(),
-        addCopyButton(2000)
-      ]
-    }
+    // shikiConfig: {
+    //   themes: {
+    //     light: 'github-light',
+    //     dark: 'github-dark'
+    //   },
+    //   transformers: [
+    //     transformerNotationDiff(),
+    //     transformerNotationHighlight(),
+    //     updateStyle(),
+    //     addTitle(),
+    //     addLanguage(),
+    //     addCopyButton(2000)
+    //   ]
+    // }
   },
   experimental: {
     svg: true,

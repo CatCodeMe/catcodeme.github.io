@@ -80,10 +80,11 @@ export const theme: ThemeUserConfig = {
   },
 
   content: {
-    externalLinksContent: ' ↗',
+    externalLinks: {
+      content: '',
+    },
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
-    externalLinkArrow: false, // show external link arrow
     // Currently support weibo, x, bluesky
     share: ['weibo', 'x', 'bluesky']
   }

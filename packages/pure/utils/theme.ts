@@ -36,12 +36,6 @@ export function setTheme(theme?: string, save = false) {
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', targetTheme === 'dark' ? '#0B0B10' : '#FCFCFD')
-
-    // 强制更新 expressive-code 主题
-    const codeBlocks = document.querySelectorAll('.expressive-code')
-    codeBlocks.forEach((block) => {
-      block.setAttribute('data-theme', targetTheme === 'dark' ? 'github-dark' : 'github-light')
-    })
   }
 
   // The View Transitions API is used here to animate the theme change.
