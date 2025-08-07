@@ -79,7 +79,25 @@ a {
   z-index: 999;
 }
 
-/* Details/Summary Styles */
+/* startlight tabs Styles */
+starlight-tabs {
+  position: relative;
+  border-top: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+  margin-top: .5em;
+}
+
+/* Add a decorative pattern in the middle of the top border */
+starlight-tabs::before {
+  content: '✻ ✻ ✻';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: hsl(var(--background));
+  padding: 0 0.5rem;
+  color: hsl(var(--muted-foreground));
+}
 
 
 /* inline code css*/
