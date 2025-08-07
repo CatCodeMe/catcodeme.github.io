@@ -138,3 +138,24 @@ details .details-content > :first-child {
 details .details-content > :last-child {
   margin-bottom: 0;
 }
+
+/* inline code css*/
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
+  border-radius: .25rem;
+  padding: .15rem .3rem;
+  font-size: 0.875em;
+  font-family: 'Consolas', monospace;
+  --un-bg-opacity: .13;
+  background-color: rgb(136 136 136 / var(--un-bg-opacity)) !important;
+  color: #2d3748;
+  transition: background-color 0.2s, color 0.2s;
+
+  &::before, &::after {
+    content: '' !important;
+  }
+}
+
+html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
+  background-color: rgba(220, 220, 220, 0.13) !important;
+  color: #f8fafc;
+}
