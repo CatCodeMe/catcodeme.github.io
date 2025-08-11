@@ -1,9 +1,10 @@
-// https://github.com/rehypejs/rehype-external-links
-import type { Element, Root } from 'hast'
-import { visit } from 'unist-util-visit'
+;
 
-import { Icons } from '../libs/icons'
-import isAbsoluteUrl from '../utils/is-absolute-url'
+// https://github.com/rehypejs/rehype-external-links
+import type { Element, Root } from 'hast';
+import { visit } from 'unist-util-visit';
+import { Icons } from '../libs/icons';
+import isAbsoluteUrl from '../utils/is-absolute-url';
 
 export interface ExternalLinkOptions {
   protocols?: string[]
@@ -66,7 +67,8 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
                   className: ['external-link-icon'],
                   alt: '', // Decorative
                   width: 16,
-                  height: 16
+                  height: 16,
+                  onerror: "this.parentNode.replaceChild(document.createTextNode('🌐'), this)"
                 },
                 children: []
               }
@@ -79,7 +81,8 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
                   className: ['external-link-icon'],
                   alt: '', // Decorative
                   width: 16,
-                  height: 16
+                  height: 16,
+                  onerror: "this.parentNode.replaceChild(document.createTextNode('🌐'), this)"
                 },
                 children: []
               }
