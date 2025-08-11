@@ -1,10 +1,9 @@
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { defineEcConfig, setLuminance, setAlpha } from 'astro-expressive-code';
-import { pluginLanguageBadge } from './src/plugins/experssive-code-language-badge.js';
 
 export default defineEcConfig({
-  plugins: [pluginLineNumbers(), pluginCollapsibleSections(), pluginLanguageBadge()],
+  plugins: [pluginLineNumbers(), pluginCollapsibleSections()],
   /* Basics */
   defaultLocale: 'en-US',
   defaultProps: {

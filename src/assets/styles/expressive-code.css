@@ -2,6 +2,7 @@
 
 .expressive-code {
         padding: 0.5em 0;
+        position: relative; /* Make .expressive-code the positioning context */
 
         span {
                 cursor: var(--cursor-text), text !important;
@@ -34,4 +35,33 @@
         margin: 0 !important;
         padding: 0 !important;
         /* background: var(--un-prose-bg-soft);*/
+}
+
+
+.expressive-code [data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  z-index: 2;
+  /* Top-right positioning with padding */
+  inset: 0 0 auto auto; /* Top-right positioning relative to .expressive-code */
+  height: 1.5rem;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ec-txt-col);
+  background-color: var(--ec-bg-col);
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  opacity: 1; /* Default always visible */
+  transition: opacity 0s; /* No animation */
+}
+
+/* Hover effect */
+.expressive-code .frame:not(.has-title):not(.is-terminal) {
+  @media (hover: hover) {
+    &:hover [data-language]::before {
+      opacity: 0; /* Disappear on hover */
+    }
+  }
 }
