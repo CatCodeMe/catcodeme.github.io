@@ -91,7 +91,7 @@ export const theme: ThemeUserConfig = {
     externalLinks: {
       content: '',
       customIcons: {
-        'github.com': 'pin'
+        'github.com': 'github'
       }
     },
     /** Blog page size for pagination (optional) */
