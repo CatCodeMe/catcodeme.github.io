@@ -89,7 +89,7 @@ starlight-tabs {
 
 /* Add a decorative pattern in the middle of the top border */
 starlight-tabs::before {
-  content: '✻ ✻ ✻';
+  content: '/ / /';
   position: absolute;
   top: 0;
   left: 50%;
