@@ -1,9 +1,17 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
+
+
+
 import type { CardListData } from 'astro-pure/types';
+
+
+
+
+
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: 'CCM\'blog',
+  title: "CCM'blog",
   /** Will be used in index page & copyright declaration */
   author: 'CCM',
   /** Description metadata for your website. Can be used in page metadata. */
@@ -54,7 +62,7 @@ export const theme: ThemeUserConfig = {
       { title: 'Cats', link: '/cats' },
       // { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' },
-      { title: 'GusetBook', link: '/guestbook' },
+      { title: 'GusetBook', link: '/guestbook' }
     ]
   },
 
@@ -82,6 +90,9 @@ export const theme: ThemeUserConfig = {
   content: {
     externalLinks: {
       content: '',
+      customIcons: {
+        'github.com': 'pin'
+      }
     },
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,

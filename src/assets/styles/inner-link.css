@@ -2,7 +2,7 @@
         text-decoration: none;
         position: relative;
         padding-right: 1.2em;
-        border-bottom: 1px dashed rgba(120, 120, 120, 0.4); /* 虚线，淡灰色 */
+        border-bottom: 1px dashed rgba(120, 120, 120, 0.4);
         transition:
           border-bottom-color 0.3s cubic-bezier(0.4,0,0.2,1),
           border-bottom-width 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -10,7 +10,7 @@
 
 
 .inner-link:hover {
-        border-bottom-color: rgba(120, 120, 120, 1); /* hover更明显 */
+        border-bottom-color: rgba(120, 120, 120, 1); 
         border-bottom-width: 1px;
 }
 
@@ -32,4 +32,4 @@
         -webkit-mask-size: 100% 100%;
         mask-size: 100% 100%;
         opacity: 0.6;
-}
+} */

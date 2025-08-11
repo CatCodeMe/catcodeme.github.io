@@ -1,29 +1,32 @@
-import { spawn } from 'node:child_process'
-import { dirname, relative } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { spawn } from 'node:child_process';
+import { dirname, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 // Astro
-import type { AstroIntegration, RehypePlugins, RemarkPlugins } from 'astro'
+import type { AstroIntegration, RehypePlugins, RemarkPlugins } from 'astro';
 // Integrations
-import mdx from '@astrojs/mdx'
-import sitemap from '@astrojs/sitemap'
-import rehypeExternalLinks from 'rehype-external-links'
-import UnoCSS from 'unocss/astro'
-import rehypeTable from './plugins/rehype-table'
+import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
+import UnoCSS from 'unocss/astro';
 
-import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
-import { vitePluginUserConfig } from './plugins/virtual-user-config'
-import { UserConfigSchema, type UserInputConfig } from './types/user-config'
-import { parseWithFriendlyErrors } from './utils/error-map'
+
+
+import rehypeExternalLinks from './plugins/rehype-external-links';
+import rehypeTable from './plugins/rehype-table';
+import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins';
+import { vitePluginUserConfig } from './plugins/virtual-user-config';
+import { UserConfigSchema, type UserInputConfig } from './types/user-config';
+import { parseWithFriendlyErrors } from './utils/error-map';
+
 
 export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegration {
-  let integrations: AstroIntegration[] = []
-  let remarkPlugins: RemarkPlugins = []
-  let rehypePlugins: RehypePlugins = []
+  const integrations: AstroIntegration[] = []
+  const remarkPlugins: RemarkPlugins = []
+  const rehypePlugins: RehypePlugins = []
   return {
     name: 'astro-pure',
     hooks: {
       'astro:config:setup': async ({ config, updateConfig }) => {
-        let userConfig = parseWithFriendlyErrors(
+        const userConfig = parseWithFriendlyErrors(
           // @ts-ignore
           UserConfigSchema,
           opts,
@@ -52,18 +55,12 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         rehypePlugins.push([
           rehypeExternalLinks,
           {
-            content: {
-              type: 'text',
-              value: userConfig.content.externalLinks.content || ''
-            },
-            contentProperties: {
-              className: ['external-link-icon']
-            },
             properties: {
-              className: ['external-link','not-prose']
+              className: ['external-link', 'not-prose']
             },
             target: '_blank',
             rel: ['nofollow', 'noopener', 'noreferrer'],
+            customIcons: userConfig.content.externalLinks.customIcons
           }
         ])
         rehypePlugins.push(rehypeTable)

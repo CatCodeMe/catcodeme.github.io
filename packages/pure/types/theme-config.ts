@@ -173,7 +173,12 @@ export const ThemeConfigSchema = () =>
         properties: z
           .record(z.string())
           .optional()
-          .describe('Properties for the external links element')
+          .describe('Properties for the external links element'),
+        /** Custom icons for external links */
+        customIcons: z
+          .record(z.string())
+          .optional()
+          .describe('Custom icons for external links. Key is hostname, value is SVG string.')
       }),
 
       /** Blog page size for pagination */

@@ -1,71 +1,95 @@
 // https://github.com/rehypejs/rehype-external-links
-
-import type { Element, ElementContent, Root } from 'hast'
+import type { Element, Root } from 'hast'
 import { visit } from 'unist-util-visit'
 
+import { Icons } from '../libs/icons'
 import isAbsoluteUrl from '../utils/is-absolute-url'
 
 export interface ExternalLinkOptions {
-  content?: ElementContent | ElementContent[]
-  contentProperties?: Record<string, unknown>
   protocols?: string[]
+  rel?: string | string[]
+  target?: string
+  properties?: Record<string, unknown>
+  customIcons?: Record<string, string> // hostname -> icon key
 }
 
-const defaultProtocols = ['http', 'https']
+const defaultProtocols = ['http', 'https'];
 
-/**
- * Automatically add `rel` (and `target`?) to external links.
- *
- * ###### Notes
- *
- * You should [likely not configure `target`][css-tricks].
- *
- * You should at least set `rel` to `['nofollow']`.
- * When using a `target`, add `noopener` and `noreferrer` to avoid exploitation
- * of the `window.opener` API.
- *
- * When using a `target`, you should set `content` to adhere to accessibility
- * guidelines by giving users advanced warning when opening a new window.
- *
- * [css-tricks]: https://css-tricks.com/use-target_blank/
- *
- * @param {Readonly<Options> | null | undefined} [options]
- *   Configuration (optional).
- * @returns
- *   Transform.
- */
 export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
-  const { content, contentProperties = {}, protocols = defaultProtocols } = options
+  const {
+    protocols = defaultProtocols,
+    rel = ['nofollow', 'noopener', 'noreferrer'],
+    target = '_blank',
+    properties = {},
+    customIcons = {}
+  } = options
 
   return function transformer(tree: Root): void {
     visit(tree, 'element', (node: Element) => {
       if (node.tagName === 'a' && typeof node.properties?.href === 'string') {
         const href = node.properties.href
-        const protocol = href.startsWith('//')
-          ? 'http' // treat protocol-relative as http
-          : href.slice(0, href.indexOf(':'))
+        const protocolRelative = href.startsWith('//')
+        const protocol = protocolRelative ? 'http' : href.slice(0, href.indexOf(':'))
 
-        if (href.startsWith('//') || (isAbsoluteUrl(href) && protocols.includes(protocol))) {
+        if (protocolRelative || (isAbsoluteUrl(href) && protocols.includes(protocol))) {
           node.properties = {
             ...node.properties,
-            rel: 'nofollow noopener noreferrer',
-            target: '_blank'
+            ...properties,
+            rel,
+            target
           }
 
-          if (content) {
-            const spanNode: Element = {
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                ...(contentProperties as Record<
-                  string,
-                  string | number | boolean | (string | number)[] | null | undefined
-                >)
-              },
-              children: Array.isArray(content) ? content : [content]
+          const url = protocolRelative ? `http:${href}` : href
+          try {
+            const hostname = new URL(url).hostname
+
+            let iconNode: Element | undefined
+            let svgString: string | undefined
+
+            const customIconKey = customIcons?.[hostname]
+            if (customIconKey) {
+              svgString = Icons[customIconKey as keyof typeof Icons]
             }
 
-            node.children.push(spanNode)
+            if (svgString) {
+              // If the icon is an SVG fragment (e.g. <g>), wrap it in an <svg> tag.
+              if (!svgString.trim().startsWith('<svg')) {
+                svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
+              }
+
+              const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgString).toString('base64')}`
+              iconNode = {
+                type: 'element',
+                tagName: 'img',
+                properties: {
+                  src: dataUri,
+                  className: ['external-link-icon'],
+                  alt: '', // Decorative
+                  width: 16,
+                  height: 16
+                },
+                children: []
+              }
+            } else {
+              iconNode = {
+                type: 'element',
+                tagName: 'img',
+                properties: {
+                  src: `https://www.google.com/s2/favicons?domain=${hostname}&size=16`,
+                  className: ['external-link-icon'],
+                  alt: '', // Decorative
+                  width: 16,
+                  height: 16
+                },
+                children: []
+              }
+            }
+
+            if (iconNode) {
+              node.children.unshift(iconNode)
+            }
+          } catch (e) {
+            // Ignore invalid URLs
           }
         }
       }
