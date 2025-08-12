@@ -9,8 +9,6 @@ language: 'english'
 ---
 import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
 
-
-
 ```css title="site.css" icon="postcss"
 .flex {
   display: flex;
@@ -199,17 +197,6 @@ test "hello world test" {
 def hello_world():
     print("Hello, World!")    
 ```
-
-import { Code } from 'astro-expressive-code/components'
-
-<Code code="console.log('Hello world!')" lang="js" />
-
-export const exampleCode = `console.log('This could come from a file or CMS!');`
-export const fileName = 'example.js'
-export const highlights = ['file', 'CMS']
-
-<Code code={exampleCode} lang="js" title={fileName} mark={highlights} />
-
 
 ```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
 // labeled-line-markers.jsx
