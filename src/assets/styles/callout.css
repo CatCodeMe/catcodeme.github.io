@@ -56,14 +56,14 @@
 }
 
 .aside.aside-warning {
-  background-color: rgb(234 179 8 / 14%);
+  background-color: rgb(251 146 60 / 14%);
 }
 .aside.aside-warning .aside-title {
   color: #915930;
 }
 
 .aside.aside-caution {
-  background-color: rgb(244 63 94 / 14%);
+  background-color: rgb(251 113 133 / 14%);
 }
 .aside.aside-caution .aside-title {
   color: #b8272c;
@@ -99,10 +99,10 @@ html.dark .aside.aside-info .aside-title {
 }
 
 html.dark .aside.aside-warning {
-  background-color: rgb(234 179 8 / 16%);
+  background-color: rgb(251 146 60 / 16%);
 }
 html.dark .aside.aside-warning .aside-title {
-  color: #e6b30a;
+  color: #fdba74;
 }
 
 html.dark .aside.aside-caution {
