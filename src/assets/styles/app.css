@@ -120,3 +120,24 @@ html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) 
   background-color: rgba(220, 220, 220, 0.13) !important;
   color: #f8fafc;
 }
+
+/* Reading progress bar using modern CSS scroll-driven animations */
+@media (min-width: 768px) {
+  body::before {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: hsl(var(--primary));
+    width: 0%;
+    z-index: 9999;
+    animation: progress-bar linear;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes progress-bar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
