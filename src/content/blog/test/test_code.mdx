@@ -1,0 +1,231 @@
+---
+title: 'Test: expressive-code'
+publishDate: 2025-08-12
+description: 'test expressive-code features'
+tags:
+  - test
+  - expressive-code
+language: 'english'
+---
+import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
+
+
+
+```css title="site.css" icon="postcss"
+.flex {
+  display: flex;
+}
+```
+
+<Tabs>
+<TabItem label='Astro'>
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
+</TabItem>
+<TabItem label='MDX'>
+```tsx
+import { MdxRepl } from 'astro-pure/user'
+```
+</TabItem>
+</Tabs>
+
+
+```js collapse={1-5, 12-14, 21-24} showLineNumbers
+// All this boilerplate setup code will be collapsed
+import { someBoilerplateEngine } from '@example/some-boilerplate'
+import { evenMoreBoilerplate } from '@example/even-more-boilerplate'
+
+const engine = someBoilerplateEngine(evenMoreBoilerplate())
+
+// This part of the code will be visible by default
+engine.doSomething(1, 2, 3, calcFn)
+
+function calcFn() {
+  // You can have multiple collapsed sections
+  const a = 1
+  const b = 2
+  const c = a + b
+
+  // This will remain visible
+  console.log(`Calculation result: ${a} + ${b} = ${c}`)
+  return c
+}
+
+// All this code until the end of the block will be collapsed again
+engine.closeConnection()
+engine.freeMemory()
+engine.shutdown({ reason: 'End of example boilerplate code' })
+```
+
+```zig {1, 4, 7-8}
+// Line 1 - targeted by line number
+// Line 2
+// Line 3
+// Line 4 - targeted by line number
+// Line 5
+// Line 6
+// Line 7 - targeted by range "7-8"
+// Line 8 - targeted by range "7-8"
+```
+
+```jsx {"1":5} del={"2":7-8} ins={"3":10-12} showLineNumbers /button/
+// labeled-line-markers.jsx
+<button
+  role="button"
+  {...props}
+  value={value}
+  className={buttonClassName}
+  disabled={disabled}
+  active={active}
+>
+  {children &&
+    !active &&
+    (typeof children === 'string' ? <span>{children}</span> : children)}
+</button>
+```
+
+```js showLineNumbers
+// This code block will show line numbers
+console.log('Greetings from line 2!')
+console.log('I am on line 3')
+```
+
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
+
+<Tabs>
+<TabItem label='Astro'>
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
+</TabItem>
+<TabItem label='line-markers'>
+```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
+// labeled-line-markers.jsx
+<button
+  role="button"
+  {...props}
+
+  value={value}
+  className={buttonClassName}
+
+  disabled={disabled}
+  active={active}
+>
+
+  {children &&
+    !active &&
+    (typeof children === 'string' ? <span>{children}</span> : children)}
+</button>
+```
+</TabItem>
+</Tabs>
+
+
+[baidu](https://baidu.com)
+[gg](https://google.com)
+[bili](https://bilibili.com)
+[x](https://x.com)
+[deepseek](https://deepseek.com)
+[npm](https://npmjs.com)
+[baidu](https://jetbrains.com)
+[local](https://地理大家费老大劲堪萨斯的)
+[site](https://8cat.life)
+
+
+```css title="site.css" icon="postcss"
+.flex {
+  display: flex;
+}
+```
+
+```css title="site.css" no-icon
+.flex {
+  display: flex;
+}
+```
+
+
+```java title="site"
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+```yaml title="site" showLineNumbers
+name: HelloWorld
+description: A simple Java program
+version: 1.0.0
+mainClass: HelloWorld
+dependencies:
+  - java: 11
+```
+
+
+```zig {1, 4, 7-8} title="zig code" 
+const std = @import("std");
+
+test "hello world test" {
+    std.debug.print("Hello, test!\n", .{});
+    try std.testing.expect(true);
+}
+
+```
+
+
+```json title="site.json" showLineNumbers
+{
+  "name": "HelloWorld",
+  "description": "A simple Java program",
+  "version": "1.0.0",
+  "mainClass": "HelloWorld",
+  "dependencies": {
+    "java": "11"
+  }
+}
+```
+
+```python title="site.py" showLineNumbers
+def hello_world():
+    print("Hello, World!")    
+```
+
+import { Code } from 'astro-expressive-code/components'
+
+<Code code="console.log('Hello world!')" lang="js" />
+
+export const exampleCode = `console.log('This could come from a file or CMS!');`
+export const fileName = 'example.js'
+export const highlights = ['file', 'CMS']
+
+<Code code={exampleCode} lang="js" title={fileName} mark={highlights} />
+
+
+```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
+// labeled-line-markers.jsx
+<button
+  role="button"
+  {...props}
+
+  value={value}
+  className={buttonClassName}
+
+  disabled={disabled}
+  active={active}
+>
+
+  {children &&
+    !active &&
+    (typeof children === 'string' ? <span>{children}</span> : children)}
+</button>
+```

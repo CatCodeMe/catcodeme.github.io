@@ -28,6 +28,7 @@
     "@playform/compress": "^0.2.0",
     "@unocss/preset-wind3": "^66.0.0",
     "@unocss/reset": "^66.0.0",
+    "@xt0rted/expressive-code-file-icons": "^1.0.0",
     "astro": "5.5.3",
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",

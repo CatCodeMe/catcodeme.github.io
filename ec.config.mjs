@@ -1,9 +1,17 @@
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
-import { defineEcConfig, setLuminance, setAlpha } from 'astro-expressive-code';
+import { pluginFileIcons } from "@xt0rted/expressive-code-file-icons";
+import { defineEcConfig, setAlpha, setLuminance } from 'astro-expressive-code';
 
 export default defineEcConfig({
-  plugins: [pluginLineNumbers(), pluginCollapsibleSections()],
+  plugins: [
+    pluginLineNumbers(),
+    pluginCollapsibleSections(),
+    pluginFileIcons({
+      iconClass: 'size-5',
+      titleClass: 'flex items-center gap-1'
+    })
+  ],
   /* Basics */
   defaultLocale: 'en-US',
   defaultProps: {
