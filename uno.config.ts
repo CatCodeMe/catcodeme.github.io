@@ -6,6 +6,16 @@ const bgMuted = 'hsl(var(--muted) / var(--un-bg-opacity, 1))'
 
 const typographyConfig = {
   cssExtend: {
+    // 覆盖 UnoCSS reset 中的默认 monospace 字体
+    'code, kbd, samp, pre': {
+      'font-family': '"LXGW WenKai", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
+      'font-size': '1.015em',
+      'font-weight': '600'
+    },
+    'details':{
+        'margin': '0',
+        'padding': '0',
+    },
     // Title
     'h2,h3,h4,h5,h6': {
       'scroll-margin-top': '3rem',

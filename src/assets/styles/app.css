@@ -1,8 +1,3 @@
-/* Font */
-html {
-  font-family: 'Crjk', sans-serif;
-}
-
 /* Theme */
 :root {
   --background: 210 33% 99%;
@@ -100,12 +95,10 @@ starlight-tabs::before {
 }
 
 
-/* inline code css*/
+/* inline code css , config font in uno.config.ts*/
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
   border-radius: .25rem;
   padding: .15rem .3rem;
-  font-size: 0.875em;
-  font-family: 'Consolas', monospace;
   --un-bg-opacity: .13;
   background-color: rgb(136 136 136 / var(--un-bg-opacity)) !important;
   color: #2d3748;

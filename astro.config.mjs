@@ -1,19 +1,13 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
-import fontCarrier from 'font-carrier';
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
-
-
 
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
@@ -24,78 +18,6 @@ import { remarkMermaid } from './src/plugins/remark-mermaid';
 // Shiki
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
-
-
-const createFontSubsetIntegration = () => {
-  return {
-    name: 'font-subset-integration',
-    hooks: {
-      'astro:server:start': () => {
-        const projectRoot = process.cwd()
-        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf')
-        const outputDir = path.join(projectRoot, 'public', 'fonts')
-        const outputPath = path.join(outputDir, 'crjk-subset.ttf')
-
-        // To avoid slow startup, only copy the .ttf file in dev mode if it doesn't exist.
-        // The browser will show 404s for woff/woff2 but will fall back to the ttf.
-        if (fs.existsSync(outputPath)) {
-          return
-        }
-
-        if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true })
-        }
-
-        fs.copyFileSync(fontPath, outputPath)
-        console.log('Development font .ttf copied to public/fonts!')
-      },
-      'astro:build:done': async ({ dir }) => {
-        const projectRoot = process.cwd()
-        const contentDir = path.join(projectRoot, 'src', 'content')
-        const pagesDir = path.join(projectRoot, 'src', 'pages')
-        const fontPath = path.join(projectRoot, 'src', 'assets', 'fonts', 'crjk03w03.ttf')
-        const outputDir = fileURLToPath(new URL('./fonts', dir))
-        const outputPath = path.join(outputDir, 'crjk-subset')
-
-        if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true })
-        }
-
-        function getAllFiles(dirPath, arrayOfFiles) {
-          const files = fs.readdirSync(dirPath)
-          arrayOfFiles = arrayOfFiles || []
-          files.forEach(function (file) {
-            if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
-              arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles)
-            } else {
-              if (file.endsWith('.md') || file.endsWith('.mdx') || file.endsWith('.astro')) {
-                arrayOfFiles.push(path.join(dirPath, file))
-              }
-            }
-          })
-          return arrayOfFiles
-        }
-
-        const contentFiles = getAllFiles(contentDir)
-        const pagesFiles = getAllFiles(pagesDir)
-        const allFiles = [...contentFiles, ...pagesFiles]
-
-        const noticeTextForSubsetting =
-          'AI-Assisted Content This article is AI-assisted, and the author has strived for accuracy. Please use with discretion. Posted today Posted 1 day ago Posted {days} days ago 本文由AI辅助生成，作者已尽力确保内容准确，请谨慎参考 发布于今天 发布于 1 天前 发布于 {days} 天前'
-        let allText = noticeTextForSubsetting
-        allFiles.forEach((file) => {
-          allText += fs.readFileSync(file, 'utf-8')
-        })
-
-        const font = fontCarrier.transfer(fontPath)
-        font.min(allText)
-        font.output({ path: outputPath })
-
-        console.log('Font subset created successfully in dist/fonts!')
-      }
-    }
-  }
-}
 
 // https://astro.build/config
 export default defineConfig({
@@ -148,8 +70,7 @@ export default defineConfig({
         devicon: ['*']
       }
     }),
-    AstroPureIntegration(config),
-    createFontSubsetIntegration()
+    AstroPureIntegration(config)
   ],
   // root: './my-project-directory',
 

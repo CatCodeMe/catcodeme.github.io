@@ -16,6 +16,7 @@ import AccordionTOC from '@/components/toc/AccordionTOC.astro'
 import { integ } from '@/site-config'
 
 import Copyright from '../../packages/pure/components/pages/Copyright.astro'
+import InnerLinkPreview from '../components/InnerLinkPreview.astro'
 
 interface Props {
   post: CollectionEntry<'blog'>
@@ -85,6 +86,7 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
 
   <slot name='bottom-sidebar' slot='bottom-sidebar' />
   <Mermaid />
+  <InnerLinkPreview />
 </PageLayout>
 
 {integ.mediumZoom.enable && <MediumZoom />}
