@@ -1,5 +1,9 @@
-import { defineCollection, z } from 'astro:content'
-import { glob } from 'astro/loaders'
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+
+
+
 
 function removeDupsAndLowerCase(array: string[]) {
   if (!array.length) return array
@@ -35,7 +39,9 @@ const blog = defineCollection({
       language: z.string().optional(),
       draft: z.boolean().default(false),
       // Special fields
-      comment: z.boolean().default(true)
+      comment: z.boolean().default(true),
+      //toc : 0= 不显示 toc 1= 默认 toc 2=手风琴 toc
+      toc: z.number().default(1).optional()
     })
 })
 

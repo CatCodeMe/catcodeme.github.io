@@ -91,7 +91,8 @@ starlight-tabs::before {
   transform: translate(-50%, -50%);
   background-color: hsl(var(--background));
   padding: 0 0.5rem;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--border));
+  z-index: -1;
 }
 
 

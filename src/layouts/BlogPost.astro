@@ -38,7 +38,8 @@ const {
   title,
   updatedDate,
   draft: isDraft,
-  comment: enableComment
+  comment: enableComment,
+  toc: tocType,
 } = data
 
 const socialImage = heroImage
@@ -58,15 +59,15 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
 >
   {/* 大屏幕：手风琴目录专用 slot，支持贴边布局 (仅在大屏幕显示) */}
   {
-    !!headings.length && headings.length > 4 && (
+    tocType == 2 && (
       <AccordionTOC headings={headings} position='right' slot='handletoc' class='hidden lg:block' />
     )
   }
 
   {/* 右侧 sidebar TOC：小屏幕显示所有目录，大屏幕只显示 <= 4 项的目录 */}
   {
-    !!headings.length && (
-      <TOC {headings} slot='sidebar' class={headings.length > 4 ? 'lg:hidden' : ''} />
+    tocType == 1 && (
+      <TOC {headings} slot='sidebar' />
     )
   }
 

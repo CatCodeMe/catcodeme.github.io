@@ -8,7 +8,7 @@ const typographyConfig = {
   cssExtend: {
     // 覆盖 UnoCSS reset 中的默认 monospace 字体
     'code, kbd, samp, pre': {
-      'font-family': '"LXGW WenKai", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
+      'font-family': '"LXGW Zhenkai", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
       'font-size': '1.015em',
       'font-weight': '600'
     },

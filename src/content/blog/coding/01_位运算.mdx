@@ -1,63 +1,38 @@
 ---
 title: 位运算技巧整理
 publishDate: 2025-08-13
-description: '位运算技巧'
+description: '位运算技巧java实现'
 tags:
   - algorithm
   - java
 language: 'english'
 ai-model:
   - gemini-2.5-pro
+  - deepseek
 heroImage:
-  src: ./attachments/bloom_filter_2.png
-  color: '#faf5e7'
+  src: ./attachments/bit_op.png
+  color: '#188a3e'
+toc: 1
 ---
 
 import Aside from '@/custom/components/user/Aside.astro'
 
 import { LinkPreview } from 'astro-pure/advanced'
 import { TabItem, Tabs } from 'astro-pure/user'
+import { Collapse } from 'astro-pure/user'
 
-<Aside title='位运算技巧' icon='note'>
-  <p>
-    位运算是计算机科学中的一种基本操作，涉及对二进制位进行直接操作。它在算法优化、数据压缩和加密等领域具有重要应用。
-  </p>
-  <p>本文将介绍一些常用的位运算技巧，包括位掩码、位移操作和布隆过滤器等。</p>
-  <p>位运算技巧可以帮助我们更高效地处理数据，减少内存使用和提高算法性能。</p>
+
+<Aside title='位运算技巧' type="tip" icons='tip'>
+1.位运算是计算机科学中的一种基本操作，涉及对二进制位进行直接操作。它在算法优化、数据压缩和加密等领域具有重要应用。
+  本文将介绍一些常用的位运算技巧，包括位掩码、位移操作和布隆过滤器等。
+  位运算技巧可以帮助我们更高效地处理数据，减少内存使用和提高算法性能。
+2.本文出自[Bit Twiddling Hacks](https://graphics.stanford.edu/~seander/bithacks.html)
 </Aside>
-
-## 计算整数的符号
-<Tabs>
-<TabItem label="位运算技巧概览">
- ```java title="计算整数的符号" showLineNumbers
-public static int getSign(int v) {
-    // Java's >> is arithmetic shift, which is what the C code relies on.
-    // However, to get +1 for positive, we need a bit more work.
-    return (v >> 31) | (-v >>> 31);
-    // Java Built-in: Integer.signum(v);
-}
- ```
-</TabItem>
-<TabItem label="位运算技巧">
-```java title="测试用例" showLineNumbers
-@Test
-@DisplayName("1. 计算整数的符号")
-void testGetSign() {
-    assertEquals(1, BitHacks.getSign(123));
-    assertEquals(-1, BitHacks.getSign(-456));
-    assertEquals(0, BitHacks.getSign(0));
-    assertEquals(1, BitHacks.getSign(Integer.MAX_VALUE));
-    assertEquals(-1, BitHacks.getSign(Integer.MIN_VALUE));
-}
-```
-</TabItem>
-</Tabs>
-
 
 ## 1. 计算整数的符号
 <Tabs>
 <TabItem label="计算整数的符号">
-```java title="计算整数的符号" showLineNumbers
+```java showLineNumbers wrap
 /**
  * ### 1. 计算整数的符号 ###
  * 计算整数的符号。
@@ -71,7 +46,7 @@ public static int getSign(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("1. 计算整数的符号")
 void testGetSign() {
@@ -83,12 +58,17 @@ void testGetSign() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java 
+Integer.signum(int v) 
+```
+</TabItem>
 </Tabs>
 
 ## 2. 检测两个整数的符号是否相反
 <Tabs>
 <TabItem label="检测两个整数的符号是否相反">
-```java title="检测两个整数的符号是否相反" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 2. 检测两个整数的符号是否相反 ###
  * @param x 第一个整数。
@@ -102,7 +82,7 @@ public static boolean haveOppositeSigns(int x, int y) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("2. 检测两个整数的符号是否相反")
 void testHaveOppositeSigns() {
@@ -121,7 +101,7 @@ void testHaveOppositeSigns() {
 ## 3. 无分支计算整数绝对值
 <Tabs>
 <TabItem label="无分支计算整数绝对值">
-```java title="无分支计算整数绝对值" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 3. 无分支计算整数绝对值 ###
  * @param v 待计算的整数。
@@ -135,7 +115,7 @@ public static int absWithoutBranch(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("3. 无分支计算整数绝对值")
 void testAbsWithoutBranch() {
@@ -148,12 +128,18 @@ void testAbsWithoutBranch() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java 
+Math.abs(int v)
+```
+</TabItem>
 </Tabs>
 
 ## 4. 无分支计算最小值和最大值
 <Tabs>
 <TabItem label="无分支计算最小值和最大值">
-```java title="无分支计算最小值和最大值" showLineNumbers
+> 为了代码的清晰性和可维护性，优先使用 Math.min() / Math.max() 或者简单的三元运算符，它们的性能在现代JVM上已经优化得非常好了。
+```java "return y \^" "return x \^" showLineNumbers wrap
 /**
  * ### 4. 无分支计算两个整数的最小值 ###
  * @param x 第一个整数。
@@ -165,20 +151,13 @@ public static int minWithoutBranch(int x, int y) {
     return y ^ ((x ^ y) & ((x - y) >> 31));
 }
 
-/**
- * ### 4. 无分支计算两个整数的最大值 ###
- * @param x 第一个整数。
- * @param y 第二个整数。
- * @return x 和 y 中的较大值。
- * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax">Original C version</a>
- */
 public static int maxWithoutBranch(int x, int y) {
     return x ^ ((x ^ y) & ((x - y) >> 31));
 }
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("4. 无分支计算最小值和最大值")
 void testMinMaxWithoutBranch() {
@@ -196,7 +175,7 @@ void testMinMaxWithoutBranch() {
 ## 5. 判断一个整数是否是2的幂
 <Tabs>
 <TabItem label="判断一个整数是否是2的幂">
-```java title="判断一个整数是否是2的幂" showLineNumbers
+```java  showLineNumbers
 /**
  * ### 5. 判断一个整数是否是2的幂 ###
  * @param v 待检查的正整数。
@@ -209,7 +188,7 @@ public static boolean isPowerOfTwo(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("5. 判断一个整数是否是2的幂")
 void testIsPowerOfTwo() {
@@ -225,14 +204,19 @@ void testIsPowerOfTwo() {
 }
 ```
 </TabItem>
+<TabItem label="结合 jdk">
+```java
+(v > 0) && (Integer.bitCount(v) == 1)
+```
+</TabItem>
 </Tabs>
 
-## 6, 7, 8. 符号扩展
+## 6. 符号扩展
 <Tabs>
 <TabItem label="符号扩展">
-```java title="符号扩展" showLineNumbers
+```java  showLineNumbers wrap
 /**
- * ### 6, 7, 8. 符号扩展 ###
+ * ### 6. 符号扩展 ###
  * 从可变位宽进行符号扩展。
  * @param x 包含b位有符号数的整数。
  * @param b x中实际使用的位数 (1-32)。
@@ -240,7 +224,8 @@ void testIsPowerOfTwo() {
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend">Original C version</a>
  */
 public static int signExtendFrom(int x, int b) {
-    if (b <= 0 || b > 32) throw new IllegalArgumentException("Bit width b must be between 1 and 32.");
+    if (b <= 0 || b > 32) 
+        throw new IllegalArgumentException("Bit width b must be between 1 and 32.");
     if (b == 32) return x;
     int mask = 1 << (b - 1);
     int value = x & ((1 << b) - 1);
@@ -249,7 +234,7 @@ public static int signExtendFrom(int x, int b) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("6, 7, 8. 符号扩展")
 void testSignExtendFrom() {
@@ -270,10 +255,10 @@ void testSignExtendFrom() {
 </TabItem>
 </Tabs>
 
-## 9. 无分支地条件性设置或清除位
+## 7. 无分支地条件性设置或清除位
 <Tabs>
 <TabItem label="无分支地条件性设置或清除位">
-```java title="无分支地条件性设置或清除位" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 9. 无分支地条件性设置或清除位 ###
  * 等效于: if (flag) w |= m; else w &= ~m;
@@ -290,7 +275,7 @@ public static int conditionalSetClear(int w, int m, boolean flag) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers wrap
 @Test
 @DisplayName("9. 无分支地条件性设置或清除位")
 void testConditionalSetClear() {
@@ -305,10 +290,10 @@ void testConditionalSetClear() {
 </TabItem>
 </Tabs>
 
-## 10. 无分支地条件性取反一个值
+## 8. 无分支地条件性取反一个值
 <Tabs>
 <TabItem label="无分支地条件性取反一个值">
-```java title="无分支地条件性取反一个值" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 10. 无分支地条件性取反一个值 ###
  * 等效于: fNegate ? -v : v;
@@ -324,7 +309,7 @@ public static int conditionalNegate(int v, boolean fNegate) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("10. 无分支地条件性取反一个值")
 void testConditionalNegate() {
@@ -337,10 +322,10 @@ void testConditionalNegate() {
 </TabItem>
 </Tabs>
 
-## 11. 根据掩码合并两个值的位
+## 9. 根据掩码合并两个值的位
 <Tabs>
 <TabItem label="根据掩码合并两个值的位">
-```java title="根据掩码合并两个值的位" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 11. 根据掩码合并两个值的位 ###
  * 等效于: (a & ~mask) | (b & mask);
@@ -356,7 +341,7 @@ public static int mergeBits(int a, int b, int mask) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("11. 根据掩码合并两个值的位")
 void testMergeBits() {
@@ -370,10 +355,10 @@ void testMergeBits() {
 </TabItem>
 </Tabs>
 
-## 14. 计算置位数 (Kernighan)
+## 10. 计算置位数 (Kernighan)
 <Tabs>
 <TabItem label="计算置位数 (Kernighan)">
-```java title="计算置位数 (Kernighan)" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 14. 计算置位数 (Brian Kernighan's way) ###
  * 循环次数等于置位(1)的数量。
@@ -392,25 +377,41 @@ public static int countSetBits(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("14. 计算置位数 (Kernighan)")
 void testCountSetBits() {
+    // 测试0的置位数（二进制表示全0）
     assertEquals(0, BitHacks.countSetBits(0));
+    
+    // 测试1的置位数（二进制0001）
     assertEquals(1, BitHacks.countSetBits(1));
+    
+    // 测试8的置位数（二进制1000）
     assertEquals(1, BitHacks.countSetBits(8));
+    
+    // 测试9的置位数（二进制1001）
     assertEquals(2, BitHacks.countSetBits(9));
+    
+    // 测试Integer.MAX_VALUE的置位数（二进制011...1，共31个1）
     assertEquals(31, BitHacks.countSetBits(Integer.MAX_VALUE));
+    
+    // 测试-1的置位数（二进制全1，共32个1）
     assertEquals(32, BitHacks.countSetBits(-1));
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java
+Integer.bitCount(v)
+```
+</TabItem>
 </Tabs>
 
-## 16. 并行计算置位数
+## 11. 并行计算置位数
 <Tabs>
 <TabItem label="并行计算置位数">
-```java title="并行计算置位数" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 16. 并行计算置位数 ###
  * @param v 待计算的32位整数。
@@ -425,7 +426,7 @@ public static int countSetBitsParallel(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("16. 并行计算置位数")
 void testCountSetBitsParallel() {
@@ -437,12 +438,90 @@ void testCountSetBitsParallel() {
 }
 ```
 </TabItem>
+<TabItem label="为什么说是并行?">
+
+<Collapse title='并行?'> 
+<Aside type="note" title="并行计算置位数 by Gemini-2.5-Pro">
+您好！这是一个非常深入的好问题。这里的“并行”并不是指我们通常说的多线程或多核并行，而是指 **“数据并行” (Data Parallelism)**，或者更具体地说，是利用单条指令同时对一个寄存器内的多个数据块进行操作，这种思想类似于 SIMD (Single Instruction, Multiple Data)。
+
+让我们一步步分解 `countSetBitsParallel` 这个函数，看看“并行”体现在哪里：
+
+假设我们的输入 `v` 是一个32位的整数。
+
+-----
+
+### **第一步：并行计算每 2 个比特位的和**
+
+```java
+v = v - ((v >>> 1) & 0x55555555);
+```
+
+  * `0x55555555` 的二进制是 `01010101...`。
+  * `v >>> 1` 将 `v` 右移一位。
+  * `& 0x55555555` 会提取出 `v` 中所有奇数位上的原始值。
+  * `v - ...` 这一步非常巧妙。它在**一次操作**中，**同时**对所有16个“2位组”进行了求和。
+
+**举例说明一个2位组 `b1 b0`：**
+
+  * 如果 `v` 的这个组是 `11` (3)，操作是 `(11) - (01) = 10` (2)。结果 `10` 正是 `1+1`。
+  * 如果 `v` 的这个组是 `10` (2)，操作是 `(10) - (01) = 01` (1)。结果 `01` 正是 `1+0`。
+  * 如果 `v` 的这个组是 `01` (1)，操作是 `(01) - (00) = 01` (1)。结果 `01` 正是 `0+1`。
+
+执行完这行代码后，`v` 的每个2位组都存储了原始值在该2位组中 `1` 的数量。这个计算是**并行**发生在所有16个2位组上的。
+
+-----
+
+### **第二步：并行计算每 4 个比特位的和**
+
+```java
+v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+```
+
+  * `0x33333333` 的二进制是 `00110011...`。
+  * `(v & 0x33333333)` 提取出上一步计算出的、位于低位的2位组的和。
+  * `((v >>> 2) & 0x33333333)` 提取出上一步计算出的、位于高位的2位组的和。
+  * `+` 将它们相加。
+
+现在，`v` 的每个4位组都存储了原始值在该4位组中 `1` 的数量。这个加法**并行**发生在所有8个4位组上。
+
+-----
+
+### **第三步：并行计算每 8 位的和，并得出最终结果**
+
+```java
+return (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
+```
+
+1.  `(v + (v >>> 4)) & 0x0F0F0F0F`：这一步将4位组的和相加，得到8位组（即一个字节）的和。现在，`v` 的4个字节分别存储了原始值对应字节中 `1` 的数量。例如，如果 `v` 原始值是 `0x12345678`，经过这几步后，`v` 的4个字节可能变成了 `[count(0x12), count(0x34), count(0x56), count(0x78)]`。
+2.  `* 0x01010101`：这是最神奇的一步。这个乘法利用了进位，**并行地**将4个字节的和累加到了最高的那个字节中。
+3.  `>>> 24`：最后，将包含了总和的最高字节移到最低位，作为最终结果返回。
+
+### **总结**
+
+与逐位检查的循环方法（比如 Kernighan 算法）不同，这个“并行”算法的每一步都是在`整个32位整数`上操作，`同时`处理多个独立的比特组。它用固定的、少量的几步就完成了计算，没有任何循环和分支，因此效率非常高。这就是其“并行”的精髓所在。
+</Aside>
+</Collapse>
+</TabItem>
+<TabItem label="jdk实现">
+```java title="jdk实现" showLineNumbers
+@HotSpotIntrinsicCandidate
+public static int bitCount(int i) {
+    // HD, Figure 5-2
+    i = i - ((i >>> 1) & 0x55555555);
+    i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);
+    i = (i + (i >>> 4)) & 0x0f0f0f0f;
+    i = i + (i >>> 8);
+    i = i + (i >>> 16);
+    return i & 0x3f;
+}
+```
+</TabItem>
 </Tabs>
 
-## 23. 并行计算奇偶校验位
+## 12. 并行计算奇偶校验位
 <Tabs>
 <TabItem label="并行计算奇偶校验位">
-```java title="并行计算奇偶校验位" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 23. 并行计算奇偶校验位 ###
  * @param v 待计算的32位整数。
@@ -459,7 +538,7 @@ public static boolean getParity(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("23. 并行计算奇偶校验位")
 void testGetParity() {
@@ -471,12 +550,17 @@ void testGetParity() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java
+(Integer.bitCount(v) % 2) != 0;
+```
+</TabItem>
 </Tabs>
 
-## 25. 通过异或(XOR)交换两个整数的值
+## 13. 通过异或(XOR)交换两个整数的值
 <Tabs>
 <TabItem label="通过异或(XOR)交换两个整数的值">
-```java title="通过异或(XOR)交换两个整数的值" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 25. 通过异或(XOR)交换两个整数的值 ###
  * 注意：a和b不能是同一个内存地址的引用。
@@ -493,7 +577,7 @@ public static void swapWithXOR(int[] a, int[] b) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("25. 通过异或(XOR)交换两个整数的值")
 void testSwapWithXOR() {
@@ -507,10 +591,10 @@ void testSwapWithXOR() {
 </TabItem>
 </Tabs>
 
-## 26. 通过异或(XOR)交换一个整数内部的两个位序列
+## 14. 通过异或(XOR)交换一个整数内部的两个位序列
 <Tabs>
 <TabItem label="通过异或(XOR)交换一个整数内部的两个位序列">
-```java title="通过异或(XOR)交换一个整数内部的两个位序列" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 26. 通过异或(XOR)交换一个整数内部的两个位序列 ###
  * @param b 原始整数。
@@ -527,7 +611,7 @@ public static int swapBitSequences(int b, int i, int j, int n) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("26. 通过异或(XOR)交换一个整数内部的两个位序列")
 void testSwapBitSequences() {
@@ -541,10 +625,10 @@ void testSwapBitSequences() {
 </TabItem>
 </Tabs>
 
-## 32. 并行反转一个32位整数的所有位
+## 15. 并行反转一个32位整数的所有位
 <Tabs>
 <TabItem label="并行反转一个32位整数的所有位">
-```java title="并行反转一个32位整数的所有位" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 32. 并行反转一个32位整数的所有位 ###
  * @param v 待反转的32位整数。
@@ -562,7 +646,7 @@ public static int reverseBits(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("32. 并行反转一个32位整数的所有位")
 void testReverseBits() {
@@ -574,12 +658,17 @@ void testReverseBits() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java
+Integer.reverse(v)
+```
+</TabItem>
 </Tabs>
 
-## 34. 计算 n % d, 其中 d = 2^s - 1
+## 16. 计算 n % d, 其中 d = 2^s - 1
 <Tabs>
 <TabItem label="计算 n % d, 其中 d = 2^s - 1">
-```java title="计算 n % d, 其中 d = 2^s - 1" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 34. 计算 n % d, 其中 d = 2^s - 1 ###
  * @param n 分子。
@@ -606,7 +695,7 @@ public static int modulusByPowerOf2Minus1(int n, int s) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("34. 计算 n % d, 其中 d = 2^s - 1")
 void testModulusByPowerOf2Minus1() {
@@ -618,10 +707,11 @@ void testModulusByPowerOf2Minus1() {
 </TabItem>
 </Tabs>
 
-## 40. 使用 De Bruijn 序列计算log₂
+## 17. 使用 De Bruijn 序列计算log₂
 <Tabs>
 <TabItem label="使用 De Bruijn 序列计算log₂">
-```java title="使用 De Bruijn 序列计算log₂" showLineNumbers
+- [De Bruijn 序列](https://en.wikipedia.org/wiki/De_Bruijn_sequenceDe)
+```java  showLineNumbers wrap
 /**
  * ### 40. 使用 De Bruijn 序列和乘法查找计算整数的log₂ ###
  * @param v 待计算的32位正整数。
@@ -643,7 +733,7 @@ public static int log2WithDeBruijn(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("40. 使用 De Bruijn 序列计算log₂")
 void testLog2WithDeBruijn() {
@@ -655,12 +745,102 @@ void testLog2WithDeBruijn() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java showLineNumbers
+31 - Integer.numberOfLeadingZeros(v);
+```
+</TabItem>
+<TabItem label="DeepSeek">
+<Aside type="note" title="DeepSeek">
+**为什么 `log2WithDeBruijn(v)` 等价于 `31 - Integer.numberOfLeadingZeros(v)`？**
+
+#### **1. 方法目标**
+这两个方法的目标都是计算 **`log₂(v)`**，即：
+- 给定一个整数 `v`（假设 `v > 0`），返回 `v` 的最高有效位（MSB）的位置（即 `v` 的二进制位数减 1）。
+- 例如：
+  - `v = 8 (1000₂)` → `log₂(8) = 3`
+  - `v = 5 (0101₂)` → `log₂(5) ≈ 2`（因为 `2² = 4` 是 ≤5 的最大 2 的幂）
+
+---
+
+### **2. `31 - Integer.numberOfLeadingZeros(v)` 的原理**
+`Integer.numberOfLeadingZeros(v)` 返回 `v` 的二进制表示中 **前导 0 的个数**：
+- 例如：
+  - `v = 8 (000...0001000₂)` → `numberOfLeadingZeros(8) = 28`（32位整型，前 28 位是 0）
+  - `v = 5 (000...0000101₂)` → `numberOfLeadingZeros(5) = 29`
+
+因此：
+```java
+31 - numberOfLeadingZeros(v)
+```
+计算的是：
+- `32 - 1 - numberOfLeadingZeros(v)`（因为 `log₂(v)` 的范围是 `0..31`）
+- 即 `v` 的最高有效位的位置（从 0 开始计数）。
+
+**示例：**
+- `v = 8 (1000₂)`：
+  - `numberOfLeadingZeros(8) = 28`
+  - `31 - 28 = 3`（正确，因为 `2³ = 8`）
+- `v = 5 (0101₂)`：
+  - `numberOfLeadingZeros(5) = 29`
+  - `31 - 29 = 2`（正确，因为 `2² = 4 ≤ 5`）
+
+---
+
+### **3. `log2WithDeBruijn(v)` 的原理**
+
+import { Steps, Timeline } from 'astro-pure/user'
+
+1. **步骤 1：`v |= v >>> 1 | v >>> 2 | ... | v >>> 16`**
+这段代码的目的是 **将 `v` 的最高有效位（MSB）以下的所有低位全部置 1**：
+- 例如：
+  - `v = 5 (0101₂)` → 经过 `v |= v >>> 1` → `0101 | 0010 = 0111`
+  - `v = 8 (1000₂)` → 经过 `v |= v >>> 1` → `1000 | 0100 = 1100`，然后 `1100 | 0011 = 1111`
+- 最终 `v` 会变成一个形如 `000...001111...111` 的数（所有低于 MSB 的位都是 1）。
+
+2. **步骤 2：`(v * 0x07C4ACDD) >>> 27`**
+- `0x07C4ACDD` 是一个 **De Bruijn 序列** 的魔数，它有一个特殊性质：
+  - 当乘以一个 `2ⁿ - 1` 形式的数（即 `000...001111...111`）时，高位会包含一个唯一的 5 位模式（因为 `32 = 2⁵`）。
+- `>>> 27` 提取高 5 位（因为 `32 - 5 = 27`），得到一个 `0..31` 的索引。
+
+3. **步骤 3：查表 `DE_BRUIJN_TABLE`**
+- `DE_BRUIJN_TABLE` 是一个预计算的表，它根据 `(v * 0x07C4ACDD) >>> 27` 的结果返回 `log₂(v)`。
+- 这个表的设计使得：
+  - 对于 `v = 2ⁿ`，它返回 `n`（即 `log₂(v)`）。
+
+**示例：**
+- `v = 8 (1000₂)`：
+  - 经过 `v |= v >>> ...` 后，`v = 1111`（即 `0xF`）
+  - `0xF * 0x07C4ACDD = ...`（计算后高 5 位可能是 `3`）
+  - `DE_BRUIJN_TABLE[3] = 3`（因为 `2³ = 8`）
+
+---
+
+### **4. 为什么两者等价？**
+- `31 - numberOfLeadingZeros(v)` 直接计算 `v` 的二进制位数减 1。
+- `log2WithDeBruijn(v)` 通过 **De Bruijn 序列的数学技巧** 间接计算 `v` 的二进制位数减 1。
+- 最终结果相同，但 `De Bruijn` 方法在某些 CPU 上可能更快（因为避免了分支）。
+
+---
+
+### **5. 总结**
+| 方法 | 原理 | 适用场景 |
+|------|------|----------|
+| `31 - Integer.numberOfLeadingZeros(v)` | 直接计算前导 0 的个数，然后取补 | 代码简单，可读性强 |
+| `log2WithDeBruijn(v)` | 利用 De Bruijn 序列和查表 | 可能更快（无分支，适合高性能计算） |
+
+**结论：**
+- 两者数学上等价，都能正确计算 `⌊log₂(v)⌋`。
+- `De Bruijn` 方法更底层，可能更快，但可读性较差。
+- `numberOfLeadingZeros` 方法更直观，推荐在一般代码中使用。
+</Aside>
+</TabItem>
 </Tabs>
 
-## 41. 计算整数的log₁₀
+## 18. 计算整数的log₁₀
 <Tabs>
 <TabItem label="计算整数的log₁₀">
-```java title="计算整数的log₁₀" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 41. 计算整数的log₁₀ ###
  * @param v 待计算的32位正整数。
@@ -677,7 +857,7 @@ public static int log10(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("41. 计算整数的log₁₀")
 void testLog10() {
@@ -690,12 +870,17 @@ void testLog10() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java showLineNumbers
+Math.log10(v)
+```
+</TabItem>
 </Tabs>
 
-## 50. 计算末尾连续0的数量
+## 19. 计算末尾连续0的数量
 <Tabs>
 <TabItem label="计算末尾连续0的数量">
-```java title="计算末尾连续0的数量" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 50. 使用 De Bruijn 序列和乘法查找计算末尾连续0的数量 ###
  * @param v 待计算的32位整数。
@@ -713,7 +898,7 @@ public static int countTrailingZeros(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("50. 计算末尾连续0的数量")
 void testCountTrailingZeros() {
@@ -726,12 +911,29 @@ void testCountTrailingZeros() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java showLineNumbers 
+// Integer.numberOfTrailingZeros(v)
+@HotSpotIntrinsicCandidate
+public static int numberOfTrailingZeros(int i) {
+    // HD, Figure 5-14
+    int y;
+    if (i == 0) return 32;
+    int n = 31;
+    y = i <<16; if (y != 0) { n = n -16; i = y; }
+    y = i << 8; if (y != 0) { n = n - 8; i = y; }
+    y = i << 4; if (y != 0) { n = n - 4; i = y; }
+    y = i << 2; if (y != 0) { n = n - 2; i = y; }
+    return n - ((i << 1) >>> 31);
+}
+```
+</TabItem>
 </Tabs>
 
-## 52. 向上取整到下一个2的幂
+## 20. 向上取整到下一个2的幂
 <Tabs>
 <TabItem label="向上取整到下一个2的幂">
-```java title="向上取整到下一个2的幂" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 52. 向上取整到下一个2的幂 ###
  * @param v 待计算的32位整数。
@@ -752,7 +954,7 @@ public static int roundUpToPowerOfTwo(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("52. 向上取整到下一个2的幂")
 void testRoundUpToPowerOfTwo() {
@@ -767,12 +969,17 @@ void testRoundUpToPowerOfTwo() {
 }
 ```
 </TabItem>
+<TabItem label="jdk实现">
+```java showLineNumbers
+v > 0 ? Integer.highestOneBit(v - 1) << 1 : 1;
+```    
+</TabItem>        
 </Tabs>
 
-## 56. 交错位 (莫顿码)
+## 21. 交错位 (莫顿码)
 <Tabs>
 <TabItem label="交错位 (莫顿码)">
-```java title="交错位 (莫顿码)" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 56. 使用二进制魔数交错两个16位整数的位，生成32位莫顿码 ###
  * @param x 第一个16位整数 (放入偶数位)。
@@ -781,6 +988,7 @@ void testRoundUpToPowerOfTwo() {
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN">Original C version</a>
  */
 public static int interleaveBits(int x, int y) {
+    //x and y must be < 65536
     x = (x | (x << 8)) & 0x00FF00FF;
     x = (x | (x << 4)) & 0x0F0F0F0F;
     x = (x | (x << 2)) & 0x33333333;
@@ -796,7 +1004,7 @@ public static int interleaveBits(int x, int y) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("56. 交错位 (莫顿码)")
 void testInterleaveBits() {
@@ -809,10 +1017,10 @@ void testInterleaveBits() {
 </TabItem>
 </Tabs>
 
-## 57. 判断一个字中是否含有0字节
+## 22. 判断一个字中是否含有0字节
 <Tabs>
 <TabItem label="判断一个字中是否含有0字节">
-```java title="判断一个字中是否含有0字节" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 57. 判断一个字中是否含有0字节 ###
  * @param v 待检查的整数。
@@ -825,7 +1033,7 @@ public static boolean hasZeroByte(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("57. 判断一个字中是否含有0字节")
 void testHasZeroByte() {
@@ -839,12 +1047,12 @@ void testHasZeroByte() {
 </TabItem>
 </Tabs>
 
-## 58. 判断一个字中是否有等于n的字节
+## 23. 判断一个整数中是否有等于n的字节
 <Tabs>
-<TabItem label="判断一个字中是否有等于n的字节">
-```java title="判断一个字中是否有等于n的字节" showLineNumbers
+<TabItem label="判断一个整数中是否有等于n的字节">
+```java  showLineNumbers wrap
 /**
- * ### 58. 判断一个字中是否有等于n的字节 ###
+ * ### 58. 判断一个整数中是否有等于n的字节 ###
  * @param x 待检查的整数。
  * @param n 目标字节值 (0-255)。
  * @return 如果含有等于n的字节则返回true。
@@ -852,12 +1060,13 @@ void testHasZeroByte() {
  */
 public static boolean hasValueByte(int x, int n) {
     int mask = 0x01010101 * (n & 0xFF);
+    // 参考 22. 判断一个字中是否含有0字节
     return hasZeroByte(x ^ mask);
 }
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("58. 判断一个字中是否有等于n的字节")
 void testHasValueByte() {
@@ -871,10 +1080,10 @@ void testHasValueByte() {
 </TabItem>
 </Tabs>
 
-## 59. 判断一个字中是否有小于n的字节
+## 24. 判断一个字中是否有小于n的字节
 <Tabs>
 <TabItem label="判断一个字中是否有小于n的字节">
-```java title="判断一个字中是否有小于n的字节" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 59. 判断一个字中是否有小于n的字节 ###
  * @param x 待检查的整数。
@@ -888,7 +1097,7 @@ void testHasValueByte() {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("59. 判断一个字中是否有小于n的字节")
 void testHasByteLessThan() {
@@ -900,10 +1109,10 @@ void testHasByteLessThan() {
 </TabItem>
 </Tabs>
 
-## 62. 计算字典序的下一个位排列
+## 25. 计算字典序的下一个位排列
 <Tabs>
 <TabItem label="计算字典序的下一个位排列">
-```java title="计算字典序的下一个位排列" showLineNumbers
+```java  showLineNumbers wrap
 /**
  * ### 62. 计算字典序的下一个位排列 ###
  * @param v 当前的位排列。
@@ -918,7 +1127,7 @@ public static int nextBitPermutation(int v) {
 ```
 </TabItem>
 <TabItem label="测试用例">
-```java title="测试用例" showLineNumbers
+```java  showLineNumbers
 @Test
 @DisplayName("62. 计算字典序的下一个位排列")
 void testNextBitPermutation() {
