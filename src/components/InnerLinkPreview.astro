@@ -118,11 +118,8 @@
         if (!link || (this.tooltip && this.tooltip.contains(link))) return;
         if (!this.isPinned && link === this.currentTarget) return;
 
-        const href = this._getSafeUrl(link);
-        if (!href) return;
-
         this.currentTarget = link;
-        this.currentHref = href;
+        this.currentHref = link.getAttribute('href') || '';
 
         this.clearTimers();
         this.showPreviewTimer = setTimeout(() => this.showLinkPreview(e), 200);
@@ -153,7 +150,7 @@
 
       this.gotoButton?.addEventListener('click', () => {
         if (this.currentHref) {
-          window.location.href = this.currentHref;
+          window.open(this.currentHref, '_blank');
         }
       });
     }
@@ -206,33 +203,6 @@
         this.tooltip?.classList.add('hidden');
         this.currentTarget = null;
       }, 100);
-    }
-
-    /**
-     * Gets the original href and constructs a full URL with HTTPS protocol.
-     * This is the key fix for the mixed content issue.
-     */
-    private _getSafeUrl(link: HTMLAnchorElement): string | null {
-        const rawHref = link.getAttribute('href');
-        if (!rawHref) return null;
-
-        // For external links, return as is.
-        if (rawHref.startsWith('http')) {
-            // You might want to add logic here to decide if you preview external links
-            return rawHref;
-        }
-
-        // Construct a full URL from a relative path, ensuring it uses the page's origin.
-        const url = new URL(rawHref, window.location.origin);
-        // Force HTTPS protocol to prevent mixed content issues in production.
-        url.protocol = 'https';
-
-        // Ensure trailing slash to prevent server-side redirects to http.
-        if (!url.pathname.endsWith('/') && !url.pathname.split('/').pop()?.includes('.')) {
-            url.pathname += '/';
-        }
-        
-        return url.href;
     }
 
     private async getPreviewContent(href: string): Promise<string | null> {
@@ -425,7 +395,7 @@
     transition: transform 0.2s ease;
   }
   .preview-pin.text-primary {
-    transform: rotate(45deg);
+    transform: rotate(180deg);
   }
   .preview-pin.text-primary svg {
     stroke: hsl(var(--primary));

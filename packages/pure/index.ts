@@ -8,8 +8,6 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import UnoCSS from 'unocss/astro';
 
-
-
 import rehypeExternalLinks from './plugins/rehype-external-links';
 import rehypeTable from './plugins/rehype-table';
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins';
@@ -27,7 +25,6 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
     hooks: {
       'astro:config:setup': async ({ config, updateConfig }) => {
         const userConfig = parseWithFriendlyErrors(
-          // @ts-ignore
           UserConfigSchema,
           opts,
           'Invalid config passed to astro-pure integration'

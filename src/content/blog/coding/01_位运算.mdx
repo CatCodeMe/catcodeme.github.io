@@ -1,0 +1,934 @@
+---
+title: 位运算技巧整理
+publishDate: 2025-08-13
+description: '位运算技巧'
+tags:
+  - algorithm
+  - java
+language: 'english'
+ai-model:
+  - gemini-2.5-pro
+heroImage:
+  src: ./attachments/bloom_filter_2.png
+  color: '#faf5e7'
+---
+
+import Aside from '@/custom/components/user/Aside.astro'
+
+import { LinkPreview } from 'astro-pure/advanced'
+import { TabItem, Tabs } from 'astro-pure/user'
+
+<Aside title='位运算技巧' icon='note'>
+  <p>
+    位运算是计算机科学中的一种基本操作，涉及对二进制位进行直接操作。它在算法优化、数据压缩和加密等领域具有重要应用。
+  </p>
+  <p>本文将介绍一些常用的位运算技巧，包括位掩码、位移操作和布隆过滤器等。</p>
+  <p>位运算技巧可以帮助我们更高效地处理数据，减少内存使用和提高算法性能。</p>
+</Aside>
+
+## 计算整数的符号
+<Tabs>
+<TabItem label="位运算技巧概览">
+ ```java title="计算整数的符号" showLineNumbers
+public static int getSign(int v) {
+    // Java's >> is arithmetic shift, which is what the C code relies on.
+    // However, to get +1 for positive, we need a bit more work.
+    return (v >> 31) | (-v >>> 31);
+    // Java Built-in: Integer.signum(v);
+}
+ ```
+</TabItem>
+<TabItem label="位运算技巧">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("1. 计算整数的符号")
+void testGetSign() {
+    assertEquals(1, BitHacks.getSign(123));
+    assertEquals(-1, BitHacks.getSign(-456));
+    assertEquals(0, BitHacks.getSign(0));
+    assertEquals(1, BitHacks.getSign(Integer.MAX_VALUE));
+    assertEquals(-1, BitHacks.getSign(Integer.MIN_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+
+## 1. 计算整数的符号
+<Tabs>
+<TabItem label="计算整数的符号">
+```java title="计算整数的符号" showLineNumbers
+/**
+ * ### 1. 计算整数的符号 ###
+ * 计算整数的符号。
+ * @param v 待计算的整数。
+ * @return -1 (负数), 0 (零), 或 +1 (正数)。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign">Original C version</a>
+ */
+public static int getSign(int v) {
+    return (v >> 31) | (-v >>> 31);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("1. 计算整数的符号")
+void testGetSign() {
+    assertEquals(1, BitHacks.getSign(123));
+    assertEquals(-1, BitHacks.getSign(-456));
+    assertEquals(0, BitHacks.getSign(0));
+    assertEquals(1, BitHacks.getSign(Integer.MAX_VALUE));
+    assertEquals(-1, BitHacks.getSign(Integer.MIN_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+## 2. 检测两个整数的符号是否相反
+<Tabs>
+<TabItem label="检测两个整数的符号是否相反">
+```java title="检测两个整数的符号是否相反" showLineNumbers
+/**
+ * ### 2. 检测两个整数的符号是否相反 ###
+ * @param x 第一个整数。
+ * @param y 第二个整数。
+ * @return 如果符号相反则返回 true。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#DetectOppositeSigns">Original C version</a>
+ */
+public static boolean haveOppositeSigns(int x, int y) {
+    return (x ^ y) < 0;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("2. 检测两个整数的符号是否相反")
+void testHaveOppositeSigns() {
+    assertTrue(BitHacks.haveOppositeSigns(100, -50));
+    assertTrue(BitHacks.haveOppositeSigns(-1, 1));
+    assertFalse(BitHacks.haveOppositeSigns(10, 20));
+    assertFalse(BitHacks.haveOppositeSigns(-10, -20));
+    assertFalse(BitHacks.haveOppositeSigns(0, 100));
+    assertFalse(BitHacks.haveOppositeSigns(0, -100));
+    assertFalse(BitHacks.haveOppositeSigns(0, 0));
+}
+```
+</TabItem>
+</Tabs>
+
+## 3. 无分支计算整数绝对值
+<Tabs>
+<TabItem label="无分支计算整数绝对值">
+```java title="无分支计算整数绝对值" showLineNumbers
+/**
+ * ### 3. 无分支计算整数绝对值 ###
+ * @param v 待计算的整数。
+ * @return v 的绝对值。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerAbs">Original C version</a>
+ */
+public static int absWithoutBranch(int v) {
+    int mask = v >> 31;
+    return (v + mask) ^ mask;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("3. 无分支计算整数绝对值")
+void testAbsWithoutBranch() {
+    assertEquals(123, BitHacks.absWithoutBranch(123));
+    assertEquals(123, BitHacks.absWithoutBranch(-123));
+    assertEquals(0, BitHacks.absWithoutBranch(0));
+    assertEquals(Integer.MAX_VALUE, BitHacks.absWithoutBranch(Integer.MAX_VALUE));
+    // Note: abs(Integer.MIN_VALUE) is still Integer.MIN_VALUE due to overflow
+    assertEquals(Integer.MIN_VALUE, BitHacks.absWithoutBranch(Integer.MIN_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+## 4. 无分支计算最小值和最大值
+<Tabs>
+<TabItem label="无分支计算最小值和最大值">
+```java title="无分支计算最小值和最大值" showLineNumbers
+/**
+ * ### 4. 无分支计算两个整数的最小值 ###
+ * @param x 第一个整数。
+ * @param y 第二个整数。
+ * @return x 和 y 中的较小值。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax">Original C version</a>
+ */
+public static int minWithoutBranch(int x, int y) {
+    return y ^ ((x ^ y) & ((x - y) >> 31));
+}
+
+/**
+ * ### 4. 无分支计算两个整数的最大值 ###
+ * @param x 第一个整数。
+ * @param y 第二个整数。
+ * @return x 和 y 中的较大值。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerMinOrMax">Original C version</a>
+ */
+public static int maxWithoutBranch(int x, int y) {
+    return x ^ ((x ^ y) & ((x - y) >> 31));
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("4. 无分支计算最小值和最大值")
+void testMinMaxWithoutBranch() {
+    assertEquals(5, BitHacks.minWithoutBranch(5, 10));
+    assertEquals(5, BitHacks.minWithoutBranch(10, 5));
+    assertEquals(-10, BitHacks.minWithoutBranch(-5, -10));
+    assertEquals(-5, BitHacks.maxWithoutBranch(-5, -10));
+    assertEquals(10, BitHacks.maxWithoutBranch(5, 10));
+    assertEquals(10, BitHacks.maxWithoutBranch(10, 5));
+}
+```
+</TabItem>
+</Tabs>
+
+## 5. 判断一个整数是否是2的幂
+<Tabs>
+<TabItem label="判断一个整数是否是2的幂">
+```java title="判断一个整数是否是2的幂" showLineNumbers
+/**
+ * ### 5. 判断一个整数是否是2的幂 ###
+ * @param v 待检查的正整数。
+ * @return 如果是2的幂则返回 true。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2">Original C version</a>
+ */
+public static boolean isPowerOfTwo(int v) {
+    return (v > 0) && ((v & (v - 1)) == 0);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("5. 判断一个整数是否是2的幂")
+void testIsPowerOfTwo() {
+    assertTrue(BitHacks.isPowerOfTwo(1));
+    assertTrue(BitHacks.isPowerOfTwo(2));
+    assertTrue(BitHacks.isPowerOfTwo(16));
+    assertTrue(BitHacks.isPowerOfTwo(1024));
+    assertTrue(BitHacks.isPowerOfTwo(1 << 30));
+    assertFalse(BitHacks.isPowerOfTwo(0));
+    assertFalse(BitHacks.isPowerOfTwo(3));
+    assertFalse(BitHacks.isPowerOfTwo(15));
+    assertFalse(BitHacks.isPowerOfTwo(-4));
+}
+```
+</TabItem>
+</Tabs>
+
+## 6, 7, 8. 符号扩展
+<Tabs>
+<TabItem label="符号扩展">
+```java title="符号扩展" showLineNumbers
+/**
+ * ### 6, 7, 8. 符号扩展 ###
+ * 从可变位宽进行符号扩展。
+ * @param x 包含b位有符号数的整数。
+ * @param b x中实际使用的位数 (1-32)。
+ * @return 符号扩展后的整数。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend">Original C version</a>
+ */
+public static int signExtendFrom(int x, int b) {
+    if (b <= 0 || b > 32) throw new IllegalArgumentException("Bit width b must be between 1 and 32.");
+    if (b == 32) return x;
+    int mask = 1 << (b - 1);
+    int value = x & ((1 << b) - 1);
+    return (value ^ mask) - mask;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("6, 7, 8. 符号扩展")
+void testSignExtendFrom() {
+    // 5-bit number 10 (01010) -> 10
+    assertEquals(10, BitHacks.signExtendFrom(0b01010, 5));
+    // 5-bit number -6 (11010) -> -6
+    assertEquals(-6, BitHacks.signExtendFrom(0b11010, 5));
+    // 5-bit number -1 (11111) -> -1
+    assertEquals(-1, BitHacks.signExtendFrom(0b11111, 5));
+    // 8-bit number 127 -> 127
+    assertEquals(127, BitHacks.signExtendFrom(127, 8));
+    // 8-bit number -128 -> -128
+    assertEquals(-128, BitHacks.signExtendFrom(0b10000000, 8));
+    // 32-bit number
+    assertEquals(Integer.MIN_VALUE, BitHacks.signExtendFrom(Integer.MIN_VALUE, 32));
+}
+```
+</TabItem>
+</Tabs>
+
+## 9. 无分支地条件性设置或清除位
+<Tabs>
+<TabItem label="无分支地条件性设置或清除位">
+```java title="无分支地条件性设置或清除位" showLineNumbers
+/**
+ * ### 9. 无分支地条件性设置或清除位 ###
+ * 等效于: if (flag) w |= m; else w &= ~m;
+ * @param w 待修改的字。
+ * @param m 掩码。
+ * @param flag 条件标志。
+ * @return 修改后的字。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Original C version</a>
+ */
+public static int conditionalSetClear(int w, int m, boolean flag) {
+    int f = flag ? -1 : 0;
+    return w ^ ((f ^ w) & m);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("9. 无分支地条件性设置或清除位")
+void testConditionalSetClear() {
+    int w = 0b10101010;
+    int m = 0b00001111;
+    // if (true) w |= m -> 10101111
+    assertEquals(0b10101111, BitHacks.conditionalSetClear(w, m, true));
+    // if (false) w &= ~m -> 10100000
+    assertEquals(0b10100000, BitHacks.conditionalSetClear(w, m, false));
+}
+```
+</TabItem>
+</Tabs>
+
+## 10. 无分支地条件性取反一个值
+<Tabs>
+<TabItem label="无分支地条件性取反一个值">
+```java title="无分支地条件性取反一个值" showLineNumbers
+/**
+ * ### 10. 无分支地条件性取反一个值 ###
+ * 等效于: fNegate ? -v : v;
+ * @param v 待取反的值。
+ * @param fNegate 是否取反的标志。
+ * @return 结果。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalNegate">Original C version</a>
+ */
+public static int conditionalNegate(int v, boolean fNegate) {
+    int f = fNegate ? -1 : 0;
+    return (v ^ f) - f;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("10. 无分支地条件性取反一个值")
+void testConditionalNegate() {
+    assertEquals(-123, BitHacks.conditionalNegate(123, true));
+    assertEquals(123, BitHacks.conditionalNegate(123, false));
+    assertEquals(123, BitHacks.conditionalNegate(-123, true));
+    assertEquals(-123, BitHacks.conditionalNegate(-123, false));
+}
+```
+</TabItem>
+</Tabs>
+
+## 11. 根据掩码合并两个值的位
+<Tabs>
+<TabItem label="根据掩码合并两个值的位">
+```java title="根据掩码合并两个值的位" showLineNumbers
+/**
+ * ### 11. 根据掩码合并两个值的位 ###
+ * 等效于: (a & ~mask) | (b & mask);
+ * @param a 当掩码位为0时取此值。
+ * @param b 当掩码位为1时取此值。
+ * @param mask 掩码。
+ * @return 合并后的值。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge">Original C version</a>
+ */
+public static int mergeBits(int a, int b, int mask) {
+    return a ^ ((a ^ b) & mask);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("11. 根据掩码合并两个值的位")
+void testMergeBits() {
+    int a = 0b11110000;
+    int b = 0b00001111;
+    int mask = 0b00110011;
+    // expected: (a & ~mask) | (b & mask) = (11000000) | (00000011) = 11000011
+    assertEquals(0b11000011, BitHacks.mergeBits(a, b, mask));
+}
+```
+</TabItem>
+</Tabs>
+
+## 14. 计算置位数 (Kernighan)
+<Tabs>
+<TabItem label="计算置位数 (Kernighan)">
+```java title="计算置位数 (Kernighan)" showLineNumbers
+/**
+ * ### 14. 计算置位数 (Brian Kernighan's way) ###
+ * 循环次数等于置位(1)的数量。
+ * @param v 待计算的整数。
+ * @return 置位(1)的数量。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan">Original C version</a>
+ */
+public static int countSetBits(int v) {
+    int c = 0;
+    while (v != 0) {
+        v &= (v - 1);
+        c++;
+    }
+    return c;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("14. 计算置位数 (Kernighan)")
+void testCountSetBits() {
+    assertEquals(0, BitHacks.countSetBits(0));
+    assertEquals(1, BitHacks.countSetBits(1));
+    assertEquals(1, BitHacks.countSetBits(8));
+    assertEquals(2, BitHacks.countSetBits(9));
+    assertEquals(31, BitHacks.countSetBits(Integer.MAX_VALUE));
+    assertEquals(32, BitHacks.countSetBits(-1));
+}
+```
+</TabItem>
+</Tabs>
+
+## 16. 并行计算置位数
+<Tabs>
+<TabItem label="并行计算置位数">
+```java title="并行计算置位数" showLineNumbers
+/**
+ * ### 16. 并行计算置位数 ###
+ * @param v 待计算的32位整数。
+ * @return 置位(1)的数量。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel">Original C version</a>
+ */
+public static int countSetBitsParallel(int v) {
+    v = v - ((v >>> 1) & 0x55555555);
+    v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+    return (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("16. 并行计算置位数")
+void testCountSetBitsParallel() {
+    assertEquals(0, BitHacks.countSetBitsParallel(0));
+    assertEquals(1, BitHacks.countSetBitsParallel(1));
+    assertEquals(8, BitHacks.countSetBitsParallel(0x11111111));
+    assertEquals(31, BitHacks.countSetBitsParallel(Integer.MAX_VALUE));
+    assertEquals(32, BitHacks.countSetBitsParallel(-1));
+}
+```
+</TabItem>
+</Tabs>
+
+## 23. 并行计算奇偶校验位
+<Tabs>
+<TabItem label="并行计算奇偶校验位">
+```java title="并行计算奇偶校验位" showLineNumbers
+/**
+ * ### 23. 并行计算奇偶校验位 ###
+ * @param v 待计算的32位整数。
+ * @return 如果1的个数为奇数返回true, 否则返回false。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ParityParallel">Original C version</a>
+ */
+public static boolean getParity(int v) {
+    v ^= v >>> 16;
+    v ^= v >>> 8;
+    v ^= v >>> 4;
+    v &= 0x0f;
+    return ((0x6996 >>> v) & 1) != 0;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("23. 并行计算奇偶校验位")
+void testGetParity() {
+    assertTrue(BitHacks.getParity(7));  // 0111 -> 3 ones (odd)
+    assertFalse(BitHacks.getParity(6)); // 0110 -> 2 ones (even)
+    assertFalse(BitHacks.getParity(0)); // 0 ones (even)
+    assertFalse(BitHacks.getParity(-1)); // 32 ones (even)
+    assertTrue(BitHacks.getParity(Integer.MAX_VALUE)); // 31 ones (odd)
+}
+```
+</TabItem>
+</Tabs>
+
+## 25. 通过异或(XOR)交换两个整数的值
+<Tabs>
+<TabItem label="通过异或(XOR)交换两个整数的值">
+```java title="通过异或(XOR)交换两个整数的值" showLineNumbers
+/**
+ * ### 25. 通过异或(XOR)交换两个整数的值 ###
+ * 注意：a和b不能是同一个内存地址的引用。
+ * @param a 第一个整数的单元素数组。
+ * @param b 第二个整数的单元素数组。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#SwappingValuesXOR">Original C version</a>
+ */
+public static void swapWithXOR(int[] a, int[] b) {
+    if (a == b) return;
+    a[0] ^= b[0];
+    b[0] ^= a[0];
+    a[0] ^= b[0];
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("25. 通过异或(XOR)交换两个整数的值")
+void testSwapWithXOR() {
+    int[] a = {10};
+    int[] b = {20};
+    BitHacks.swapWithXOR(a, b);
+    assertEquals(20, a[0]);
+    assertEquals(10, b[0]);
+}
+```
+</TabItem>
+</Tabs>
+
+## 26. 通过异或(XOR)交换一个整数内部的两个位序列
+<Tabs>
+<TabItem label="通过异或(XOR)交换一个整数内部的两个位序列">
+```java title="通过异或(XOR)交换一个整数内部的两个位序列" showLineNumbers
+/**
+ * ### 26. 通过异或(XOR)交换一个整数内部的两个位序列 ###
+ * @param b 原始整数。
+ * @param i 第一个位序列的起始位置。
+ * @param j 第二个位序列的起始位置。
+ * @param n 位序列的长度。
+ * @return 交换后的整数。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#SwappingBitsXOR">Original C version</a>
+ */
+public static int swapBitSequences(int b, int i, int j, int n) {
+    int x = ((b >>> i) ^ (b >>> j)) & ((1 << n) - 1);
+    return b ^ ((x << i) | (x << j));
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("26. 通过异或(XOR)交换一个整数内部的两个位序列")
+void testSwapBitSequences() {
+    // b = 00101111, i=1, j=5, n=3 -> swap 001 with 111
+    // expected: 11100011
+    int b = 0b00101111;
+    int expected = 0b11100011;
+    assertEquals(expected, BitHacks.swapBitSequences(b, 1, 5, 3));
+}
+```
+</TabItem>
+</Tabs>
+
+## 32. 并行反转一个32位整数的所有位
+<Tabs>
+<TabItem label="并行反转一个32位整数的所有位">
+```java title="并行反转一个32位整数的所有位" showLineNumbers
+/**
+ * ### 32. 并行反转一个32位整数的所有位 ###
+ * @param v 待反转的32位整数。
+ * @return 反转后的整数。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel">Original C version</a>
+ */
+public static int reverseBits(int v) {
+    v = ((v >>> 1) & 0x55555555) | ((v & 0x55555555) << 1);
+    v = ((v >>> 2) & 0x33333333) | ((v & 0x33333333) << 2);
+    v = ((v >>> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4);
+    v = ((v >>> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8);
+    v = (v >>> 16) | (v << 16);
+    return v;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("32. 并行反转一个32位整数的所有位")
+void testReverseBits() {
+    assertEquals(0, BitHacks.reverseBits(0));
+    assertEquals(0x80000000, BitHacks.reverseBits(1));
+    assertEquals(0x40000000, BitHacks.reverseBits(2));
+    assertEquals(-1, BitHacks.reverseBits(-1));
+    assertEquals(0x55555555, BitHacks.reverseBits(0xAAAAAAAA));
+}
+```
+</TabItem>
+</Tabs>
+
+## 34. 计算 n % d, 其中 d = 2^s - 1
+<Tabs>
+<TabItem label="计算 n % d, 其中 d = 2^s - 1">
+```java title="计算 n % d, 其中 d = 2^s - 1" showLineNumbers
+/**
+ * ### 34. 计算 n % d, 其中 d = 2^s - 1 ###
+ * @param n 分子。
+ * @param s d = (1 << s) - 1。
+ * @return n % d。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ModulusDivision">Original C version</a>
+ */
+public static int modulusByPowerOf2Minus1(int n, int s) {
+    if (s <= 0 || s >= 32) throw new IllegalArgumentException("s must be between 1 and 31");
+    int d = (1 << s) - 1;
+    if (d == 0) return 0;
+    int m = n;
+    while (n > d) {
+        m = 0;
+        int tempN = n;
+        while (tempN > 0) {
+            m += tempN & d;
+            tempN >>>= s;
+        }
+        n = m;
+    }
+    return m == d ? 0 : m;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("34. 计算 n % d, 其中 d = 2^s - 1")
+void testModulusByPowerOf2Minus1() {
+    assertEquals(100 % 7, BitHacks.modulusByPowerOf2Minus1(100, 3)); // s=3, d=7
+    assertEquals(12345 % 31, BitHacks.modulusByPowerOf2Minus1(12345, 5)); // s=5, d=31
+    assertEquals(99 % 1, BitHacks.modulusByPowerOf2Minus1(99, 1)); // s=1, d=1
+}
+```
+</TabItem>
+</Tabs>
+
+## 40. 使用 De Bruijn 序列计算log₂
+<Tabs>
+<TabItem label="使用 De Bruijn 序列计算log₂">
+```java title="使用 De Bruijn 序列计算log₂" showLineNumbers
+/**
+ * ### 40. 使用 De Bruijn 序列和乘法查找计算整数的log₂ ###
+ * @param v 待计算的32位正整数。
+ * @return log₂(v)。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn">Original C version</a>
+ */
+public static int log2WithDeBruijn(int v) {
+    final int[] DE_BRUIJN_TABLE = {
+        0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
+        8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
+    };
+    v |= v >>> 1;
+    v |= v >>> 2;
+    v |= v >>> 4;
+    v |= v >>> 8;
+    v |= v >>> 16;
+    return DE_BRUIJN_TABLE[(v * 0x07C4ACDD) >>> 27];
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("40. 使用 De Bruijn 序列计算log₂")
+void testLog2WithDeBruijn() {
+    assertEquals(0, BitHacks.log2WithDeBruijn(1));
+    assertEquals(1, BitHacks.log2WithDeBruijn(2));
+    assertEquals(4, BitHacks.log2WithDeBruijn(16));
+    assertEquals(4, BitHacks.log2WithDeBruijn(20)); // floor(log2(20)) = 4
+    assertEquals(30, BitHacks.log2WithDeBruijn(Integer.MAX_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+## 41. 计算整数的log₁₀
+<Tabs>
+<TabItem label="计算整数的log₁₀">
+```java title="计算整数的log₁₀" showLineNumbers
+/**
+ * ### 41. 计算整数的log₁₀ ###
+ * @param v 待计算的32位正整数。
+ * @return log₁₀(v)。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#IntegerLog10">Original C version</a>
+ */
+public static int log10(int v) {
+    if (v <= 0) throw new IllegalArgumentException("v must be positive");
+    final int[] POWERS_OF_10 = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    int log2 = 31 - Integer.numberOfLeadingZeros(v);
+    int t = (log2 + 1) * 1233 >>> 12;
+    return t - (v < POWERS_OF_10[t] ? 1 : 0);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("41. 计算整数的log₁₀")
+void testLog10() {
+    assertEquals(0, BitHacks.log10(9));
+    assertEquals(1, BitHacks.log10(10));
+    assertEquals(2, BitHacks.log10(100));
+    assertEquals(2, BitHacks.log10(999));
+    assertEquals(3, BitHacks.log10(1000));
+    assertEquals(9, BitHacks.log10(Integer.MAX_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+## 50. 计算末尾连续0的数量
+<Tabs>
+<TabItem label="计算末尾连续0的数量">
+```java title="计算末尾连续0的数量" showLineNumbers
+/**
+ * ### 50. 使用 De Bruijn 序列和乘法查找计算末尾连续0的数量 ###
+ * @param v 待计算的32位整数。
+ * @return 末尾连续0的数量。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup">Original C version</a>
+ */
+public static int countTrailingZeros(int v) {
+    final int[] DE_BRUIJN_TABLE = {
+         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
+        31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+    };
+    if (v == 0) return 32;
+    return DE_BRUIJN_TABLE[(((v & -v) * 0x077CB531)) >>> 27];
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("50. 计算末尾连续0的数量")
+void testCountTrailingZeros() {
+    assertEquals(32, BitHacks.countTrailingZeros(0));
+    assertEquals(0, BitHacks.countTrailingZeros(1));
+    assertEquals(1, BitHacks.countTrailingZeros(2));
+    assertEquals(3, BitHacks.countTrailingZeros(8));
+    assertEquals(0, BitHacks.countTrailingZeros(-1));
+    assertEquals(31, BitHacks.countTrailingZeros(Integer.MIN_VALUE));
+}
+```
+</TabItem>
+</Tabs>
+
+## 52. 向上取整到下一个2的幂
+<Tabs>
+<TabItem label="向上取整到下一个2的幂">
+```java title="向上取整到下一个2的幂" showLineNumbers
+/**
+ * ### 52. 向上取整到下一个2的幂 ###
+ * @param v 待计算的32位整数。
+ * @return 大于或等于v的最小的2的幂。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2">Original C version</a>
+ */
+public static int roundUpToPowerOfTwo(int v) {
+    if (v == 0) return 1;
+    v--;
+    v |= v >>> 1;
+    v |= v >>> 2;
+    v |= v >>> 4;
+    v |= v >>> 8;
+    v |= v >>> 16;
+    v++;
+    return v;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("52. 向上取整到下一个2的幂")
+void testRoundUpToPowerOfTwo() {
+    assertEquals(1, BitHacks.roundUpToPowerOfTwo(0));
+    assertEquals(1, BitHacks.roundUpToPowerOfTwo(1));
+    assertEquals(2, BitHacks.roundUpToPowerOfTwo(2));
+    assertEquals(4, BitHacks.roundUpToPowerOfTwo(3));
+    assertEquals(8, BitHacks.roundUpToPowerOfTwo(7));
+    assertEquals(8, BitHacks.roundUpToPowerOfTwo(8));
+    assertEquals(1024, BitHacks.roundUpToPowerOfTwo(1000));
+    assertEquals(1 << 30, BitHacks.roundUpToPowerOfTwo((1 << 30) - 1));
+}
+```
+</TabItem>
+</Tabs>
+
+## 56. 交错位 (莫顿码)
+<Tabs>
+<TabItem label="交错位 (莫顿码)">
+```java title="交错位 (莫顿码)" showLineNumbers
+/**
+ * ### 56. 使用二进制魔数交错两个16位整数的位，生成32位莫顿码 ###
+ * @param x 第一个16位整数 (放入偶数位)。
+ * @param y 第二个16位整数 (放入奇数位)。
+ * @return 32位莫顿码。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN">Original C version</a>
+ */
+public static int interleaveBits(int x, int y) {
+    x = (x | (x << 8)) & 0x00FF00FF;
+    x = (x | (x << 4)) & 0x0F0F0F0F;
+    x = (x | (x << 2)) & 0x33333333;
+    x = (x | (x << 1)) & 0x55555555;
+
+    y = (y | (y << 8)) & 0x00FF00FF;
+    y = (y | (y << 4)) & 0x0F0F0F0F;
+    y = (y | (y << 2)) & 0x33333333;
+    y = (y | (y << 1)) & 0x55555555;
+
+    return x | (y << 1);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("56. 交错位 (莫顿码)")
+void testInterleaveBits() {
+    // x=1 (0001), y=2 (0010) -> z = ...010010 -> 18
+    assertEquals(18, BitHacks.interleaveBits(1, 2));
+    // x=2 (0010), y=3 (0011) -> z = ...011010 -> 26
+    assertEquals(26, BitHacks.interleaveBits(2, 3));
+}
+```
+</TabItem>
+</Tabs>
+
+## 57. 判断一个字中是否含有0字节
+<Tabs>
+<TabItem label="判断一个字中是否含有0字节">
+```java title="判断一个字中是否含有0字节" showLineNumbers
+/**
+ * ### 57. 判断一个字中是否含有0字节 ###
+ * @param v 待检查的整数。
+ * @return 如果含有0字节则返回true。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ZeroInWord">Original C version</a>
+ */
+public static boolean hasZeroByte(int v) {
+    return ((v - 0x01010101) & ~v & 0x80808080) != 0;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("57. 判断一个字中是否含有0字节")
+void testHasZeroByte() {
+    assertTrue(BitHacks.hasZeroByte(0x12345600));
+    assertTrue(BitHacks.hasZeroByte(0x00345678));
+    assertTrue(BitHacks.hasZeroByte(0x12005678));
+    assertFalse(BitHacks.hasZeroByte(0x12345678));
+    assertFalse(BitHacks.hasZeroByte(-1));
+}
+```
+</TabItem>
+</Tabs>
+
+## 58. 判断一个字中是否有等于n的字节
+<Tabs>
+<TabItem label="判断一个字中是否有等于n的字节">
+```java title="判断一个字中是否有等于n的字节" showLineNumbers
+/**
+ * ### 58. 判断一个字中是否有等于n的字节 ###
+ * @param x 待检查的整数。
+ * @param n 目标字节值 (0-255)。
+ * @return 如果含有等于n的字节则返回true。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ValueInWord">Original C version</a>
+ */
+public static boolean hasValueByte(int x, int n) {
+    int mask = 0x01010101 * (n & 0xFF);
+    return hasZeroByte(x ^ mask);
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("58. 判断一个字中是否有等于n的字节")
+void testHasValueByte() {
+    assertTrue(BitHacks.hasValueByte(0x12345678, 0x12));
+    assertTrue(BitHacks.hasValueByte(0x12345678, 0x34));
+    assertTrue(BitHacks.hasValueByte(0x12345678, 0x56));
+    assertTrue(BitHacks.hasValueByte(0x12345678, 0x78));
+    assertFalse(BitHacks.hasValueByte(0x12345678, 0x99));
+}
+```
+</TabItem>
+</Tabs>
+
+## 59. 判断一个字中是否有小于n的字节
+<Tabs>
+<TabItem label="判断一个字中是否有小于n的字节">
+```java title="判断一个字中是否有小于n的字节" showLineNumbers
+/**
+ * ### 59. 判断一个字中是否有小于n的字节 ###
+ * @param x 待检查的整数。
+ * @param n 比较值 (0-128)。
+ * @return 如果含有小于n的字节则返回true。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#HasLessInWord">Original C version</a>
+ */
+ public static boolean hasByteLessThan(int x, int n) {
+    return ((x - (0x01010101 * n)) & ~x & 0x80808080) != 0;
+ }
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("59. 判断一个字中是否有小于n的字节")
+void testHasByteLessThan() {
+    assertTrue(BitHacks.hasByteLessThan(0x80706050, 0x60)); // has 0x50
+    assertFalse(BitHacks.hasByteLessThan(0x80706050, 0x50));
+    assertTrue(BitHacks.hasByteLessThan(0x10203040, 128));
+}
+```
+</TabItem>
+</Tabs>
+
+## 62. 计算字典序的下一个位排列
+<Tabs>
+<TabItem label="计算字典序的下一个位排列">
+```java title="计算字典序的下一个位排列" showLineNumbers
+/**
+ * ### 62. 计算字典序的下一个位排列 ###
+ * @param v 当前的位排列。
+ * @return 下一个位排列。
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation">Original C version</a>
+ */
+public static int nextBitPermutation(int v) {
+    int t = v | (v - 1);
+    int w = (t + 1) | (((~t & -~t) - 1) >>> (Integer.numberOfTrailingZeros(v) + 1));
+    return w;
+}
+```
+</TabItem>
+<TabItem label="测试用例">
+```java title="测试用例" showLineNumbers
+@Test
+@DisplayName("62. 计算字典序的下一个位排列")
+void testNextBitPermutation() {
+    // 00010011 (19) -> 00010101 (21)
+    assertEquals(21, BitHacks.nextBitPermutation(19));
+    // 00010101 (21) -> 00010110 (22)
+    assertEquals(22, BitHacks.nextBitPermutation(21));
+    // 00011100 (28) -> 00100011 (35)
+    assertEquals(35, BitHacks.nextBitPermutation(28));
+}
+```
+</TabItem>
+</Tabs>

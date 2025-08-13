@@ -299,7 +299,7 @@ async function main() {
     const commentsWithCode = allComments.filter(comment => comment.bodyHTML.includes('<pre><code'));
     if (commentsWithCode.length > 0) {
       console.log('\n--- bodyHTML for comments with code blocks ---');
-      commentsWithCode.forEach((comment, index) => {
+      commentsWithCode.forEach((comment) => {
         console.log(`\nComment ID: ${comment.id}`);
         console.log(`Author: ${comment.author.login}`);
         console.log(`bodyHTML:\n${comment.bodyHTML}`);

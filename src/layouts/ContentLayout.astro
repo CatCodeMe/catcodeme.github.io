@@ -8,7 +8,8 @@ import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'
 
-// import LinkPreview from '../components/InnerLinkPreview.astro'
+//样式问题, 必须放在当前文件
+import LinkPreview from '../components/InnerLinkPreview.astro'
 
 interface Props {
   meta: SiteMeta
@@ -30,7 +31,7 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
   <main class='mt-6 items-start gap-x-10 md:flex'>
     {/* 新增 handletoc slot，支持手风琴贴边布局 */}
     <slot name='handletoc' />
-    <!-- <LinkPreview /> -->
+    <LinkPreview />
 
     {/* Sidebar */}
     <aside

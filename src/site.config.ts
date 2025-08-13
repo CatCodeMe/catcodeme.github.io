@@ -1,12 +1,5 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
-
-
-
 import type { CardListData } from 'astro-pure/types';
-
-
-
-
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -15,7 +8,7 @@ export const theme: ThemeUserConfig = {
   /** Will be used in index page & copyright declaration */
   author: 'CCM',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: 'Stay hungry, stay foolish',
+  description: '',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** Specify the default language for this site. */

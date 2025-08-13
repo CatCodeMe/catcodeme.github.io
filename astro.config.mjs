@@ -109,7 +109,7 @@ export default defineConfig({
               hChildren: [
                 {
                   type: 'text',
-                  value: normalizedSlug || alias || ''
+                  value: alias || normalizedSlug || ''
                 }
               ]
             }

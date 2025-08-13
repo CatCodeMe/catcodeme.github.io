@@ -7,7 +7,7 @@ import { ToolTag } from '@/components/tools/Tool.astro'
 import ToolSection from '@/components/tools/ToolSection.astro'
 ---
 
-<PageLayout title='About' info={{slug: '/about', hideComment: true}}>
+<PageLayout title='About' info={{ slug: '/about', hideComment: true }}>
   <h2 id='about'>About Me</h2>
   <ul>
     <li>Communist / Developer / Learner / Cat owner</li>
@@ -145,7 +145,7 @@ import ToolSection from '@/components/tools/ToolSection.astro'
         // api: 'bilibili/19080963',
         color: '#fe7398',
         count: 18
-      },
+      }
     ]}
   />
 
@@ -194,10 +194,9 @@ import ToolSection from '@/components/tools/ToolSection.astro'
       >
     </li>
     <li>
-      Icons: from <a href='https://iconify.design/' target='_blank'>Iconify</a> & <a
-        href='https://lobehub.com/icons'
-        target='_blank'>lobehub</a
-      >, some icons from `GPT-4o`
+      Icons: from <a href='https://iconify.design/' class='external-link not-prose' target='_blank'
+        >Iconify</a
+      > & <a href='https://lobehub.com/icons' target='_blank'>lobehub</a>, some icons from `GPT-4o`
     </li>
   </ul>
   <Comment slot='bottom' />
