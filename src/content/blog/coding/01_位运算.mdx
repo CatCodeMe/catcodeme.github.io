@@ -503,7 +503,7 @@ return (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
 </Collapse>
 </TabItem>
 <TabItem label="jdk实现">
-```java title="jdk实现" showLineNumbers
+```java showLineNumbers
 @HotSpotIntrinsicCandidate
 public static int bitCount(int i) {
     // HD, Figure 5-2
