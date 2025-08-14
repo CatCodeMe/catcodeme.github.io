@@ -1,4 +1,4 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy Astro site to GitHub Pages & Cloudflare Pages
 
 on:
   push:
@@ -13,8 +13,8 @@ on:
     types: [created, edited, deleted] 
 
 concurrency:
-  group: "pages-deploy"  # 全局统一组名,避免频繁评论频繁触发, 确保同一时间只有一个部署任务运行
-  cancel-in-progress: true  # 新触发时取消旧任务
+  group: "pages-deploy"
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -29,26 +29,18 @@ jobs:
         with:
           token: ${{ secrets.gh_action_token_PAT }}
           fetch-depth: 0
-#          submodules: 'recursive'
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
-#      - name: Fetch submodules
-#        continue-on-error: true
-#
-#        run: |
-#          git submodule update --init --recursive --checkout -f --remote -- "content"
-#          git config --global user.name "GitHub Action"
-#          git config --global user.email "noreply@github.com"
-#          git commit -am "chore(update): fetch submodule" || echo "No changes to commit"
-#          git push || echo "Nothing to push"
-
   build:
     needs: setup
     runs-on: ubuntu-22.04
+    outputs:
+      # 输出构建产物路径，供后续 job 使用
+      artifact-path: ${{ steps.build.outputs.artifact-path }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,14 +62,26 @@ jobs:
           GITHUB_TOKEN_READ: ${{ secrets.gh_action_token_PAT }}
 
       - name: Build Production
-        run: bun run build
+        id: build
+        run: |
+          bun run build
+          echo "artifact-path=dist" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact
+      # 为 GitHub Pages 上传 artifact
+      - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
+      # 为 Cloudflare Pages 缓存构建产物
+      - name: Cache build for Cloudflare
+        uses: actions/cache/save@v3
+        with:
+          path: dist
+          key: build-${{ github.sha }}-${{ github.run_id }}
+
+  # GitHub Pages 部署 (海外访问)
+  deploy-github:
     needs: build
     environment:
       name: github-pages
@@ -87,3 +91,83 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Cloudflare Worker 部署 (智能分流)
+  deploy-cloudflare:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create Worker script
+        run: |
+          mkdir -p worker
+          cat > worker/wrangler.toml << 'EOF'
+          name = "site-proxy"
+          main = "worker.js"
+          compatibility_date = "2024-01-01"
+          
+          [[routes]]
+          pattern = "${{ secrets.DOMAIN_NAME }}/*"
+          zone_id = "${{ secrets.CLOUDFLARE_ZONE_ID }}"
+          EOF
+          
+          cat > worker/worker.js << 'EOF'
+          export default {
+            async fetch(request) {
+              const url = new URL(request.url);
+              const country = request.cf?.country || 'US';
+              const isChinaUser = ['CN', 'HK', 'MO', 'TW'].includes(country);
+              
+              if (isChinaUser) {
+                const cacheKey = new Request(url.toString(), request);
+                const cache = caches.default;
+                let response = await cache.match(cacheKey);
+                
+                if (!response) {
+                  const githubUrl = `https://${{ secrets.GH_PAGES_URL }}${url.pathname}${url.search}`;
+                  response = await fetch(githubUrl, {
+                    headers: { 'User-Agent': 'CF-Worker' }
+                  });
+                  
+                  if (response.ok) {
+                    const headers = new Headers(response.headers);
+                    headers.set('Cache-Control', 'public, max-age=3600');
+                    const cachedResponse = new Response(response.body, {
+                      status: response.status,
+                      headers: headers
+                    });
+                    caches.default.put(cacheKey, cachedResponse.clone());
+                    return cachedResponse;
+                  }
+                }
+                return response;
+              }
+              
+              // 海外用户直接访问 GitHub Pages
+              const githubUrl = `https://${{ secrets.GITHUB_PAGES_URL }}${url.pathname}${url.search}`;
+              return fetch(githubUrl, {
+                method: request.method,
+                headers: request.headers,
+                body: request.body
+              });
+            }
+          };
+          EOF
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'worker'
+
+  # # 可选: 部署状态通知
+  # notify:
+  #   needs: [deploy-github, deploy-cloudflare]
+  #   runs-on: ubuntu-latest
+  #   if: always()
+  #   steps:
+  #     - name: Deployment Status
+  #       run: |
+  #         echo "GitHub Pages: ${{ needs.deploy-github.result }}"
+  #         echo "Cloudflare Pages: ${{ needs.deploy-cloudflare.result }}"
