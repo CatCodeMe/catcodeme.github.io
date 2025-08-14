@@ -23,9 +23,7 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
     customIcons = {}
   } = options
 
-  return async function transformer(tree: Root): Promise<void> {
-    const nodesToProcess: { node: Element; hostname: string }[] = []
-
+  return function transformer(tree: Root): void {
     visit(tree, 'element', (node: Element) => {
       if (node.tagName === 'a' && typeof node.properties?.href === 'string') {
         const href = node.properties.href
@@ -43,92 +41,57 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
           const url = protocolRelative ? `http:${href}` : href
           try {
             const hostname = new URL(url).hostname
-            nodesToProcess.push({ node, hostname })
+            let iconNode: Element | undefined
+
+            const customIconKey = customIcons?.[hostname]
+            if (customIconKey) {
+              let svgString = Icons[customIconKey as keyof typeof Icons]
+              if (svgString) {
+                if (!svgString.trim().startsWith('<svg')) {
+                  svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
+                }
+                const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgString).toString(
+                  'base64'
+                )}`
+                iconNode = {
+                  type: 'element',
+                  tagName: 'img',
+                  properties: {
+                    src: dataUri,
+                    className: ['external-link-icon'],
+                    alt: '', // Decorative
+                    width: 16,
+                    height: 16
+                  },
+                  children: []
+                }
+              }
+            }
+
+            if (!iconNode) {
+              iconNode = {
+                type: 'element',
+                tagName: 'img',
+                properties: {
+                  src: `https://www.google.com/s2/favicons?domain=${hostname}&size=16`,
+                  className: ['external-link-icon'],
+                  alt: '', // Decorative
+                  width: 16,
+                  height: 16,
+                  onerror: "this.parentNode.replaceChild(document.createTextNode('🌐'), this)"
+                },
+                children: []
+              }
+            }
+
+            if (iconNode) {
+              node.children.unshift(iconNode)
+            }
           } catch (e) {
             // Ignore invalid URLs
           }
         }
       }
     })
-
-    await Promise.all(
-      nodesToProcess.map(async ({ node, hostname }) => {
-        let iconNode: Element | undefined
-
-        const customIconKey = customIcons?.[hostname]
-        if (customIconKey) {
-          let svgString = Icons[customIconKey as keyof typeof Icons]
-          if (svgString) {
-            if (!svgString.trim().startsWith('<svg')) {
-              svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
-            }
-            const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgString).toString('base64')}`
-            iconNode = {
-              type: 'element',
-              tagName: 'img',
-              properties: {
-                src: dataUri,
-                className: ['external-link-icon'],
-                alt: '', // Decorative
-                width: 16,
-                height: 16
-              },
-              children: []
-            }
-          }
-        }
-
-        if (!iconNode) {
-          const controller = new AbortController()
-          const timeout = setTimeout(() => {
-            controller.abort()
-          }, 2000)
-
-          try {
-            const response = await fetch(`https://www.google.com/s2/favicons?domain=${hostname}&size=16`, {
-              signal: controller.signal
-            })
-
-            if (!response.ok) {
-              throw new Error(`Failed to fetch favicon for ${hostname}, status: ${response.status}`)
-            }
-
-            const buffer = await response.arrayBuffer()
-            const base64 = Buffer.from(buffer).toString('base64')
-            const type = response.headers.get('content-type') || 'image/x-icon'
-            const dataUri = `data:${type};base64,${base64}`
-
-            iconNode = {
-              type: 'element',
-              tagName: 'img',
-              properties: {
-                src: dataUri,
-                className: ['external-link-icon'],
-                alt: '', // Decorative
-                width: 16,
-                height: 16
-              },
-              children: []
-            }
-          } catch (e) {
-            // When timeout or other fetch error occurs
-            iconNode = {
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                className: ['external-link-icon']
-              },
-              children: [{ type: 'text', value: '🌐' }]
-            }
-          } finally {
-            clearTimeout(timeout)
-          }
-        }
-
-        if (iconNode) {
-          node.children.unshift(iconNode)
-        }
-      })
-    )
   }
 }

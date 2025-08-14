@@ -10,8 +10,6 @@ import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
 
-
-
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
 // Local rehype & remark plugins
@@ -28,7 +26,10 @@ export default defineConfig({
   // Top-Level Options
   site: 'https://8cat.life',
   // base: '/docs',
-  trailingSlash: 'always',
+  trailingSlash: 'never',
+  build: {
+    format: 'file'
+  },
 
   // Adapter
   // https://docs.astro.build/en/guides/deploy/
