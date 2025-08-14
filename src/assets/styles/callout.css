@@ -35,86 +35,86 @@
 
 /* --- Light Mode --- */
 .aside.aside-note {
-  background-color: rgb(142 150 170 / 14%);
+  background-color: rgb(100 116 139 / 14%);
 }
 .aside.aside-note .aside-title {
-  color: #656869;
+  color: #334155;
 }
 
 .aside.aside-tip {
-  background-color: rgb(16 185 129 / 14%);
+  background-color: rgb(20 184 166 / 14%);
 }
 .aside.aside-tip .aside-title {
-  color: #18794e;
+  color: #0d9488;
 }
 
 .aside.aside-info {
-  background-color: rgb(27 178 229 / 14%);
+  background-color: rgb(56 189 248 / 14%);
 }
 .aside.aside-info .aside-title {
-  color: #2888a7;
+  color: #0369a1;
 }
 
 .aside.aside-warning {
   background-color: rgb(251 146 60 / 14%);
 }
 .aside.aside-warning .aside-title {
-  color: #915930;
+  color: #c2410c;
 }
 
 .aside.aside-caution {
   background-color: rgb(251 113 133 / 14%);
 }
 .aside.aside-caution .aside-title {
-  color: #b8272c;
+  color: #be123c;
 }
 
 .aside.aside-important {
-  background-color: rgb(159 122 234 / 14%);
+  background-color: rgb(139 92 246 / 14%);
 }
 .aside.aside-important .aside-title {
-  color: #6f42c1;
+  color: #6d28d9;
 }
 
 /* --- Dark Mode --- */
 html.dark .aside.aside-note {
-  background-color: rgb(142 150 170 / 14%);
+  background-color: rgb(100 116 139 / 16%);
 }
 html.dark .aside.aside-note .aside-title {
-  color: #e4e4e9;
+  color: #94a3b8;
 }
 
 html.dark .aside.aside-tip {
-  background-color: rgb(16 185 129 / 16%);
+  background-color: rgb(20 184 166 / 16%);
 }
 html.dark .aside.aside-tip .aside-title {
-  color: #3dd68c;
+  color: #2dd4bf;
 }
 
 html.dark .aside.aside-info {
-  background-color: rgb(27 178 229 / 16%);
+  background-color: rgb(56 189 248 / 16%);
 }
 html.dark .aside.aside-info .aside-title {
-  color: #43bde2;
+  color: #38bdf8;
 }
 
 html.dark .aside.aside-warning {
   background-color: rgb(251 146 60 / 16%);
 }
 html.dark .aside.aside-warning .aside-title {
-  color: #fdba74;
+  color: #fb923c;
 }
 
 html.dark .aside.aside-caution {
-  background-color: rgb(244 63 94 / 16%);
+  background-color: rgb(251 113 133 / 16%);
 }
 html.dark .aside.aside-caution .aside-title {
-  color: #ff7875;
+  color: #fb7185;
 }
 
 html.dark .aside.aside-important {
-  background-color: rgb(159 122 234 / 16%);
+  background-color: rgb(139 92 246 / 16%);
 }
 html.dark .aside.aside-important .aside-title {
-  color: #b392f0;
+  color: #a78bfa;
 }

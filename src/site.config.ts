@@ -8,7 +8,7 @@ export const theme: ThemeUserConfig = {
   /** Will be used in index page & copyright declaration */
   author: 'CCM',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: '',
+  description: '一个写代码的人，偶然记录历史的碎片，有时停下笔挠挠猫下巴',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** Specify the default language for this site. */
