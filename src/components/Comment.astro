@@ -7,64 +7,70 @@ const giscus = config.integ.giscus
 {
   giscus && giscus.enable && (
     <div class='giscus-container'>
-      <script
-        is:inline
-        src='https://giscus.app/client.js'
-        data-repo={giscus.repo}
-        data-repo-id={giscus.repoId}
-        data-category={giscus.category}
-        data-category-id={giscus.categoryId}
-        data-mapping={giscus.mapping || 'pathname'}
-        data-strict={giscus.strict || '0'}
-        data-reactions-enabled={giscus.reactionsEnabled || '1'}
-        data-emit-metadata={giscus.emitMetadata || '0'}
-        data-input-position={giscus.inputPosition || 'top'}
-        data-theme={giscus.theme}
-        data-lang={giscus.lang || 'zh-CN'}
-        data-loading='lazy'
-        crossorigin='anonymous'
-        async
-      />
+      <script is:inline data-giscus-config={JSON.stringify(giscus)}>
+        // Immediately-invoked function to avoid polluting the global scope
+        ;(() => {
+          const getGiscusTheme = () => {
+            let theme = localStorage.getItem('theme')
+            if (!theme || theme === 'system') {
+              theme =
+                window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+            // Use the 'noborder_' prefix as required by the user's setup
+            return `noborder_${theme}`
+          }
+
+          // Create a new script element
+          const giscusScript = document.createElement('script')
+
+          // Get the Giscus config from the data attribute of this script
+          const config = JSON.parse(document.currentScript.getAttribute('data-giscus-config'))
+
+          // Set all the necessary attributes for Giscus
+          Object.entries({
+            src: 'https://giscus.app/client.js',
+            'data-repo': config.repo,
+            'data-repo-id': config.repoId,
+            'data-category': config.category,
+            'data-category-id': config.categoryId,
+            'data-mapping': config.mapping || 'pathname',
+            'data-strict': config.strict || '0',
+            'data-reactions-enabled': config.reactionsEnabled || '1',
+            'data-emit-metadata': config.emitMetadata || '0',
+            'data-input-position': config.inputPosition || 'top',
+            'data-lang': config.lang || 'zh-CN',
+            'data-loading': 'lazy',
+            crossorigin: 'anonymous',
+            async: true,
+            // Set the theme dynamically!
+            'data-theme': getGiscusTheme()
+          }).forEach(([key, value]) => giscusScript.setAttribute(key, String(value)))
+
+          // Append the script to the container, which will trigger it to load.
+          document.querySelector('.giscus-container').appendChild(giscusScript)
+        })()
+      </script>
     </div>
   )
 }
 
+{/* This separate script handles theme changes after the initial load */}
 <script is:inline>
   ;(() => {
-    const getEffectiveTheme = () => {
-      const root = document.documentElement
-      const theme = root.getAttribute('data-theme')
-      if (theme === 'system') {
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      }
-      return theme || 'light'
-    }
+    const updateGiscusTheme = () => {
+      const iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe || !iframe.contentWindow) return
 
-    const updateGiscus = (attempt = 0) => {
-      const giscusScript = document.querySelector('script[src^="https://giscus.app"]');
-      const iframe = document.querySelector('iframe.giscus-frame');
-
-      if (!iframe || !giscusScript) {
-        if (attempt < 10) setTimeout(() => updateGiscus(attempt + 1), 300);
-        return;
-      }
-
-      const effectiveTheme = getEffectiveTheme();
-      
-      // 始终使用 noborder 主题
-      const newGiscusTheme = `noborder_${effectiveTheme}`;
+      const effectiveTheme =
+        document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+      const newGiscusTheme = `noborder_${effectiveTheme}`
 
       iframe.contentWindow.postMessage(
         { giscus: { setConfig: { theme: newGiscusTheme } } },
         'https://giscus.app'
-      );
+      )
     }
 
-    // 初始化
-    document.addEventListener('DOMContentLoaded', updateGiscus);
-    window.addEventListener('load', updateGiscus);
-
-    // 监听主题切换完成事件
-    document.addEventListener('theme-transition-complete', updateGiscus);
-  })();
+    document.addEventListener('theme-transition-complete', updateGiscusTheme)
+  })()
 </script>
