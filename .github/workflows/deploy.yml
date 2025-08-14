@@ -1,52 +1,27 @@
-name: Deploy Astro site to GitHub Pages & Cloudflare Pages
+name: Deploy Astro site to GitHub Pages & Cloudflare
 
 on:
   push:
     branches: [ astro-pure-v4_0_3 ]
   workflow_dispatch:
-  workflow_run:
-    workflows: [build, deploy]
-    branches: [astro-pure-v4_0_3]
-  discussion:
-    types: [created, edited, deleted]
-  discussion_comment:
-    types: [created, edited, deleted] 
-
-concurrency:
-  group: "pages-deploy"
-  cancel-in-progress: true
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages-deploy"
+  cancel-in-progress: true
+
 jobs:
-  setup:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.gh_action_token_PAT }}
-          fetch-depth: 0
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
   build:
-    needs: setup
     runs-on: ubuntu-22.04
-    outputs:
-      # 输出构建产物路径，供后续 job 使用
-      artifact-path: ${{ steps.build.outputs.artifact-path }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.gh_action_token_PAT }}
           fetch-depth: 0
-          submodules: 'recursive'
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -59,50 +34,36 @@ jobs:
       - name: Fetch Giscus comments
         run: node src/scripts/fetch-comments.js
         env:
-          GITHUB_TOKEN_READ: ${{ secrets.gh_action_token_PAT }}
+          # Ensure this secret has read access to discussions
+          GITHUB_TOKEN: ${{ secrets.gh_action_token_PAT }}
 
       - name: Build Production
-        id: build
-        run: |
-          bun run build
-          echo "artifact-path=dist" >> $GITHUB_OUTPUT
+        run: bun run build
 
-      # 为 GitHub Pages 上传 artifact
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-      # 为 Cloudflare Pages 缓存构建产物
-      - name: Cache build for Cloudflare
-        uses: actions/cache/save@v3
-        with:
-          path: dist
-          key: build-${{ github.sha }}-${{ github.run_id }}
-
-  # GitHub Pages 部署 (海外访问)
   deploy-github:
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Cloudflare Worker 部署 (智能分流)
   deploy-cloudflare:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
       - name: Create Worker script
         run: |
           mkdir -p worker
-          cat > worker/wrangler.toml << 'EOF'
+          cat > worker/wrangler.toml << EOF
           name = "site-proxy"
           main = "worker.js"
           compatibility_date = "2024-01-01"
@@ -112,62 +73,51 @@ jobs:
           zone_id = "${{ secrets.CLOUDFLARE_ZONE_ID }}"
           EOF
           
-          cat > worker/worker.js << 'EOF'
+          # Note: Using a single secret GH_PAGES_URL for consistency.
+          # Make sure this secret is set correctly in your repository settings.
+          # It should be the base URL of your GitHub Pages site, e.g., "catcodeme.github.io".
+          cat > worker/worker.js << EOF
           export default {
-            async fetch(request) {
+            async fetch(request, env, ctx) {
               const url = new URL(request.url);
-              const country = request.cf?.country || 'US';
-              const isChinaUser = ['CN', 'HK', 'MO', 'TW'].includes(country);
               
-              if (isChinaUser) {
-                const cacheKey = new Request(url.toString(), request);
-                const cache = caches.default;
-                let response = await cache.match(cacheKey);
+              // All users will be proxied to GitHub Pages through this worker.
+              // The logic for differentiating users can be added here if needed.
+              const githubUrl = `https://${{ secrets.GH_PAGES_URL }}${url.pathname}${url.search}`;
+              
+              // Implement caching strategy
+              const cacheKey = new Request(url.toString(), request);
+              const cache = caches.default;
+              let response = await cache.match(cacheKey);
+              
+              if (!response) {
+                console.log(`Cache miss for ${url.toString()}. Fetching from origin.`);
+                response = await fetch(githubUrl, {
+                  headers: { 'User-Agent': 'Cloudflare-Worker-Proxy' }
+                });
                 
-                if (!response) {
-                  const githubUrl = `https://${{ secrets.GH_PAGES_URL }}${url.pathname}${url.search}`;
-                  response = await fetch(githubUrl, {
-                    headers: { 'User-Agent': 'CF-Worker' }
+                if (response.ok) {
+                  const headers = new Headers(response.headers);
+                  headers.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+                  const cachedResponse = new Response(response.body, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: headers
                   });
-                  
-                  if (response.ok) {
-                    const headers = new Headers(response.headers);
-                    headers.set('Cache-Control', 'public, max-age=3600');
-                    const cachedResponse = new Response(response.body, {
-                      status: response.status,
-                      headers: headers
-                    });
-                    caches.default.put(cacheKey, cachedResponse.clone());
-                    return cachedResponse;
-                  }
+                  ctx.waitUntil(cache.put(cacheKey, cachedResponse.clone()));
+                  return cachedResponse;
                 }
-                return response;
+              } else {
+                console.log(`Cache hit for ${url.toString()}.`);
               }
               
-              // 海外用户直接访问 GitHub Pages
-              const githubUrl = `https://${{ secrets.GITHUB_PAGES_URL }}${url.pathname}${url.search}`;
-              return fetch(githubUrl, {
-                method: request.method,
-                headers: request.headers,
-                body: request.body
-              });
+              return response;
             }
           };
           EOF
 
-      - name: Deploy Worker
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: 'worker'
-
-  # # 可选: 部署状态通知
-  # notify:
-  #   needs: [deploy-github, deploy-cloudflare]
-  #   runs-on: ubuntu-latest
-  #   if: always()
-  #   steps:
-  #     - name: Deployment Status
-  #       run: |
-  #         echo "GitHub Pages: ${{ needs.deploy-github.result }}"
-  #         echo "Cloudflare Pages: ${{ needs.deploy-cloudflare.result }}"
