@@ -55,7 +55,7 @@ export const theme: ThemeUserConfig = {
       { title: 'Cats', link: '/cats' },
       // { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' },
-      { title: 'GusetBook', link: '/guestbook' }
+      // { title: 'GusetBook', link: '/guestbook' }
     ]
   },
 
