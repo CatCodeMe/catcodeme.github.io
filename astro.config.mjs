@@ -26,10 +26,9 @@ export default defineConfig({
   // Top-Level Options
   site: 'https://8cat.life',
   // base: '/docs',
-  trailingSlash: 'never',
+  trailingSlash: 'ignore',
   build: {
-    format: 'directory',
-    redirects: false,
+    format: 'directory'
   },
 
   // Adapter
