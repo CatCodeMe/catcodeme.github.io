@@ -1,5 +1,5 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
-// import remarkWikiLink from "@braindb/remark-wiki-link";
+import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
@@ -89,33 +89,33 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkMath,
-      // [
-      //   remarkWikiLink,
-      //   {
-      //     linkTemplate: ({ slug, alias }) => {
-      //       let normalizedSlug = (slug || '')
-      //         .replace(/^\/\//, '')
-      //         .replace(/^src\/content\//, '')
-      //         .replace(/^\/+/, '')
-      //         .replace(/\.(md|mdx)$/, '')
-      //         .replace(/\/index$/, '')
+      [
+        remarkWikiLink,
+        {
+          linkTemplate: ({ slug, alias }) => {
+            let normalizedSlug = (slug || '')
+              .replace(/^\/\//, '')
+              .replace(/^src\/content\//, '')
+              .replace(/^\/+/, '')
+              .replace(/\.(md|mdx)$/, '')
+              .replace(/\/index$/, '')
 
-      //       return {
-      //         hName: 'a',
-      //         hProperties: {
-      //           href: `/${normalizedSlug}`,
-      //           class: 'inner-link not-prose'
-      //         },
-      //         hChildren: [
-      //           {
-      //             type: 'text',
-      //             value: alias || normalizedSlug || ''
-      //           }
-      //         ]
-      //       }
-      //     }
-      //   }
-      // ],
+            return {
+              hName: 'a',
+              hProperties: {
+                href: `/${normalizedSlug}`,
+                class: 'inner-link not-prose'
+              },
+              hChildren: [
+                {
+                  type: 'text',
+                  value: alias || normalizedSlug || ''
+                }
+              ]
+            }
+          }
+        }
+      ],
       remarkBreaks,
       remarkMermaid,
       // remarkAiNotice
