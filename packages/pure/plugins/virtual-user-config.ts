@@ -15,8 +15,9 @@ export function vitePluginUserConfig(
     build,
     root,
     srcDir,
-    trailingSlash
-  }: Pick<AstroConfig, 'root' | 'srcDir' | 'trailingSlash'> & {
+    trailingSlash,
+    site
+  }: Pick<AstroConfig, 'root' | 'srcDir' | 'trailingSlash' | 'site'> & {
     build: Pick<AstroConfig['build'], 'format'>
   }
 ): NonNullable<ViteUserConfig['plugins']>[number] {
@@ -37,7 +38,8 @@ export function vitePluginUserConfig(
       build: { format: build.format },
       root,
       srcDir,
-      trailingSlash
+      trailingSlash,
+      site
     })}`,
     'virtual:starlight/user-css': opts.customCss.map((id) => `import ${resolveId(id)};`).join(''),
     'virtual:starlight/user-images': opts.logo
