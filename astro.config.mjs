@@ -28,7 +28,8 @@ export default defineConfig({
   // base: '/docs',
   trailingSlash: 'never',
   build: {
-    format: 'file'
+    format: 'directory',
+    redirects: false,
   },
 
   // Adapter
