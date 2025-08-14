@@ -76,7 +76,7 @@ jobs:
           # Note: Using a single secret GH_PAGES_URL for consistency.
           # Make sure this secret is set correctly in your repository settings.
           # It should be the base URL of your GitHub Pages site, e.g., "catcodeme.github.io".
-          cat > worker/worker.js << EOF
+          cat > worker/worker.js << 'EOF'
           export default {
             async fetch(request, env, ctx) {
               const url = new URL(request.url);
@@ -121,3 +121,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: 'worker'
+          wranglerVersion: '4'
