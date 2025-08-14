@@ -10,6 +10,8 @@ import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
 
+
+
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
 // Local rehype & remark plugins
@@ -18,7 +20,7 @@ import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
 // Shiki
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
-import config from './src/site.config.ts'
+import config from './src/site.config.ts';
 
 
 // https://astro.build/config
@@ -26,7 +28,7 @@ export default defineConfig({
   // Top-Level Options
   site: 'https://8cat.life',
   // base: '/docs',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
   build: {
     format: 'directory'
   },
@@ -122,7 +124,7 @@ export default defineConfig({
         }
       ],
       remarkBreaks,
-      remarkMermaid,
+      remarkMermaid
       // remarkAiNotice
     ],
     rehypePlugins: [
@@ -136,7 +138,7 @@ export default defineConfig({
           content: { type: 'text', value: '#' }
         }
       ]
-    ],
+    ]
     // https://docs.astro.build/en/guides/syntax-highlighting/
     // shikiConfig: {
     //   themes: {
@@ -165,7 +167,7 @@ export default defineConfig({
       //   })
     ],
     server: {
-      host: true,
+      host: true
       // https: {
       //   key: fs.readFileSync('./localhost+2-key.pem'),
       //   cert: fs.readFileSync('./localhost+2.pem')
