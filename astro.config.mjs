@@ -24,7 +24,7 @@ export default defineConfig({
   // Top-Level Options
   site: 'https://8cat.life',
   // base: '/docs',
-  trailingSlash: 'always',
+  trailingSlash: 'never',
 
   // Adapter
   // https://docs.astro.build/en/guides/deploy/
