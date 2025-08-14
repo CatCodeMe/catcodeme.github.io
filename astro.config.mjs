@@ -1,5 +1,5 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
-import vercel from '@astrojs/vercel';
+// import vercel from '@astrojs/vercel';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
@@ -33,8 +33,8 @@ export default defineConfig({
   // Adapter
   // https://docs.astro.build/en/guides/deploy/
   // 1. Vercel (serverless)
-  adapter: vercel(),
-  output: 'server',
+  // adapter: vercel(),
+  // output: 'server',
   // 2. Vercel (static)
   // adapter: vercelStatic(),
   // 3. Local (standalone)
@@ -42,7 +42,7 @@ export default defineConfig({
   // output: 'server',
   // ---
   // adapter: undefined,
-  // output: 'static',
+  output: 'static',
   // outDir: 'dist',
 
   image: {
