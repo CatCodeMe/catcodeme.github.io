@@ -1,10 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-
-
-
-
 function removeDupsAndLowerCase(array: string[]) {
   if (!array.length) return array
   const lowercaseItems = array.map((str) => str.toLowerCase())
@@ -20,6 +16,7 @@ const blog = defineCollection({
     z.object({
       // Required
       title: z.string().max(60),
+      slug: z.string(),
       description: z.string().max(160).optional(),
       publishDate: z.coerce.date(),
       // Optional

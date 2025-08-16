@@ -6,8 +6,7 @@ tags:
   - Markdown
 heroImage: { src: './thumbnail.jpg', color: '#c8d57fff' }
 language: 'English'
-redirect_from:
-  - m1
+slug: m2
 ---
 
 ## Basic Syntax

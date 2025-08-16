@@ -9,7 +9,7 @@ export const prerender = true
 export async function getStaticPaths() {
   const posts = sortMDByDate(await getBlogCollection())
   return posts.map((post) => ({
-    params: { id: post.id },
+    params: { slug: post.data.slug },
     props: { post, posts }
   }))
 }
