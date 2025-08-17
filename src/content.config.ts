@@ -48,6 +48,7 @@ const docs = defineCollection({
   schema: () =>
     z.object({
       title: z.string().max(60),
+      slug: z.string().optional(),
       description: z.string().max(160),
       publishDate: z.coerce.date().optional(),
       updatedDate: z.coerce.date().optional(),

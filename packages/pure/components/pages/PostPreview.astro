@@ -14,7 +14,7 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 
 const { as: Tag = 'div', post, detailed = false, class: className } = Astro.props
 
-const { id, data } = post
+const { data } = post
 
 const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
