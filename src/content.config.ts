@@ -38,7 +38,7 @@ const blog = defineCollection({
       // Special fields
       comment: z.boolean().default(true),
       //toc : 0= 不显示 toc 1= 默认 toc 2=手风琴 toc
-      toc: z.number().default(1).optional()
+      toc: z.number().default(1)
     })
 })
 
