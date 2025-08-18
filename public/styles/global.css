@@ -1,8 +1,7 @@
-/* @import url("https://chinese-fonts-cdn.deno.dev/packages/sypxzs/dist/%E6%80%9D%E6%BA%90%E5%B1%8F%E6%98%BE%E8%87%BB%E5%AE%8B/result.css"); */
-@import url("https://chinese-fonts-cdn.deno.dev/packages/zqfs/dist/ZhuqueFangsong-Regular/result.css");
+@import url("https://chinese-fonts-cdn.deno.dev/packages/lywkpmydb/dist/LXGWWenKaiMonoScreen/result.css");
 
 body {
-  font-family: "Zhuque Fangsong (technical preview)";
+  font-family: "LXGW WenKai Mono Screen";
   font-weight: normal;
   font-style: normal;
   font-display: swap;
