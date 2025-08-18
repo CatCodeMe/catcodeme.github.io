@@ -20,6 +20,17 @@ import path from 'node:path'
 import minimist from './libs/minimist.cjs'
 import slugify from './libs/slugify.cjs'
 
+const ID_LENGTH = 4;
+const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+function generateShortId(length) {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length));
+  }
+  return result;
+}
+
 function getDate() {
   const date = new Date()
   const year = date.getFullYear()
@@ -53,6 +64,28 @@ Example:
   astro-pure new -l zh "你好，世界"
 `
 const TARGET_DIR = 'src/content/blog/'
+
+function getExistingSlugs() {
+  const existingSlugs = new Set();
+  const files = fs.readdirSync(TARGET_DIR);
+
+  for (const file of files) {
+    if (file.endsWith('.md') || file.endsWith('.mdx')) {
+      const filePath = path.join(TARGET_DIR, file);
+      const content = fs.readFileSync(filePath, 'utf8');
+      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+
+      if (frontmatterMatch && frontmatterMatch[1]) {
+        const frontmatter = frontmatterMatch[1];
+        const slugMatch = frontmatter.match(/^slug:\s*(.*)$/m);
+        if (slugMatch && slugMatch[1]) {
+          existingSlugs.add(slugMatch[1].trim());
+        }
+      }
+    }
+  }
+  return existingSlugs;
+}
 
 export default function main(args) {
   const parsedArgs = minimist(args, {
@@ -93,19 +126,21 @@ export default function main(args) {
     process.exit(1)
   }
 
-  let content = `---
-title: ${postTitle}
-description: 'Write your description here.'
-publishDate: ${getDate()}
-`
+  let slug = generateShortId(ID_LENGTH);
+  const existingSlugs = getExistingSlugs();
+
+  while (existingSlugs.has(slug)) {
+    slug = generateShortId(ID_LENGTH);
+  }
+
+  let content = `---\ntitle: ${postTitle}\ndescription: 'Write your description here.'\npublishDate: ${getDate()}\nslug: ${slug}\n`
   content += parsedArgs.draft ? 'draft: true\n' : ''
   content += parsedArgs.lang ? `lang: ${parsedArgs.lang}\n` : ''
-  content += `tags: ['tag1', 'tag2']
----
-
-Write your content here.
+  content += `tags: ['tag1', 'tag2']\n---\n\nWrite your content here.
 `
 
   fs.writeFileSync(fullPath, content)
   console.log(`Post "${postTitle}" created at ${fullPath}`)
 }
+
+main(process.argv.slice(2));
