@@ -432,48 +432,69 @@ import config from 'virtual:config'
     }
   }
 
-  async function renderMermaidDiagrams() {
-    const diagrams = document.querySelectorAll('pre.mermaid')
-    for (const element of diagrams) {
-      try {
-        if (element.hasAttribute('data-processed')) {
-          const encodedContent = element.getAttribute('data-original')
-          if (encodedContent) {
-            const originalContent = decodeURIComponent(atob(encodedContent))
-            element.textContent = originalContent
-            element.removeAttribute('data-processed')
-          }
-        } else {
-          const content = element.textContent || ''
-          const encodedContent = btoa(encodeURIComponent(content))
-          element.setAttribute('data-original', encodedContent)
-          element.setAttribute('data-source', encodedContent)
+  async function renderDiagram(element) {
+    try {
+      if (element.hasAttribute('data-processed')) {
+        const encodedContent = element.getAttribute('data-original')
+        if (encodedContent) {
+          const originalContent = decodeURIComponent(atob(encodedContent))
+          element.textContent = originalContent
+          element.removeAttribute('data-processed')
         }
-
-        await mermaid.run({
-          nodes: [element]
-        })
-
-        // 初始化查看器
-        if (!element.hasAttribute('data-viewer-initialized')) {
-          new MermaidViewer(element)
-          element.setAttribute('data-viewer-initialized', 'true')
-        }
-      } catch (error) {
-        console.error('Mermaid rendering error:', error)
+      } else {
+        const content = element.textContent || ''
+        const encodedContent = btoa(encodeURIComponent(content))
+        element.setAttribute('data-original', encodedContent)
+        element.setAttribute('data-source', encodedContent)
       }
+
+      await mermaid.run({
+        nodes: [element]
+      })
+
+      if (!element.hasAttribute('data-viewer-initialized')) {
+        new MermaidViewer(element)
+        element.setAttribute('data-viewer-initialized', 'true')
+      }
+    } catch (error) {
+      console.error('Mermaid rendering error:', error)
     }
   }
 
-  // 初始化并首次渲染
+  async function renderAllDiagrams() {
+    const diagrams = document.querySelectorAll('pre.mermaid');
+    for (const diagram of diagrams) {
+      await renderDiagram(diagram);
+    }
+  }
+
+  function setupObserver() {
+    const diagrams = document.querySelectorAll('pre.mermaid:not([data-viewer-initialized])')
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            renderDiagram(entry.target)
+            obs.unobserve(entry.target)
+          }
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    for (const diagram of diagrams) {
+      observer.observe(diagram)
+    }
+  }
+
+  // Initialize and set up observer
   ;(async () => {
     await initializeMermaid()
-    await renderMermaidDiagrams()
+    setupObserver()
   })()
 
-  // 监听主题切换完成事件
+  // Listen for theme change completion
   document.addEventListener('theme-transition-complete', async () => {
     await initializeMermaid()
-    await renderMermaidDiagrams()
+    await renderAllDiagrams()
   })
 </script>
