@@ -1,7 +1,8 @@
-@import url("https://chinese-fonts-cdn.deno.dev/packages/lywkpmydb/dist/LXGWWenKaiMonoScreen/result.css");
+/* @import url("https://chinese-fonts-cdn.deno.dev/packages/lywkpmydb/dist/LXGWWenKaiMonoScreen/result.css"); */
+@import url("https://chinese-fonts-cdn.deno.dev/packages/GuanKiapTsingKhai/dist/GuanKiapTsingKhai/result.css");
 
 body {
-  font-family: "LXGW WenKai Mono Screen";
+  font-family: "GuanKiapTsingKhai";
   font-weight: normal;
   font-style: normal;
   font-display: swap;
