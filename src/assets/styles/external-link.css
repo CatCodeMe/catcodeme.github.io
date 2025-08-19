@@ -1,21 +1,38 @@
 .external-link {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.2em;
   text-decoration: none;
-  border-bottom: 1px solid rgba(120, 120, 120, 0.4); /* 默认很淡很细 */
-  transition:
-    border-bottom-color 0.3s cubic-bezier(0.4,0,0.2,1),
-    border-bottom-width 0.3s cubic-bezier(0.4,0,0.2,1);
+  color: hsl(var(--primary)) !important;
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 2px solid transparent;
+  background-color: transparent;
+  border-bottom-color: hsla(200, 29%, 45%, 0.3);
+  margin: 0.1em;
 }
 
 .external-link:hover {
-  border-bottom-color: rgba(120, 120, 120, 1); /* hover更明显 */
-  border-bottom-width: 1px;
+  border-bottom-color: hsl(var(--primary));
+  background-color: hsla(200, 29%, 45%, 0.1);
 }
 
 .external-link-icon {
   display: inline-block;
   vertical-align: text-bottom;
+  transition: transform 0.2s ease-in-out;
+}
+
+.external-link:hover .external-link-icon {
+  transform: scale(1.1);
+}
+
+html.dark {
+  .external-link {
+    border-bottom-color: hsl(var(--primary));
+  }
+  .external-link:hover {
+    background-color: hsla(195, 95%, 85%, 0.1);
+  }
 }
