@@ -21,9 +21,16 @@ interface Props {
   type?: (typeof asideVariants)[number]
   title?: string
   icon?: string
+  open?: string;
 }
 
-let { type = 'note', title, icon } = Astro.props
+const { type = 'note', icon, open: openProp } = Astro.props;
+let { title } = Astro.props;
+
+const isCollapsible = openProp !== undefined;
+
+// Correctly handle open="false" as a string
+const open = !(openProp === 'false');
 
 if (!asideVariants.includes(type)) {
   throw new AstroError(
@@ -34,7 +41,7 @@ if (!asideVariants.includes(type)) {
 }
 
 if (!title) {
-  title = type.toUpperCase()
+  title = type.toUpperCase();
 }
 
 // Determine the icon to render
@@ -45,7 +52,7 @@ if (icon) {
   // Check if the provided icon is an emoji
   const emojiRegex = /\p{Emoji}/u; // Unicode property escape for emoji
   if (emojiRegex.test(icon)) {
-    iconToRender = undefined // Set to undefined if it's an emoji, handled by isEmoji
+    iconToRender = undefined // Set to undefined if it\'s an emoji, handled by isEmoji
     isEmoji = true
   } else if (icon in Icons) {
     iconToRender = icon as IconName
@@ -59,28 +66,86 @@ if (icon) {
 }
 ---
 
-<aside aria-label={title} class={`aside aside-${type}`}>
-  <p class='aside-title'>
-    {isEmoji ? (
-      <span class="aside-icon-emoji">{icon}</span>
-    ) : (
-      <Icon name={iconToRender!} />
-    )}
-    <span>{title}</span>
-  </p>
-  <div class='aside-content'>
+<aside
+  aria-label={title}
+  class:list={[
+    `aside aside-${type}`,
+    { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open },
+  ]}
+>
+  <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
+    <div class="aside-title-content">
+      {isEmoji ? (
+        <span class="aside-icon-emoji">{icon}</span>
+      ) : (
+        <Icon name={iconToRender!} />
+      )}
+      <span>{title}</span>
+    </div>
+    {isCollapsible && <Icon name="down_arrow" class="aside-toggle-icon" size=".8em" />}
+  </div>
+  <div class="aside-content">
     <slot />
   </div>
 </aside>
 
 <style>
   .aside-icon-emoji {
-    font-size: 1.3em; /* Adjust size to match SVG icons */
+    font-size: 1.3em;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
+  .aside-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: -0.4rem;
+  }
+
+  .aside-title-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-grow: 1;
+  }
+
+  /* --- Collapsible Styles --- */
+  .aside-title.is-interactive {
+    cursor: pointer;
+  }
+
+  .aside-toggle-icon {
+    flex-shrink: 0;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .is-collapsed .aside-toggle-icon {
+    transform: rotate(-90deg);
+  }
+
+  .is-collapsed .aside-content {
+    margin-top: 1rem;
+    display: none;
+  }
 </style>
+
+<script>
+  document.querySelectorAll('.aside.is-collapsible').forEach((aside) => {
+    const title = aside.querySelector('.aside-title.is-interactive');
+    if (title) {
+      title.addEventListener('click', () => {
+        aside.classList.toggle('is-collapsed');
+      });
+    }
+  });
+</script>
+
+
 
 
