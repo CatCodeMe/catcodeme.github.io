@@ -3,7 +3,7 @@
 .aside {
   border-radius: 8px;
   margin: 1rem 0;
-  padding: 1rem; /* Base padding */
+  padding: 0.5rem 1rem; /* Base padding */
   border: 1px solid var(--aside-border-color);
   color: var(--aside-color);
 }
@@ -141,7 +141,7 @@ html.dark .aside.aside-tip {
   overflow: hidden;
 }
 .aside.aside-style-card > .aside-title {
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--aside-border-color);
   background-color: var(--aside-bg-color);
 }
