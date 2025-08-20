@@ -1,9 +1,10 @@
 ---
-title: Markdown Syntax Support
-publishDate: 2024-07-26 08:00:00
+title: 'Test: Markdown Syntax Support'
+publishDate: 2025-07-26 08:00:00
 description: 'Markdown is a lightweight markup language.'
 tags:
-  - Markdown
+  - test
+  - markdown
 heroImage: { src: './thumbnail.jpg', color: '#c8d57fff' }
 language: 'English'
 slug: m2
