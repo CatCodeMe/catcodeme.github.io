@@ -441,8 +441,7 @@ void testCountSetBitsParallel() {
 </TabItem>
 <TabItem label="为什么说是并行?">
 
-<Collapse title='并行?'> 
-<Aside type="note" title="并行计算置位数 by Gemini-2.5-Pro">
+<Aside type="note" title="并行计算置位数 by Gemini-2.5-Pro" open="false" style="card">
 您好！这是一个非常深入的好问题。这里的“并行”并不是指我们通常说的多线程或多核并行，而是指 **“数据并行” (Data Parallelism)**，或者更具体地说，是利用单条指令同时对一个寄存器内的多个数据块进行操作，这种思想类似于 SIMD (Single Instruction, Multiple Data)。
 
 让我们一步步分解 `countSetBitsParallel` 这个函数，看看“并行”体现在哪里：
@@ -501,7 +500,6 @@ return (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
 
 与逐位检查的循环方法（比如 Kernighan 算法）不同，这个“并行”算法的每一步都是在`整个32位整数`上操作，`同时`处理多个独立的比特组。它用固定的、少量的几步就完成了计算，没有任何循环和分支，因此效率非常高。这就是其“并行”的精髓所在。
 </Aside>
-</Collapse>
 </TabItem>
 <TabItem label="jdk实现">
 ```java showLineNumbers
@@ -752,8 +750,7 @@ void testLog2WithDeBruijn() {
 ```
 </TabItem>
 <TabItem label="DeepSeek">
-<Aside type="note" title="DeepSeek">
-**为什么 `log2WithDeBruijn(v)` 等价于 `31 - Integer.numberOfLeadingZeros(v)`？**
+<Aside type="note" icon="deep_seek" title='为什么 `log2WithDeBruijn(v)` 等价于 `31 - Integer.numberOfLeadingZeros(v)`？' open="false" style="card">
 
 #### **1. 方法目标**
 这两个方法的目标都是计算 **`log₂(v)`**，即：

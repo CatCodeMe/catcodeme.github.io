@@ -51,9 +51,7 @@ if (style && !asideStyles.includes(style)) {
   );
 }
 
-if (!title) {
-  title = type.toUpperCase();
-}
+
 
 // Determine the icon to render
 let iconToRender: IconName | undefined
@@ -78,24 +76,28 @@ if (icon) {
 ---
 
 <aside
-  aria-label={title}
+  aria-label={title || undefined}
   class:list={[
     `aside aside-${type}`,
     `aside-style-${style}`,
     { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open },
   ]}
 >
-  <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
-    <div class="aside-title-content">
-      {isEmoji ? (
-        <span class="aside-icon-emoji">{icon}</span>
-      ) : (
-        <Icon name={iconToRender!} />
-      )}
-      <span>{title}</span>
+  {(Astro.slots.has('title') || title) &&
+    <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
+      <div class="aside-title-content">
+        <slot name="icon">
+          {isEmoji ? (
+            <span class="aside-icon-emoji">{icon}</span>
+          ) : (
+            <Icon name={iconToRender!} />
+          )}
+        </slot>
+        {Astro.slots.has('title') ? <slot name="title" /> : (title && <span>{title}</span>)}
+      </div>
+      {isCollapsible && <Icon name="down_arrow" class="aside-toggle-icon" size=".8em" />}
     </div>
-    {isCollapsible && <Icon name="down_arrow" class="aside-toggle-icon" size=".8em" />}
-  </div>
+  }
   <div class="aside-content">
     <slot />
   </div>
