@@ -1,10 +1,11 @@
-/* callout.css - VuePress Theme Hope Style - Corrected Layout */
+/* callout.css - Refactored with CSS Variables */
 
 .aside {
   border-radius: 8px;
   margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid;
+  padding: 1rem; /* Base padding */
+  border: 1px solid var(--aside-border-color);
+  color: var(--aside-color);
 }
 
 .aside .aside-title {
@@ -21,7 +22,7 @@
 }
 
 .aside .aside-content {
-  margin-top: 1rem; /* Counteract the negative margin */
+  margin-top: 1rem;
   color: inherit;
 }
 
@@ -32,342 +33,123 @@
   margin-bottom: 0;
 }
 
-/* --- Light Mode --- */
-.aside.aside-style-solid.aside-info {
-  background-color: #e3f2fd;
-  border-color: #2196f3;
-  color: #1565c0;
+/* --- Color Variable Definitions --- */
+
+/* Light Mode */
+.aside.aside-info {
+  --aside-color: #1565c0;
+  --aside-bg-color: #e3f2fd;
+  --aside-border-color: #2196f3;
+  --aside-content-bg-color: #f5faff;
 }
-.aside.aside-style-solid.aside-info .aside-title {
-  color: #1565c0;
+.aside.aside-success {
+  --aside-color: #2e7d32;
+  --aside-bg-color: #e8f5e8;
+  --aside-border-color: #4caf50;
+  --aside-content-bg-color: #f6fbf6;
+}
+.aside.aside-warning {
+  --aside-color: #ef6c00;
+  --aside-bg-color: #fff8e1;
+  --aside-border-color: #ff9800;
+  --aside-content-bg-color: #fffcf4;
+}
+.aside.aside-error,
+.aside.aside-caution {
+  --aside-color: #c62828;
+  --aside-bg-color: #ffebee;
+  --aside-border-color: #f44336;
+  --aside-content-bg-color: #fff7f6;
+}
+.aside.aside-note {
+  --aside-color: #7b1fa2;
+  --aside-bg-color: #f3e5f5;
+  --aside-border-color: #9c27b0;
+  --aside-content-bg-color: #fbf7fc;
+}
+.aside.aside-important {
+  --aside-color: #334155;
+  --aside-bg-color: #eef2f9;
+  --aside-border-color: #64748b;
+  --aside-content-bg-color: #f8f9fa;
+}
+.aside.aside-tip {
+  --aside-color: #00695c;
+  --aside-bg-color: #e0f2f1;
+  --aside-border-color: #009688;
+  --aside-content-bg-color: #f2faf9;
 }
 
-.aside.aside-style-solid.aside-success {
-  background-color: #e8f5e8;
-  border-color: #4caf50;
-  color: #2e7d32;
+/* Dark Mode */
+html.dark .aside.aside-info {
+  --aside-color: #cde2f9;
+  --aside-bg-color: #0c3b7a;
+  --aside-border-color: #5a9ae5;
+  --aside-content-bg-color: #1e293b;
 }
-.aside.aside-style-solid.aside-success .aside-title {
-  color: #2e7d32;
+html.dark .aside.aside-success {
+  --aside-color: #d1e9d2;
+  --aside-bg-color: #1a4e1e;
+  --aside-border-color: #7cc67f;
+  --aside-content-bg-color: #1e2b20;
 }
-
-.aside.aside-style-solid.aside-warning {
-  background-color: #fff8e1;
-  border-color: #ff9800;
-  color: #ef6c00;
+html.dark .aside.aside-warning {
+  --aside-color: #ffeacc;
+  --aside-bg-color: #b84100;
+  --aside-border-color: #ffb347;
+  --aside-content-bg-color: #2d1e10;
 }
-.aside.aside-style-solid.aside-warning .aside-title {
-  color: #ef6c00;
+html.dark .aside.aside-error,
+html.dark .aside.aside-caution {
+  --aside-color: #ffd6d9;
+  --aside-bg-color: #9c1c1c;
+  --aside-border-color: #f56c6c;
+  --aside-content-bg-color: #2d1313;
 }
-
-.aside.aside-style-solid.aside-error, .aside.aside-style-solid.aside-caution {
-  background-color: #ffebee;
-  border-color: #f44336;
-  color: #c62828;
+html.dark .aside.aside-note {
+  --aside-color: #e9d3f0;
+  --aside-bg-color: #3e1074;
+  --aside-border-color: #c388d1;
+  --aside-content-bg-color: #241c30;
 }
-.aside.aside-style-solid.aside-error .aside-title, .aside.aside-style-solid.aside-caution .aside-title {
-  color: #c62828;
+html.dark .aside.aside-important {
+  --aside-color: #e2e8f0;
+  --aside-bg-color: #1e293b;
+  --aside-border-color: #94a3b8;
+  --aside-content-bg-color: #1e293b;
 }
-
-.aside.aside-style-solid.aside-note {
-  background-color: #f3e5f5;
-  border-color: #9c27b0;
-  color: #7b1fa2;
-}
-.aside.aside-style-solid.aside-note .aside-title {
-  color: #7b1fa2;
-}
-
-.aside.aside-style-solid.aside-important {
-  background-color: #eef2f9;
-  border-color: #64748b;
-  color: #334155;
-}
-.aside.aside-style-solid.aside-important .aside-title {
-  color: #334155;
-}
-
-.aside.aside-style-solid.aside-tip {
-  background-color: #e0f2f1;
-  border-color: #009688;
-  color: #00695c;
-}
-.aside.aside-style-solid.aside-tip .aside-title {
-  color: #00695c;
+html.dark .aside.aside-tip {
+  --aside-color: #c6e8e4;
+  --aside-bg-color: #003c32;
+  --aside-border-color: #5dbbad;
+  --aside-content-bg-color: #1a2b29;
 }
 
+/* --- Style Implementations --- */
 
-/* --- Dark Mode --- */
-html.dark .aside.aside-style-solid.aside-info {
-  background-color: #0c3b7a;
-  border-color: #5a9ae5;
-  color: #cde2f9;
+/* Solid Style */
+.aside.aside-style-solid {
+  background-color: var(--aside-bg-color);
 }
-html.dark .aside.aside-style-solid.aside-info .aside-title {
-  color: #cde2f9;
-}
-
-html.dark .aside.aside-style-solid.aside-success {
-  background-color: #1a4e1e;
-  border-color: #7cc67f;
-  color: #d1e9d2;
-}
-html.dark .aside.aside-style-solid.aside-success .aside-title {
-  color: #d1e9d2;
-}
-
-html.dark .aside.aside-style-solid.aside-warning {
-  background-color: #b84100;
-  border-color: #ffb347;
-  color: #ffeacc;
-}
-html.dark .aside.aside-style-solid.aside-warning .aside-title {
-  color: #ffeacc;
-}
-
-html.dark .aside.aside-style-solid.aside-error, html.dark .aside.aside-style-solid.aside-caution {
-  background-color: #9c1c1c;
-  border-color: #f56c6c;
-  color: #ffd6d9;
-}
-html.dark .aside.aside-style-solid.aside-error .aside-title, html.dark .aside.aside-style-solid.aside-caution .aside-title {
-  color: #ffd6d9;
-}
-
-html.dark .aside.aside-style-solid.aside-note {
-  background-color: #3e1074;
-  border-color: #c388d1;
-  color: #e9d3f0;
-}
-html.dark .aside.aside-style-solid.aside-note .aside-title {
-  color: #e9d3f0;
-}
-
-html.dark .aside.aside-style-solid.aside-important {
-  background-color: #1e293b;
-  border-color: #94a3b8;
-  color: #e2e8f0;
-}
-html.dark .aside.aside-style-solid.aside-important .aside-title {
-  color: #e2e8f0;
-}
-
-html.dark .aside.aside-style-solid.aside-tip {
-  background-color: #003c32;
-  border-color: #5dbbad;
-  color: #c6e8e4;
-}
-html.dark .aside.aside-style-solid.aside-tip .aside-title {
-  color: #c6e8e4;
+.aside.aside-style-solid > .aside-title {
+  color: var(--aside-color);
 }
 
 /* Card Style */
 .aside.aside-style-card {
-  padding: 0;
-  border-radius: 8px;
+  padding: 0; /* Override base padding */
   overflow: hidden;
 }
-
 .aside.aside-style-card > .aside-title {
   padding: 1rem;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--aside-border-color);
+  background-color: var(--aside-bg-color);
 }
-
 .aside.is-collapsed.aside-style-card > .aside-title {
   border-bottom: none;
 }
-
 .aside.aside-style-card > .aside-content {
   padding: 1rem;
   margin-top: 0;
-}
-
-/* Light Mode Card */
-.aside.aside-style-card.aside-info {
-  border-color: #2196f3;
-  color: #1565c0;
-}
-.aside.aside-style-card.aside-info > .aside-title {
-  background-color: #e3f2fd;
-  border-color: #2196f3;
-  color: #1565c0;
-}
-.aside.aside-style-card.aside-info > .aside-content {
-  background-color: #f5faff;
-}
-
-.aside.aside-style-card.aside-success {
-  border-color: #4caf50;
-  color: #2e7d32;
-}
-.aside.aside-style-card.aside-success > .aside-title {
-  background-color: #e8f5e8;
-  border-color: #4caf50;
-  color: #2e7d32;
-}
-.aside.aside-style-card.aside-success > .aside-content {
-  background-color: #f6fbf6;
-}
-
-.aside.aside-style-card.aside-warning {
-  border-color: #ff9800;
-  color: #ef6c00;
-}
-.aside.aside-style-card.aside-warning > .aside-title {
-  background-color: #fff8e1;
-  border-color: #ff9800;
-  color: #ef6c00;
-}
-.aside.aside-style-card.aside-warning > .aside-content {
-  background-color: #fffcf4;
-}
-
-.aside.aside-style-card.aside-error,
-.aside.aside-style-card.aside-caution {
-  border-color: #f44336;
-  color: #c62828;
-}
-.aside.aside-style-card.aside-error > .aside-title,
-.aside.aside-style-card.aside-caution > .aside-title {
-  background-color: #ffebee;
-  border-color: #f44336;
-  color: #c62828;
-}
-.aside.aside-style-card.aside-error > .aside-content,
-.aside.aside-style-card.aside-caution > .aside-content {
-  background-color: #fff7f6;
-}
-
-.aside.aside-style-card.aside-note {
-  border-color: #9c27b0;
-  color: #7b1fa2;
-}
-.aside.aside-style-card.aside-note > .aside-title {
-  background-color: #f3e5f5;
-  border-color: #9c27b0;
-  color: #7b1fa2;
-}
-.aside.aside-style-card.aside-note > .aside-content {
-  background-color: #fbf7fc;
-}
-
-.aside.aside-style-card.aside-important {
-  border-color: #64748b;
-  color: #334155;
-}
-.aside.aside-style-card.aside-important > .aside-title {
-  background-color: #eef2f9;
-  border-color: #64748b;
-  color: #334155;
-}
-.aside.aside-style-card.aside-important > .aside-content {
-  background-color: #f8f9fa;
-}
-
-.aside.aside-style-card.aside-tip {
-  border-color: #009688;
-  color: #00695c;
-}
-.aside.aside-style-card.aside-tip > .aside-title {
-  background-color: #e0f2f1;
-  border-color: #009688;
-  color: #00695c;
-}
-.aside.aside-style-card.aside-tip > .aside-content {
-  background-color: #f2faf9;
-}
-
-/* Dark Mode Card */
-html.dark .aside.aside-style-card.aside-info {
-  border-color: #5a9ae5;
-  color: #cde2f9;
-}
-html.dark .aside.aside-style-card.aside-info > .aside-title {
-  background-color: #0c3b7a;
-  border-color: #5a9ae5;
-  color: #cde2f9;
-}
-html.dark .aside.aside-style-card.aside-info > .aside-content {
-  background-color: #1e293b;
-}
-
-html.dark .aside.aside-style-card.aside-success {
-  border-color: #7cc67f;
-  color: #d1e9d2;
-}
-html.dark .aside.aside-style-card.aside-success > .aside-title {
-  background-color: #1a4e1e;
-  border-color: #7cc67f;
-  color: #d1e9d2;
-}
-html.dark .aside.aside-style-card.aside-success > .aside-content {
-  background-color: #1e2b20;
-}
-
-html.dark .aside.aside-style-card.aside-warning {
-  border-color: #ffb347;
-  color: #ffeacc;
-}
-html.dark .aside.aside-style-card.aside-warning > .aside-title {
-  background-color: #b84100;
-  border-color: #ffb347;
-  color: #ffeacc;
-}
-html.dark .aside.aside-style-card.aside-warning > .aside-content {
-  background-color: #2d1e10;
-}
-
-html.dark .aside.aside-style-card.aside-error,
-html.dark .aside.aside-style-card.aside-caution {
-  border-color: #f56c6c;
-  color: #ffd6d9;
-}
-html.dark .aside.aside-style-card.aside-error > .aside-title,
-html.dark .aside.aside-style-card.aside-caution > .aside-title {
-  background-color: #9c1c1c;
-  border-color: #f56c6c;
-  color: #ffd6d9;
-}
-html.dark .aside.aside-style-card.aside-error > .aside-content,
-html.dark .aside.aside-style-card.aside-caution > .aside-content {
-  background-color: #2d1313;
-}
-
-html.dark .aside.aside-style-card.aside-note {
-  border-color: #c388d1;
-  color: #e9d3f0;
-}
-html.dark .aside.aside-style-card.aside-note > .aside-title {
-  background-color: #3e1074;
-  border-color: #c388d1;
-  color: #e9d3f0;
-}
-html.dark .aside.aside-style-card.aside-note > .aside-content {
-  background-color: #241c30;
-}
-
-html.dark .aside.aside-style-card.aside-important {
-  border-color: #94a3b8;
-  color: #e2e8f0;
-}
-html.dark .aside.aside-style-card.aside-important > .aside-title {
-  background-color: #1e293b;
-  border-color: #94a3b8;
-  color: #e2e8f0;
-}
-html.dark .aside.aside-style-card.aside-important > .aside-content {
-  background-color: #1e293b;
-}
-
-html.dark .aside.aside-style-card.aside-tip {
-  border-color: #5dbbad;
-  color: #c6e8e4;
-}
-html.dark .aside.aside-style-card.aside-tip > .aside-title {
-  background-color: #003c32;
-  border-color: #5dbbad;
-  color: #c6e8e4;
-}
-html.dark .aside.aside-style-card.aside-tip > .aside-content {
-  background-color: #1a2b29;
+  background-color: var(--aside-content-bg-color);
 }
