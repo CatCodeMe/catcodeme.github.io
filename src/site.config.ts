@@ -4,9 +4,9 @@ import type { CardListData } from 'astro-pure/types';
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: "CCM'blog",
+  title: "CCM",
   /** Will be used in index page & copyright declaration */
-  author: 'CCM',
+  author: 'catcodeme',
   /** Description metadata for your website. Can be used in page metadata. */
   description: '记录生活的碎片，有时停下笔挠挠猫下巴',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
