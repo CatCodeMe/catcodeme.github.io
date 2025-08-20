@@ -1,39 +1,49 @@
 ---
 import { AstroError } from 'astro/errors'
 
-import Icon from './Icon.astro'
 import { Icons } from '../../libs/icons'
+import Icon from './Icon.astro'
 
-const asideVariants = ['important', 'info', 'note', 'tip', 'warning', 'caution'] as const
-const asideStyles = ['solid', 'card'] as const;
+const asideVariants = [
+  'important',
+  'info',
+  'note',
+  'tip',
+  'warning',
+  'caution',
+  'success',
+  'error'
+] as const
+const asideStyles = ['solid', 'card'] as const
 
+type IconName = keyof typeof Icons
 
-type IconName = keyof typeof Icons;
-
-const defaultIcons: Record<typeof asideVariants[number], IconName> = {
+const defaultIcons: Record<(typeof asideVariants)[number], IconName> = {
   important: 'important',
   info: 'callout_info',
   note: 'note',
   tip: 'tip',
+  success: 'tip',
   warning: 'warning',
-  caution: 'caution'
+  caution: 'caution',
+  error: 'caution'
 } as const
 
 interface Props {
   type?: (typeof asideVariants)[number]
   title?: string
   icon?: string
-  open?: string;
-  style?: (typeof asideStyles)[number];
+  open?: string
+  style?: (typeof asideStyles)[number]
 }
 
-const { type = 'note', icon, open: openProp, style = 'solid' } = Astro.props;
-let { title } = Astro.props;
+const { type = 'note', icon, open: openProp, style = 'solid' } = Astro.props
+let { title } = Astro.props
 
-const isCollapsible = openProp !== undefined;
+const isCollapsible = openProp !== undefined
 
 // Correctly handle open="false" as a string
-const open = !(openProp === 'false');
+const open = !(openProp === 'false')
 
 if (!asideVariants.includes(type)) {
   throw new AstroError(
@@ -48,10 +58,8 @@ if (style && !asideStyles.includes(style)) {
     'Invalid `style` prop passed to the `<Aside>` component.\n',
     `Received: ${JSON.stringify(style)}
 ` + `Expected one of ${asideStyles.map((i) => JSON.stringify(i)).join(', ')}`
-  );
+  )
 }
-
-
 
 // Determine the icon to render
 let iconToRender: IconName | undefined
@@ -59,7 +67,7 @@ let isEmoji = false
 
 if (icon) {
   // Check if the provided icon is an emoji
-  const emojiRegex = /\p{Emoji}/u; // Unicode property escape for emoji
+  const emojiRegex = /\p{Emoji}/u // Unicode property escape for emoji
   if (emojiRegex.test(icon)) {
     iconToRender = undefined // Set to undefined if it\'s an emoji, handled by isEmoji
     isEmoji = true
@@ -67,11 +75,13 @@ if (icon) {
     iconToRender = icon as IconName
   } else {
     // Fallback to default icon if provided icon name is not found in Icons
-    console.warn(`Icon "${icon}" not found in icons.ts. Falling back to default icon for type "${type}".`);
-    iconToRender = defaultIcons[type] as IconName;
+    console.warn(
+      `Icon "${icon}" not found in icons.ts. Falling back to default icon for type "${type}".`
+    )
+    iconToRender = defaultIcons[type] as IconName
   }
 } else {
-  iconToRender = defaultIcons[type] as IconName;
+  iconToRender = defaultIcons[type] as IconName
 }
 ---
 
@@ -80,25 +90,23 @@ if (icon) {
   class:list={[
     `aside aside-${type}`,
     `aside-style-${style}`,
-    { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open },
+    { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open }
   ]}
 >
-  {(Astro.slots.has('title') || title) &&
-    <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
-      <div class="aside-title-content">
-        <slot name="icon">
-          {isEmoji ? (
-            <span class="aside-icon-emoji">{icon}</span>
-          ) : (
-            <Icon name={iconToRender!} />
-          )}
-        </slot>
-        {Astro.slots.has('title') ? <slot name="title" /> : (title && <span>{title}</span>)}
+  {
+    (Astro.slots.has('title') || title) && (
+      <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
+        <div class='aside-title-content'>
+          <slot name='icon'>
+            {isEmoji ? <span class='aside-icon-emoji'>{icon}</span> : <Icon name={iconToRender!} />}
+          </slot>
+          {Astro.slots.has('title') ? <slot name='title' /> : title && <span>{title}</span>}
+        </div>
+        {isCollapsible && <Icon name='down_arrow' class='aside-toggle-icon' size='.8em' />}
       </div>
-      {isCollapsible && <Icon name="down_arrow" class="aside-toggle-icon" size=".8em" />}
-    </div>
+    )
   }
-  <div class="aside-content">
+  <div class='aside-content'>
     <slot />
   </div>
 </aside>
@@ -151,15 +159,11 @@ if (icon) {
 
 <script>
   document.querySelectorAll('.aside.is-collapsible').forEach((aside) => {
-    const title = aside.querySelector('.aside-title.is-interactive');
+    const title = aside.querySelector('.aside-title.is-interactive')
     if (title) {
       title.addEventListener('click', () => {
-        aside.classList.toggle('is-collapsed');
-      });
+        aside.classList.toggle('is-collapsed')
+      })
     }
-  });
+  })
 </script>
-
-
-
-

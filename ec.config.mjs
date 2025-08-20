@@ -37,7 +37,7 @@ export default defineEcConfig({
 
   /* Styles */
   styleOverrides: {
-    uiFontFamily: "'GuanKiapTsingKhai', 'Input Mono', 'Fira Code', 'monospace'",
+    uiFontFamily: "'JyunsaiKaai', 'Input Mono', 'Fira Code', 'monospace'",
     uiFontSize: '1em',
     codeBackground: (context) => (context.theme.name === 'vitesse-dark' ? '#0e0e0e' : '#fafafa'),
     codeFontFamily: "'Fira Code', 'monospace'",

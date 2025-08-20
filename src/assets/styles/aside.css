@@ -37,93 +37,81 @@
 
 /* Light Mode */
 .aside.aside-info {
-  --aside-color: #1565c0;
-  --aside-bg-color: #e3f2fd;
-  --aside-border-color: #2196f3;
-  --aside-content-bg-color: #f5faff;
+  --aside-color: color-mix(in srgb, rgb(59, 130, 246), black 30%);
+  --aside-bg-color: rgb(59 130 246 / 0.14);
+  --aside-border-color: rgb(59, 130, 246);
+  --aside-content-bg-color: rgb(59 130 246 / 0.05);
 }
-.aside.aside-success {
-  --aside-color: #2e7d32;
-  --aside-bg-color: #e8f5e8;
-  --aside-border-color: #4caf50;
-  --aside-content-bg-color: #f6fbf6;
-}
+
 .aside.aside-warning {
-  --aside-color: #ef6c00;
-  --aside-bg-color: #fff8e1;
-  --aside-border-color: #ff9800;
-  --aside-content-bg-color: #fffcf4;
+  --aside-color: color-mix(in srgb, rgb(249, 115, 22), black 30%);
+  --aside-bg-color: rgb(249 115 22 / 0.14);
+  --aside-border-color: rgb(249, 115, 22);
+  --aside-content-bg-color: rgb(249 115 22 / 0.05);
 }
-.aside.aside-error,
 .aside.aside-caution {
-  --aside-color: #c62828;
-  --aside-bg-color: #ffebee;
-  --aside-border-color: #f44336;
-  --aside-content-bg-color: #fff7f6;
+  --aside-color: color-mix(in srgb, rgb(244, 63, 94), black 30%);
+  --aside-bg-color: rgb(244 63 94 / 0.14);
+  --aside-border-color: rgb(244, 63, 94);
+  --aside-content-bg-color: rgb(244 63 94 / 0.05);
 }
 .aside.aside-note {
-  --aside-color: #7b1fa2;
-  --aside-bg-color: #f3e5f5;
-  --aside-border-color: #9c27b0;
-  --aside-content-bg-color: #fbf7fc;
+  --aside-color: color-mix(in srgb, rgb(142, 150, 170), black 40%);
+  --aside-bg-color: rgb(142 150 170 / 0.14);
+  --aside-border-color: rgb(142, 150, 170);
+  --aside-content-bg-color: rgb(142 150 170 / 0.05);
 }
 .aside.aside-important {
-  --aside-color: #334155;
-  --aside-bg-color: #eef2f9;
-  --aside-border-color: #64748b;
-  --aside-content-bg-color: #f8f9fa;
+  --aside-color: color-mix(in srgb, rgb(159, 122, 234), black 30%);
+  --aside-bg-color: rgb(159 122 234 / 0.14);
+  --aside-border-color: rgb(159, 122, 234);
+  --aside-content-bg-color: rgb(159 122 234 / 0.05);
 }
 .aside.aside-tip {
-  --aside-color: #00695c;
-  --aside-bg-color: #e0f2f1;
-  --aside-border-color: #009688;
-  --aside-content-bg-color: #f2faf9;
+  --aside-color: color-mix(in srgb, rgb(22, 163, 74), black 30%);
+  --aside-bg-color: rgb(22 163 74 / 0.14);
+  --aside-border-color: rgb(22, 163, 74);
+  --aside-content-bg-color: rgb(22 163 74 / 0.05);
 }
 
 /* Dark Mode */
 html.dark .aside.aside-info {
-  --aside-color: #cde2f9;
-  --aside-bg-color: #0c3b7a;
-  --aside-border-color: #5a9ae5;
-  --aside-content-bg-color: #1e293b;
-}
-html.dark .aside.aside-success {
-  --aside-color: #d1e9d2;
-  --aside-bg-color: #1a4e1e;
-  --aside-border-color: #7cc67f;
-  --aside-content-bg-color: #1e2b20;
+  --aside-color: color-mix(in srgb, rgb(59, 130, 246), white 80%);
+  --aside-bg-color: rgb(59 130 246 / 0.16);
+  --aside-border-color: rgb(59, 130, 246);
+  --aside-content-bg-color: rgb(59 130 246 / 0.1);
 }
 html.dark .aside.aside-warning {
-  --aside-color: #ffeacc;
-  --aside-bg-color: #b84100;
-  --aside-border-color: #ffb347;
-  --aside-content-bg-color: #2d1e10;
+  --aside-color: color-mix(in srgb, rgb(249, 115, 22), white 80%);
+  --aside-bg-color: rgb(249 115 22 / 0.16);
+  --aside-border-color: rgb(249, 115, 22);
+  --aside-content-bg-color: rgb(249 115 22 / 0.1);
 }
-html.dark .aside.aside-error,
 html.dark .aside.aside-caution {
-  --aside-color: #ffd6d9;
-  --aside-bg-color: #9c1c1c;
-  --aside-border-color: #f56c6c;
-  --aside-content-bg-color: #2d1313;
+  --aside-color: color-mix(in srgb, rgb(244, 63, 94), white 80%);
+  --aside-bg-color: rgb(244 63 94 / 0.16);
+  --aside-border-color: rgb(244, 63, 94);
+  --aside-content-bg-color: rgb(244 63 94 / 0.1);
 }
 html.dark .aside.aside-note {
-  --aside-color: #e9d3f0;
-  --aside-bg-color: #3e1074;
-  --aside-border-color: #c388d1;
-  --aside-content-bg-color: #241c30;
+  --aside-color: color-mix(in srgb, rgb(101, 117, 133), white 80%);
+  --aside-bg-color: rgb(101 117 133 / 0.16);
+  --aside-border-color: rgb(101, 117, 133);
+  --aside-content-bg-color: rgb(101 117 133 / 0.1);
 }
 html.dark .aside.aside-important {
-  --aside-color: #e2e8f0;
-  --aside-bg-color: #1e293b;
-  --aside-border-color: #94a3b8;
-  --aside-content-bg-color: #1e293b;
+  --aside-color: color-mix(in srgb, rgb(159, 122, 234), white 80%);
+  --aside-bg-color: rgb(159 122 234 / 0.16);
+  --aside-border-color: rgb(159, 122, 234);
+  --aside-content-bg-color: rgb(159 122 234 / 0.1);
 }
 html.dark .aside.aside-tip {
-  --aside-color: #c6e8e4;
-  --aside-bg-color: #003c32;
-  --aside-border-color: #5dbbad;
-  --aside-content-bg-color: #1a2b29;
+  --aside-color: color-mix(in srgb, rgb(22, 163, 74), white 80%);
+  --aside-bg-color: rgb(22 163 74 / 0.16);
+  --aside-border-color: rgb(22, 163, 74);
+  --aside-content-bg-color: rgb(22 163 74 / 0.1);
 }
+
 
 /* --- Style Implementations --- */
 
