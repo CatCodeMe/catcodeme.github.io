@@ -5,6 +5,8 @@ import Icon from './Icon.astro'
 import { Icons } from '../../libs/icons'
 
 const asideVariants = ['important', 'info', 'note', 'tip', 'warning', 'caution'] as const
+const asideStyles = ['solid', 'card'] as const;
+
 
 type IconName = keyof typeof Icons;
 
@@ -22,9 +24,10 @@ interface Props {
   title?: string
   icon?: string
   open?: string;
+  style?: (typeof asideStyles)[number];
 }
 
-const { type = 'note', icon, open: openProp } = Astro.props;
+const { type = 'note', icon, open: openProp, style = 'solid' } = Astro.props;
 let { title } = Astro.props;
 
 const isCollapsible = openProp !== undefined;
@@ -38,6 +41,14 @@ if (!asideVariants.includes(type)) {
     `Received: ${JSON.stringify(type)}
 ` + `Expected one of ${asideVariants.map((i) => JSON.stringify(i)).join(', ')}`
   )
+}
+
+if (style && !asideStyles.includes(style)) {
+  throw new AstroError(
+    'Invalid `style` prop passed to the `<Aside>` component.\n',
+    `Received: ${JSON.stringify(style)}
+` + `Expected one of ${asideStyles.map((i) => JSON.stringify(i)).join(', ')}`
+  );
 }
 
 if (!title) {
@@ -70,6 +81,7 @@ if (icon) {
   aria-label={title}
   class:list={[
     `aside aside-${type}`,
+    `aside-style-${style}`,
     { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open },
   ]}
 >

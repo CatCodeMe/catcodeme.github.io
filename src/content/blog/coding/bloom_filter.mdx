@@ -63,12 +63,12 @@ import { Steps, Timeline } from 'astro-pure/user'
 
 所以, 工程师们必须想尽一切办法来减少对磁盘的访问，并最大限度地节省宝贵的内存资源。
 
-<Aside type='note' icon='heart' title='野史/沉浸式胡说八道' open='false'>
+<Aside type='note' icon='heart' title='野史/沉浸式胡说八道' open='false' style='card'>
 
 1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
 2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
 3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+4. <Aside type="info" icon="💡" title="我是标题" open="true" style='card'>这是一个带有灯泡图标的信息框。</Aside>
 
 
 <Aside type="info" >
@@ -83,7 +83,7 @@ import { Steps, Timeline } from 'astro-pure/user'
 
 <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
 <Aside type="info" >这是一个带有灯泡图标的信息框。</Aside>
-<Aside type="info" icon="up">up</Aside>
+<Aside type="info" icon="up" style='card'>up</Aside>
 
 > [!TIP] 野史/沉浸式胡说八道
 >
@@ -128,7 +128,7 @@ import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
 
 Components let you easily reuse a piece of UI or styling consistently. You can use them not just in `.astro` files, but also in `.mdx` files.
 
-<Aside type='note' icons='caution' title='自定义信息'>
+<Aside type='note' icons='caution' title='自定义信息' style='card'>
 1. [MDX](https://mdxjs.com/) is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways.
 2. 1
 3. 4
