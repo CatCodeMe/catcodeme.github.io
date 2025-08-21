@@ -750,8 +750,8 @@ void testLog2WithDeBruijn() {
 ```
 </TabItem>
 <TabItem label="DeepSeek">
-<Aside type="note" icon="deep_seek" title='为什么 `log2WithDeBruijn(v)` 等价于 `31 - Integer.numberOfLeadingZeros(v)`？' open="false" style="card">
-
+<Aside type="note" icon="deep_seek"  open="false" style="card">
+<span slot="title">为什么 `log2WithDeBruijn(v)` 等价于 `31 - Integer.numberOfLeadingZeros(v)`?</span>
 #### **1. 方法目标**
 这两个方法的目标都是计算 **`log₂(v)`**，即：
 - 给定一个整数 `v`（假设 `v > 0`），返回 `v` 的最高有效位（MSB）的位置（即 `v` 的二进制位数减 1）。

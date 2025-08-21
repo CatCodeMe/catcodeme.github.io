@@ -1,5 +1,5 @@
 ---
-title: 'Test: inner-link,wiki-link,callout,mermaid'
+title: 'Test: inner-link,wiki-link,mermaid'
 publishDate: 2025-07-01
 description: 'astro-theme-pure Personalized Customization Guide'
 tags:
@@ -26,3 +26,14 @@ slug: inner-link-test
 - 内部链接：[[blog/test/x|not found]]
 - 同 1 个文件夹 c： [[blog/c]]
   blog 下不同子文件夹同名： [[blog/m2|en md]]
+
+
+## mermaid
+```mermaid
+graph TD
+  A[Start] --> B{Is it working?}
+  B -- Yes --> C[Great!]
+  B -- No --> D[Fix it]
+  D --> B
+  C --> E[End]
+```
