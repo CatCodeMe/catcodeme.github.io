@@ -1,7 +1,7 @@
 ---
 title: 'Test: Custom Paper Component'
 publishDate: '2025-03-19'
-description: '这篇论文提出了 Transformer 架构，彻底改变了自然语言处理领域。本文记录了我的阅读笔记和关键见解。'
+description: 'test'
 tags:
   - test
   - custom-component
@@ -10,7 +10,12 @@ slug: paper-test
 ---
 
 import Paper from '@/custom/components/pages/Paper.astro'
+import Aside from '@/custom/components/user/Aside.astro'
 
+
+<Aside type="tip" title="tips">
+为了成功加载图片，必须把图片放在这里`/src/assets/images/papers/`, 可以使用jpeg,jpg,png,gif,webp,svg这些类型的图片
+</Aside>
 <Paper paper={{
   id: 'attention-is-all-you-need',
   data: {
@@ -23,13 +28,12 @@ import Paper from '@/custom/components/pages/Paper.astro'
     citations: 123456,
     paperUrl: "https://example.com/paper",
     star: 6,
+    image: { src: 'gczy_5.png', alt: 'Paper Image'},
     tags: ['Transformer', 'Attention Mechanism', 'Neural Networks Neural Networks Neural Networks Neural Networks Neural Networks',]
   },
   index: 99
 }} />
 
-> [!note] Change $\alpha_k$ adaptively
-> One way to increase the performance of our model is to let the optimizer change $\alpha_k$ adaptively.
 
 <Paper paper={{
   id: 'attention-is-all-you-need',
@@ -105,8 +109,6 @@ $$
 
 ## 实验结果
 
-> [!note] 关键发现
-> Transformer 在多个翻译任务上都取得了当时最好的效果，同时训练时间显著减少。
 
 | 模型 | BLEU 分数 | 训练时间 |
 |-----|-----------|---------|

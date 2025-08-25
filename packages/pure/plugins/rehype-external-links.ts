@@ -73,7 +73,8 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
                 type: 'element',
                 tagName: 'img',
                 properties: {
-                  src: `https://www.google.com/s2/favicons?domain=${hostname}&size=16`,
+                  // src: `https://www.google.com/s2/favicons?domain=${hostname}&size=16`,
+                  src: `https://favicon.im/${hostname}`,
                   className: ['external-link-icon'],
                   alt: '', // Decorative
                   width: 16,
