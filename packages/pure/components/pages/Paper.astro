@@ -51,13 +51,11 @@ if (data.image && data.image.src) {
     const imagePath = `/src/assets/images/papers/${data.image.src}`
     if (allPaperImages[imagePath]) {
       resolvedImageSrc = (await allPaperImages[imagePath]()).default
-    }
-    else {
+    } else {
       // Optional: handle image not found case
       console.warn(`[Paper Component] Image not found for src: ${data.image.src}`)
     }
-  }
-  else {
+  } else {
     // If src is already ImageMetadata, use it directly.
     resolvedImageSrc = data.image.src
   }
@@ -75,8 +73,7 @@ if (data.image && data.image.src) {
   )}
 >
   {
-    data.image &&
-    resolvedImageSrc && (
+    data.image && resolvedImageSrc && (
       <Image
         src={resolvedImageSrc}
         alt={data.image.alt || data.title}
@@ -121,7 +118,7 @@ if (data.image && data.image.src) {
               </div>
             )}
             {typeof paper.index === 'number' && (
-              <span class='ml-2 text-xs text-zinc-300 dark:text-zinc-600 font-mono select-none'>
+              <span class='ml-2 text-xs text-zinc-900 dark:text-zinc-100 font-mono select-none'>
                 No.{String(paper.index).padStart(2, '0')}
               </span>
             )}
@@ -132,15 +129,14 @@ if (data.image && data.image.src) {
 
     <!-- Author list -->
     {
-      Array.isArray(data.author) &&
-        data.author.length > 0 && (
-          <div class='mt-2 text-sm text-zinc-500 dark:text-zinc-400'>
-            <span class='flex items-center gap-1.5'>
-              <Icon name='brain' class='size-4' />
-              {data.author.map((author: string) => author.trim()).join(', ')}
-            </span>
-          </div>
-        )
+      Array.isArray(data.author) && data.author.length > 0 && (
+        <div class='mt-2 text-sm text-zinc-500 dark:text-zinc-400'>
+          <span class='flex items-center gap-1.5'>
+            <Icon name='brain' class='size-4' />
+            {data.author.map((author: string) => author.trim()).join(', ')}
+          </span>
+        </div>
+      )
     }
 
     {/* 元信息 - 发布日期和引用数 */}
@@ -324,23 +320,15 @@ if (data.image && data.image.src) {
     height: 5.5rem;
     padding-bottom: 0.25rem;
     border-radius: var(--radius);
-    border: 1px solid rgb(226, 232, 240);
+    border: 1px solid rgb(39, 39, 42);
     box-shadow:
       0 4px 6px -1px rgb(0 0 0 / 0.05),
       0 2px 4px -2px rgb(0 0 0 / 0.05);
     transition: border-color 0.3s;
   }
 
-  .dark .paper-preview-container {
-    border-color: rgb(39, 39, 42);
-  }
-
-  .group:hover .paper-preview-container {
+  html.dark .paper-preview-container {
     border-color: rgb(203, 213, 225);
-  }
-
-  .dark .group:hover .paper-preview-container {
-    border-color: rgb(63, 63, 70);
   }
 
   .paper-icon {
