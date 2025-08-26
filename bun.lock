@@ -18,6 +18,7 @@
         "astro": "5.5.3",
         "astro-expressive-code": "^0.41.3",
         "astro-icon": "^1.1.5",
+        "astro-lightgallery": "^2.0.1",
         "astro-pure": "1.3.1",
         "katex": "^0.16.22",
         "rehype-katex": "^7.0.1",
@@ -574,6 +575,8 @@
 
     "astro-icon": ["astro-icon@1.1.5", "", { "dependencies": { "@iconify/tools": "^4.0.5", "@iconify/types": "^2.0.0", "@iconify/utils": "^2.1.30" } }, "sha512-CJYS5nWOw9jz4RpGWmzNQY7D0y2ZZacH7atL2K9DeJXJVaz7/5WrxeyIxO8KASk1jCM96Q4LjRx/F3R+InjJrw=="],
 
+    "astro-lightgallery": ["astro-lightgallery@2.0.1", "", { "dependencies": { "lightgallery": "^2.9.0-beta.1" } }, "sha512-4yR/NvBrp5UHDfGutmwuJdL4wgFh8gKK3V5G772+I+g+k3yGTT5/nzJL1cTJHT0txxPLu6S9FMacoCl68vx2vw=="],
+
     "astro-pure": ["astro-pure@1.3.1", "", { "dependencies": { "@astrojs/mdx": "^4.3.0", "@astrojs/sitemap": "^3.4.0", "@pagefind/default-ui": "^1.3.0", "astro": "^5.8.1", "hast-util-select": "^6.0.4", "node-html-parser": "^7.0.1", "pagefind": "^1.3.0", "rehype-external-links": "^3.0.0", "unocss": "^66.1.3" }, "bin": { "astro-pure": "scripts/index.js" } }, "sha512-0edjNNQyWZwLp5qCC1gACBKdelTGWh02tNsFLewWT0qgxhb7pth8JsZj0yNYp6BwSGRqsmJ978MBh42BJxZelw=="],
 
     "astrojs-compiler-sync": ["astrojs-compiler-sync@1.1.1", "", { "dependencies": { "synckit": "^0.11.0" }, "peerDependencies": { "@astrojs/compiler": ">=0.27.0" } }, "sha512-0mKvB9sDQRIZPsEJadw6OaFbGJ92cJPPR++ICca9XEyiUAZqgVuk25jNmzHPT0KF80rI94trSZrUR5iHFXGGOQ=="],
@@ -1043,6 +1046,8 @@
     "kolorist": ["kolorist@1.8.0", "", {}, "sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ=="],
 
     "levn": ["levn@0.4.1", "", { "dependencies": { "prelude-ls": "^1.2.1", "type-check": "~0.4.0" } }, "sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ=="],
+
+    "lightgallery": ["lightgallery@2.9.0-beta.1", "", {}, "sha512-4Bl1vsYGOsI6RsPyephAUFW8bbZuZlLrpxU59cfKYKPDEX5Mhxfo1DUoUIJ+j5QPNrHEqrd+QeQtnGUCCwqK2g=="],
 
     "lightningcss": ["lightningcss@1.30.1", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "lightningcss-darwin-arm64": "1.30.1", "lightningcss-darwin-x64": "1.30.1", "lightningcss-freebsd-x64": "1.30.1", "lightningcss-linux-arm-gnueabihf": "1.30.1", "lightningcss-linux-arm64-gnu": "1.30.1", "lightningcss-linux-arm64-musl": "1.30.1", "lightningcss-linux-x64-gnu": "1.30.1", "lightningcss-linux-x64-musl": "1.30.1", "lightningcss-win32-arm64-msvc": "1.30.1", "lightningcss-win32-x64-msvc": "1.30.1" } }, "sha512-xi6IyHML+c9+Q3W0S4fCQJOym42pyurFiJUHEcEyHS0CeKzia4yZDEsLlqOFykxOdHpNy0NmvVO31vcSqAxJCg=="],
 

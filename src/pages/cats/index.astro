@@ -1,32 +1,59 @@
---- 
-import InteractiveBentoGallery from '@/components/InteractiveBentoGallery.astro';
-import { cats } from '@/assets/cats/config/data';
-import GalleryLayout from '@/layouts/GalleryLayout.astro';
+---
+import { Image } from 'astro:assets'
+import { LightGallery } from 'astro-lightgallery'
 
-import type { MediaItem } from '@/components/InteractiveBentoGallery.astro';
+import GalleryLayout from '@/layouts/GalleryLayout.astro'
+import { cats } from '@/assets/cats/config/data'
 
-const spans = [
-    'md:col-span-2 md:row-span-2',
-    'md:col-span-1 md:row-span-1',
-    'md:col-span-1 md:row-span-2',
-    'md:col-span-2 md:row-span-1',
-];
-
-const mediaItems: MediaItem[] = cats.map((cat, index) => ({
-    ...cat,
-    id: index,
-    type: (typeof cat.image === 'object' && cat.image.src.endsWith('.mp4')) ? 'video' : 'image',
-    url: (typeof cat.image === 'object' && cat.image.src.endsWith('.mp4')) ? cat.image.src : cat.image,
-    title: cat.name || cat.desc || 'Cat Photo',
-    span: spans[index % spans.length],
-}));
-
+const imgs = cats
+  .map((cat) => ({
+    srcFull: cat.image,
+    srcSmall: typeof cat.image === 'object' ? cat.image.src : ''
+  }))
+  .filter((img) => img.srcFull && img.srcSmall)
 ---
 
 <GalleryLayout title='Cat Gallery'>
-    <InteractiveBentoGallery 
-        mediaItems={mediaItems}
-        title="Gallery Shots Collection"
-        description="A collection of cat photos."
-    />
+  <LightGallery
+    class='mygallery-container'
+    options={{
+      thumbnail: true,
+      autoplay: true,
+      slideShowInterval: 500
+    }}
+    addPlugins={['zoom']}
+  >
+    {
+      imgs.map((img) => (
+        <a class='mygallery-one-img' href={img.srcSmall}>
+          {/* <img src={img.srcFull} /> */}
+          <Image src={img.srcFull} alt={'Cat Image'} width={1200} height={630} class={'gallery-image'} />
+        </a>
+      ))
+    }
+  </LightGallery>
 </GalleryLayout>
+
+<style>
+  .mygallery-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+
+  .mygallery-one-img {
+    margin: 5px;
+    height: 100px;
+    /* border: 1px solid black; */
+    min-width: 0; /* Don't use more space than available */
+  }
+
+  .gallery-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+</style>
