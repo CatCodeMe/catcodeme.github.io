@@ -1,5 +1,4 @@
-
-import type { Element, Root, Node } from 'hast';
+import type { Element, Root, Node, Text, ElementContent } from 'hast';
 import { rehype } from 'rehype';
 
 const isElement = (node: Node): node is Element => node.type === 'element';
@@ -35,7 +34,7 @@ export const processAdvanceSteps = (html: string | undefined, split: SplitType) 
           } else {
             // Fallback for 'ol' mode: if content is not a single OL, wrap everything in one step.
             if (tree.children.length > 0) {
-              const li: Element = { type: 'element', tagName: 'li', properties: {}, children: tree.children };
+              const li: Element = { type: 'element', tagName: 'li', properties: {}, children: tree.children as ElementContent[] };
               tree.children = [{
                 type: 'element',
                 tagName: 'ol',
@@ -56,7 +55,7 @@ export const processAdvanceSteps = (html: string | undefined, split: SplitType) 
 
         if (!hasSeparators) {
           if (tree.children.length > 0) {
-            const li: Element = { type: 'element', tagName: 'li', properties: {}, children: tree.children };
+            const li: Element = { type: 'element', tagName: 'li', properties: {}, children: tree.children as ElementContent[] };
             tree.children = [{
               type: 'element',
               tagName: 'ol',
@@ -90,7 +89,7 @@ export const processAdvanceSteps = (html: string | undefined, split: SplitType) 
           .filter(
             (step) =>
               step.length > 0 &&
-              step.some((node) => isElement(node) || (node.type === 'text' && node.value.trim() !== '')),
+              step.some((node) => isElement(node) || (node.type === 'text' && (node as Text).value.trim() !== '')),
           )
           .map((stepNodes) => {
             return {
