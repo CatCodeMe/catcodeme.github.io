@@ -48,15 +48,34 @@ const toc = generateToc(headings)
     constructor() {
       super()
 
-      // Initialize the headings and tocLinks
+      // 1. Get the correct top-level headings for interaction.
       this.headings = Array.from(
-        document.querySelectorAll('article h1, article h2, article h3, article h4, article h5, article h6')
-      )
-      this.tocLinks = Array.from(this.querySelectorAll('a[href^="#"]')).map((link) => ({
+        document.querySelectorAll('#content > h1, #content > h2, #content > h3, #content > h4, #content > h5, #content > h6')
+      ) as HTMLElement[];
+
+      const validSlugs = new Set(this.headings.map(h => h.id));
+
+      // 2. Filter the visible TOC links based on the valid slugs.
+      const allLinks = Array.from(this.querySelectorAll('a[href^="#"]'));
+      allLinks.forEach(link => {
+        const slug = (link.getAttribute('href') || '').substring(1);
+        if (!validSlugs.has(slug)) {
+          // Hide the parent <li> element of the invalid link.
+          link.parentElement?.style.setProperty('display', 'none');
+        }
+      });
+
+      // 3. Initialize the tocLinks array with only the visible links.
+      this.tocLinks = allLinks
+        .filter(link => {
+            const slug = (link.getAttribute('href') || '').substring(1);
+            return validSlugs.has(slug);
+        })
+        .map((link) => ({
         element: link as HTMLAnchorElement,
         progressBar: link.previousElementSibling as HTMLElement,
         slug: (link.getAttribute('href') || '').substring(1)
-      }))
+      }));
     }
 
     updatePositionAndStyle = () => {
