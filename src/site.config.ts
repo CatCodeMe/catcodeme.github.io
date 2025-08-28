@@ -168,7 +168,7 @@ export const integ: IntegrationUserConfig = {
     categoryId: 'DIC_kwDOLTuIuc4Csz7O',
     mapping: 'pathname', // 评论关联方式
     strict: '0',
-    reactionsEnabled: '1',
+    reactionsEnabled: '0',
     emitMetadata: '0',
     inputPosition: 'top',
     theme: 'noborder_light', // 可选: light, dark, transparent_dark, preferred_color_scheme
