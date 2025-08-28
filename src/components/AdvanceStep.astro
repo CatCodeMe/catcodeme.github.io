@@ -1,0 +1,13 @@
+---
+import { processAdvanceSteps, type SplitType } from '../plugins/rehype-advanced-steps';
+
+interface Props {
+  split: SplitType;
+}
+
+const { split } = Astro.props;
+
+const html = await Astro.slots.render('default');
+const { html: processedHtml } = processAdvanceSteps(html, split);
+---
+<Fragment set:html={processedHtml} />
