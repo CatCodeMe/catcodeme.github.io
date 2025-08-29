@@ -64,7 +64,6 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
     )
   }
 
-  {/* 右侧 sidebar TOC：小屏幕显示所有目录，大屏幕只显示 <= 4 项的目录 */}
   {
     tocType == 1 && (
       <TOC {headings} slot='sidebar' />
