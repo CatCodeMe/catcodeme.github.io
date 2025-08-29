@@ -5,10 +5,11 @@ ol.advanced-steps {
 
     list-style: none !important;
     counter-reset: advanced-step-counter;
-    padding-left: 0;
-    margin-left: 1rem;
+    padding-left: 0 !important;
+    margin-left: .3rem;
     margin-top: 1rem;
     position: relative;
+    box-sizing: border-box;
 }
 
 ol.advanced-steps>li {
@@ -107,6 +108,14 @@ ol.advanced-steps>li ol {
 ol.advanced-steps>li ul {
     list-style: disc;
     padding-left: 2rem;
+}
+
+/* Make code blocks inside steps wrap properly
+ 修复 mdxrepl展示区包含代码块时, step渲染后左侧溢出问题
+*/
+ol.advanced-steps>li pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 /* Hide the auto-link anchor from headings inside steps */
