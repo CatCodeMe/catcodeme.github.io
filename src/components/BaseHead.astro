@@ -1,6 +1,4 @@
 ---
-// import { ClientRouter } from 'astro:transitions'
-
 import { prod } from 'astro-pure/server'
 import type { SiteMeta } from 'astro-pure/types'
 import config from '@/site-config'
@@ -24,6 +22,9 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <link rel='icon' type='image/png' sizes='32x32' href='/favicon/favicon-32x32.png' />
 <link rel='icon' type='image/png' sizes='16x16' href='/favicon/favicon-16x16.png' />
 <link rel='manifest' href='/favicon/site.webmanifest' />
+
+{/* Font Preload */}
+<link rel="preload" href="/fonts/LinBiolinum.woff2" as="font" type="font/woff2" crossorigin>
 
 {/* Canonical URL */}
 <link rel='canonical' href={canonicalURL} />
@@ -80,19 +81,6 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 
 {/* Styles */}
 <link rel='stylesheet' href='/styles/global.css' />
-
-{/* View transitions */}
-<!-- <ClientRouter /> -->
-<!-- <script is:inline>
-  const style = document.createElement('style')
-  style.textContent = `* { transition: none !important; }`
-  document.addEventListener('astro:after-swap', () => {
-    document.head.appendChild(style)
-    setTimeout(() => {
-      style.remove()
-    }, 100)
-  })
-</script> -->
 
 {
   /* User script*/

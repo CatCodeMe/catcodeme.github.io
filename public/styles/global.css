@@ -1,4 +1,3 @@
-
 @import url("https://fontsapi.zeoseven.com/89/main/result.css");
 
 body {
@@ -7,9 +6,8 @@ body {
 }
 
 @font-face {
-  font-family: "ZSFT-e";
-  src: url("https://fontsapi.zeoseven.com/e/main.woff2") format("woff2"),
-    url("https://fontsapi-storage.zeoseven.com/e/main.woff2") format("woff2");
+  font-family: 'ZSFT-e';
+  src: url('/fonts/LinBiolinum.woff2') format('woff2');
   font-display: swap;
 }
 
