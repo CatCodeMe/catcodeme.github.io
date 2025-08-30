@@ -83,7 +83,7 @@ starlight-tabs {
 }
 
 /* Add a decorative pattern in the middle of the top border */
-starlight-tabs::before {
+/* starlight-tabs::before {
   content: '/ / /';
   position: absolute;
   top: 0;
@@ -93,7 +93,7 @@ starlight-tabs::before {
   padding: 0 0.5rem;
   color: hsl(var(--border));
   z-index: -1;
-}
+} */
 
 
 /* inline code css , config font in uno.config.ts*/

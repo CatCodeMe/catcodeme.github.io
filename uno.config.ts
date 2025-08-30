@@ -122,7 +122,8 @@ const typographyConfig = {
       color: fg
     },
     'code:not(pre code)': {
-      'white-space': 'pre-wrap!important',
+      // 解决 inline code 在长单词时换行的问题
+      // 'white-space': 'pre-wrap!important',
       'word-break': 'break-all!important'
     },
     '.katex-html': {

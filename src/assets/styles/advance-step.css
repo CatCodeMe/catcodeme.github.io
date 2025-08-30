@@ -113,14 +113,15 @@ ol.advanced-steps>li ul {
 /* Make code blocks inside steps wrap properly
  修复 mdxrepl展示区包含代码块时, step渲染后左侧溢出问题
 */
-ol.advanced-steps>li pre {
+/* ol.advanced-steps>li pre {
     white-space: pre-wrap;
     word-wrap: break-word;
-}
+} */
 
 /* Hide the auto-link anchor from headings inside steps */
 ol.advanced-steps>li h2>a,
 ol.advanced-steps>li h3>a,
-ol.advanced-steps>li h4>a {
+ol.advanced-steps>li h4>a, 
+ol.advanced-steps>li h5>a {
     display: none;
 }

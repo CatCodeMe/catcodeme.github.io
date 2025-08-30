@@ -15,19 +15,16 @@ export default defineEcConfig({
   /* Basics */
   defaultLocale: 'en-US',
   defaultProps: {
-    wrap: false,
+    wrap: true,
     preserveIndent: true,
     showLineNumbers: false,
     collapseStyle: 'collapsible-auto'
   },
-  minSyntaxHighlightingColorContrast: 0,
+  minSyntaxHighlightingColorContrast: 0.3,
   frames: {
     extractFileNameFromCode: true
   },
-  // themes: ['github-light', 'github-dark'],
   removeUnusedThemes: true,
-  // themeCssSelector: (theme) => `[data-theme='${theme.type}']`
-
   /* Theme */
   themes: ['vitesse-dark', 'vitesse-light'],
   themeCssRoot: ':root',
