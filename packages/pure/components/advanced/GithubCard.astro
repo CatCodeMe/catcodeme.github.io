@@ -84,7 +84,7 @@ const [owner, repoName] = repo.split('/')
   .loading .gh-text {
     color: transparent;
     border-radius: calc(var(--radius) - 3px);
-    background-color: hsl(var(--primary-foreground) / var(--un-text-opacity));
+    background-color: hsl(var(--primary-foreground) / var(--un-bg-opacity, 1));
     animation: pulsate 2s infinite linear;
     user-select: none;
   }
@@ -157,7 +157,6 @@ const [owner, repoName] = repo.split('/')
         const avatarEl = this.querySelector('#gh-avatar') as HTMLElement
         if (avatarEl) {
           avatarEl.style.backgroundImage = `url(${data.owner.avatar_url})`
-          avatarEl.style.backgroundColor = 'transparent'
         }
 
         this.classList.remove('loading')
