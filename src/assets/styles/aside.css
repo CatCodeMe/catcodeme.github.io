@@ -1,6 +1,8 @@
 /* callout.css - Refactored with CSS Variables */
 
 .aside {
+  position: relative;
+  overflow: hidden;
   border-radius: 8px;
   margin: 1rem 0;
   padding: 0.5rem 1rem; /* Base padding */
@@ -140,4 +142,22 @@ html.dark .aside.aside-tip {
   padding: 1rem;
   margin-top: 0;
   background-color: var(--aside-content-bg-color);
+}
+
+.aside-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 2px 8px;
+  background-color: var(--aside-border-color);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 5px;
+  text-transform: capitalize;
+  line-height: 1.2;
+}
+
+html.dark .aside-type-badge {
+  color: #111;
 }

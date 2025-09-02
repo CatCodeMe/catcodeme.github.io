@@ -33,17 +33,15 @@ interface Props {
   type?: (typeof asideVariants)[number]
   title?: string
   icon?: string
-  open?: string
+  open?: boolean
   style?: (typeof asideStyles)[number]
+  showTypeBadge?: boolean
 }
 
-const { type = 'note', icon, open: openProp, style = 'solid' } = Astro.props
+const { type = 'note', icon, open: openProp, style = 'solid', showTypeBadge = true } = Astro.props
 let { title } = Astro.props
 
-const isCollapsible = openProp !== undefined
-
-// Correctly handle open="false" as a string
-const open = !(openProp === 'false')
+const isCollapsible = openProp !== undefined && openProp !== false
 
 if (!asideVariants.includes(type)) {
   throw new AstroError(
@@ -90,16 +88,28 @@ if (icon) {
   class:list={[
     `aside aside-${type}`,
     `aside-style-${style}`,
-    { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !open }
+    { 'is-collapsible': isCollapsible, 'is-collapsed': isCollapsible && !openProp }
   ]}
 >
   {
-    (Astro.slots.has('title') || title) && (
+    (showTypeBadge || Astro.slots.has('title') || title) && (
       <div class:list={['aside-title', { 'is-interactive': isCollapsible }]}>
         <div class='aside-title-content'>
-          <slot name='icon'>
-            {isEmoji ? <span class='aside-icon-emoji'>{icon}</span> : <Icon name={iconToRender!} />}
-          </slot>
+          {showTypeBadge && (
+            <div class="aside-type-badge">
+              <slot name="icon">
+                {isEmoji ? <span class='aside-icon-emoji'>{icon}</span> : <Icon name={iconToRender!} />}
+              </slot>
+              {type}
+            </div>
+          )}
+
+          {!showTypeBadge && (
+            <slot name="icon">
+              {isEmoji ? <span class='aside-icon-emoji'>{icon}</span> : <Icon name={iconToRender!} />}
+            </slot>
+          )}
+
           {Astro.slots.has('title') ? <slot name='title' /> : title && <span>{title}</span>}
         </div>
         {isCollapsible && <Icon name='down_arrow' class='aside-toggle-icon' size='.8em' />}
