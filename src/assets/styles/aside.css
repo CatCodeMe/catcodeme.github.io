@@ -114,6 +114,20 @@ html.dark .aside.aside-tip {
   --aside-content-bg-color: rgb(22 163 74 / 0.1);
 }
 
+/* Quote Type */
+.aside.aside-quote {
+  --aside-color: color-mix(in srgb, rgb(70, 130, 180), black 30%);
+  --aside-bg-color: rgb(70 130 180 / 0.14);
+  --aside-border-color: rgb(70, 130, 180);
+  --aside-content-bg-color: rgb(70 130 180 / 0.05);
+}
+html.dark .aside.aside-quote {
+  --aside-color: color-mix(in srgb, rgb(70, 130, 180), white 80%);
+  --aside-bg-color: rgb(70 130 180 / 0.16);
+  --aside-border-color: rgb(70, 130, 180);
+  --aside-content-bg-color: rgb(70 130 180 / 0.1);
+}
+
 
 /* --- Style Implementations --- */
 

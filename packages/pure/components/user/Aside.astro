@@ -11,8 +11,7 @@ const asideVariants = [
   'tip',
   'warning',
   'caution',
-  'success',
-  'error'
+  'quote'
 ] as const
 const asideStyles = ['solid', 'card'] as const
 
@@ -23,10 +22,9 @@ const defaultIcons: Record<(typeof asideVariants)[number], IconName> = {
   info: 'callout_info',
   note: 'note',
   tip: 'tip',
-  success: 'tip',
   warning: 'warning',
   caution: 'caution',
-  error: 'caution'
+  quote: 'quote'
 } as const
 
 interface Props {

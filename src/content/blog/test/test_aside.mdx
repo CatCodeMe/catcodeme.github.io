@@ -1,6 +1,6 @@
 ---
 title: 'Test: enhanced <Aside> Component'
-description: 'Write your description here.'
+description: 'A showcase of the <Aside> component, demonstrating its various types, styles, and customization options.'
 publishDate: 2025-08-20 15:10:53
 slug: 5pob
 tags: 
@@ -9,107 +9,362 @@ tags:
 ---
 
 import Aside from '@/custom/components/user/Aside.astro'
+import { MdxRepl } from 'astro-pure/user'
 
-> //['important', 'info', 'note', 'tip', 'warning', 'caution']
+本页面展示了 `<Aside>` 组件的各种用法。
 
+## 1. 标准卡片类型 (Standard Card Types)
 
-<Aside type='important' icons='important' title='自定义信息'>
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+### 1.1. 注意 (Note)
+<MdxRepl>
+  <Aside type='note' title='注意' style='card'>
+    这是一个卡片样式的注意提示。适用于补充细节。
+  </Aside>
 
-</Aside>
-<Aside type='info' icons='info' title='自定义信息'>
-2
-</Aside>
-<Aside type='note' icons='note' title='自定义信息'>
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='note' title='注意' style='card'>
+    这是一个卡片样式的注意提示。适用于补充细节。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-</Aside>
-<Aside type='tip' icons='tip' title='自定义信息'>
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+### 1.2. 信息 (Info)
+<MdxRepl>
+  <Aside type='info' title='信息' style='card'>
+    这是一个信息卡片。用于重要信息。
+  </Aside>
 
-</Aside>
-<Aside type='warning' icons='warning' style='card'>
-<span slot='title'>~~title~~</span>
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true" style='card'>这是一个带有灯泡图标的信息框。</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='info' title='信息' style='card'>
+    这是一个信息卡片。用于重要信息。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-</Aside>
-<Aside type='caution' icons='caution' title='自定义信息' style='card'>
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
+### 1.3. 提示 (Tip)
+<MdxRepl>
+  <Aside type='tip' title='提示' style='card'>
+    一个有用的提示或建议。
+  </Aside>
 
-</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='tip' title='提示' style='card'>
+    一个有用的提示或建议。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-<Aside type='note' icon='heart' title='野史/沉浸式胡说八道' open='false' style='card'>
+### 1.4. 警告 (Warning)
+<MdxRepl>
+  <Aside type='warning' title='警告' style='card'>
+    关于潜在问题的警告，需要谨慎。
+  </Aside>
 
-1. (Burton Howard Bloom）遇到了一个具体问题。他需要设计一个系统来高效地查询一个元素是否存在于一个庞大的集合中，而这个集合因为太大而无法完全放入内存，只能存储在磁盘上
-2. 他敏锐地观察到一个关键现象：在许多应用场景中，`绝大多数的查询都是针对那些根本不存在于集合中的元素` 。例如，在一个拼写检查系统中，绝大多数输入的单词都是正确的，因此查询“这个词是否在错误单词词典里？”的结果大多是“否”
-3. 传统做法是，每一次查询，无论元素是否存在，都必须启动一次昂贵的磁盘I/O来确认。这意味着系统将大量的时间和资源浪费在那些最终结果为“未找到”的无效查询上
-4. <Aside type="info" icon="💡" title="我是标题" open="true" style='card'>这是一个带有灯泡图标的信息框。</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='warning' title='警告' style='card'>
+    关于潜在问题的警告，需要谨慎。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
+### 1.5. 警示 (Caution)
+<MdxRepl>
+  <Aside type='caution' title='警示' style='card'>
+    用于可能产生负面后果的操作。
+  </Aside>
 
-<Aside type="info" >
-  这是一个带有灯泡图标的信息框。
-<Aside type="info" >
-  这是一个带有灯泡图标的信息框。
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='caution' title='警示' style='card'>
+    用于可能产生负面后果的操作。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-</Aside>
-</Aside>
+### 1.6. 重要 (Important)
+<MdxRepl>
+  <Aside type='important' title='重要' style='card'>
+    用于不应错过的重要信息。
+  </Aside>
 
-</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='important' title='重要' style='card'>
+    用于不应错过的重要信息。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-<Aside type="info" icon="💡" title="我是标题" open="true">这是一个带有灯泡图标的信息框。</Aside>
-<Aside type="info" >这是一个带有灯泡图标的信息框。</Aside>
-<Aside type="info" icon="up" style='card'>up</Aside>
+### 1.7. 引用 (Quote)
+<MdxRepl>
+  <Aside type='quote' title='引用' style='card'>
+    引用卡片用于展示引用的内容。
+  </Aside>
 
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='quote' title='引用' style='card'>
+    引用卡片用于展示引用的内容。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-<Aside type='note' icons='caution' title='自定义信息' style='card'>
-1. [MDX](https://mdxjs.com/) is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways.
-2. 1
-3. 4
+## 2. 属性使用示例 (Attribute Usage Examples)
 
-```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```
+### 2.1. 可折叠 (Collapsible)
+<MdxRepl>
+  <Aside type='note' title='初始折叠' open={false} style='card'>
+    此内容最初是隐藏的。点击可查看。
+  </Aside>
 
-</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='note' title='初始折叠' open={false} style='card'>
+    此内容最初是隐藏的。点击可查看。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-<Aside type='note' icons='caution' title='自定义信息'>
-1. [MDX](https://mdxjs.com/) is a format that lets you write JSX embedded inside Markdown. And it has no difference with markdown files in other ways.
-2. 1
-3. 4
+<MdxRepl>
+  <Aside type='info' title='初始展开' open={true} style='card'>
+    此内容最初是可见的。您可以折叠它。
+  </Aside>
 
-```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='info' title='初始展开' open={true} style='card'>
+    此内容最初是可见的。您可以折叠它。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
 
-</Aside>
+### 2.2. 自定义图标与标题 (Custom Icons & Titles)
 
-<Aside type='tip' icons='caution' title='自定义信息'>
-  12312312
-</Aside>
+#### 2.2.1. Emoji 图标
+<MdxRepl>
+  <Aside type="info" icon="💡" title="Emoji 图标" style='card'>
+    使用 `icon` 属性设置一个表情符号作为图标。
+  </Aside>
 
-<Aside type='tip' icons='caution' title='自定义信息' style='card'>
-  12312312
-</Aside>
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type="info" icon="💡" title="Emoji 图标" style='card'>
+    使用 `icon` 属性设置一个表情符号作为图标。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 2.2.2. 具名图标
+<MdxRepl>
+  <Aside type="tip" icon="heart" title="具名图标" style='card'>
+    您也可以使用项目图标库中的任何图标名称（例如 `heart`）。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type="tip" icon="heart" title="具名图标" style='card'>
+    您也可以使用项目图标库中的任何图标名称（例如 `heart`）。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 2.3. 极简样式 (Minimalist Styles)
+
+#### 2.3.1. 无类型徽章
+<MdxRepl>
+  <Aside type='info' title='无类型徽章' showTypeBadge={false} style='card'>
+    有时您只想要一个图标和一个标题。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='info' title='无类型徽章' showTypeBadge={false} style='card'>
+    有时您只想要一个图标和一个标题。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 2.3.2. 仅图标
+<MdxRepl>
+  <Aside type='tip' showTypeBadge={false} title='仅图标' style='card'>
+    这也是可能的。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='tip' showTypeBadge={false} title='仅图标' style='card'>
+    这也是可能的。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 2.3.3. 无徽章卡片
+<MdxRepl>
+  <Aside type='note' style='card' title='无徽章卡片'>
+    此卡片没有默认类型徽章，只有一个自定义标题。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='note' style='card' title='无徽章卡片'>
+    此卡片没有默认类型徽章，只有一个自定义标题。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 2.4. 嵌套 Aside (Nested Asides)
+<MdxRepl>
+  <Aside type='important' title='外部 Aside' style='card'>
+    这是外部组件。
+    <Aside type='warning' title='内部 Aside' style='solid'>
+      这是一个嵌套的 Aside。请注意，过度嵌套可能会使视觉变得混乱。
+    </Aside>
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='important' title='外部 Aside' style='card'>
+    这是外部组件。
+    <Aside type='warning' title='内部 Aside' style='solid'>
+      这是一个嵌套的 Aside。请注意，过度嵌套可能会使视觉变得混乱。
+    </Aside>
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 2.5. 实心样式示例 (Solid Style Examples)
+
+#### 2.5.1. 实心注意
+<MdxRepl>
+  <Aside type='note' title='实心注意'>
+    一个简单的实心样式注意提示。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='note' title='实心注意'>
+    一个简单的实心样式注意提示。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 2.5.2. 实心警告 (可折叠)
+<MdxRepl>
+  <Aside type='warning' title='实心警告' open={false}>
+    一个可折叠的实心样式警告。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='warning' title='实心警告' open={false}>
+    一个可折叠的实心样式警告。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 3. 具名插槽解析行为 (Named Slot Parsing Behavior)
+
+### 3.1. 空行问题 (Empty Line Issue)
+
+当您使用具名插槽（例如 `<span slot="title">...</span>`）并且其后紧跟着一行普通文本而**没有**空行时，MDX 解析器可能会错误地将插槽内容解释为组件默认内容的一部分，从而不会出现在组件的指定位置（例如，Aside 组件的标题栏）。
+
+#### 3.1.1. 问题用法
+<MdxRepl>
+  <Aside type='warning' style='card' >
+  <span slot="title">此标题不会出现在标题栏中</span>
+  这段普通文本紧随插槽内容。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx showLineNumbers del={"这里的普通文本和上一行的 slot 没有空行,会导致标题位置问题":3}
+  <Aside type='warning' style='card' >
+  <span slot="title">此标题不会出现在标题栏中</span>
+
+  这段普通文本紧随插槽内容。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 3.1.2. 带空行的正确用法
+在具名插槽内容后添加一个空行，有助于 MDX 解析器正确识别具名插槽，确保其内容出现在组件的指定插槽区域。
+<MdxRepl>
+  <Aside type='tip' style='card' >
+  <span slot="title">此标题将出现在标题栏中</span>
+
+  这段普通文本与插槽内容之间有一个空行。
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx showLineNumbers ins={"这里的普通文本和上一行的 slot 之间有空行,标题位置正常":3}
+  <Aside type='tip' style='card' >
+  <span slot="title">此标题将出现在标题栏中</span>
+
+  这段普通文本与插槽内容之间有一个空行。
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 3.2. 块级内容后的正确用法 (Correct Usage with Block-Level Content)
+
+当具名插槽后跟一个块级元素（例如代码块或 MDX 标题）时，即使没有空行，具名插槽通常也会被正确解析，因为块级元素提供了清晰的边界。
+
+#### 3.2.1. 代码块后
+<MdxRepl>
+  <Aside type='info' style='card' >
+  <span slot="title">此标题也将出现在标题栏中</span>
+  ```js
+  console.log('Code block follows the slot.')
+  ```
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='info' style='card' >
+  <span slot="title">此标题也将出现在标题栏中</span>
+  ```js
+  console.log('Code block follows the slot.')
+  ```
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
+
+#### 3.2.2. MDX 标题后
+<MdxRepl>
+  <Aside type='info' style='card' >
+  <span slot="title">此标题也将出现在标题栏中</span>
+  #### 一个 MDX 标题
+  </Aside>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Aside type='info' style='card' >
+  <span slot="title">此标题也将出现在标题栏中</span>
+  #### 一个 MDX 标题
+  </Aside>
+  ````
+  </Fragment>
+</MdxRepl>
