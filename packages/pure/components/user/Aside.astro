@@ -39,7 +39,7 @@ interface Props {
 const { type = 'note', icon, open: openProp, style = 'solid', showTypeBadge = true } = Astro.props
 let { title } = Astro.props
 
-const isCollapsible = openProp !== undefined && openProp !== false
+const isCollapsible = openProp !== undefined
 
 if (!asideVariants.includes(type)) {
   throw new AstroError(

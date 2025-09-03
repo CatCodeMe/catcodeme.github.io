@@ -200,35 +200,37 @@ import { MdxRepl } from 'astro-pure/user'
   </Fragment>
 </MdxRepl>
 
-#### 2.3.2. 仅图标
+#### 2.3.2. 无标题仅徽章
 <MdxRepl>
-  <Aside type='tip' showTypeBadge={false} title='仅图标' style='card'>
+  <Aside type='tip' showTypeBadge={true} style='card'>
     这也是可能的。
   </Aside>
 
   <Fragment slot='desc'>
   ````mdx
-  <Aside type='tip' showTypeBadge={false} title='仅图标' style='card'>
+  <Aside type='tip' showTypeBadge={true} style='card'>
     这也是可能的。
   </Aside>
   ````
   </Fragment>
 </MdxRepl>
 
-#### 2.3.3. 无徽章卡片
+
+#### 2.3.2. 无标题无徽章
 <MdxRepl>
-  <Aside type='note' style='card' title='无徽章卡片'>
-    此卡片没有默认类型徽章，只有一个自定义标题。
+  <Aside type='tip' showTypeBadge={false} style='card'>
+    这也是可能的。
   </Aside>
 
   <Fragment slot='desc'>
   ````mdx
-  <Aside type='note' style='card' title='无徽章卡片'>
-    此卡片没有默认类型徽章，只有一个自定义标题。
+  <Aside type='tip' showTypeBadge={false} style='card'>
+    这也是可能的。
   </Aside>
   ````
   </Fragment>
 </MdxRepl>
+
 
 ### 2.4. 嵌套 Aside (Nested Asides)
 <MdxRepl>
