@@ -1,5 +1,8 @@
 ---
+import { Image } from 'astro:assets'
 import config from 'virtual:config'
+
+import signature from '@/assets/signature.svg'
 
 import { Icon } from '../user'
 ---
@@ -7,12 +10,15 @@ import { Icon } from '../user'
 <header-component
   class='group sticky top-4 z-30 md:z-50 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl'
 >
-  <a
-    class='z-30 text-xl font-semibold group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
-    style='transition:margin-inline 0.3s; font-family: "ZSFT-e";'
-    href='/'
-    aria-label='Brand'>{config.title}</a
-  >
+  <a href='/' aria-label='Brand' class='z-30 flex items-center gap-x-2'>
+    <span class='text-xl font-semibold' style='font-family: "ZSFT-e";'>{config.title}</span>
+    <Image
+      src={signature}
+      alt='`catcodeme`: generate by signature.cnrad.dev, animation by Claude AI'
+      class='w-12 h-auto opacity-50 md:w-24'
+      loading='lazy'
+    />
+  </a>
 
   <div class='flex items-center gap-x-2'>
     {/* Menu links */}

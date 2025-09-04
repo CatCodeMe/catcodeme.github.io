@@ -4,6 +4,8 @@ import type { CollectionKey, InferEntrySchema } from 'astro:content'
 import config from 'virtual:config'
 
 import avatar from '@/assets/avatar.jpeg' // 根据实际路径调整
+
+import human from '@/assets/human.webp'
 import signature from '@/assets/signature.svg'
 
 import { cn, getFormattedDate, showToast } from '../../utils'
@@ -50,12 +52,11 @@ const showToastStr = showToast.toString()
     className
   )}
 >
-  <Icon class='absolute end-4 top-4 size-20 opacity-10' name='copyright' />
   <Image
-    src={signature}
-    alt="`catcodeme`: generate by signature.cnrad.dev, animation by Claude AI"
-    class="absolute bottom-0 right-0 w-24 h-auto opacity-50 md:w-48"
-    loading="lazy"
+    src={human}
+    alt='this svg find at here: https://www.introvertdrawingclub.com/p/human-intelligence-badge'
+    class='absolute end-4 top-4 size-20 bottom-0 right-3 w-15 h-auto md:w-24'
+    loading='lazy'
   />
 
   {/* title & link */}
@@ -65,7 +66,9 @@ const showToastStr = showToast.toString()
   </div>
 
   {/* common info */}
-  <div class='flex flex-col gap-y-2 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-8 sm:gap-y-1'>
+  <div
+    class='flex flex-col gap-y-2 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-8 sm:gap-y-1'
+  >
     {/* 小屏幕布局：垂直排列 */}
     <div class='flex flex-col gap-y-2 sm:hidden'>
       {/* 图片 + Author 名称在一行 */}
@@ -81,20 +84,22 @@ const showToastStr = showToast.toString()
         <span>Author</span>
         <span class='text-sm text-foreground'>{config.author}</span>
       </div>
-      
+
       {/* Published at 另起一行 */}
-      {publishDate && (
-        <div class='flex items-center gap-x-2'>
-          <span>Published at</span>
-          <span class='text-sm text-foreground'>
-            {getFormattedDate(publishDate, {
-              month: 'long'
-            })}
-          </span>
-        </div>
-      )}
+      {
+        publishDate && (
+          <div class='flex items-center gap-x-2'>
+            <span>Published at</span>
+            <span class='text-sm text-foreground'>
+              {getFormattedDate(publishDate, {
+                month: 'long'
+              })}
+            </span>
+          </div>
+        )
+      }
     </div>
-    
+
     {/* 大屏幕布局：保持原有的图片切换效果 */}
     <div class='hidden sm:flex sm:items-center sm:gap-x-2 sm:flex-col'>
       <div class='relative group h-12 sm:min-w-16'>
