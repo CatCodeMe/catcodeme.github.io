@@ -10,7 +10,9 @@ interface Props {
 
 const { view, comment, class: className, ...props } = Astro.props
 
-const path = Astro.url.pathname
+//部署到 github pages 时，路径会带上 .html 后缀, 导致 waline 统计不到
+let path = Astro.url.pathname
+if (path.endsWith('.html')) path = path.slice(0, -5)
 ---
 
 <div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
