@@ -156,7 +156,6 @@ export const integ: IntegrationUserConfig = {
       search: false, //表情包搜索
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
-      imageUploader: false,
       reaction: true,
       pageview: true, //页面 pv
       comment: true, //页面评论数
