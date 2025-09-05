@@ -1,9 +1,9 @@
 ---
-import config from 'virtual:config'
+import config from '@/site-config'
 
 import '@waline/client/style'
 
-import { cn } from '../../utils'
+import { cn } from 'astro-pure/utils'
 
 const { class: className } = Astro.props
 ---
@@ -82,7 +82,7 @@ const { class: className } = Astro.props
     --waline-avatar-size: 3.25rem;
     --waline-m-avatar-size: calc(var(--waline-avatar-size) * 9 / 13);
     /* Badge */
-    --waline-badge-color: hsl(var(--border) / var(--un-border-opacity, 1));
+    /* --waline-badge-color: hsl(var(--border) / var(--un-border-opacity, 1)); */
     --waline-badge-font-size: 0.775em;
     /* Info */
     --waline-info-bg-color: var(--waline-bg-color-light);
@@ -94,8 +94,24 @@ const { class: className } = Astro.props
     --waline-box-shadow: none;
   }
 
+  /* Fix long text and links overflow */
+  #waline :global(.wl-content, .wl-text, .wl-comment-text, .wl-item, .wl-card-item, a) {
+    max-width: 100%;
+  }
+  #waline :global(.wl-meta, .wl-content, .wl-text, .wl-comment-text) {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  #waline :global(a) {
+    display: inline-block;
+  }
+  #waline :global(.wl-item, .wl-card-item) {
+    overflow: hidden;
+  }
+
   /* Reaction buttons */
-  #waline :global(.wl-reaction-title, .wl-reaction-text) {
+  /* #waline :global(.wl-reaction-title, .wl-reaction-text) {
     display: none;
   }
   #waline :global(.wl-reaction) {
@@ -108,8 +124,8 @@ const { class: className } = Astro.props
     height: 35px;
     align-items: center;
     column-gap: 0.4rem;
-  }
-  #waline :global(.wl-reaction-votes) {
+  } */
+  /* #waline :global(.wl-reaction-votes) {
     position: inherit;
     top: inherit;
     min-width: inherit;
@@ -121,8 +137,8 @@ const { class: className } = Astro.props
     color: inherit;
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-  }
-  #waline :global(.wl-reaction-loading) {
+  } */
+  /* #waline :global(.wl-reaction-loading) {
     position: inherit;
     top: inherit;
     min-width: inherit;
@@ -130,19 +146,19 @@ const { class: className } = Astro.props
   #waline :global(.wl-reaction-item.active .wl-reaction-votes) {
     background: var(--waline-theme-color);
     color: var(--waline-bg-color);
-  }
+  } */
 
-  #waline :global(.wl-reaction-votes:after) {
+  /* #waline :global(.wl-reaction-votes:after) {
     margin-left: 0.25em;
     content: 'Like(s)';
     display: inline-block;
     clear: both;
     border: 0;
-  }
-  #waline :global(.wl-reaction img) {
+  } */
+  /* #waline :global(.wl-reaction img) {
     filter: invert(25%);
   }
   :global(.dark) #waline :global(.wl-reaction img) {
     filter: invert(75%);
-  }
+  } */
 </style>

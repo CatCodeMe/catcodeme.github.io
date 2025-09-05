@@ -11,10 +11,8 @@ import Hero from '@/custom/components/pages/Hero.astro'
 
 import { MediumZoom } from 'astro-pure/advanced'
 import PageLayout from '@/layouts/ContentLayout.astro'
-// import Comment from '@/components/Comment.astro'
-import { Comment } from '@/custom/components/advanced'
-
 import AccordionTOC from '@/components/toc/AccordionTOC.astro'
+import { Comment, PageInfo } from '@/components/waline'
 import { integ } from '@/site-config'
 
 import Copyright from '../../packages/pure/components/pages/Copyright.astro'
@@ -41,7 +39,7 @@ const {
   updatedDate,
   draft: isDraft,
   comment: enableComment,
-  toc: tocType,
+  toc: tocType
 } = data
 
 const socialImage = heroImage
@@ -66,13 +64,13 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
     )
   }
 
-  {
-    tocType == 1 && (
-      <TOC {headings} slot='sidebar' />
-    )
-  }
+  {tocType == 1 && <TOC {headings} slot='sidebar' />}
 
-  <Hero {data} {remarkPluginFrontmatter} slot='header' />
+  <Hero {data} {remarkPluginFrontmatter} slot='header'>
+    <Fragment slot='description'>
+      {!isDraft && enableComment && <PageInfo comment class='mt-1' />}
+    </Fragment>
+  </Hero>
 
   <slot />
 

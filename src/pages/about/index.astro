@@ -1,15 +1,14 @@
 ---
 // import Comment from '@/components/Comment.astro'
-import { Comment } from '@/custom/components/advanced'
-
 import { Spoiler, Timeline } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import Substats from '@/components/about/Substats.astro'
 import { ToolTag } from '@/components/tools/Tool.astro'
 import ToolSection from '@/components/tools/ToolSection.astro'
+import { Comment } from '@/components/waline'
 ---
 
-<PageLayout title='About' info={{ slug: '/about', hideComment: true }}>
+<PageLayout title='About' info={{ slug: '/about', comment: true, view: true }}>
   <h2 id='about'>About Me</h2>
   <ul>
     <li>Communist / Developer / Learner / Cat owner</li>
@@ -176,7 +175,7 @@ import ToolSection from '@/components/tools/ToolSection.astro'
     technical support provided by the following excellent projects/service providers:
   </p>
   <ul>
-    <li>Domain: <a href='#' target='_blank'>Github Pages</a></li>
+    <li>Domain: <a href='#' target='_blank'>Github Pages & CloudFlare pages</a></li>
     <li>
       Framework & Theme: <a href='https://astro.build/' target='_blank'>Astro</a> + <a
         href='https://github.com/cworld1/astro-theme-pure'
@@ -190,21 +189,24 @@ import ToolSection from '@/components/tools/ToolSection.astro'
       CI/CD: <a href='https://github.com/actions' target='_blank'>Github Action</a>
     </li>
     <!-- <li>Resources speedup: <a href='https://cdn.cbd.int/' target='_blank'>CBD CDN</a></li> -->
-    <li>Comment system: <a href='https://giscus.app' target='_blank'>Giscus</a></li>
+    <li>Comment system: <a href='https://waline.js.org' target='_blank'>Waline</a></li>
     <li>
-      Visits & Stats: <a href='https://github.com/EvanNotFound/vercount' target='_blank'>Vercount</a
-      >
-    </li>
-    <li>
-      Icons & OgImage: from <a href='https://iconify.design/' target='_blank'>Iconify</a> & <a
-        href='https://lobehub.com/icons'
-        target='_blank'>lobehub</a
-      >, some icons from `GPT-4o`
-    </li>
-    <li>
-      Fonts: from <a href='https://fonts.zeoseven.com/items/89/' target='_blank'>ZSFT</a>, current
-      font is `JyunsaiKaai 芫茜雅楷`, 标题字体是 `ZSFT-e`
+      TotalPV: <a href='https://github.com/EvanNotFound/vercount' target='_blank'>Vercount</a>
+      <li>
+        PagePV & Comment: <a href='https://waline.js.org/next/guide/features/pageview.html' target='_blank'
+          >Waline</a
+        >
+      </li>
+      <li>
+        Icons & OgImage: from <a href='https://iconify.design/' target='_blank'>Iconify</a> & <a
+          href='https://lobehub.com/icons'
+          target='_blank'>lobehub</a
+        >, some icons from `GPT-4o`
+      </li>
+      <li>
+        Fonts: from <a href='https://fonts.zeoseven.com/items/89/' target='_blank'>ZSFT</a>, current
+        font is `JyunsaiKaai 芫茜雅楷`, 标题字体是 `ZSFT-e`
+      </li>
     </li>
   </ul>
-  <Comment slot='bottom' />
 </PageLayout>

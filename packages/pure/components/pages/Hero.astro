@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets'
 import type { InferEntrySchema } from 'astro:content'
 
-import { PageInfo } from '.'
 import { FormattedDate, Icon } from '../user'
 
 interface Props {
@@ -18,7 +17,6 @@ const {
     heroImage,
     publishDate,
     updatedDate,
-    comment: enableComment,
     tags,
     language
   },
@@ -121,7 +119,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 
   <div class='mt-3 italic'>
     <blockquote class='text-sm text-muted-foreground'><q>{description}</q></blockquote>
-    {!draft && enableComment && <PageInfo class='mt-1' />}
+    <slot name='description' />
   </div>
 </div>
 

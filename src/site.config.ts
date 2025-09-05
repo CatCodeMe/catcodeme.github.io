@@ -1,5 +1,12 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
+
+
+
 import type { CardListData } from 'astro-pure/types';
+
+
+
+
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -144,19 +151,18 @@ export const integ: IntegrationUserConfig = {
   waline: {
     enable: true,
     server: 'https://waline-for-8catlife.vercel.app',
-    emoji: ['weibo'],
+    emoji: ['qq'],
     additionalConfigs: {
-      search: false,
+      search: false, //表情包搜索
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
-      imageUploader: true,
+      imageUploader: false,
       reaction: true,
-      pageview: true,
-      comment: true,
-      placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
-      copyright: false,
+      pageview: true, //页面 pv
+      comment: true, //页面评论数
       locale: {
-        placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)'
+        placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
+        reactionTitle: '',
       }
     }
   },

@@ -1,9 +1,5 @@
 ---
-// import { Image } from 'astro:assets'
 import config from 'virtual:config'
-
-// import signature from '@/assets/signature.svg'
-
 import { Icon } from '../user'
 ---
 
@@ -12,12 +8,6 @@ import { Icon } from '../user'
 >
   <a href='/' aria-label='Brand' class='z-30 flex items-center gap-x-2'>
     <span class='text-xl font-semibold' style='font-family: "ZSFT-e";'>{config.title}</span>
-    <!-- <Image
-      src={signature}
-      alt='`catcodeme`: generate by signature.cnrad.dev, animation by Claude AI'
-      class='w-12 h-auto opacity-50 md:w-24'
-      loading='lazy'
-    /> -->
   </a>
 
   <div class='flex items-center gap-x-2'>

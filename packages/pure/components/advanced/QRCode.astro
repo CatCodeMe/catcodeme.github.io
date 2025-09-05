@@ -90,7 +90,7 @@ const redirect_from = remarkPluginFrontmatter?.redirect_from as string | string[
   async function initQRCode() {
     try {
       await loadScript(
-        'https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.min.js'
+        'https://gcore.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.min.js'
       )
 
       const qrcodeContainer = document.getElementById('qrcode-container')
