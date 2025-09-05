@@ -14,9 +14,12 @@ import config from '@/site-config'
       const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
       const el = document.querySelector('.waline-pageview-count')
       if (el) {
+        //部署到 github pages 时，路径会带上 .html 后缀, 导致 waline 统计不到
+        let path = window.location.pathname
+        if (path.endsWith('.html')) path = path.slice(0, -5)
         pageview.pageviewCount({
           serverURL: walineServer,
-          path: window.location.pathname
+          path: path
         })
       }
     } catch (e) {
