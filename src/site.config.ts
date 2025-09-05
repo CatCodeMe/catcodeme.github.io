@@ -32,7 +32,7 @@ export const theme: ThemeUserConfig = {
   // === Global configuration ===
   titleDelimiter: '•',
   prerender: true,
-  npmCDN: 'https://cdn.jsdelivr.net/npm',
+  npmCDN: 'https://gcore.jsdelivr.net/npm',
 
   // Still in test
   head: [
@@ -142,15 +142,15 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: false,
-    server: 'https://waline.8cat.life/',
+    enable: true,
+    server: 'https://waline-for-8catlife.vercel.app',
     emoji: ['weibo'],
     additionalConfigs: {
       search: false,
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
-      imageUploader: false,
-      reaction: false,
+      imageUploader: true,
+      reaction: true,
       pageview: true,
       comment: true,
       placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
