@@ -1,12 +1,5 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
-
-
-
 import type { CardListData } from 'astro-pure/types';
-
-
-
-
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -160,16 +153,11 @@ export const integ: IntegrationUserConfig = {
       requiredMeta: ['nick'],
       // reaction: true,
       reaction: [
-        // 'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif'
-        'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif', // [👍] 的GIF
-    'https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif',      // [❤️] 的GIF
-    'https://media.giphy.com/media/LYDNZAzOqrez6/giphy.gif',     // [🎉] 的GIF
-    '/egg.png',
-        // {
-        //   src: 'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif', // 图片地址
-        //   title: '赞', // 鼠标悬停提示文字
-        //   value: 'like' // 可选，用于区分的唯一标识
-        // }
+        '/waline/1.png',
+        '/waline/2.png',
+        '/waline/3.png',
+        '/waline/4.png',
+        '/waline/5.png',
       ],
       pageview: true, //页面 pv
       comment: true, //页面评论数
