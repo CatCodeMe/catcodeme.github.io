@@ -1,0 +1,43 @@
+---
+title: 'Conversation Component Feature Test'
+publishDate: 2025-09-15
+description: 'Testing new features: optional collapse, distinct card designs, and improved numbering.'
+tags:
+  - test
+  - astro
+language: 'english'
+slug: conversation-component-test
+---
+
+import { Conversation,Message } from '@/components/conversation';
+
+## Conversation Component: New Features
+
+This page tests the latest component upgrades.
+
+### Optional Collapsing
+Only messages with the `collapsible` attribute will have the collapse button.
+
+<Conversation>
+  <Message role="human">
+    This is a standard message without the collapse feature.
+  </Message>
+
+  <Message role="ai" collapsible>
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+    This is an AI response with the collapse feature enabled. You should see a `+/-` button on the timeline. The card design for AI messages is also different now, with a subtle glow to make it stand out.
+  </Message>
+
+  <Message role="human" collapsible>
+    This is a much longer human message with the collapse feature enabled. When you click the collapse button, the card should shrink to show only the first line of text, and the layout of the item below should not break. The numbering and emoji are now separated on the timeline for clarity.
+  </Message>
+
+   <Message role="ai">
+    This is a final message to check the layout and spacing after a collapsible message.
+  </Message>
+</Conversation>

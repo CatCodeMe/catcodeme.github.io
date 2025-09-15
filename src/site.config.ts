@@ -13,17 +13,19 @@ export const theme: ThemeUserConfig = {
   /** Title for your website. Will be used in metadata and as browser tab title. */
   title: "CCM",
   /** Will be used in index page & copyright declaration */
-  author: 'catcodeme',
+  author: 'ccm',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: '记录生活的碎片，有时停下笔挠挠猫下巴',
+  description: '文字沉淀生命, 回忆勾连古今',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** Specify the default language for this site. */
   locale: {
     lang: 'zh-CN',
-    attrs: 'en_US',
+    // attrs: 'en_US',
+    attrs: 'zh_CN',
     // Date locale
-    dateLocale: 'en-US',
+    // dateLocale: 'en-US',
+    dateLocale: 'zh-CN',
     dateOptions: {
       day: 'numeric',
       month: 'short',
@@ -95,7 +97,7 @@ export const theme: ThemeUserConfig = {
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
     // Currently support weibo, x, bluesky
-    share: ['weibo', 'x', 'bluesky']
+    share: ['x', 'bluesky']
   }
 }
 
@@ -156,12 +158,24 @@ export const integ: IntegrationUserConfig = {
       search: false, //表情包搜索
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
-      reaction: true,
+      // reaction: true,
+      reaction: [
+        // 'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif'
+        'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif', // [👍] 的GIF
+    'https://media.giphy.com/media/jUwpNzg9IcyrK/giphy.gif',      // [❤️] 的GIF
+    'https://media.giphy.com/media/LYDNZAzOqrez6/giphy.gif',     // [🎉] 的GIF
+    '/egg.png',
+        // {
+        //   src: 'https://media.giphy.com/media/ibolLe3mOqHE3PQTtk/giphy.gif', // 图片地址
+        //   title: '赞', // 鼠标悬停提示文字
+        //   value: 'like' // 可选，用于区分的唯一标识
+        // }
+      ],
       pageview: true, //页面 pv
       comment: true, //页面评论数
       locale: {
         placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
-        reactionTitle: '',
+        reactionTitle: ''
       }
     }
   },

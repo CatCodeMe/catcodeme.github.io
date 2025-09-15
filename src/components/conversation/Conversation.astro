@@ -1,0 +1,43 @@
+---
+// This component provides a container for a timeline-style conversation.
+---
+<div class="conversation-container">
+  <slot />
+</div>
+
+<script>
+  // This script handles the fade-in animation for each message.
+  document.addEventListener('astro:page-load', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '0px',
+        threshold: 0.1,
+      }
+    );
+
+    const messages = document.querySelectorAll('.message-wrapper');
+    messages.forEach((msg) => {
+      const htmlEl = msg as HTMLElement;
+      htmlEl.style.opacity = '0';
+      htmlEl.style.transform = 'translateY(20px)';
+      observer.observe(msg);
+    });
+  });
+</script>
+
+<style>
+    .conversation-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem; /* Space between messages */
+    counter-reset: message-counter; /* Initialize the counter */
+  }
+</style>

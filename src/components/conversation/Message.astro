@@ -1,0 +1,194 @@
+---
+// A single message component with refined timeline, optional collapse, and distinct card designs.
+interface Props {
+  role: 'ai' | 'human';
+  collapsible?: boolean;
+}
+const { role, collapsible = false } = Astro.props;
+
+const config = {
+  human: { emoji: '🤔' },
+  ai: { emoji: '💡' }
+};
+const author = config[role];
+---
+<div class="message-wrapper" data-role={role} data-collapsible={collapsible}>
+  <div class="timeline-item">
+    <div class="msg-index"></div>
+    <div class="avatar">{author.emoji}</div>
+    {collapsible && (
+      <button class="collapse-toggle" aria-label="Toggle message" aria-expanded="true">
+        <span class="icon">-</span>
+      </button>
+    )}
+  </div>
+  <div class="bubble">
+    <div class="message-body">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupToggleButtons() {
+    const wrappers = document.querySelectorAll('.message-wrapper');
+
+    wrappers.forEach((wrapper) => {
+      const button = wrapper.querySelector('.collapse-toggle');
+      const bubble = wrapper.querySelector('.bubble');
+      const icon = button?.querySelector('.icon');
+
+      if (!button || !bubble || button.dataset.initialized) {
+        return;
+      }
+      button.dataset.initialized = 'true';
+
+      button.addEventListener('click', () => {
+        const isCollapsed = bubble.classList.toggle('is-collapsed');
+        icon.textContent = isCollapsed ? '+' : '-';
+        button.setAttribute('aria-expanded', String(!isCollapsed));
+      });
+    });
+  }
+
+  setupToggleButtons();
+  document.addEventListener('astro:page-load', setupToggleButtons);
+</script>
+
+<style>
+  .message-wrapper {
+    position: relative;
+    padding-left: 4rem; /* 64px */
+    min-height: 110px; /* Prevents layout jump on collapse */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .message-wrapper.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* The timeline vertical line segment */
+  .message-wrapper::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: hsl(var(--border));
+  }
+
+  /* Adjust line for first and last messages */
+  :global(.conversation-container > .astro-slot > :first-child) .message-wrapper::before,
+  :global(.conversation-container > :first-child) .message-wrapper::before {
+    top: 11px; /* Align with center of number node */
+  }
+  :global(.conversation-container > .astro-slot > :last-child) .message-wrapper::before,
+  :global(.conversation-container > :last-child) .message-wrapper::before {
+    height: 40px; /* End line at the avatar */
+  }
+  :global(.conversation-container > .astro-slot > :last-child[data-collapsible="true"]) .message-wrapper::before,
+  :global(.conversation-container > :last-child[data-collapsible="true"]) .message-wrapper::before {
+    height: 82px; /* End line below collapse button */
+  }
+
+  .timeline-item {
+    position: absolute;
+    left: 21px; /* The center of the timeline items */
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  .msg-index {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--muted-foreground));
+    counter-increment: message-counter;
+  }
+  .msg-index::before {
+    content: counter(message-counter);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 4px solid hsl(var(--background));
+    font-size: 1.5rem;
+    margin-top: 8px;
+  }
+
+  .collapse-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 8px;
+    border-radius: 50%;
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .collapse-toggle:hover {
+    background-color: hsl(var(--muted));
+  }
+  .collapse-toggle .icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    position: relative;
+    top: -1px;
+  }
+
+  .bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: max-height 0.4s ease-in-out;
+  }
+
+  .message-body {
+    line-height: 1.6;
+  }
+
+  .bubble.is-collapsed {
+    max-height: 40px;
+    overflow: hidden;
+  }
+
+  /* --- Role-specific styles --- */
+
+  .message-wrapper[data-role="human"] .avatar {
+    background-color: hsl(var(--muted));
+  }
+  .message-wrapper[data-role="human"] .bubble {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+  }
+
+  .message-wrapper[data-role="ai"] .avatar {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+  .message-wrapper[data-role="ai"] .bubble {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    border-left: 3px solid hsla(var(--accent-foreground) / 0.5);
+  }
+</style>
