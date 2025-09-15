@@ -34,11 +34,11 @@ const author = config[role];
     const wrappers = document.querySelectorAll('.message-wrapper');
 
     wrappers.forEach((wrapper) => {
-      const button = wrapper.querySelector('.collapse-toggle');
-      const bubble = wrapper.querySelector('.bubble');
-      const icon = button?.querySelector('.icon');
+      const button = wrapper.querySelector('.collapse-toggle') as HTMLElement | null;
+      const bubble = wrapper.querySelector('.bubble') as HTMLElement | null;
+      const icon = button?.querySelector('.icon') as HTMLElement | null;
 
-      if (!button || !bubble || button.dataset.initialized) {
+      if (!button || !bubble || !icon || button.dataset.initialized) {
         return;
       }
       button.dataset.initialized = 'true';
