@@ -1,0 +1,135 @@
+---
+title: "组件指南: Badge"
+description: '一个关于 Badge 组件的详细用法和示例的文档，演示了如何通过 MDX 直接使用该组件。'
+publishDate: 2025-09-15 16:18:26
+slug: z3iy
+tags: ['component', 'documentation', 'badge','建站']
+badge:
+    - key: 'Author'
+      value: 'Felix'
+    - key: { icon: 'github' }
+      value: 'GitHub'  
+    - key: { image: '/src/assets/avatar.webp' }
+    - key: { image: '/src/assets/avatar.webp' }
+      value: 'CatCodeMe'
+    - key: 'Featured'
+      color: '#ea9a45ff'
+---
+import { MdxRepl } from 'astro-pure/user'
+import Badge from '@/components/Badge.astro'
+import avatar from '/src/assets/avatar.webp'
+
+`Badge` 是一个灵活的组件，用于显示各种徽章。在 MDX 中，你可以直接调用该组件并传入 `item` 属性来渲染徽章。
+
+## 1. 纯文本徽章
+
+最简单的徽章类型，只有一个 `key`。
+
+<MdxRepl>
+  <Badge item={{ key: 'Featured', color: '#ea9a45ff' }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+
+  <Badge item={{ key: 'Featured', color: '#ea9a45ff' }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 2. 键值对徽章 (文本)
+
+包含 `key` 和 `value` 的文本徽章。
+
+<MdxRepl>
+  <Badge item={{ key: 'Author', value: 'Felix' }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+
+  <Badge item={{ key: 'Author', value: 'Felix' }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 自定义颜色
+
+你可以通过 `color` 字段覆盖 `key` 部分的默认背景色。颜色值可以是任何有效的 CSS 颜色。
+
+<MdxRepl>
+  <Badge item={{ key: 'Author', value: 'Felix', color: 'gray' }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+
+  <Badge item={{ key: 'Author', value: 'Felix', color: 'gray' }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 3. 图标徽章
+
+徽章可以包含一个图标作为 `key`。
+
+### 3.1. 只有图标的徽章
+
+<MdxRepl>
+  <Badge item={{ key: { icon: 'github' } }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+
+  <Badge item={{ key: { icon: 'github' } }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 3.2. 图标 + 文本值的徽章
+
+<MdxRepl>
+  <Badge item={{ key: { icon: 'deep_seek' }, value: 'AI Assistant' }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+
+  <Badge item={{ key: { icon: 'deep_seek' }, value: 'AI Assistant' }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 4. 图片徽章
+
+徽章也可以使用图片作为 `key`。
+
+### 4.1. 只有图片的徽章
+
+<MdxRepl>
+  <Badge item={{ key: { image: avatar } }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+  import avatar from '/src/assets/avatar.webp';
+
+  <Badge item={{ key: { image: avatar } }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 4.2. 图片 + 文本值的徽章
+
+<MdxRepl>
+  <Badge item={{ key: { image: avatar }, value: 'CatCodeMe' }} />
+  <Fragment slot='desc'>
+  ````jsx
+  import Badge from '@/components/Badge.astro';
+  import avatar from '/src/assets/avatar.webp';
+
+  <Badge item={{ key: { image: avatar }, value: 'CatCodeMe' }} />
+  ````
+  </Fragment>
+</MdxRepl>
+
+---
+
+**注意:**
+- 在 MDX 文件中直接使用 `<Badge>` 组件时，`icon` 的值必须是系统中已定义的图标名称。
+- `image` 的值是图片的路径。为了确保图片能正确显示和被 Astro 的构建流程优化，**必须**在 MDX 文件顶部导入图片资源，然后将导入的图片对象直接传递给组件。

@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { Icons } from '@/custom/pure/libs/icons';
 
 function removeDupsAndLowerCase(array: string[]) {
   if (!array.length) return array
@@ -37,7 +38,22 @@ const blog = defineCollection({
       // Special fields
       comment: z.boolean().default(true),
       //toc : 0= 不显示 toc 1= 默认 toc 2=手风琴 toc
-      toc: z.number().default(1)
+      toc: z.number().default(1),
+      badge: z
+        .array(
+          z.object({
+            key: z.union([
+              z.string(),
+              z.object({
+                icon: z.enum(Object.keys(Icons) as [string, ...string[]]).optional(),
+                image: z.string().optional()
+              })
+            ]),
+            value: z.string().optional(),
+            color: z.string().optional()
+          })
+        )
+        .optional()
     })
 })
 

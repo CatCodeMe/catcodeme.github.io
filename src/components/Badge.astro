@@ -1,0 +1,119 @@
+---
+import { Image } from 'astro:assets'
+import { Icon } from '@/custom/components/user'
+import type { IconName } from '@/custom/pure/libs/icons'
+
+interface Props {
+  item: {
+    key: string | { icon?: IconName; image?: string }
+    value?: string
+    color?: string
+  }
+  className?: string
+}
+
+const { item, className } = Astro.props
+const { key, value, color } = item
+
+const isKeyObject = typeof key === 'object'
+
+// For Icon Key: White background, dark icon
+const defaultKeyBg =
+  'bg-white dark:bg-slate-800 ring-1 ring-slate-900/10 dark:ring-white/10'
+const defaultKeyText = 'text-slate-700 dark:text-slate-300'
+
+// For Value: Light sky blue background
+const defaultValueBg = 'bg-sky-100 dark:bg-slate-700'
+const defaultValueText = 'text-sky-800 dark:text-slate-200'
+
+// For Text Key & Key-Only: Light gray background
+const defaultNormalBg = 'bg-slate-100 dark:bg-slate-800'
+const defaultNormalText = 'text-slate-700 dark:text-slate-300'
+---
+
+{
+  value ? (
+    <div
+      class:list={[
+        'inline-flex items-stretch overflow-hidden rounded-md text-xs font-medium',
+        className
+      ]}
+    >
+      {isKeyObject ? (
+        // --- K-V Badge with Icon/Image Key ---
+        <div
+          class:list={[
+            defaultKeyText,
+            'flex size-6 items-center justify-center',
+            { [defaultKeyBg]: !color }
+          ]}
+          style={color ? `background-color: ${color}` : ''}
+        >
+          {'icon' in key && key.icon ? (
+            <Icon name={key.icon} class='size-4' />
+          ) : 'image' in key && key.image ? (
+            <Image
+              src={key.image}
+              alt='badge-key'
+              width={24}
+              height={24}
+              class='size-full object-cover not-prose'
+            />
+          ) : null}
+        </div>
+      ) : (
+        // --- K-V Badge with Text Key ---
+        <div
+          class:list={[
+            defaultValueText,
+            'flex items-center gap-x-1 px-2 py-1 font-semibold',
+            { [defaultNormalBg]: !color }
+          ]}
+          style={color ? `background-color: ${color}` : ''}
+        >
+          <span>{key}</span>
+        </div>
+      )}
+      {/* --- Value Part (Common for all K-V) --- */}
+      <div class:list={[defaultValueText, defaultValueBg, 'px-2 py-1']}>
+        {value}
+      </div>
+    </div>
+  ) : isKeyObject ? (
+    // --- Key-Only Icon/Image Badge (Rounded Square) ---
+    <div
+      class:list={[
+        defaultNormalText,
+        'flex size-6 aspect-square items-center justify-center rounded-md',
+        { [defaultValueBg]: !color },
+        className
+      ]}
+      style={color ? `background-color: ${color}` : ''}
+    >
+      {'icon' in key && key.icon ? (
+        <Icon name={key.icon} class='size-4' />
+      ) : 'image' in key && key.image ? (
+        <Image
+          src={key.image}
+          alt='badge-key'
+          width={24}
+          height={24}
+          class='size-6 rounded-md object-cover'
+        />
+      ) : null}
+    </div>
+  ) : (
+    // --- Key-Only Text Badge ---
+    <span
+      class:list={[
+        defaultNormalText,
+        'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium',
+        { [defaultValueBg]: !color },
+        className
+      ]}
+      style={color ? `background-color: ${color}` : ''}
+    >
+      {key}
+    </span>
+  )
+}
