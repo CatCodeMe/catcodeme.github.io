@@ -6,16 +6,13 @@ import { Mermaid } from '@/custom/components/advanced'
 // Plugin styles
 import 'katex/dist/katex.min.css'
 
-import { ArticleBottom, TOC } from '@/custom/components/pages'
-import Hero from '@/custom/components/pages/Hero.astro'
+import { ArticleBottom, TOC, Copyright, Hero } from '@/custom/components/pages'
 
 import { MediumZoom } from 'astro-pure/advanced'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import AccordionTOC from '@/components/toc/AccordionTOC.astro'
 import { Comment, PageInfo } from '@/components/waline'
 import { integ } from '@/site-config'
-
-import Copyright from '../../packages/pure/components/pages/Copyright.astro'
 
 interface Props {
   post: CollectionEntry<'blog'>
