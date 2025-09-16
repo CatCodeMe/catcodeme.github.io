@@ -4,7 +4,7 @@ import type { CardListData } from 'astro-pure/types';
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: "CCM",
+  title: 'CCM',
   /** Will be used in index page & copyright declaration */
   author: 'ccm',
   /** Description metadata for your website. Can be used in page metadata. */
@@ -55,7 +55,7 @@ export const theme: ThemeUserConfig = {
       // { title: 'Projects', link: '/projects' },
       { title: 'Cats', link: '/cats' },
       // { title: 'Links', link: '/links' },
-      { title: 'About', link: '/about' },
+      { title: 'About', link: '/about' }
     ]
   },
 
@@ -65,11 +65,11 @@ export const theme: ThemeUserConfig = {
     year: `© ${new Date().getFullYear()}`,
     // year: `© 2019 - ${new Date().getFullYear()}`,
     links: [
-      // {
-      //   title: 'Moe ICP APTX4869',
-      //   link: 'https://icp.gov.moe/?keyword=APTX4869',
-      //   style: 'text-sm'
-      // },
+      {
+        title: '京ICP备2025143479号-1',
+        link: 'https://beian.miit.gov.cn/',
+        style: 'text-sm'
+      }
       // {
       //   title: 'CC BY-NC-SA 4.0',
       //   link: '/terms/list',
