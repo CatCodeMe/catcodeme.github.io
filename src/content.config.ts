@@ -46,7 +46,7 @@ const blog = defineCollection({
               z.string(),
               z.object({
                 icon: z.enum(Object.keys(Icons) as [string, ...string[]]).optional(),
-                image: z.string().optional()
+                image: image().optional()
               })
             ]),
             value: z.string().optional(),
