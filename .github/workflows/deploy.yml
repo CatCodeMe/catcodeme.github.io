@@ -56,7 +56,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  deploy-cloudflare:
+  # deploy-cloudflare:
     needs: build
     runs-on: ubuntu-latest
     steps:
