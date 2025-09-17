@@ -1,5 +1,12 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
+
+
+
 import type { CardListData } from 'astro-pure/types';
+
+
+
+
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -50,12 +57,12 @@ export const theme: ThemeUserConfig = {
   /** Configure the header of your site. */
   header: {
     menu: [
-      { title: 'Blog', link: '/blog' },
-      { title: 'Archives', link: '/archives' },
+      { title: '文章', link: '/blog' },
+      { title: '归档', link: '/archives' },
       // { title: 'Projects', link: '/projects' },
-      { title: 'Cats', link: '/cats' },
-      // { title: 'Links', link: '/links' },
-      { title: 'About', link: '/about' }
+      { title: '🐱', link: '/cats' },
+      { title: '留言板', link: '/msgboard' },
+      { title: '关于', link: '/about' }
     ]
   },
 
@@ -149,6 +156,7 @@ export const integ: IntegrationUserConfig = {
     emoji: ['qq'],
     additionalConfigs: {
       search: false, //表情包搜索
+      lang: 'zh-CN',
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
       // reaction: true,
@@ -157,7 +165,7 @@ export const integ: IntegrationUserConfig = {
         '/waline/2.png',
         '/waline/3.png',
         '/waline/4.png',
-        '/waline/5.png',
+        '/waline/5.png'
       ],
       pageview: true, //页面 pv
       comment: true, //页面评论数
