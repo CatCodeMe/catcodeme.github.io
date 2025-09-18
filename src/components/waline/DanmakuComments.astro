@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets'
+import commentFlag from '@/assets/other/comment_flag.png'
 import config from '@/site-config'
 
 interface WalineComment {
@@ -29,7 +31,7 @@ if (serverURL) {
 <div id='danmaku_container' class='terminal-container my-12 mx-auto'>
   <div class='terminal-header'>
     <div class='terminal-title'>
-      <span>弹幕发射</span>
+      <span>弹幕装填中</span>
       <span id='danmaku-status' class='running'>running</span>
     </div>
     <div class='terminal-controls'>
@@ -40,6 +42,7 @@ if (serverURL) {
   </div>
 
   <div class='terminal-screen'>
+    <Image src={commentFlag} alt="Welcome to leave comments" class="absolute bottom-4 left-4 w-[120px] h-auto opacity-70 pointer-events-none" />
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
@@ -106,7 +109,7 @@ if (serverURL) {
       // New badge-like structure
       danmaku.innerHTML = `
           <img class="danmaku-avatar" src="${data.avatar}" alt="" onerror="this.style.display='none'">
-          <span class="danmaku-nick">${data.nick}</span>
+          <span class="danmaku-nick">${data.nick}$</span>
           <span class="danmaku-comment not-prose">${cleanComment}</span>
       `
 
@@ -206,8 +209,8 @@ if (serverURL) {
     --accent: #2196f3;
     --danmaku-bg: #ffffff;
     --danmaku-border: #e0e0e0;
-    --danmaku-nick-bg: #2196f3;
-    --danmaku-nick-text: #ffffff;
+    --danmaku-nick-text: #2196f3;
+    --grid-color: #2196f3;
   }
   :global([data-theme='dark']) {
     --bg: #0a0a0a;
@@ -218,8 +221,8 @@ if (serverURL) {
     --accent: #00ff00;
     --danmaku-bg: #1a1a1a;
     --danmaku-border: #333333;
-    --danmaku-nick-bg: #00ff00;
-    --danmaku-nick-text: #1a1a1a;
+    --danmaku-nick-text: #00ff00;
+    --grid-color: #00ff00;
   }
 
   .terminal-container {
@@ -246,11 +249,31 @@ if (serverURL) {
     align-items: center;
     gap: 10px;
   }
+  #danmaku-status {
+    display: inline-block;
+    min-width: 60px;
+    padding: 2px 16px;
+    /* border-radius: 999px; */
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition:
+      background 0.3s,
+      color 0.3s;
+    background: linear-gradient(90deg, #e0e0e0 0%, #fafafa 100%);
+    color: #666;
+    /* box-shadow: 0 1px 4px rgba(0,0,0,0.04); */
+    border: 1px solid #e0e0e0;
+  }
   #danmaku-status.running {
-    color: #00ff00;
+    background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
+    color: #1a7f2b;
+    border: 1px solid #78ffd6;
   }
   #danmaku-status.paused {
-    color: red;
+    background: linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%);
+    color: #b94a48;
+    border: 1px solid #fcb69f;
   }
   .terminal-controls {
     display: flex;
@@ -274,7 +297,23 @@ if (serverURL) {
     height: 400px;
     position: relative;
     overflow: hidden;
-    background: var(--terminal-bg);
+    background-color: var(--terminal-bg);
+  }
+
+  .terminal-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
   }
 
   :global(.danmaku-track) {
@@ -326,14 +365,12 @@ if (serverURL) {
     object-fit: cover;
   }
   :global(.danmaku-nick) {
-    background-color: var(--danmaku-nick-bg);
     color: var(--danmaku-nick-text);
-    padding: 4px 10px;
-    border-radius: 9999px;
+    padding: 4px;
     font-size: 14px;
     font-weight: 600;
-    margin-left: 8px; /* Spacing between avatar and nick */
-    margin-right: 8px;
+    margin-left: 0.1rem; /* Spacing between avatar and nick */
+    margin-right: 0.1rem;
   }
   :global(.danmaku-comment) {
     padding-right: 12px;
@@ -410,4 +447,5 @@ if (serverURL) {
   .danmaku-comment img[height] {
     height: 28px !important;
   }
+
 </style>
