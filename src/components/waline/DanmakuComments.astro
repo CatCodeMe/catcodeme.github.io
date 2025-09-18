@@ -1,41 +1,41 @@
---- 
-import config from '@/site-config';
+---
+import config from '@/site-config'
 
 interface WalineComment {
-  nick: string;
-  comment: string;
-  avatar: string;
-  like?: number;
-  type?: string; // Add type for admin check
+  nick: string
+  comment: string
+  avatar: string
+  like?: number
+  type?: string // Add type for admin check
 }
 
-let recentComments: WalineComment[] = [];
-const serverURL = config.integ.waline.server;
+let recentComments: WalineComment[] = []
+const serverURL = config.integ.waline.server
 
 if (serverURL) {
-    try {
-        const response = await fetch(`${serverURL}/comment?type=recent&count=50`);
-        if (response.ok) {
-            recentComments = await response.json();
-        } else {
-            console.error(`[Danmaku Server] Failed to fetch, status: ${response.status}`);
-        }
-    } catch (e) {
-        console.error('[Danmaku Server] Error fetching comments:', e);
+  try {
+    const response = await fetch(`${serverURL}/comment?type=recent&count=50`)
+    if (response.ok) {
+      recentComments = await response.json()
+    } else {
+      console.error(`[Danmaku Server] Failed to fetch, status: ${response.status}`)
     }
+  } catch (e) {
+    console.error('[Danmaku Server] Error fetching comments:', e)
+  }
 }
 ---
 
 <div id='danmaku_container' class='terminal-container my-12 mx-auto'>
   <div class='terminal-header'>
     <div class='terminal-title'>
-      <span>danmaku_display.exe</span>
-      <span id='danmaku-status'>running</span>
+      <span>弹幕发射</span>
+      <span id='danmaku-status' class='running'>running</span>
     </div>
     <div class='terminal-controls'>
       <button class='control-btn' id='danmaku-toggle'>PAUSE</button>
       <button class='control-btn' id='danmaku-clear'>CLEAR</button>
-      <button class='control-btn' id='danmaku-theme'>THEME</button>
+      <!-- <button class='control-btn' id='danmaku-theme'>THEME</button> -->
     </div>
   </div>
 
@@ -56,131 +56,148 @@ if (serverURL) {
 
 <script define:vars={{ comments: recentComments }}>
   function initializeDanmaku() {
-    const container = document.getElementById('danmaku_container');
-    if (!container || container.dataset.initialized) return;
-    container.dataset.initialized = 'true';
+    const container = document.getElementById('danmaku_container')
+    if (!container || container.dataset.initialized) return
+    container.dataset.initialized = 'true'
 
     if (!comments || comments.length === 0) {
-      return;
+      return
     }
 
-    let isPlaying = true;
-    let trackLastTime = [0, 0, 0, 0, 0, 0];
-    let lineCount = 0;
-    let loopTimeoutId = null;
-    let commentIndex = 0;
+    let isPlaying = true
+    let trackLastTime = [0, 0, 0, 0, 0, 0]
+    let lineCount = 0
+    let loopTimeoutId = null
+    let commentIndex = 0
 
     function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
+      const current = document.documentElement.getAttribute('data-theme')
+      const newTheme = current === 'dark' ? 'light' : 'dark'
+      document.documentElement.setAttribute('data-theme', newTheme)
     }
 
     function selectBestTrack() {
-      let bestTrack = 0;
-      let earliestTime = trackLastTime[0];
+      let bestTrack = 0
+      let earliestTime = trackLastTime[0]
       for (let i = 1; i < trackLastTime.length; i++) {
         if (trackLastTime[i] < earliestTime) {
-          earliestTime = trackLastTime[i];
-          bestTrack = i;
+          earliestTime = trackLastTime[i]
+          bestTrack = i
         }
       }
-      return bestTrack;
+      return bestTrack
     }
 
     function createDanmaku(data) {
-      if (!isPlaying) return;
-      const trackIndex = selectBestTrack();
-      const track = container.querySelectorAll('.danmaku-track')[trackIndex];
-      if (!track) return;
-      
-      const danmaku = document.createElement('div');
-      danmaku.className = 'danmaku-item';
+      if (!isPlaying) return
+      const trackIndex = selectBestTrack()
+      const track = container.querySelectorAll('.danmaku-track')[trackIndex]
+      if (!track) return
+
+      const danmaku = document.createElement('div')
+      danmaku.className = 'danmaku-item not-prose'
       // Add admin class if applicable
       if (data.type === 'administrator') {
-          danmaku.classList.add('is-admin');
+        danmaku.classList.add('is-admin')
       }
-      
-      const cleanComment = data.comment.replace(/^<p>|<\/p>$/g, '');
+
+      const cleanComment = data.comment.replace(/^<p>|<\/p>$/g, '')
 
       // New badge-like structure
       danmaku.innerHTML = `
           <img class="danmaku-avatar" src="${data.avatar}" alt="" onerror="this.style.display='none'">
           <span class="danmaku-nick">${data.nick}</span>
-          <span class="danmaku-comment">${cleanComment}</span>
-      `;
-      
-      const duration = Math.random() * 6 + 12; // 12-18s duration
-      danmaku.style.animationDuration = `${duration}s`;
-      
-      track.appendChild(danmaku);
-      trackLastTime[trackIndex] = Date.now();
-      
-      lineCount++;
-      const lineCountEl = document.getElementById('danmaku-lineCount');
-      if(lineCountEl) lineCountEl.textContent = lineCount.toString();
-      
-      danmaku.classList.add('danmaku-animate');
-      danmaku.addEventListener('animationend', () => { danmaku.remove(); });
+          <span class="danmaku-comment not-prose">${cleanComment}</span>
+      `
+
+      let duration
+      if (window.innerWidth < 600) {
+        // 移动端 6-10秒
+        duration = Math.random() * 4 + 6
+      } else {
+        // PC端 16-24秒
+        duration = Math.random() * 8 + 16
+      }
+      danmaku.style.animationDuration = `${duration}s`
+      //   const duration = Math.random() * 4 + 6 // 6-10s duration
+      //   danmaku.style.animationDuration = `${duration}s`
+
+      track.appendChild(danmaku)
+      trackLastTime[trackIndex] = Date.now()
+
+      lineCount++
+      const lineCountEl = document.getElementById('danmaku-lineCount')
+      if (lineCountEl) lineCountEl.textContent = lineCount.toString()
+
+      danmaku.classList.add('danmaku-animate')
+      danmaku.addEventListener('animationend', () => {
+        danmaku.remove()
+      })
     }
 
     function startDanmakuLoop() {
-      if (!isPlaying) return;
-      const commentData = comments[commentIndex];
-      createDanmaku(commentData);
-      commentIndex = (commentIndex + 1) % comments.length;
-      loopTimeoutId = setTimeout(startDanmakuLoop, 3000);
+      if (!isPlaying) return
+      const commentData = comments[commentIndex]
+      createDanmaku(commentData)
+      commentIndex = (commentIndex + 1) % comments.length
+      loopTimeoutId = setTimeout(startDanmakuLoop, 3000)
     }
 
     function toggleDanmaku() {
-      isPlaying = !isPlaying;
-      const btn = document.getElementById('danmaku-toggle');
-      const status = document.getElementById('danmaku-status');
-      if(btn) btn.textContent = isPlaying ? 'PAUSE' : 'PLAY';
-      if(status) status.textContent = isPlaying ? 'running' : 'paused';
-      if (isPlaying) startDanmakuLoop();
-      else clearTimeout(loopTimeoutId);
+      isPlaying = !isPlaying
+      const btn = document.getElementById('danmaku-toggle')
+      const status = document.getElementById('danmaku-status')
+      if (btn) btn.textContent = isPlaying ? 'PAUSE' : 'PLAY'
+      if (status) {
+        status.textContent = isPlaying ? 'running' : 'paused'
+        status.classList.toggle('running', isPlaying)
+        status.classList.toggle('paused', !isPlaying)
+      }
+      if (isPlaying) startDanmakuLoop()
+      else clearTimeout(loopTimeoutId)
     }
 
     function clearDanmaku() {
-      container.querySelectorAll('.danmaku-track').forEach(track => { track.innerHTML = ''; });
-      trackLastTime.fill(0);
-      lineCount = 0;
-      const lineCountEl = document.getElementById('danmaku-lineCount');
-      if(lineCountEl) lineCountEl.textContent = '0';
+      container.querySelectorAll('.danmaku-track').forEach((track) => {
+        track.innerHTML = ''
+      })
+      trackLastTime.fill(0)
+      lineCount = 0
+      const lineCountEl = document.getElementById('danmaku-lineCount')
+      if (lineCountEl) lineCountEl.textContent = '0'
     }
 
-    const toggleBtn = document.getElementById('danmaku-toggle');
-    const clearBtn = document.getElementById('danmaku-clear');
-    const themeBtn = document.getElementById('danmaku-theme');
+    const toggleBtn = document.getElementById('danmaku-toggle')
+    const clearBtn = document.getElementById('danmaku-clear')
+    const themeBtn = document.getElementById('danmaku-theme')
 
-    if (toggleBtn) toggleBtn.addEventListener('click', toggleDanmaku);
-    if (clearBtn) clearBtn.addEventListener('click', clearDanmaku);
-    if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleDanmaku)
+    if (clearBtn) clearBtn.addEventListener('click', clearDanmaku)
+    if (themeBtn) themeBtn.addEventListener('click', toggleTheme)
 
     document.addEventListener('keydown', (e) => {
-      if (document.activeElement !== document.body && document.activeElement !== container) return;
-      switch(e.key.toLowerCase()) {
+      if (document.activeElement !== document.body && document.activeElement !== container) return
+      switch (e.key.toLowerCase()) {
         case ' ':
         case 'spacebar':
-          e.preventDefault();
-          toggleDanmaku();
-          break;
+          e.preventDefault()
+          toggleDanmaku()
+          break
         case 'c':
-          clearDanmaku();
-          break;
+          clearDanmaku()
+          break
       }
-    });
+    })
 
-    if(loopTimeoutId) clearTimeout(loopTimeoutId);
-    startDanmakuLoop();
+    if (loopTimeoutId) clearTimeout(loopTimeoutId)
+    startDanmakuLoop()
   }
 
-  setTimeout(initializeDanmaku, 0);
+  setTimeout(initializeDanmaku, 0)
 </script>
 
 <style>
-:global(:root) {
+  :global(:root) {
     --bg: #ffffff;
     --terminal-bg: #fafafa;
     --border: #e0e0e0;
@@ -191,8 +208,8 @@ if (serverURL) {
     --danmaku-border: #e0e0e0;
     --danmaku-nick-bg: #2196f3;
     --danmaku-nick-text: #ffffff;
-}
-:global([data-theme='dark']) {
+  }
+  :global([data-theme='dark']) {
     --bg: #0a0a0a;
     --terminal-bg: #1a1a1a;
     --border: #333333;
@@ -203,37 +220,43 @@ if (serverURL) {
     --danmaku-border: #333333;
     --danmaku-nick-bg: #00ff00;
     --danmaku-nick-text: #1a1a1a;
-}
+  }
 
-.terminal-container {
+  .terminal-container {
     width: 100%;
     max-width: 1000px;
     background: var(--terminal-bg);
     border: 1px solid var(--border);
     border-radius: 4px;
     transition: all 0.3s ease;
-}
-.terminal-header {
+  }
+  .terminal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
     border-bottom: 1px solid var(--border);
     background: var(--terminal-bg);
-}
-.terminal-title {
+  }
+  .terminal-title {
     color: var(--text);
     font-size: 14px;
     font-weight: normal;
     display: flex;
     align-items: center;
     gap: 10px;
-}
-.terminal-controls {
+  }
+  #danmaku-status.running {
+    color: #00ff00;
+  }
+  #danmaku-status.paused {
+    color: red;
+  }
+  .terminal-controls {
     display: flex;
     gap: 10px;
-}
-.control-btn {
+  }
+  .control-btn {
     background: none;
     border: 1px solid var(--border);
     color: var(--text);
@@ -242,56 +265,67 @@ if (serverURL) {
     cursor: pointer;
     font-family: inherit;
     transition: all 0.2s ease;
-}
-.control-btn:hover {
+  }
+  .control-btn:hover {
     background: var(--accent);
     color: var(--bg);
-}
-.terminal-screen {
+  }
+  .terminal-screen {
     height: 400px;
     position: relative;
     overflow: hidden;
     background: var(--terminal-bg);
-}
+  }
 
-:global(.danmaku-track) {
+  :global(.danmaku-track) {
     position: absolute;
     width: 100%;
     height: 50px;
     overflow: hidden;
-}
-:global(.terminal-screen .danmaku-track:nth-child(1)) { top: 20px; }
-:global(.terminal-screen .danmaku-track:nth-child(2)) { top: 80px; }
-:global(.terminal-screen .danmaku-track:nth-child(3)) { top: 140px; }
-:global(.terminal-screen .danmaku-track:nth-child(4)) { top: 200px; }
-:global(.terminal-screen .danmaku-track:nth-child(5)) { top: 260px; }
-:global(.terminal-screen .danmaku-track:nth-child(6)) { top: 320px; }
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(1)) {
+    top: 20px;
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(2)) {
+    top: 80px;
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(3)) {
+    top: 140px;
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(4)) {
+    top: 200px;
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(5)) {
+    top: 260px;
+  }
+  :global(.terminal-screen .danmaku-track:nth-child(6)) {
+    top: 320px;
+  }
 
-:global(.danmaku-item) {
+  :global(.danmaku-item) {
     position: absolute;
     right: -100%;
     top: 0;
     display: inline-flex;
     align-items: center;
-    background: var(--danmaku-bg);
+    /* background: var(--danmaku-bg); */
     border: 1px solid var(--danmaku-border);
-    border-radius: 9999px;
     padding: 4px;
     white-space: nowrap;
     height: 40px;
-}
-:global(.danmaku-item.is-admin) {
+  }
+  :global(.danmaku-item.is-admin) {
     border: 1.5px solid var(--accent);
-    box-shadow: 0 0 8px -2px var(--accent);
-}
+    /* box-shadow: 0 0 8px -2px var(--accent); */
+  }
 
-:global(.danmaku-avatar) {
+  :global(.danmaku-avatar) {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-}
-:global(.danmaku-nick) {
+  }
+  :global(.danmaku-nick) {
     background-color: var(--danmaku-nick-bg);
     color: var(--danmaku-nick-text);
     padding: 4px 10px;
@@ -300,8 +334,8 @@ if (serverURL) {
     font-weight: 600;
     margin-left: 8px; /* Spacing between avatar and nick */
     margin-right: 8px;
-}
-:global(.danmaku-comment) {
+  }
+  :global(.danmaku-comment) {
     padding-right: 12px;
     max-width: 40ch;
     overflow: hidden;
@@ -310,32 +344,70 @@ if (serverURL) {
     display: inline-flex;
     align-items: center;
     color: var(--text);
-}
-:global(.danmaku-comment p) {
+  }
+  :global(.danmaku-comment p) {
     display: inline;
     margin: 0;
-}
-:global(.danmaku-comment .wl-emoji) {
+  }
+  :global(.danmaku-comment .wl-emoji) {
     height: 1.4em;
     width: auto;
     margin: 0 2px;
     vertical-align: middle;
-}
+  }
 
-@keyframes danmaku-move {
-    from { transform: translateX(0); }
-    to { transform: translateX(-150vw); }
-}
-:global(.danmaku-animate) {
+  :global(.danmaku-comment img) {
+    height: 1.4em;
+    width: auto;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+
+  @keyframes danmaku-move {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    90% {
+      transform: translateX(-150vw);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-170vw);
+      opacity: 0;
+    }
+  }
+  :global(.danmaku-animate) {
     animation: danmaku-move linear;
-}
+  }
 
-.status-line {
+  .status-line {
     padding: 8px 20px;
     border-top: 1px solid var(--border);
     font-size: 12px;
     color: var(--text-secondary);
     display: flex;
     justify-content: space-between;
-}
+  }
+
+  /* .danmaku-comment img {
+    height: 28px !important;
+    width: auto !important;
+    max-width: 60px !important;
+    border-radius: 2px !important;
+    border: 1px solid var(--border) !important;
+    object-fit: cover !important;
+    vertical-align: middle !important;
+    display: inline-block !important;
+    flex-shrink: 0;
+  } */
+
+  /* 防止图片过宽导致卡片变形 */
+  .danmaku-comment img[width] {
+    width: auto !important;
+  }
+
+  .danmaku-comment img[height] {
+    height: 28px !important;
+  }
 </style>
