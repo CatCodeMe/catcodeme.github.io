@@ -1,20 +1,25 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro';
-import { Comment } from '@/components/waline'
+import MsgboardLayout from '@/layouts/MsgboardLayout.astro'
+import DanmakuComments from '@/components/waline/DanmakuComments.astro'
+import commentFlag from '@/assets/other/comment_flag.png'
+import { Image } from 'astro:assets'
 ---
 
-<PageLayout 
-  title="留言板" 
-  info={{ slug: '/msgboard', comment: false, view: false }}
->
-  <div class="text-center max-w-2xl mx-auto">
-    <h1 class="text-4xl font-bold tracking-tight">欢迎留言</h1>
-    <p class="mt-4 text-lg text-muted-foreground">
-      很高兴看到你. 欢迎分享你的想法, 或只是简单地打个招呼.
-    </p>
+<MsgboardLayout info={{ slug: '/msgboard' }}>
+  <div class="flex items-center justify-center gap-8 max-w-3xl mx-auto">
+    <Image
+      src={commentFlag}
+      alt="comment"
+      class="w-48 flex-shrink-0"
+      loading="eager"
+    />
+    <div class="text-left">
+      <p class="text-xl font-semibold">有什么新鲜事想分享吗？</p>
+      <p class="text-lg mt-2 text-muted-foreground">或只是想留下你的足迹...</p>
+      <p class="text-lg mt-2 text-muted-foreground">期待你的声音。</p>
+    </div>
   </div>
 
-  <div class="mt-16 max-w-4xl mx-auto">
-    <Comment />
-  </div>
-</PageLayout>
+  <DanmakuComments />
+
+</MsgboardLayout>

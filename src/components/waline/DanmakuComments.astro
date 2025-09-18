@@ -1,0 +1,322 @@
+---
+import config from '@/site-config';
+
+interface WalineComment {
+  nick: string;
+  comment: string;
+  avatar: string;
+  like?: number;
+}
+
+let recentComments: WalineComment[] = [];
+const serverURL = config.integ.waline.server;
+
+if (serverURL) {
+    try {
+        const response = await fetch(`${serverURL}/comment?type=recent&count=10`);
+        if (response.ok) {
+            recentComments = await response.json();
+            console.log(`[Danmaku Server] Fetched ${recentComments.length} comments from Waline.`);
+        } else {
+            console.error(`[Danmaku Server] Failed to fetch, status: ${response.status}`);
+        }
+    } catch (e) {
+        console.error('[Danmaku Server] Error fetching comments:', e);
+    }
+}
+---
+
+<div id="danmaku_container" class="terminal-container my-12 mx-auto">
+    <div class="terminal-header">
+        <div class="terminal-title">
+            <span>danmaku_display.exe</span>
+            <span id="danmaku-status">running</span>
+        </div>
+        <div class="terminal-controls">
+            <button class="control-btn" id="danmaku-toggle">PAUSE</button>
+            <button class="control-btn" id="danmaku-clear">CLEAR</button>
+            <button class="control-btn" id="danmaku-theme">THEME</button>
+        </div>
+    </div>
+    
+    <div class="terminal-screen">
+        <div class="danmaku-track"></div>
+        <div class="danmaku-track"></div>
+        <div class="danmaku-track"></div>
+        <div class="danmaku-track"></div>
+        <div class="danmaku-track"></div>
+        <div class="danmaku-track"></div>
+    </div>
+    
+    <div class="status-line">
+        <span>Lines: <span id="danmaku-lineCount">0</span></span>
+        <span id="danmaku-keyboard-shortcuts">Press SPACE to pause, C to clear</span>
+    </div>
+</div>
+
+<script define:vars={{ comments: recentComments }}>
+    // All logic is now wrapped in a single function to be called directly.
+    function initializeDanmaku() {
+        const container = document.getElementById('danmaku_container');
+        if (!container) {
+            console.error("[Danmaku Client] CRITICAL: Container not found. Halting.");
+            return;
+        }
+        // Prevent re-initialization on HMR
+        if (container.dataset.initialized) return;
+        container.dataset.initialized = "true";
+
+        console.log("[Danmaku Client] Initializing script...");
+
+        if (!comments || comments.length === 0) {
+            console.warn("[Danmaku Client] No comments from server to display.");
+            return;
+        }
+
+        let isPlaying = true;
+        let trackLastTime = [0, 0, 0, 0, 0, 0];
+        let lineCount = 0;
+        let loopTimeoutId = null;
+        let commentIndex = 0;
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        function selectBestTrack() {
+            let bestTrack = 0;
+            let earliestTime = trackLastTime[0];
+            for (let i = 1; i < trackLastTime.length; i++) {
+                if (trackLastTime[i] < earliestTime) {
+                    earliestTime = trackLastTime[i];
+                    bestTrack = i;
+                }
+            }
+            return bestTrack;
+        }
+
+        function createDanmaku(data) {
+            if (!isPlaying) return;
+            const trackIndex = selectBestTrack();
+            const track = container.querySelectorAll('.danmaku-track')[trackIndex];
+            if (!track) return;
+            
+            const danmaku = document.createElement('div');
+            danmaku.className = 'danmaku-item';
+            danmaku.innerHTML = `
+                <img class="danmaku-avatar" src="${data.avatar}" alt="" onerror="this.style.display='none'">
+                <span class="danmaku-text"><strong class="danmaku-nick">${data.nick}:</strong> ${data.comment}</span>
+                <span class="danmaku-likes">+${data.like || 0}</span>
+            `;
+            
+            const duration = Math.random() * 4 + 8;
+            danmaku.style.animationDuration = `${duration}s`;
+            
+            track.appendChild(danmaku);
+            trackLastTime[trackIndex] = Date.now();
+            
+            lineCount++;
+            const lineCountEl = document.getElementById('danmaku-lineCount');
+            if(lineCountEl) lineCountEl.textContent = lineCount.toString();
+            
+            danmaku.classList.add('danmaku-animate');
+            danmaku.addEventListener('animationend', () => { danmaku.remove(); });
+        }
+
+        function startDanmakuLoop() {
+            if (!isPlaying) return;
+            const commentData = comments[commentIndex];
+            createDanmaku(commentData);
+            commentIndex = (commentIndex + 1) % comments.length;
+            loopTimeoutId = setTimeout(startDanmakuLoop, 3000);
+        }
+
+        function toggleDanmaku() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('danmaku-toggle');
+            const status = document.getElementById('danmaku-status');
+            if(btn) btn.textContent = isPlaying ? 'PAUSE' : 'PLAY';
+            if(status) status.textContent = isPlaying ? 'running' : 'paused';
+            if (isPlaying) startDanmakuLoop();
+            else clearTimeout(loopTimeoutId);
+        }
+
+        function clearDanmaku() {
+            container.querySelectorAll('.danmaku-track').forEach(track => { track.innerHTML = ''; });
+            trackLastTime.fill(0);
+            lineCount = 0;
+            const lineCountEl = document.getElementById('danmaku-lineCount');
+            if(lineCountEl) lineCountEl.textContent = '0';
+        }
+
+        const toggleBtn = document.getElementById('danmaku-toggle');
+        const clearBtn = document.getElementById('danmaku-clear');
+        const themeBtn = document.getElementById('danmaku-theme');
+
+        if (toggleBtn) toggleBtn.addEventListener('click', toggleDanmaku);
+        if (clearBtn) clearBtn.addEventListener('click', clearDanmaku);
+        if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement !== document.body && document.activeElement !== container) return;
+            switch(e.key.toLowerCase()) {
+                case ' ': e.preventDefault(); toggleDanmaku(); break;
+                case 'c': clearDanmaku(); break;
+            }
+        });
+
+        console.log("[Danmaku Client] Initialization complete. Starting loop...");
+        if(loopTimeoutId) clearTimeout(loopTimeoutId);
+        startDanmakuLoop();
+    }
+
+    // CRITICAL FIX: Remove event listener and call directly.
+    // This ensures the script runs as soon as it is loaded.
+    initializeDanmaku();
+</script>
+
+<style>
+:global(:root) {
+    --bg: #ffffff;
+    --terminal-bg: #fafafa;
+    --border: #e0e0e0;
+    --text: #333333;
+    --text-secondary: #666666;
+    --accent: #2196f3;
+    --danmaku-bg: #ffffff;
+    --danmaku-border: #e0e0e0;
+    --likes: #999999;
+}
+:global([data-theme="dark"]) {
+    --bg: #0a0a0a;
+    --terminal-bg: #1a1a1a;
+    --border: #333333;
+    --text: #00ff00;
+    --text-secondary: #888888;
+    --accent: #00ff00;
+    --danmaku-bg: #1a1a1a;
+    --danmaku-border: #333333;
+    --likes: #666666;
+}
+
+.terminal-container {
+    width: 100%;
+    max-width: 1000px;
+    background: var(--terminal-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.terminal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--terminal-bg);
+}
+.terminal-title {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.terminal-controls {
+    display: flex;
+    gap: 10px;
+}
+.control-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+.control-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+}
+.terminal-screen {
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+    background: var(--terminal-bg);
+}
+
+:global(.danmaku-track) {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+}
+:global(.terminal-screen .danmaku-track:nth-child(1)) { top: 20px; }
+:global(.terminal-screen .danmaku-track:nth-child(2)) { top: 80px; }
+:global(.terminal-screen .danmaku-track:nth-child(3)) { top: 140px; }
+:global(.terminal-screen .danmaku-track:nth-child(4)) { top: 200px; }
+:global(.terminal-screen .danmaku-track:nth-child(5)) { top: 260px; }
+:global(.terminal-screen .danmaku-track:nth-child(6)) { top: 320px; }
+
+:global(.danmaku-item) {
+    position: absolute;
+    right: -100%;
+    top: 0;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    background: var(--danmaku-bg);
+    border: 1px solid var(--danmaku-border);
+    padding: 8px 12px;
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--text);
+    width: auto;
+}
+:global(.danmaku-avatar) {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    margin-right: 8px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+}
+:global(.danmaku-text) {
+    margin-right: 8px;
+}
+:global(.danmaku-text p) {
+    display: inline;
+    margin: 0;
+}
+:global(.danmaku-nick) {
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+:global(.danmaku-likes) {
+    color: var(--likes);
+    font-size: 12px;
+}
+
+@keyframes danmaku-move {
+    from { transform: translateX(0); }
+    to { transform: translateX(-150vw); }
+}
+:global(.danmaku-animate) {
+    animation: danmaku-move linear;
+}
+
+.status-line {
+    padding: 8px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+</style>
