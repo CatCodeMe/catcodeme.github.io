@@ -33,7 +33,7 @@ const serverURL = config.integ.waline.server
 
   <div class='status-line'>
     <span>Lines: <span id='danmaku-lineCount'>0</span></span>
-    <span id='danmaku-keyboard-shortcuts'>Press <kbd>Space</kbd> to play <kbd>C</kbd> to clear</span
+    <span id='danmaku-keyboard-shortcuts'>Click to play, press <kbd>C</kbd> to clear</span
     >
   </div>
 </div>
@@ -125,7 +125,7 @@ const serverURL = config.integ.waline.server
       danmaku.target = '_blank'
       danmaku.rel = 'noopener noreferrer'
       danmaku.className = 'danmaku-item not-prose'
-      if (data.type === 'administrator') danmaku.classList.add('is-admin')
+      if (data.type === 'administrator') danmaku.style.border = '1.5px solid var(--accent)'
 
       const cleanComment = truncateHtmlInline(data.comment, 30)
       const likeHtml = data.like > 0 ? `<span class="danmaku-like">👍 ${data.like}</span>` : ''
@@ -207,11 +207,6 @@ const serverURL = config.integ.waline.server
     document.addEventListener('keydown', (e) => {
       if (document.activeElement !== document.body && document.activeElement !== container) return
       switch (e.key.toLowerCase()) {
-        case ' ':
-        case 'spacebar':
-          e.preventDefault()
-          toggleDanmaku()
-          break
         case 'c':
           clearDanmaku()
           break
@@ -302,7 +297,7 @@ const serverURL = config.integ.waline.server
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 6rem;
+    font-size: 4rem;
     color: var(--text);
     cursor: pointer;
     z-index: 10;
@@ -367,9 +362,6 @@ const serverURL = config.integ.waline.server
     height: 40px;
     text-decoration: none;
     cursor: pointer;
-  }
-  :global(.danmaku-item.is-admin) {
-    border: 1.5px solid var(--accent);
   }
 
   .terminal-container.paused :global(.danmaku-item) {
