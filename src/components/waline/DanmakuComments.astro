@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets'
+
 import commentFlag from '@/assets/other/comment_flag.png'
 import config from '@/site-config'
 
@@ -35,14 +36,16 @@ if (serverURL) {
       <span id='danmaku-status' class='running'>running</span>
     </div>
     <div class='terminal-controls'>
-      <button class='control-btn' id='danmaku-toggle'>PAUSE</button>
-      <button class='control-btn' id='danmaku-clear'>CLEAR</button>
-      <!-- <button class='control-btn' id='danmaku-theme'>THEME</button> -->
+      <!-- <button class='control-btn' id='danmaku-toggle'>暂停</button> -->
     </div>
   </div>
 
   <div class='terminal-screen'>
-    <Image src={commentFlag} alt="Welcome to leave comments" class="absolute bottom-4 left-4 w-[120px] h-auto opacity-70 pointer-events-none" />
+    <Image
+      src={commentFlag}
+      alt='Welcome to leave comments'
+      class='absolute bottom-4 left-4 w-[120px] h-auto pointer-events-none'
+    />
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
@@ -53,7 +56,7 @@ if (serverURL) {
 
   <div class='status-line'>
     <span>Lines: <span id='danmaku-lineCount'>0</span></span>
-    <span id='danmaku-keyboard-shortcuts'>Press SPACE to pause, C to clear</span>
+    <span id='danmaku-keyboard-shortcuts'>Press <kbd>Space</kbd> to play , <kbd>C</kbd> to clear</span>
   </div>
 </div>
 
@@ -68,16 +71,10 @@ if (serverURL) {
     }
 
     let isPlaying = true
-    let trackLastTime = [0, 0, 0, 0, 0, 0]
-    let lineCount = 0
+    const trackLastTime = [0, 0, 0, 0, 0, 0]
     let loopTimeoutId = null
     let commentIndex = 0
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme')
-      const newTheme = current === 'dark' ? 'light' : 'dark'
-      document.documentElement.setAttribute('data-theme', newTheme)
-    }
+    let lineCount = 0
 
     function selectBestTrack() {
       let bestTrack = 0
@@ -91,6 +88,48 @@ if (serverURL) {
       return bestTrack
     }
 
+    function truncateHtmlInline(html, maxLen) {
+      // 去掉换行，避免输出换行
+      html = html.replace(/^<p>|<\/p>$/g, '')
+
+      const tagRegex = /<\/?[^>]+>/g
+      let textLen = 0
+      let result = ''
+      let lastIndex = 0
+      let match
+
+      while ((match = tagRegex.exec(html)) !== null) {
+        // 标签前的纯文字
+        if (lastIndex < match.index) {
+          const text = html.slice(lastIndex, match.index)
+          if (textLen + text.length < maxLen) {
+            result += text
+            textLen += text.length
+          } else {
+            const remaining = maxLen - textLen
+            result += text.slice(0, remaining) + '...'
+            return result
+          }
+        }
+
+        // 保留标签本身（比如 <img>）
+        result += match[0]
+        lastIndex = tagRegex.lastIndex
+      }
+
+      // 标签后的最后一段纯文字
+      if (lastIndex < html.length && textLen < maxLen) {
+        const text = html.slice(lastIndex)
+        if (textLen + text.length <= maxLen) {
+          result += text
+        } else {
+          result += text.slice(0, maxLen - textLen) + '...'
+        }
+      }
+
+      return result
+    }
+
     function createDanmaku(data) {
       if (!isPlaying) return
       const trackIndex = selectBestTrack()
@@ -99,36 +138,31 @@ if (serverURL) {
 
       const danmaku = document.createElement('div')
       danmaku.className = 'danmaku-item not-prose'
-      // Add admin class if applicable
       if (data.type === 'administrator') {
         danmaku.classList.add('is-admin')
       }
 
-      const cleanComment = data.comment.replace(/^<p>|<\/p>$/g, '')
+      const cleanComment = truncateHtmlInline(data.comment, 30)
+      const likeHtml = data.like > 0 ? `<span class="danmaku-like">👍 ${data.like}</span>` : ''
 
-      // New badge-like structure
       danmaku.innerHTML = `
           <img class="danmaku-avatar" src="${data.avatar}" alt="" onerror="this.style.display='none'">
-          <span class="danmaku-nick">${data.nick}$</span>
+          <span class="danmaku-nick">${data.nick}</span>
           <span class="danmaku-comment not-prose">${cleanComment}</span>
+          ${likeHtml}
       `
 
       let duration
       if (window.innerWidth < 600) {
-        // 移动端 6-10秒
         duration = Math.random() * 4 + 6
       } else {
-        // PC端 16-24秒
         duration = Math.random() * 8 + 16
       }
       danmaku.style.animationDuration = `${duration}s`
-      //   const duration = Math.random() * 4 + 6 // 6-10s duration
-      //   danmaku.style.animationDuration = `${duration}s`
 
       track.appendChild(danmaku)
       trackLastTime[trackIndex] = Date.now()
 
-      lineCount++
       const lineCountEl = document.getElementById('danmaku-lineCount')
       if (lineCountEl) lineCountEl.textContent = lineCount.toString()
 
@@ -139,25 +173,27 @@ if (serverURL) {
     }
 
     function startDanmakuLoop() {
-      if (!isPlaying) return
+      if (!isPlaying || comments.length === 0) return
       const commentData = comments[commentIndex]
       createDanmaku(commentData)
+      lineCount++
       commentIndex = (commentIndex + 1) % comments.length
       loopTimeoutId = setTimeout(startDanmakuLoop, 3000)
     }
 
     function toggleDanmaku() {
       isPlaying = !isPlaying
-      const btn = document.getElementById('danmaku-toggle')
       const status = document.getElementById('danmaku-status')
-      if (btn) btn.textContent = isPlaying ? 'PAUSE' : 'PLAY'
       if (status) {
         status.textContent = isPlaying ? 'running' : 'paused'
         status.classList.toggle('running', isPlaying)
         status.classList.toggle('paused', !isPlaying)
       }
-      if (isPlaying) startDanmakuLoop()
-      else clearTimeout(loopTimeoutId)
+      if (isPlaying) {
+        startDanmakuLoop()
+      } else {
+        clearTimeout(loopTimeoutId)
+      }
     }
 
     function clearDanmaku() {
@@ -165,18 +201,7 @@ if (serverURL) {
         track.innerHTML = ''
       })
       trackLastTime.fill(0)
-      lineCount = 0
-      const lineCountEl = document.getElementById('danmaku-lineCount')
-      if (lineCountEl) lineCountEl.textContent = '0'
     }
-
-    const toggleBtn = document.getElementById('danmaku-toggle')
-    const clearBtn = document.getElementById('danmaku-clear')
-    const themeBtn = document.getElementById('danmaku-theme')
-
-    if (toggleBtn) toggleBtn.addEventListener('click', toggleDanmaku)
-    if (clearBtn) clearBtn.addEventListener('click', clearDanmaku)
-    if (themeBtn) themeBtn.addEventListener('click', toggleTheme)
 
     document.addEventListener('keydown', (e) => {
       if (document.activeElement !== document.body && document.activeElement !== container) return
@@ -196,7 +221,7 @@ if (serverURL) {
     startDanmakuLoop()
   }
 
-  setTimeout(initializeDanmaku, 0)
+  setTimeout(initializeDanmaku, 1000)
 </script>
 
 <style>
@@ -374,13 +399,19 @@ if (serverURL) {
   }
   :global(.danmaku-comment) {
     padding-right: 12px;
-    max-width: 40ch;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     color: var(--text);
+  }
+  :global(.danmaku-like) {
+    opacity: 0.8;
+    font-size: 12px;
+    margin-left: 8px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
   }
   :global(.danmaku-comment p) {
     display: inline;
@@ -447,5 +478,4 @@ if (serverURL) {
   .danmaku-comment img[height] {
     height: 28px !important;
   }
-
 </style>
