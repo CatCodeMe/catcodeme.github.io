@@ -32,15 +32,12 @@ if (serverURL) {
 <div id='danmaku_container' class='terminal-container my-12 mx-auto'>
   <div class='terminal-header'>
     <div class='terminal-title'>
-      <span style='font-family: "ZSFT-e";'>CCMTV</span>
-      <span id='danmaku-status' class='running'>running</span>
-    </div>
-    <div class='terminal-controls'>
-      <!-- <button class='control-btn' id='danmaku-toggle'>暂停</button> -->
+      <span style='font-family: "ZSFT-e"; font-size: 1.5rem;'>CCMTV</span>
     </div>
   </div>
 
   <div class='terminal-screen'>
+    <div id="play-pause-indicator">▶️</div>
     <Image
       src={commentFlag}
       alt='Welcome to leave comments'
@@ -72,11 +69,13 @@ if (serverURL) {
       return
     }
 
-    let isPlaying = true
+    let isPlaying = false
     const trackLastTime = [0, 0, 0, 0, 0, 0]
     let loopTimeoutId = null
     let commentIndex = 0
     let lineCount = 0
+
+    const indicator = document.getElementById('play-pause-indicator')
 
     function selectBestTrack() {
       let bestTrack = 0
@@ -185,11 +184,8 @@ if (serverURL) {
 
     function toggleDanmaku() {
       isPlaying = !isPlaying
-      const status = document.getElementById('danmaku-status')
-      if (status) {
-        status.textContent = isPlaying ? 'running' : 'paused'
-        status.classList.toggle('running', isPlaying)
-        status.classList.toggle('paused', !isPlaying)
+      if (indicator) {
+        indicator.classList.toggle('hidden', isPlaying)
       }
       if (isPlaying) {
         startDanmakuLoop()
@@ -203,6 +199,17 @@ if (serverURL) {
         track.innerHTML = ''
       })
       trackLastTime.fill(0)
+    }
+
+    if (indicator) {
+      indicator.addEventListener('click', (e) => {
+        e.stopPropagation()
+        toggleDanmaku()
+      })
+    }
+    const screen = container.querySelector('.terminal-screen')
+    if (screen) {
+      screen.addEventListener('click', toggleDanmaku)
     }
 
     document.addEventListener('keydown', (e) => {
@@ -263,7 +270,7 @@ if (serverURL) {
   .terminal-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 12px 20px;
     border-bottom: 1px solid var(--border);
     background: var(--terminal-bg);
@@ -275,32 +282,6 @@ if (serverURL) {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  #danmaku-status {
-    display: inline-block;
-    min-width: 60px;
-    padding: 2px 16px;
-    /* border-radius: 999px; */
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 1px;
-    transition:
-      background 0.3s,
-      color 0.3s;
-    background: linear-gradient(90deg, #e0e0e0 0%, #fafafa 100%);
-    color: #666;
-    /* box-shadow: 0 1px 4px rgba(0,0,0,0.04); */
-    border: 1px solid #e0e0e0;
-  }
-  #danmaku-status.running {
-    background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
-    color: #1a7f2b;
-    border: 1px solid #78ffd6;
-  }
-  #danmaku-status.paused {
-    background: linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%);
-    color: #b94a48;
-    border: 1px solid #fcb69f;
   }
   .terminal-controls {
     display: flex;
@@ -325,6 +306,23 @@ if (serverURL) {
     position: relative;
     overflow: hidden;
     background-color: var(--terminal-bg);
+  }
+
+  #play-pause-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    color: var(--text);
+    cursor: pointer;
+    z-index: 10;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  #play-pause-indicator.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .terminal-screen::before {
