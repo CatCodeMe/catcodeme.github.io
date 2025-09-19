@@ -18,7 +18,10 @@ const { friends } = links
 const linksConf = config.integ.links
 ---
 
-<PageLayout title='Links' {headings} info='/links'>
+<PageLayout
+  frontmatter={{ title: 'Links', info: { slug: '/links', comment: true } }}
+  headings={headings}
+>
   <p>怎么可能有顺序呢，当然是随机的~ It's random</p>
   <h2 id='common-links'>Common Links</h2>
   <FriendList list={friends[0]} />

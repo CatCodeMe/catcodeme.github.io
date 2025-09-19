@@ -5,23 +5,28 @@ import PageLayout from '@/layouts/ContentLayout.astro'
 import { Comment, PageInfo } from '@/components/waline'
 
 interface Props {
-  title: string
+  frontmatter: {
+    title: string
+    description?: string
+    info?:
+      | string
+      | {
+          slug: string
+          comment?: boolean
+          view?: boolean
+        }
+  }
   headings?: MarkdownHeading[]
-  info?:
-    | string
-    | {
-        slug: string
-        comment?: boolean,
-        view?: boolean
-      }
 }
 
-const { title, info, ...props } = Astro.props
+const { frontmatter } = Astro.props
+const { title, description, info } = frontmatter
+
 const view = typeof info === 'object' ? info.view : undefined
 const enableComment = typeof info === 'object' ? info.comment : undefined
 ---
 
-<PageLayout meta={{ title }} {...props} hasToc={false}>
+<PageLayout meta={{ title, description }} hasToc={false}>
   <Fragment slot='header'>
     <h1 class='text-2xl font-medium sm:mb-2 sm:text-3xl'>{title}</h1>
     {(view || enableComment) && <PageInfo {view} comment={enableComment} class='italic' />}

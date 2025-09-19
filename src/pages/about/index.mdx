@@ -1,0 +1,178 @@
+---
+layout: ../../layouts/CommonPage.astro
+title: '关于'
+description: 'About page for catcodeme'
+info:
+  slug: '/about'
+  comment: true
+  view: true
+---
+import { Spoiler, Timeline } from 'astro-pure/user'
+import Substats from '@/components/about/Substats.astro'
+import { ToolTag } from '@/components/tools/Tool.astro'
+import ToolSection from '@/components/tools/ToolSection.astro'
+
+## About Me
+
+*   Communist / Developer / Learner / Cat owner
+*   改造自己,进而改造世界🚩 <Spoiler>革命无罪，造反有理！</Spoiler>
+
+
+## Tools
+
+Current support tools as follow:
+
+<ToolSection
+  class='mb-5'
+  title='Workstation (+Operating System)'
+  tools={[
+    {
+      name: 'MacBook M1 Pro 14"',
+      description: 'MacOS Sequoia 15',
+      href: 'https://www.apple.com/mac/',
+      icon: import('@/assets/tools/apple.svg?raw'),
+      tags: [ToolTag.Favorite]
+    }
+  ]}
+/>
+<ToolSection
+  class='mb-5'
+  title='Daily Tools'
+  tools={[
+    {
+      name: 'Microsoft Edge',
+      description: 'Browser',
+      href: 'https://www.microsoft.com/edge',
+      icon: import('@/assets/tools/edge.svg?raw')
+    },
+    {
+      name: 'Obsidian',
+      description: 'Tool for thought',
+      href: 'https://obsidian.md/',
+      icon: import('@/assets/tools/obsidian.svg?raw'),
+      tags: [ToolTag.Free]
+    },
+    {
+      name: 'Warp',
+      description: 'Terimnal',
+      href: 'https://www.warp.dev/',
+      icon: import('@/assets/tools/warp.svg?raw')
+    },
+    {
+      name: 'NotebookLM',
+      description: 'AI Notebook',
+      href: 'https://notebooklm.com/',
+      icon: import('@/assets/tools/notebooklm.svg?raw'),
+      tags: [ToolTag.Favorite]
+    },
+    {
+      name: 'Deepseek',
+      description: 'AI Assistant',
+      href: 'https://deepseek.com/',
+      icon: import('@/assets/tools/deepseek.svg?raw')
+    },
+    {
+      name: 'Utools',
+      description: 'Powerful launcher',
+      href: 'https://u.tools/',
+      icon: import('@/assets/tools/utools.svg?raw'),
+      tags: [ToolTag.Favorite]
+    },
+    {
+      name: 'WeRead',
+      description: 'Reading App',
+      href: 'https://weread.qq.com/',
+      icon: import('@/assets/tools/weread.svg?raw'),
+      tags: [ToolTag.Favorite]
+    }
+  ]}
+/>
+<ToolSection
+  class='mb-5'
+  title='Development'
+  tools={[
+    {
+      name: 'VS Code',
+      description: 'powerful code editor',
+      href: 'https://code.visualstudio.com/',
+      icon: import('@/assets/tools/vscode.svg?raw')
+    },
+    {
+      name: 'Intellij IDEA',
+      description: 'Best Java IDE',
+      href: 'https://www.jetbrains.com/idea/',
+      icon: import('@/assets/tools/idea.svg?raw')
+    },
+    {
+      name: 'GitHub Copilot',
+      description: 'AI Coding Assistant',
+      href: 'https://github.com/features/copilot',
+      icon: import('@/assets/tools/githubcopilot.svg?raw'),
+      tags: [ToolTag.Favorite]
+    },
+    {
+      name: 'Gemini Pro',
+      description: 'AI Coding Assistant',
+      href: 'https://ai.google.dev/gemini',
+      icon: import('@/assets/tools/gemini.svg?raw')
+    }
+  ]}
+/>
+
+## Social Networks
+
+<Substats
+  stats={[
+    {
+      platform: 'GitHub',
+      icon: 'github',
+      link: 'https://github.com/catcodeme',
+      text: 'followers',
+      api: 'github/catcodeme'
+    },
+    {
+      platform: 'Bilibili',
+      icon: 'bilibili',
+      link: 'https://space.bilibili.com/19080963',
+      text: 'fans',
+      // api: 'bilibili/19080963',
+      color: '#fe7398',
+      count: 18
+    }
+  ]}
+/>
+
+## About Blog
+
+Website history:
+
+<Timeline
+  events={[
+    {
+      date: '2025-09-17',
+      content: '迁移到Tencent EdgeOne CDN'
+    },
+    {
+      date: '2025-09-16',
+      content: '添加备案号'
+    },
+    {
+      date: '2025-07-11',
+      content:
+        'Website refactored from <a href="https://github.com/srleom/astro-theme-resume" target="_blank">Astro Theme Pure</a>'
+    }
+  ]}
+/>
+
+The smooth operation and personalized customization of website also rely on the resources and
+technical support provided by the following excellent projects/service providers:
+
+*   Framework & Theme: [Astro](https://astro.build/) + [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure)
+*   Site hosting: [EdgeOne Pages(Tencent)](https://edgeone.cloud.tencent.com)
+*   CI/CD: [EdgeOne](https://edgeone.cloud.tencent.com)
+*   Resources speedup: [EdgeOne](https://edgeone.cloud.tencent.com)
+*   Comment system: [Waline](https://waline.js.org)
+*   TotalPV: [Vercount](https://github.com/EvanNotFound/vercount)
+*   PagePV & Comment: [Waline](https://waline.js.org/next/guide/features/pageview.html)
+*   Icons & OgImage: from [Iconify](https://iconify.design/) & [lobehub](https://lobehub.com/icons), some icons from `GPT-4o`
+*   Fonts: from [ZSFT](https://fonts.zeoseven.com/items/89/), current font is `JyunsaiKaai 芫茜雅楷`, 标题字体是 `ZSFT-e`

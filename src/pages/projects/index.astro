@@ -15,20 +15,23 @@ const headings = [
 ]
 ---
 
-<PageLayout title='Projects' {headings} info={{ slug: '/projects', comment: true }}>
+<PageLayout
+  frontmatter={{ title: 'Projects', info: { slug: '/projects', comment: true } }}
+  headings={headings}
+>
   <p>Github Activities:</p>
   <p>
     <img
-      class="hidden dark:block"
-      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg"
-      alt="github contribution snake dark"
-      loading="lazy"
+      class='hidden dark:block'
+      src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
+      alt='github contribution snake dark'
+      loading='lazy'
     />
     <img
-      class="block dark:hidden"
-      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg"
-      alt="github contribution snake light"
-      loading="lazy"
+      class='block dark:hidden'
+      src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
+      alt='github contribution snake light'
+      loading='lazy'
     />
   </p>
   <p>

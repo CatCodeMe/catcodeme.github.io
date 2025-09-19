@@ -32,7 +32,7 @@ if (serverURL) {
 <div id='danmaku_container' class='terminal-container my-12 mx-auto'>
   <div class='terminal-header'>
     <div class='terminal-title'>
-      <span>弹幕装填中</span>
+      <span style='font-family: "ZSFT-e";'>CCMTV</span>
       <span id='danmaku-status' class='running'>running</span>
     </div>
     <div class='terminal-controls'>
@@ -56,11 +56,13 @@ if (serverURL) {
 
   <div class='status-line'>
     <span>Lines: <span id='danmaku-lineCount'>0</span></span>
-    <span id='danmaku-keyboard-shortcuts'>Press <kbd>Space</kbd> to play , <kbd>C</kbd> to clear</span>
+    <span id='danmaku-keyboard-shortcuts'
+      >Press <kbd>Space</kbd> to play , <kbd>C</kbd> to clear</span
+    >
   </div>
 </div>
 
-<script define:vars={{ comments: recentComments }}>
+<script is:inline  define:vars={{ comments: recentComments }}>
   function initializeDanmaku() {
     const container = document.getElementById('danmaku_container')
     if (!container || container.dataset.initialized) return

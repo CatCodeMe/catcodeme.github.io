@@ -21,11 +21,13 @@ interface Props {
   highlightColor?: string
 }
 
+const { meta, highlightColor, ...props } = Astro.props
 const {
-  meta: { articleDate, description = config.description, ogImage, title },
-  highlightColor,
-  ...props
-} = Astro.props
+  articleDate,
+  description = config.description,
+  ogImage,
+  title,
+} = meta || {}
 ---
 
 <html lang={config.locale.lang}>

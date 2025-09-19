@@ -14,6 +14,8 @@ import ToolSection from '@/components/tools/ToolSection.astro'
     <li>改造自己,进而改造世界🚩 <Spoiler>革命无罪，造反有理！</Spoiler></li>
   </ul>
 
+  - [edge one](https://edgeone.cloud.tencent.com/)
+
   {/* general-talk */}
   <!-- <h2 id='hobbies'>Hobbies</h2>
   <ul>
@@ -189,7 +191,9 @@ import ToolSection from '@/components/tools/ToolSection.astro'
       >
     </li>
     <li>
-      Site hosting: <a href='https://edgeone.cloud.tencent.com' target='_blank'>EdgeOne Pages(Tencent)</a>
+      Site hosting: <a href='https://edgeone.cloud.tencent.com' target='_blank'
+        >EdgeOne Pages(Tencent)</a
+      >
     </li>
     <li>
       CI/CD: <a href='https://edgeone.cloud.tencent.com' target='_blank'>EdgeOne</a>
