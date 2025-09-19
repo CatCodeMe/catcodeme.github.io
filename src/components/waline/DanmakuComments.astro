@@ -4,31 +4,9 @@ import { Image } from 'astro:assets'
 import commentFlag from '@/assets/other/comment_flag.png'
 import config from '@/site-config'
 
-interface WalineComment {
-  nick: string
-  comment: string
-  avatar: string
-  url?: string
-  link?: string
-  like?: number
-  type?: string // Add type for admin check
-}
-
-let recentComments: WalineComment[] = []
+// This frontmatter now only passes the serverURL to the client-side script.
+// The actual fetch happens in the browser.
 const serverURL = config.integ.waline.server
-
-if (serverURL) {
-  try {
-    const response = await fetch(`${serverURL}/comment?type=recent&count=50`)
-    if (response.ok) {
-      recentComments = await response.json()
-    } else {
-      console.error(`[Danmaku Server] Failed to fetch, status: ${response.status}`)
-    }
-  } catch (e) {
-    console.error('[Danmaku Server] Error fetching comments:', e)
-  }
-}
 ---
 
 <div id='danmaku_container' class='terminal-container my-12 mx-auto'>
@@ -55,17 +33,31 @@ if (serverURL) {
 
   <div class='status-line'>
     <span>Lines: <span id='danmaku-lineCount'>0</span></span>
-    <span id='danmaku-keyboard-shortcuts'
-      >Press <kbd>Space</kbd> to play <kbd>C</kbd> to clear</span
+    <span id='danmaku-keyboard-shortcuts'>Press <kbd>Space</kbd> to play <kbd>C</kbd> to clear</span
     >
   </div>
 </div>
 
-<script is:inline define:vars={{ comments: recentComments }}>
-  function initializeDanmaku() {
+<script is:inline define:vars={{ serverURL }}>
+  async function initializeDanmaku() {
     const container = document.getElementById('danmaku_container')
     if (!container || container.dataset.initialized) return
     container.dataset.initialized = 'true'
+
+    // Data is now fetched on the client-side
+    let comments = []
+    if (serverURL) {
+      try {
+        const response = await fetch(`${serverURL}/comment?type=recent&count=50`)
+        if (response.ok) {
+          comments = await response.json()
+        } else {
+          console.error(`[Danmaku Server] Failed to fetch, status: ${response.status}`)
+        }
+      } catch (e) {
+        console.error('[Danmaku Server] Error fetching comments:', e)
+      }
+    }
 
     if (!comments || comments.length === 0) {
       return
@@ -122,7 +114,7 @@ if (serverURL) {
     }
 
     function createDanmaku(data) {
-      if (!isPlaying) return
+    //   if (!isPlaying) return
       const trackIndex = selectBestTrack()
       const track = container.querySelectorAll('.danmaku-track')[trackIndex]
       if (!track) return
@@ -137,7 +129,6 @@ if (serverURL) {
 
       const cleanComment = truncateHtmlInline(data.comment, 30)
       const likeHtml = data.like > 0 ? `<span class="danmaku-like">👍 ${data.like}</span>` : ''
-
       danmaku.innerHTML = `
           <img class="danmaku-avatar" src="${data.avatar}" alt="" onerror="this.style.display='none'">
           <span class="danmaku-nick">${data.nick}</span>
@@ -198,7 +189,6 @@ if (serverURL) {
             e.clientY <= rect.bottom
           ) {
             hit = danmaku
-            // No break, so the last one (topmost) is selected in case of overlap
           }
         }
 
@@ -227,9 +217,6 @@ if (serverURL) {
           break
       }
     })
-
-    if (loopTimeoutId) clearTimeout(loopTimeoutId)
-    startDanmakuLoop()
   }
 
   setTimeout(initializeDanmaku, 1000)
