@@ -152,14 +152,13 @@ export const integ: IntegrationUserConfig = {
   // Comment system
   waline: {
     enable: true,
-    server: 'https://waline-for-8catlife.vercel.app',
+    server: 'https://waline.8cat.life',
     emoji: ['qq'],
     additionalConfigs: {
       search: false, //表情包搜索
       lang: 'zh-CN',
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
-      // reaction: true,
       reaction: [
         '/waline/1.png',
         '/waline/2.png',
@@ -171,7 +170,8 @@ export const integ: IntegrationUserConfig = {
       comment: true, //页面评论数
       locale: {
         placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
-        reactionTitle: ''
+        reactionTitle: '',
+        region: ''
       }
     }
   },
