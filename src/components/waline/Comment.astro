@@ -5,13 +5,15 @@ import '@waline/client/style'
 
 import { cn } from 'astro-pure/utils'
 
+import commentFlag from '@/assets/other/comment_flag.png'
+
 const { class: className } = Astro.props
 ---
 
 {
   config.integ.waline.enable && (
     <comment-component>
-      <div id='waline' class={cn('not-prose', className)}>
+      <div id='waline' class={cn('not-prose', className)} style={`--comment-flag-url: url(${commentFlag.src})`}>
         Comment seems to stuck. Try to refresh?✨
       </div>
     </comment-component>
@@ -108,6 +110,20 @@ const { class: className } = Astro.props
   }
   #waline :global(.wl-item, .wl-card-item) {
     overflow: hidden;
+  }
+
+  :global(.wl-editor) {
+    background-image: var(--comment-flag-url) !important;
+    background-size: 120px;
+    background-repeat: no-repeat;
+    background-position: left 0px bottom -1em;
+    background-color: transparent !important;
+    resize: vertical !important;
+    transition: background-image 0.2s ease-in-out;
+    min-height: 10em;
+  }
+  :global(.wl-editor:focus) {
+    background-image: none !important;
   }
 
   /* Reaction buttons */

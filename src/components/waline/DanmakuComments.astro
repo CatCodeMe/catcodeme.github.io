@@ -1,7 +1,4 @@
 ---
-import { Image } from 'astro:assets'
-
-import commentFlag from '@/assets/other/comment_flag.png'
 import config from '@/site-config'
 
 // This frontmatter now only passes the serverURL to the client-side script.
@@ -18,11 +15,7 @@ const serverURL = config.integ.waline.server
 
   <div class='terminal-screen'>
     <div id='play-pause-indicator'>▶️</div>
-    <Image
-      src={commentFlag}
-      alt='Welcome to leave comments'
-      class='absolute bottom-4 left-4 w-[120px] h-auto pointer-events-none'
-    />
+    
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
     <div class='danmaku-track'></div>
@@ -125,7 +118,7 @@ const serverURL = config.integ.waline.server
       danmaku.target = '_blank'
       danmaku.rel = 'noopener noreferrer'
       danmaku.className = 'danmaku-item not-prose'
-      if (data.type === 'administrator') danmaku.style.border = '1.5px solid var(--accent)'
+      if (data.type === 'administrator') danmaku.classList.add('is-admin')
 
       const cleanComment = truncateHtmlInline(data.comment, 30)
       const likeHtml = data.like > 0 ? `<span class="danmaku-like">👍 ${data.like}</span>` : ''
@@ -362,6 +355,10 @@ const serverURL = config.integ.waline.server
     height: 40px;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  :global(.danmaku-item.is-admin) {
+    border: 1.5px solid var(--accent);
   }
 
   .terminal-container.paused :global(.danmaku-item) {
