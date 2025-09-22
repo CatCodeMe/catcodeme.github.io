@@ -155,10 +155,14 @@ export const integ: IntegrationUserConfig = {
     server: 'https://waline.8cat.life',
     emoji: ['qq'],
     additionalConfigs: {
+      turnstileKey: '0x4AAAAAAB2iD4bdDPvuzxk1',
       search: false, //表情包搜索
       lang: 'zh-CN',
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
+      login: 'force',
+      wordlimit: 1024,
+      withCredentials: true,
       reaction: [
         '/waline/1.png',
         '/waline/2.png',
