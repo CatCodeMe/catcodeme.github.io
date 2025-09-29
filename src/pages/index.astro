@@ -25,11 +25,6 @@ const backend = [
   { name: 'Apache Spark', icon: 'devicon:apachespark' }
 ]
 
-// const ide = [
-//   { name: 'VSCode', icon: 'devicon:vscode' },
-//   { name: 'IntelliJ IDEA', icon: 'devicon:intellij' }
-// ]
-
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
@@ -39,8 +34,10 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
   <main class='flex w-full flex-col'>
     <!-- 第一屏 -->
     <section class='relative min-h-screen w-full'>
-      <!-- 网格背景 -->
-      <div class='grid-background absolute inset-0 z-0'></div>
+      <!-- Parallax Background -->
+      <div id="animation-viewport">
+        <img id="background-image" src="/clouds/mountain.jpg" alt="Mountain background" />
+      </div>
 
       <!-- 主要内容 - 调整垂直位置 -->
       <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
@@ -51,16 +48,12 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             <div class='avatar-container relative shrink-0'>
               <!-- 装饰星星 -->
               <div class='stars'>
-                <!-- 上方星星 -->
                 <span class='star' style='--delay: 0s; --offset: -20px'>✨</span>
                 <span class='star' style='--delay: 2s; --offset: -15px'>✨</span>
-                <!-- 右侧星星 -->
                 <span class='star' style='--delay: 1s; --offset: -20px'>✨</span>
                 <span class='star' style='--delay: 1s; --offset: -15px'>✨</span>
-                <!-- 下方星星 -->
                 <span class='star' style='--delay: 2s; --offset: -20px'>✨</span>
                 <span class='star' style='--delay: 2.5s; --offset: -15px'>✨</span>
-                <!-- 左侧星星 -->
                 <span class='star' style='--delay: 3s; --offset: -20px'>✨</span>
                 <span class='star' style='--delay: 1.5s; --offset: -15px'>✨</span>
               </div>
@@ -229,18 +222,38 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
   </main>
 </PageLayout>
 
+<script>
+  document.addEventListener('scroll', () => {
+    const bgImage = document.getElementById('background-image');
+    if (!bgImage) return;
+
+    const scrollTop = window.scrollY;
+    const zoomDuration = window.innerHeight * 1.5;
+    const scrollProgress = Math.min(1, scrollTop / zoomDuration);
+
+    const scale = 1.4 - (scrollProgress * 0.4);
+    bgImage.style.transform = `scale(${scale})`;
+  });
+</script>
+
 <style>
-  /* 网格背景 */
-  .grid-background {
-    background-image:
-      linear-gradient(var(--grid-color) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 20px 20px;
-    mask-image: linear-gradient(to bottom, transparent, 15%, white, 85%, transparent);
+  #animation-viewport {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    z-index: -1;
   }
 
-  :root {
-    --grid-color: rgba(218, 157, 12, 0.1);
+  #background-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.4);
   }
 
   /* 招手动画 */
