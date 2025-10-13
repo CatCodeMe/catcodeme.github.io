@@ -19,9 +19,10 @@ import '@waline/client/waline-meta.css'
 interface Props {
   meta: SiteMeta
   highlightColor?: string
+  bodyClass?: string
 }
 
-const { meta, highlightColor, ...props } = Astro.props
+const { meta, highlightColor, bodyClass, ...props } = Astro.props
 const {
   articleDate,
   description = config.description,
@@ -36,7 +37,7 @@ const {
     <ThemeProvider />
   </head>
 
-  <body class='flex justify-center bg-background text-foreground' {...props}>
+  <body class:list={['flex justify-center bg-background text-foreground', bodyClass]} {...props}>
     {
       highlightColor && (
         <div

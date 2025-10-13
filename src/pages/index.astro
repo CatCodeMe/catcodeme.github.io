@@ -1,14 +1,11 @@
 ---
-import { Image } from 'astro:assets'
-
 import { PostPreview } from '@/custom/components/pages'
+
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button, Icon, Label } from 'astro-pure/user'
+import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
-import avatar from '@/assets/avatar_2.png'
-import config from '@/site-config'
 
 const languages = [
   { name: 'Java', icon: 'devicon:java' },
@@ -30,137 +27,43 @@ const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
-<PageLayout meta={{ title: 'Home' }} highlightColor='#da9d0c'>
+<PageLayout meta={{ title: 'Home' }}>
   <main class='flex w-full flex-col'>
     <!-- 第一屏 -->
-    <section class='relative min-h-screen w-full'>
-      <!-- Parallax Background -->
-      <div id="animation-viewport">
-        <img id="background-image" src="/clouds/mountain.jpg" alt="Mountain background" />
-      </div>
-
-      <!-- 主要内容 - 调整垂直位置 -->
-      <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
-        <div class='mx-auto w-full max-w-7xl'>
-          <!-- 个人信息 -->
-          <div class='flex flex-col items-center gap-16 lg:flex-row lg:items-center'>
-            <!-- 左侧大头像 -->
-            <div class='avatar-container relative shrink-0'>
-              <!-- 装饰星星 -->
-              <div class='stars'>
-                <span class='star' style='--delay: 0s; --offset: -20px'>✨</span>
-                <span class='star' style='--delay: 2s; --offset: -15px'>✨</span>
-                <span class='star' style='--delay: 1s; --offset: -20px'>✨</span>
-                <span class='star' style='--delay: 1s; --offset: -15px'>✨</span>
-                <span class='star' style='--delay: 2s; --offset: -20px'>✨</span>
-                <span class='star' style='--delay: 2.5s; --offset: -15px'>✨</span>
-                <span class='star' style='--delay: 3s; --offset: -20px'>✨</span>
-                <span class='star' style='--delay: 1.5s; --offset: -15px'>✨</span>
-              </div>
-
-              <div class='avatar-wrapper relative'>
-                <Image
-                  src={avatar}
-                  alt='profile'
-                  class='size-64 rounded-full border-2 border-border object-cover shadow-lg transition-all duration-300 lg:hover:grayscale'
-                  loading='eager'
-                />
-                <div class='avatar-message'>
-                  <p><span class='speaker'></span>2016 - 2024.10.29</p>
-                  <p><span class='speaker'>小花:</span>I miss you, CCM...</p>
-                  <p><span class='speaker'>CCM:</span>I miss you too, 小花.</p>
-                  <p><span class='speaker'></span>You will live forever on the internet,</p>
-                  <p><span class='speaker'></span>and forever in my heart...</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 右侧内容 -->
-            <div class='flex flex-col gap-8 text-left'>
-              <!-- 标题区域 -->
-              <div class='flex items-center gap-3 justify-start'>
-                <h1 class='text-3xl font-bold'>
-                  Welcome to my blog, this is <span
-                    class='author-name cursor-help'
-                    data-tooltip='cat & code & me'>{config.author}</span
-                  >
-                  <span class='waving-hand text-3xl'>👋</span>
-                </h1>
-              </div>
-
-              <!-- 个人简介 -->
-              <div class='flex flex-col gap-3 text-lg text-muted-foreground'>
-                <p>
-                  <span class='inline-block mr-2'>→</span>
-                  I'm a software engineer based in <Icon
-                    name='location'
-                    class='size-6 inline-block align-text-bottom text-muted-foreground'
-                  /> Beijing, China.
-                </p>
-                <p>
-                  <span class='inline-block mr-2'>→</span>
-                  I'm passionate about programming and open-source.
-                </p>
-                <p>
-                  <span class='inline-block mr-2'>→</span>
-                  I'm currently working on a few projects and learning new things every day.
-                </p>
-              </div>
-
-              <!-- 社交媒体图标 -->
-              <div class='flex gap-4 justify-start'>
-                <Label
-                  title='GitHub'
-                  as='a'
-                  href='https://github.com/catcodeme'
-                  target='_blank'
-                  class='transition-colors hover:text-primary'
-                >
-                  <Icon name='github' class='size-6' slot='icon' />
-                </Label>
-                <Label
-                  title='twitter'
-                  as='a'
-                  href='https://twitter.com/hulj13'
-                  target='_blank'
-                  class='transition-colors hover:text-primary'
-                >
-                  <Icon name='x' class='size-6' slot='icon' />
-                </Label>
-                <Label
-                  title='Bilibili'
-                  as='a'
-                  href='https://space.bilibili.com/19080963'
-                  target='_blank'
-                  class='transition-colors hover:text-primary'
-                >
-                  <Icon name='bilibili' class='size-6' slot='icon' />
-                </Label>
-              </div>
-
-              <!-- 按钮组 -->
-              <div class='flex flex-col gap-4 sm:flex-row sm:justify-start'>
-                <Button
-                  title='About Me'
-                  href='/about'
-                  style='ahead'
-                  class='hero-button w-full sm:w-auto'
-                />
-                <Button
-                  title='View Blog'
-                  href='/blog'
-                  style='ahead'
-                  class='hero-button w-full sm:w-auto'
-                />
-              </div>
-            </div>
-          </div>
+    <div id='main-content' class='relative z-10 flex flex-col items-center px-4'>
+      <!-- Rive Animation Block -->
+      <!-- Motto Block -->
+      <div class='relative z-10 top-24 flex justify-center'>
+        <div
+          class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
+        >
+          <span class='relative flex items-center justify-center shrink-0'>
+            <span
+              class='absolute size-1.5 sm:size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+            ></span>
+            <span class='size-1.5 sm:size-2 rounded-full bg-green-400'></span>
+          </span>
+          <p class='font-medium text-muted-foreground whitespace-nowrap'>
+            文字沉淀生命, 回忆勾连古今
+          </p>
         </div>
       </div>
-    </section>
+
+      <div class='relative w-screen'>
+        <canvas id='rive-canvas' class='w-full h-auto'></canvas>
+        <p class='absolute bottom-8 right-6 text-xs text-muted-foreground/50 pointer-events-none'>
+          Animation by <a
+            href='https://fivepathways.com/'
+            target='_blank'
+            rel='noreferrer noopener'
+            class='underline pointer-events-auto'>fivepathways.com</a
+          >
+        </p>
+      </div>
+    </div>
 
     <!-- 第二屏：博客文章和技能 -->
-    <section class='w-full py-20'>
+    <section class='w-full py-20 scroll-content bg-background'>
       <div class='mx-auto max-w-4xl px-4'>
         <!-- 博客文章部分 -->
         <Section title='Latest Posts'>
@@ -169,7 +72,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
               <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
                 {allPostsByDate.map((p) => (
                   <li class='flex flex-col gap-x-2 sm:flex-row'>
-                    <PostPreview post={p}/>
+                    <PostPreview post={p} />
                   </li>
                 ))}
               </ul>
@@ -200,330 +103,37 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             loading='lazy'
           />
         </Section>
-
-        <!-- 格言 - 页面底部 -->
-        <div class='mt-5 flex justify-center'>
-          <div
-            class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
-          >
-            <span class='relative flex items-center justify-center shrink-0'>
-              <span
-                class='absolute size-1.5 sm:size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
-              ></span>
-              <span class='size-1.5 sm:size-2 rounded-full bg-green-400'></span>
-            </span>
-            <p class='font-medium text-muted-foreground whitespace-nowrap'>
-              五帝三皇神圣事，骗了无涯过客
-            </p>
-          </div>
-        </div>
       </div>
     </section>
+    <script is:inline>
+      // Force light theme on homepage
+      localStorage.setItem('theme', 'light')
+      document.documentElement.dataset.theme = 'light'
+
+      // Set body background color
+      document.body.style.backgroundColor = '#fffaf6'
+
+      // Prevent horizontal scrollbar caused by 100vw elements
+      document.body.style.overflowX = 'hidden'
+    </script>
   </main>
+
+  <script>
+    import { Rive } from '@rive-app/canvas'
+
+    const canvas = document.getElementById('rive-canvas') as HTMLCanvasElement
+    if (canvas) {
+      const rive = new Rive({
+        src: '/clouds/hero-home.riv',
+        // src: '/clouds/footer.riv',
+        canvas: canvas,
+        autoplay: true,
+        stateMachines: 'state_home-hero',
+        // stateMachines: 'state_footer',
+        onLoad: () => {
+          rive.resizeDrawingSurfaceToCanvas()
+        }
+      })
+    }
+  </script>
 </PageLayout>
-
-<script>
-  document.addEventListener('scroll', () => {
-    const bgImage = document.getElementById('background-image');
-    if (!bgImage) return;
-
-    const scrollTop = window.scrollY;
-    const zoomDuration = window.innerHeight * 1.5;
-    const scrollProgress = Math.min(1, scrollTop / zoomDuration);
-
-    const scale = 1.4 - (scrollProgress * 0.4);
-    bgImage.style.transform = `scale(${scale})`;
-  });
-</script>
-
-<style>
-  #animation-viewport {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-    z-index: -1;
-  }
-
-  #background-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.4);
-  }
-
-  /* 招手动画 */
-  .waving-hand {
-    display: inline-block;
-    animation: wave 2.5s infinite;
-    transform-origin: 70% 70%;
-    font-size: 1.5em;
-  }
-
-  @keyframes wave {
-    0% {
-      transform: rotate(0deg);
-    }
-    10% {
-      transform: rotate(14deg);
-    }
-    20% {
-      transform: rotate(-8deg);
-    }
-    30% {
-      transform: rotate(14deg);
-    }
-    40% {
-      transform: rotate(-4deg);
-    }
-    50% {
-      transform: rotate(10deg);
-    }
-    60% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(0deg);
-    }
-  }
-
-  /* 工具提示样式 */
-  [data-tooltip] {
-    position: relative;
-  }
-
-  [data-tooltip]::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.4em 0.4em;
-    background: hsl(var(--popover));
-    color: hsl(var(--popover-foreground));
-    font-size: 0.875rem;
-    border-radius: 0.4rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  [data-tooltip]:hover::before {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-8px);
-  }
-
-  /* 标记高亮效果 */
-  .marker-highlight {
-    background: linear-gradient(
-      120deg,
-      transparent 0%,
-      transparent 50%,
-      hsl(var(--primary) / 0.2) 50%,
-      hsl(var(--primary) / 0.2) 100%
-    );
-    background-size: 200% 100%;
-    background-position: 100% 0;
-    transition: background-position 0.3s ease;
-    padding: 0.1em 0.2em;
-    border-radius: 0.2em;
-  }
-
-  .marker-highlight:hover {
-    background-position: 0 0;
-  }
-
-  .author-name {
-    position: relative;
-    color: var(--highlightColor, hsl(var(--primary)));
-  }
-
-  .author-name::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 2px 8px;
-    background: hsl(var(--popover));
-    color: hsl(var(--popover-foreground));
-    font-size: 0.75rem;
-    border-radius: 4px;
-    white-space: nowrap;
-    border: 1px solid hsl(var(--border));
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.2s ease;
-  }
-
-  .author-name:hover::before {
-    opacity: 1;
-  }
-
-  .avatar-container {
-    --star-duration: 6s;
-  }
-
-  .stars {
-    position: absolute;
-    inset: -25px;
-    pointer-events: none;
-  }
-
-  .star {
-    position: absolute;
-    font-size: 1.2rem;
-    opacity: 0;
-    animation: float-star var(--star-duration) ease-in-out infinite;
-    animation-delay: var(--delay);
-  }
-
-  /* 上方星星 */
-  .star:nth-child(1) {
-    top: var(--offset);
-    left: 35%;
-  }
-  .star:nth-child(2) {
-    top: var(--offset);
-    left: 65%;
-  }
-
-  /* 右侧星星 */
-  .star:nth-child(3) {
-    top: 35%;
-    right: var(--offset);
-  }
-  .star:nth-child(4) {
-    top: 65%;
-    right: var(--offset);
-  }
-
-  /* 下方星星 */
-  .star:nth-child(5) {
-    bottom: var(--offset);
-    left: 35%;
-  }
-  .star:nth-child(6) {
-    bottom: var(--offset);
-    left: 65%;
-  }
-
-  /* 左侧星星 */
-  .star:nth-child(7) {
-    top: 35%;
-    left: var(--offset);
-  }
-  .star:nth-child(8) {
-    top: 65%;
-    left: var(--offset);
-  }
-
-  @keyframes float-star {
-    0%,
-    100% {
-      transform: translate(var(--tx, 0), var(--ty, 0)) scale(0.5);
-      opacity: 0;
-    }
-    25% {
-      opacity: 1;
-    }
-    50% {
-      transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
-      opacity: 1;
-    }
-    75% {
-      opacity: 1;
-    }
-  }
-
-  /* 为每个星星设置不同的浮动方向 */
-  .star:nth-child(odd) {
-    --tx: -10px;
-    --ty: -10px;
-  }
-  .star:nth-child(even) {
-    --tx: 10px;
-    --ty: 10px;
-  }
-
-  .curved-arrow {
-    animation: arrow-pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes arrow-pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-
-  /* 新的头像消息样式 */
-  .avatar-wrapper {
-    position: relative;
-    cursor: none; /* 隐藏默认光标 */
-  }
-
-  .avatar-message {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%) translateY(calc(100% + 1rem));
-    width: max-content;
-    color: hsl(var(--muted-foreground) / 0.6);
-    font-size: 0.875rem;
-    line-height: 1.5;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    z-index: 1;
-  }
-
-  .avatar-message p {
-    margin: 0.2em 0;
-    display: flex;
-    gap: 0.5em;
-    align-items: baseline;
-  }
-
-  .avatar-message .speaker {
-    min-width: 3em;
-    text-align: right;
-  }
-  .avatar-wrapper:hover .avatar-message {
-    opacity: 1;
-  }
-
-  /* 在小屏幕上禁用头像 hover 效果 */
-  @media (max-width: 1023px) {
-    .avatar-wrapper:hover .avatar-message {
-      opacity: 0;
-    }
-
-    /* 在小屏幕上禁用头像点击交互 */
-    .avatar-wrapper {
-      pointer-events: none;
-    }
-  }
-
-  /* Hero按钮的响应式样式 */
-  .hero-button {
-    display: flex !important;
-    justify-content: space-between !important;
-  }
-
-  @media (min-width: 640px) {
-    .hero-button {
-      display: inline-flex !important;
-      justify-content: flex-start !important;
-    }
-  }
-</style>
