@@ -33,7 +33,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     <div id='main-content' class='relative z-10 flex flex-col items-center px-4'>
       <!-- Rive Animation Block -->
       <!-- Motto Block -->
-      <div class='relative z-10 top-24 flex justify-center'>
+      <div class='relative z-10 mt-8 flex justify-center'>
         <div
           class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
         >
@@ -51,7 +51,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
       <div class='relative w-screen'>
         <canvas id='rive-canvas' class='w-full h-auto'></canvas>
-        <p class='absolute bottom-8 right-6 text-xs text-muted-foreground/50 pointer-events-none'>
+        <p class='absolute right-6 text-xs text-muted-foreground/50 pointer-events-none bottom-4 sm:bottom-12'>
           Animation by <a
             href='https://fivepathways.com/'
             target='_blank'
