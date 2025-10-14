@@ -31,9 +31,8 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
   <main class='flex w-full flex-col'>
     <!-- 第一屏 -->
     <div id='main-content' class='relative z-10 flex flex-col items-center px-4'>
-      <!-- Rive Animation Block -->
       <!-- Motto Block -->
-      <div class='relative z-10 mt-8 flex justify-center'>
+      <div class='relative z-10 mt-16 flex justify-center'>
         <div
           class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
         >
@@ -105,17 +104,13 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         </Section>
       </div>
     </section>
-    <script is:inline>
-      // Force light theme on homepage
-      localStorage.setItem('theme', 'light')
-      document.documentElement.dataset.theme = 'light'
-
-      // Set body background color
-      document.body.style.backgroundColor = '#fffaf6'
-
-      // Prevent horizontal scrollbar caused by 100vw elements
-      document.body.style.overflowX = 'hidden'
-    </script>
+<script is:inline>
+  // Force light theme on homepage
+  localStorage.setItem('theme', 'light');
+  document.documentElement.dataset.theme = 'light';
+  // Add class to body for homepage-specific styles
+  document.body.classList.add('hide-scrollbar');
+</script>
   </main>
 
   <script>
