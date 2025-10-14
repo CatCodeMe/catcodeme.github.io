@@ -1,19 +1,20 @@
-import type { ImageMetadata } from 'astro'
+import type { ImageMetadata } from 'astro';
 
-/**
- * Interface for cat photo data
- */
-export interface CatPhoto {
-  name?: string
-  image: ImageMetadata
-  date: string
-  tag?: string[]
-  desc?: string
-  // Other optional properties can be added in the future
-  [key: string]: any
+// 猫咪的基础信息 (您现有的 info 结构)
+export interface CatInfo {
+  id: string;
+  gender: '男' | '女';
+  birthday: string;
+  deathday?: string;
+  tags: string[];
+  desc?: string;
 }
 
-/**
- * Type for cat photos grouped by year
- */
-export type CatPhotosByYear = Record<number, CatPhoto[]>
+// 单张照片的信息
+export interface Photo {
+  image: ImageMetadata; // Astro 优化的图片类型
+  subjects?: string[];   // 照片中的主角们, 对应 info 的 key
+  capturedAt?: string;   // 拍摄日期
+  caption?: string;      // 照片的一句话描述
+  tags?: string[];       // 照片本身的标签, 比如 "户外", "搞怪"
+}
