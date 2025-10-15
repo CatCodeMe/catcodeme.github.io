@@ -1,7 +1,6 @@
 // Import all cat images
 import _1h1 from '@/assets/cats/1-h-1.jpg';
 import _1h2 from '@/assets/cats/1-h-2.jpg';
-import _1h3 from '@/assets/cats/1-h-3.jpg';
 import _1h from '@/assets/cats/1-h.jpg';
 import _1m1 from '@/assets/cats/1-m-1.jpg';
 import _1m2 from '@/assets/cats/1-m-2.png';
@@ -93,31 +92,21 @@ export const photos: Photo[] = [
   {
     subjects: ['小花'],
     image: _1h1,
-    tags: ['三花', '田园猫', '可爱', 'Queen'],
   },
   {
     subjects: ['小花'],
     image: _1h2,
     capturedAt: '2025-04-03',
-    tags: ['三花', '田园猫', '可爱', 'Queen'],
-  },
-  {
-    subjects: ['小花'],
-    image: _1h3,
-    capturedAt: '2025-04-03',
-    caption: '小花的第三张照片'
   },
   {
     subjects: ['小花'],
     image: _1h,
     capturedAt: '2025-04-03',
-    tags: ['花猫'],
   },
   {
     subjects: ['月亮'],
     image: _1m1,
     capturedAt: '2025-04-03',
-    tags: ['金吉拉','可爱']
   },
   {
     subjects: ['月亮'],
@@ -142,7 +131,6 @@ export const photos: Photo[] = [
     subjects: ['大姐'],
     image: _211,
     capturedAt: '2025-04-03',
-    tags: ['大姐猫']
   },
   {
     subjects: ['大头'],
@@ -159,7 +147,6 @@ export const photos: Photo[] = [
     subjects: ['老三'],
     image: _223,
     capturedAt: '2025-04-03',
-    tags: ['老三猫']
   },
   {
     subjects: ['老四'],
@@ -181,19 +168,16 @@ export const photos: Photo[] = [
     subjects: ['老四'],
     image: _224,
     capturedAt: '2025-04-03',
-    tags: ['老四猫', '主图']
   },
   {
     subjects: ['老六'],
     image: _2261,
     capturedAt: '2025-04-03',
-    tags: ['老六猫', '建筑']
   },
   {
     subjects: ['老六'],
     image: _226,
     capturedAt: '2025-04-03',
-    caption: '老六的主要照片'
   },
   {
     subjects: ['小六'],

@@ -1,0 +1,148 @@
+---
+title: 书架功能配置指南
+description: '如何配置和使用书架页面'
+publishDate: 2025-10-15 22:00:00
+slug: shelf-config
+tags: ['建站', '功能说明']
+---
+
+import { MdxRepl, Aside } from '@/custom/components/user';
+import { TabItem, Tabs } from 'astro-pure/user';
+import ReadingCard from '@/components/reading/ReadingCard.astro';
+
+"书架"页面是一个独立的看板, 用于展示您的阅读轨迹. 其所有内容都通过一个单独的 JSON 文件进行管理, 不依赖于任何文章的 frontmatter.
+
+## 1. 核心配置文件
+
+您需要维护的唯一文件是位于项目根目录下 `public/` 文件夹中的 `bookshelf.json`。
+
+## 2. 数据结构详解
+
+该 JSON 文件是一个包含多个“阅读条目”对象的数组. 每个对象代表一张卡片, 其结构如下:
+
+<Aside type="note" title="字段说明">
+| 字段 | 类型 | 是否必需 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `title` | `string` | 必需 | 书籍, 论文或文章的标题. |
+| `type` | `string` | 必需 | `'book' \| 'paper' \| 'article'`, 决定了卡片上显示的图标. |
+| `status` | `string` | 必需 | `'to-read' \| 'reading' \| 'read'`, 决定了卡片出现在看板的哪一列. |
+| `description` | `string` | 可选 | 一句简短的描述, 会显示在标题下方. |
+| `rating` | `number` | 可选 | 评分, 1-5 的数字, 会以星星形式展示. |
+| `identifier` | `string` | 可选 | 唯一标识符. 对于书籍是 ISBN, 对于论文是 DOI. |
+| `sourceUrl` | `string` | 可选 | **仅用于 `article` 类型**, 指向原文的链接. |
+| `tags` | `string[]` | 可选 | 标签数组, 会在卡片底部显示为彩色徽章. |
+| `links` | `string[]` | 可选 | 关联的博客笔记. 只填写笔记的 `slug`. |
+</Aside>
+
+## 3. 工作流程
+
+假设您读完一本书,并为它写了一篇读后感, 如何将它们添加到书架呢?
+
+1.  **撰写笔记**: 像往常一样, 在 `src/content/blog/` 目录下创建您的 `.mdx` 笔记文件. 完成文章后, 记下您在 frontmatter 中为它设置的 `slug`.
+
+2.  **打开配置文件**: 打开 `public/bookshelf.json` 文件.
+
+3.  **添加新条目**: 在 JSON 数组中添加一个新的对象, 代表您读完的这本书. 填写 `title`, `type`, `status` 等信息.
+
+4.  **关联笔记**: 在该对象的 `links` 数组中, 添加您刚刚记下的笔记 `slug` 字符串.
+
+5.  **保存**: 保存文件. 网站下次构建时, 书架页面就会自动更新.
+
+## 4. 卡片效果预览
+
+下面是不同类型卡片的渲染效果和对应的 JSON 数据结构。
+
+### 书籍 (Book) 示例
+
+<MdxRepl>
+  <ReadingCard
+    item={{
+      title: "人类简史",
+      type: "book",
+      status: "read",
+      description: "从石器时代到人工智能, 一部宏大的人类历史.",
+      rating: 5,
+      identifier: "978-7-5086-6074-3",
+      tags: ["历史", "人类学"],
+      links: ["sapiens-note-1"]
+    }}
+    postsMap={new Map()}
+    index={1}
+  />
+  <Fragment slot="desc">
+  ````json
+  {
+    "title": "人类简史",
+    "type": "book",
+    "status": "read",
+    "description": "从石器时代到人工智能, 一部宏大的人类历史.",
+    "rating": 5,
+    "identifier": "978-7-5086-6074-3",
+    "tags": ["历史", "人类学"],
+    "links": ["sapiens-note-1"]
+  }
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 论文 (Paper) 示例
+
+<MdxRepl>
+  <ReadingCard
+    item={{
+      title: "Attention Is All You Need",
+      type: "paper",
+      status: "read",
+      description: "Transformer 架构的开山之作, 奠定了现代大语言模型的基础.",
+      rating: 5,
+      identifier: "10.48550/arXiv.1706.03762",
+      tags: ["NLP", "Transformer"],
+      links: ["transformer-explained"]
+    }}
+    postsMap={new Map([['transformer-explained', {title: 'Transformer 架构解析'}]])}
+    index={2}
+  />
+  <Fragment slot="desc">
+  ````json
+  {
+    "title": "Attention Is All You Need",
+    "type": "paper",
+    "status": "read",
+    "description": "Transformer 架构的开山之作, 奠定了现代大语言模型的基础.",
+    "rating": 5,
+    "identifier": "10.48550/arXiv.1706.03762",
+    "tags": ["NLP", "Transformer"],
+    "links": ["transformer-explained"]
+  }
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 文章 (Article) 示例
+
+<MdxRepl>
+  <ReadingCard
+    item={{
+      title: "Working with TCP Sockets",
+      type: "article",
+      status: "reading",
+      description: "一篇关于 TCP Socket 编程的优秀文章.",
+      sourceUrl: "https://www.google.com",
+      tags: ["Network", "Socket"]
+    }}
+    postsMap={new Map()}
+    index={3}
+  />
+  <Fragment slot="desc">
+  ````json
+  {
+    "title": "Working with TCP Sockets",
+    "type": "article",
+    "status": "reading",
+    "description": "一篇关于 TCP Socket 编程的优秀文章.",
+    "sourceUrl": "https://www.google.com",
+    "tags": ["Network", "Socket"]
+  }
+  ````
+  </Fragment>
+</MdxRepl>

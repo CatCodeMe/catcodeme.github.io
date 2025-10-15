@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import { Icon } from '@/custom/components/user';
+import type { IconName } from 'packages/pure/libs/icons';
+import bookshelfData from 'public/bookshelf.json';
+
+import PageLayout from '@/layouts/BaseLayout.astro';
+import ReadingCard from '@/components/reading/ReadingCard.astro';
+import bannerImage from '@/assets/shelf/no_so.png';
+
+const meta = {
+  title: '书架',
+  description: '我的书架、论文架和文章收藏'
+}
+
+const allPosts = await getCollection('blog');
+const postsMap = new Map(allPosts.map((post) => [post.data.slug, { title: post.data.title }]));
+
+type ShelfItem = {
+  title: string;
+  type: "book" | "paper" | "article";
+  status: "read" | "reading" | "to-read";
+  description?: string;
+  rating?: number;
+  identifier?: string;
+  sourceUrl?: string;
+  links?: string[];
+  tags?: string[];
+};
+
+const typedBookshelfData = bookshelfData as ShelfItem[];
+
+const toRead = typedBookshelfData.filter((item) => item.status === 'to-read');
+const reading = typedBookshelfData.filter((item) => item.status === 'reading');
+const read = typedBookshelfData.filter((item) => item.status === 'read');
+
+const columnStyles: { [key: string]: { icon: IconName; color: string } } = {
+  'to-read': { icon: 'list', color: 'blue' },
+  reading: { icon: 'time', color: 'purple' },
+  read: { icon: 'package', color: 'green' }
+};
+
+
+const columns = [
+  { title: '想读', items: toRead, style: columnStyles['to-read'] },
+  { title: '在读', items: reading, style: columnStyles['reading'] },
+  { title: '已读', items: read, style: columnStyles['read'] }
+]
+---
+
+<PageLayout {meta}>
+  <main class='mt-6 lg:mt-10'>
+    <div id="content-header" class="animate relative w-full overflow-hidden rounded-lg shadow-lg mb-8 aspect-[4/1] md:aspect-[5/1]">
+      <!-- Optimized Image as Background -->
+      <Image src={bannerImage} alt="书架横幅" class="absolute inset-0 z-0 w-full h-full object-cover object-bottom" />
+      
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 z-10 bg-gradient-to-r from-background/90 via-background/60 to-transparent"></div>
+      
+      <!-- Text Content -->
+      <div class="relative z-20 flex h-full flex-col justify-center p-8 md:p-12 md:w-3/5 lg:w-1/2">
+        <div class="flex items-center gap-3">
+          <Icon name="book" class="size-8 text-foreground" />
+          <h1 class="text-4xl font-bold">{meta.title}</h1>
+        </div>
+        <p class="border-l-2 border-border pl-3 text-lg text-muted-foreground mt-2">{meta.description}</p>
+      </div>
+    </div>
+
+    <div id='content' class='animate mt-8'>
+      <div class='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        {
+          columns.map((column) => (
+            <div
+              class={`kanban-column flex flex-col rounded-lg bg-muted/30 p-4 border-t-4 border-${column.style.color}-500`}
+              style='max-height: 85vh;'
+            >
+              <h2
+                class={`flex items-center gap-2 text-lg font-semibold mb-4 text-${column.style.color}-600 dark:text-${column.style.color}-400`}
+              >
+                <Icon name={column.style.icon} class='size-5' />
+                <span>{column.title}</span>
+                <span class='ml-auto text-sm font-normal rounded-full bg-muted px-2.5 py-0.5'>
+                  {column.items.length}
+                </span>
+              </h2>
+              <div class='overflow-y-auto pr-2 flex-grow'>
+                <div class='flex flex-col gap-4'>
+                  {column.items.map((item, index) => (
+                    <ReadingCard item={item} postsMap={postsMap} index={index + 1} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</PageLayout>

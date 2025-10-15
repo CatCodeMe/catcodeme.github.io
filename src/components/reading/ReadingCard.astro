@@ -1,0 +1,127 @@
+---
+import { Icon } from '@/custom/components/user';
+import type { IconName } from 'packages/pure/libs/icons';
+
+interface Props {
+  item: {
+    title: string;
+    type: 'book' | 'paper' | 'article';
+    status: 'read' | 'reading' | 'to-read';
+    description?: string;
+    rating?: number;
+    identifier?: string;
+    sourceUrl?: string;
+    links?: string[];
+    tags?: string[];
+  };
+  postsMap: Map<string, { title: string; }>;
+  index: number;
+}
+
+const { item, postsMap, index } = Astro.props;
+
+const typeIcons: { [key: string]: IconName } = {
+  book: 'book',
+  paper: 'document',
+  article: 'link'
+};
+
+const identifierIcon = item.type === 'book' ? 'hashtag' : 'doi';
+
+const linkedPosts = item.links?.map(slug => ({
+  slug,
+  title: postsMap.get(slug)?.title || slug
+})) || [];
+
+let sourceHostname = '';
+if (item.type === 'article' && item.sourceUrl) {
+  try {
+    sourceHostname = new URL(item.sourceUrl).hostname;
+  } catch (e) {
+    // Invalid URL, ignore.
+  }
+}
+---
+
+<div
+  class="reading-card group relative flex flex-col overflow-hidden rounded-lg border bg-background/60 p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:bg-background/90"
+>
+  <!-- Index Number -->
+  <span class="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-muted/60 text-xs font-bold text-muted-foreground transition-colors duration-300 group-hover:bg-muted/90">
+    {index}
+  </span>
+
+  <div class="relative z-10 flex flex-col h-full">
+    <!-- Card Header: Type Icon + Title -->
+    <div class="flex items-start gap-2">
+      <Icon name={typeIcons[item.type]} class="size-5 flex-shrink-0 text-muted-foreground" />
+      <h3 class="text-base font-semibold text-foreground">{item.title}</h3>
+    </div>
+
+    <!-- Attributes Section: Badges -->
+    <div class="mt-2 flex flex-wrap items-center gap-2">
+      {item.rating && (
+        <div class="flex items-center gap-1 rounded-full bg-muted/80 px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <Icon name="star" class="size-3.5 text-yellow-400" />
+          <span>{item.rating.toFixed(1)}</span>
+        </div>
+      )}
+      {item.identifier && (
+        <div class="flex items-center gap-1 rounded-full bg-muted/80 px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <Icon name={identifierIcon} class="size-3.5" />
+          <span>{item.identifier}</span>
+        </div>
+      )}
+    </div>
+
+    <!-- Description -->
+    {item.description && (
+      <p class="mt-3 border-l-2 border-border pl-3 text-sm text-muted-foreground">
+        {item.description}
+      </p>
+    )}
+
+    <!-- Tags -->
+    {item.tags && item.tags.length > 0 && (
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        {item.tags.map(tag => (
+          <span class="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary/80">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <!-- Spacer to push content to bottom -->
+    <div class="flex-grow"></div>
+
+    <!-- Linked Notes -->
+    {linkedPosts.length > 0 && (
+      <div class="mt-3 border-t pt-3">
+        <h4 class="mb-1.5 text-xs font-semibold text-muted-foreground">相关笔记:</h4>
+        <ul class="flex flex-col gap-1">
+          {linkedPosts.map((post) => (
+            <li>
+              <a
+                href={`/blog/${post.slug}`}
+                class="text-sm text-primary/80 hover:text-primary hover:underline underline-offset-2"
+              >
+                {post.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Source URL (New Position & Style) -->
+    {sourceHostname && (
+       <div class="mt-3 border-t pt-3">
+         <a href={item.sourceUrl} target="_blank" rel="nofollow noopener noreferrer" class="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+           <img src={`https://favicon.im/${sourceHostname}`} alt={`Favicon for ${sourceHostname}`} class="size-4" />
+           <span>阅读原文</span>
+         </a>
+       </div>
+    )}
+  </div>
+</div>

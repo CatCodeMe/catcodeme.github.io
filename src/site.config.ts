@@ -58,6 +58,7 @@ export const theme: ThemeUserConfig = {
   header: {
     menu: [
       { title: '文章', link: '/blog' },
+      { title: '书架', link: '/shelf' },
       { title: '归档', link: '/archives' },
       // { title: 'Projects', link: '/projects' },
       { title: '🐱', link: '/cats' },
