@@ -173,23 +173,25 @@ const allCats = Object.entries(info);
     margin-bottom: 2rem;
   }
   .roster-control-btn {
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 9999px;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0.5rem 0.25rem;
+    font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+    margin: 0 0.5rem;
+    color: #718096;
   }
   .roster-control-btn:hover {
-    background-color: #edf2f7;
-    border-color: #cbd5e0;
+    color: #2d3748;
   }
   .roster-control-btn.active {
-    background-color: #4299e1;
-    color: white;
-    border-color: #4299e1;
+    font-weight: 700;
+    color: #2d3748;
+    border-bottom-color: #4299e1;
   }
 
   .roster-grid {
@@ -330,8 +332,9 @@ const allCats = Object.entries(info);
     padding: 2rem 1rem;
   }
   .masonry-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
   }
   .masonry-item {
@@ -339,10 +342,11 @@ const allCats = Object.entries(info);
     overflow: hidden;
     border-radius: 8px;
     display: block; /* For filtering */
+    height: 300px;
   }
   .masonry-item img {
-    width: 100%;
-    height: auto;
+    height: 100%;
+    width: auto;
     display: block;
     transition: transform 0.3s ease;
   }

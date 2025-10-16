@@ -1,7 +1,9 @@
 ---
+import { Image } from 'astro:assets'
 import config from 'virtual:config'
-import { Icon } from '../user'
+
 import type { IconName } from '../../libs/icons'
+import { Icon } from '../user'
 ---
 
 <header-component
@@ -28,7 +30,7 @@ import type { IconName } from '../../libs/icons'
               {item.icon ? (
                 <Icon name={item.icon as IconName} class='size-4' />
               ) : item.iconImg ? (
-                <img src={item.iconImg} class='size-4' alt={item.title || 'icon image'} />
+                <Image src={item.iconImg} width={16} height={16} class='size-4' alt={item.title || 'icon image'} />
               ) : null}
               {item.title}
             </a>
@@ -215,5 +217,4 @@ import type { IconName } from '../../libs/icons'
       }
     }
   }
-
 </style>
