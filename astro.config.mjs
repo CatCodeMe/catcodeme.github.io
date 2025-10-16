@@ -16,7 +16,6 @@ import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
-// import { remarkAiNotice } from './src/plugins/remark-ai-notice.mjs';
 import { remarkMermaid } from './src/plugins/remark-mermaid';
 // Shiki
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';

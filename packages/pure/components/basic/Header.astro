@@ -1,6 +1,7 @@
 ---
 import config from 'virtual:config'
 import { Icon } from '../user'
+import type { IconName } from '../../libs/icons'
 ---
 
 <header-component
@@ -21,9 +22,14 @@ import { Icon } from '../user'
           config.header.menu.map((item) => (
             <a
               href={item.link}
-              class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
+              class='w-full flex-none grow py-2 text-right font-medium transition-none sm:w-fit sm:px-3 flex items-center justify-end gap-x-1.5'
               aria-label='Nav menu item'
             >
+              {item.icon ? (
+                <Icon name={item.icon as IconName} class='size-4' />
+              ) : item.iconImg ? (
+                <img src={item.iconImg} class='size-4' alt={item.title || 'icon image'} />
+              ) : null}
               {item.title}
             </a>
           ))
@@ -209,4 +215,5 @@ import { Icon } from '../user'
       }
     }
   }
+
 </style>

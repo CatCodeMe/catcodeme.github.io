@@ -1,12 +1,16 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
-
-
-
 import type { CardListData } from 'astro-pure/types';
+import type { IconName } from '../packages/pure/libs/icons';
 
-
-
-
+const menu: { title: string; link: string; icon?: IconName; iconImg?: string }[] = [
+  { title: '文章', link: '/blog', icon: 'document' },
+  { title: '书架', link: '/shelf', icon: 'shelf' },
+  { title: '归档', link: '/archives', icon: 'archive' },
+  // { title: 'Projects', link: '/projects' },
+  { title: '留言板', link: '/msgboard', icon: 'msgboard' },
+  { title: '关于', link: '/about', icon: 'about' },
+  { title: '', link: '/cats', iconImg: '/favicon/favicon-32x32.png' },
+];
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -29,13 +33,13 @@ export const theme: ThemeUserConfig = {
     dateOptions: {
       day: 'numeric',
       month: 'short',
-      year: 'numeric'
-    }
+      year: 'numeric',
+    },
   },
   /** Set a logo image to show in the homepage. */
   logo: {
     src: 'src/assets/avatar.png',
-    alt: 'Avatar'
+    alt: 'Avatar',
   },
 
   // === Global configuration ===
@@ -56,15 +60,7 @@ export const theme: ThemeUserConfig = {
 
   /** Configure the header of your site. */
   header: {
-    menu: [
-      { title: '文章', link: '/blog' },
-      { title: '书架', link: '/shelf' },
-      { title: '归档', link: '/archives' },
-      // { title: 'Projects', link: '/projects' },
-      { title: '🐱', link: '/cats' },
-      { title: '留言板', link: '/msgboard' },
-      { title: '关于', link: '/about' }
-    ]
+    menu,
   },
 
   /** Configure the footer of your site. */
@@ -76,8 +72,8 @@ export const theme: ThemeUserConfig = {
       {
         title: '京ICP备2025143479号-1',
         link: 'https://beian.miit.gov.cn/',
-        style: 'text-sm'
-      }
+        style: 'text-sm',
+      },
       // {
       //   title: 'CC BY-NC-SA 4.0',
       //   link: '/terms/list',
@@ -85,22 +81,22 @@ export const theme: ThemeUserConfig = {
       // }
     ],
     credits: true,
-    social: { github: 'https://github.com/catcodeme' }
+    social: { github: 'https://github.com/catcodeme' },
   },
 
   content: {
     externalLinks: {
       content: '',
       customIcons: {
-        'github.com': 'github'
-      }
+        'github.com': 'github',
+      },
     },
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
     // Currently support weibo, x, bluesky
-    share: ['x', 'bluesky']
-  }
-}
+    share: ['x', 'bluesky'],
+  },
+};
 
 export const integ: IntegrationUserConfig = {
   // Links management
@@ -117,8 +113,8 @@ export const integ: IntegrationUserConfig = {
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
       { name: 'Link', val: 'https://8cat.life/' },
-      { name: 'Avatar', val: 'https://avatars.githubusercontent.com/u/11496772?v=4&size=64' }
-    ]
+      { name: 'Avatar', val: 'https://avatars.githubusercontent.com/u/11496772?v=4&size=64' },
+    ],
   },
   // Enable page search function
   pagefind: true,
@@ -130,7 +126,7 @@ export const integ: IntegrationUserConfig = {
     // target: (data) => (data as { hitokoto: string }).hitokoto || 'Error'
     // https://github.com/lukePeavey/quotable
     server: 'https://api.quotable.io/quotes/random?maxLength=60',
-    target: `(data) => data[0].content || 'Error'`
+    target: `(data) => data[0].content || 'Error'`,
   },
   // UnoCSS typography
   // See: https://unocss.dev/presets/typography
@@ -139,7 +135,7 @@ export const integ: IntegrationUserConfig = {
     // The style of blockquote font, normal or italic (default to italic in typography)
     blockquoteStyle: 'italic',
     // The style of inline code block, code or modern (default to code in typography)
-    inlineCodeBlockStyle: 'modern'
+    inlineCodeBlockStyle: 'modern',
   },
   // A lightbox library that can add zoom effect
   // See: https://astro-pure.js.org/docs/integrations/others#medium-zoom
@@ -147,8 +143,8 @@ export const integ: IntegrationUserConfig = {
     enable: true, // disable it will not load the whole library
     selector: '.prose .zoomable',
     options: {
-      className: 'zoomable'
-    }
+      className: 'zoomable',
+    },
   },
   // Comment system
   waline: {
@@ -169,16 +165,16 @@ export const integ: IntegrationUserConfig = {
         '/waline/2.png',
         '/waline/3.png',
         '/waline/4.png',
-        '/waline/5.png'
+        '/waline/5.png',
       ],
       pageview: true, //页面 pv
       comment: true, //页面评论数
       locale: {
         placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
         reactionTitle: '',
-        region: ''
-      }
-    }
+        region: '',
+      },
+    },
   },
   giscus: {
     enable: true,
@@ -192,31 +188,31 @@ export const integ: IntegrationUserConfig = {
     emitMetadata: '0',
     inputPosition: 'top',
     theme: 'noborder_light', // 可选: light, dark, transparent_dark, preferred_color_scheme
-    lang: 'en'
-  }
-}
+    lang: 'en',
+  },
+};
 
 export const terms: CardListData = {
   title: 'Terms content',
   list: [
     {
       title: 'Privacy Policy',
-      link: '/terms/privacy-policy'
+      link: '/terms/privacy-policy',
     },
     {
       title: 'Terms and Conditions',
-      link: '/terms/terms-and-conditions'
+      link: '/terms/terms-and-conditions',
     },
     {
       title: 'Copyright',
-      link: '/terms/copyright'
+      link: '/terms/copyright',
     },
     {
       title: 'Disclaimer',
-      link: '/terms/disclaimer'
-    }
-  ]
-}
+      link: '/terms/disclaimer',
+    },
+  ],
+};
 
-const config = { ...theme, integ } as Config
-export default config
+const config = { ...theme, integ } as Config;
+export default config;
