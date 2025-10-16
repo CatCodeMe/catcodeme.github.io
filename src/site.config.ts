@@ -1,16 +1,23 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
+
+
+
 import type { CardListData } from 'astro-pure/types';
+
+
+
 import type { IconName } from '../packages/pure/libs/icons';
+
 
 const menu: { title: string; link: string; icon?: IconName; iconImg?: string }[] = [
   { title: '文章', link: '/blog', icon: 'document' },
-  { title: '书架', link: '/shelf', icon: 'shelf' },
   { title: '归档', link: '/archives', icon: 'archive' },
+  { title: '书架', link: '/shelf', icon: 'shelf' },
   // { title: 'Projects', link: '/projects' },
   { title: '留言板', link: '/msgboard', icon: 'msgboard' },
   { title: '关于', link: '/about', icon: 'about' },
-  { title: '', link: '/cats', iconImg: '/favicon/favicon-32x32.png' },
-];
+  { title: '', link: '/cats', iconImg: '/favicon/favicon-32x32.png' }
+]
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===

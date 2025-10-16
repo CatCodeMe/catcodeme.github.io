@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user'
 import { LightGallery } from 'astro-lightgallery'
+import bannerImage from '@/assets/cats/banner.png'
 
 import GalleryLayout from '@/layouts/GalleryLayout.astro'
 import { info, photos } from '@/assets/cats/config/data'
@@ -12,8 +13,13 @@ const allCats = Object.entries(info)
 <GalleryLayout title='猫咪画廊'>
   <!-- Section 1: Cat Roster -->
   <section class='cat-roster'>
-    <h2 class='section-title'>8cats' life</h2>
-    <p class='section-subtitle'>有了名字的猫再也不孤单 | 喵星远了些, ccm 永远爱你们</p>
+    <div class="section-header">
+      <div class="section-header-text">
+        <h2 class='section-title'>8cats' life</h2>
+        <p class='section-subtitle'>有了名字的猫再也不孤单 | 喵星远了些, ccm 永远爱你们</p>
+      </div>
+      <Image src={bannerImage} alt="Cats banner" class="section-header-image" />
+    </div>
     <div class='roster-controls'>
       <button class='roster-control-btn active' data-filter='all'>全部</button>
       {
@@ -157,10 +163,42 @@ const allCats = Object.entries(info)
 </script>
 
 <style>
+  .section-header {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .section-header-text {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+  .section-header-image {
+    width: 40%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 767px) {
+    .section-header {
+      flex-direction: column;
+    }
+    .section-header-image {
+      width: 100%;
+      height: 150px;
+    }
+    .section-header-text {
+      padding: 1.5rem;
+    }
+  }
   .section-title {
     font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     text-align: left;
     color: #2d3748;
   }
@@ -168,8 +206,8 @@ const allCats = Object.entries(info)
   .section-subtitle {
     text-align: left;
     color: #718096;
-    margin-top: -1rem;
-    margin-bottom: 1.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
   }
 
   /* Roster Styles */
