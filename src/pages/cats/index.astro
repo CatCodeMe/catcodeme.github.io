@@ -1,84 +1,89 @@
 ---
 import { Image } from 'astro:assets'
-import { LightGallery } from 'astro-lightgallery'
 import { Icon } from '@/custom/components/user'
+import { LightGallery } from 'astro-lightgallery'
 
 import GalleryLayout from '@/layouts/GalleryLayout.astro'
 import { info, photos } from '@/assets/cats/config/data'
 
-const allCats = Object.entries(info);
+const allCats = Object.entries(info)
 ---
 
 <GalleryLayout title='猫咪画廊'>
   <!-- Section 1: Cat Roster -->
-  <section class="cat-roster">
-    <h2 class="section-title">8cats' life</h2>
-    <div class="roster-controls">
-      <button class="roster-control-btn active" data-filter="all">全部</button>
-      {allCats.map(([name]) => (
-        <button class="roster-control-btn" data-filter={name}>{name}</button>
-      ))}
+  <section class='cat-roster'>
+    <h2 class='section-title'>8cats' life</h2>
+    <p class='section-subtitle'>有了名字的猫再也不孤单 | 喵星远了些, ccm 永远爱你们</p>
+    <div class='roster-controls'>
+      <button class='roster-control-btn active' data-filter='all'>全部</button>
+      {
+        allCats.map(([name]) => (
+          <button class='roster-control-btn' data-filter={name}>
+            {name}
+          </button>
+        ))
+      }
     </div>
-    <div class="roster-grid">
-      {allCats.map(([name, catInfo]) => {
-        const catId = catInfo.id; // Use ID from data
-        const isDeceased = catInfo.deathday;
+    <div class='roster-grid'>
+      {
+        allCats.map(([name, catInfo]) => {
+          const catId = catInfo.id // Use ID from data
+          const isDeceased = catInfo.deathday
 
-        // Find a representative image for the cat
-        const catImage = photos.find(p => p.subjects?.includes(name))?.image;
+          // Find a representative image for the cat
+          const catImage = photos.find((p) => p.subjects?.includes(name))?.image
 
-        // Calculate age
-        const birthYear = new Date(catInfo.birthday).getFullYear();
-        const endYear = catInfo.deathday ? new Date(catInfo.deathday).getFullYear() : new Date().getFullYear();
-        const age = endYear - birthYear;
+          // Calculate age
+          const birthYear = new Date(catInfo.birthday).getFullYear()
+          const endYear = catInfo.deathday
+            ? new Date(catInfo.deathday).getFullYear()
+            : new Date().getFullYear()
+          const age = endYear - birthYear
 
-        return (
-          <div class="roster-card group" id={`cat-${catId}`} data-cat-name={name}>
-            <div class={`roster-card-inner ${isDeceased ? 'is-deceased' : ''}`}>
-              {catImage && (
-                <Image 
-                  src={catImage} 
-                  alt={name} 
-                  class="roster-cover-image" 
-                />
-              )}
-              <div class="roster-content">
-                <div class="roster-header">
-                  <h3 class="roster-name">{name}</h3>
-                  <div class="roster-top-meta">
-                    <span class="age-display">{age}岁</span>
-                    <span class={`gender-icon ${catInfo.gender === '男' ? 'male' : 'female'}`}>
-                      {catInfo.gender === '男' ? '♂' : '♀'}
-                    </span>
-                  </div>
-                </div>
-                <p class="roster-bio">{catInfo.desc || '一只可爱的猫咪'}</p>
-                <div class="roster-meta">
-                  <div class="meta-item">
-                    <Icon name="cake" />
-                    <span>{catInfo.birthday}</span>
-                  </div>
-                  {isDeceased && (
-                    <div class="meta-item">
-                      <Icon name="sleep" />
-                      <span>{catInfo.deathday} (猫星)</span>
+          return (
+            <div class='roster-card group' id={`cat-${catId}`} data-cat-name={name}>
+              <div class={`roster-card-inner ${isDeceased ? 'is-deceased' : ''}`}>
+                {catImage && <Image src={catImage} alt={name} class='roster-cover-image' />}
+                <div class='roster-content'>
+                  <div class='roster-header'>
+                    <h3 class='roster-name'>{name}</h3>
+                    <div class='roster-top-meta'>
+                      <span class='age-display'>{age}岁</span>
+                      <span class={`gender-icon ${catInfo.gender === '男' ? 'male' : 'female'}`}>
+                        {catInfo.gender === '男' ? '♂' : '♀'}
+                      </span>
                     </div>
-                  )}
-                </div>
-                <div class="roster-tags">
-                  {catInfo.tags.map(tag => <span class="tag">{tag}</span>)}
+                  </div>
+                  <p class='roster-bio'>{catInfo.desc || '一只可爱的猫咪'}</p>
+                  <div class='roster-meta'>
+                    <div class='meta-item'>
+                      <Icon name='cake' />
+                      <span>{catInfo.birthday}</span>
+                    </div>
+                    {isDeceased && (
+                      <div class='meta-item'>
+                        <Icon name='sleep' />
+                        <span>{catInfo.deathday} (猫星)</span>
+                      </div>
+                    )}
+                  </div>
+                  <div class='roster-tags'>
+                    {catInfo.tags.map((tag) => (
+                      <span class='tag'>{tag}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          )
+        })
+      }
     </div>
   </section>
 
   <!-- Section 2: Photo Gallery -->
-  <section class="photo-gallery">
-    <h2 class="section-title">📸 生活瞬间</h2>
+  <section class='photo-gallery'>
+    <h2 class='section-title'>📸 生活瞬间</h2>
     <LightGallery
       class='masonry-grid'
       options={{
@@ -88,67 +93,67 @@ const allCats = Object.entries(info);
       }}
       addPlugins={['zoom']}
     >
-      {photos.map(photo => {
-        const subjects = photo.subjects?.join(' ') || 'unknown';
-        return (
-          <a 
-            href={photo.image.src} 
-            class="masonry-item" 
-            data-subjects={subjects}
-            data-lg-size={`${photo.image.width}-${photo.image.height}`}
-          >
-            <Image src={photo.image} alt={photo.caption || 'A cat photo'} loading="lazy" />
-            <div class="overlay">
-              {photo.caption && <p class="caption">{photo.caption}</p>}
-              {photo.subjects && photo.subjects.length > 0 && 
-                <p class="subjects">
-                  {photo.subjects.join(', ')}
-                </p>
-              }
-            </div>
-          </a>
-        );
-      })}
+      {
+        photos.map((photo) => {
+          const subjects = photo.subjects?.join(' ') || 'unknown'
+          return (
+            <a
+              href={photo.image.src}
+              class='masonry-item'
+              data-subjects={subjects}
+              data-lg-size={`${photo.image.width}-${photo.image.height}`}
+            >
+              <Image src={photo.image} alt={photo.caption || 'A cat photo'} loading='lazy' />
+              <div class='overlay'>
+                {photo.caption && <p class='caption'>{photo.caption}</p>}
+                {photo.subjects && photo.subjects.length > 0 && (
+                  <p class='subjects'>{photo.subjects.join(', ')}</p>
+                )}
+              </div>
+            </a>
+          )
+        })
+      }
     </LightGallery>
   </section>
 </GalleryLayout>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const filterButtons = document.querySelectorAll('.roster-control-btn');
-    const photoItems = document.querySelectorAll('.masonry-item');
-    const rosterCards = document.querySelectorAll('.roster-card');
+    const filterButtons = document.querySelectorAll('.roster-control-btn')
+    const photoItems = document.querySelectorAll('.masonry-item')
+    const rosterCards = document.querySelectorAll('.roster-card')
 
-    filterButtons.forEach(button => {
+    filterButtons.forEach((button) => {
       button.addEventListener('click', () => {
-        const filter = button.getAttribute('data-filter');
+        const filter = button.getAttribute('data-filter')
 
         // Update button active state
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+        filterButtons.forEach((btn) => btn.classList.remove('active'))
+        button.classList.add('active')
 
         // Filter photos
-        photoItems.forEach(item => {
-          const subjects = item.getAttribute('data-subjects');
+        photoItems.forEach((item) => {
+          const subjects = item.getAttribute('data-subjects')
           if (filter === 'all' || (filter && subjects && subjects.includes(filter))) {
-            (item as HTMLElement).style.display = 'block';
+            ;(item as HTMLElement).style.display = 'block'
           } else {
-            (item as HTMLElement).style.display = 'none';
+            ;(item as HTMLElement).style.display = 'none'
           }
-        });
+        })
 
         // Highlight roster card
-        rosterCards.forEach(card => {
-          const catName = card.getAttribute('data-cat-name');
+        rosterCards.forEach((card) => {
+          const catName = card.getAttribute('data-cat-name')
           if (filter !== 'all' && catName === filter) {
-            card.classList.add('highlighted');
+            card.classList.add('highlighted')
           } else {
-            card.classList.remove('highlighted');
+            card.classList.remove('highlighted')
           }
-        });
-      });
-    });
-  });
+        })
+      })
+    })
+  })
 </script>
 
 <style>
@@ -156,8 +161,15 @@ const allCats = Object.entries(info);
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
-    text-align: center;
+    text-align: left;
     color: #2d3748;
+  }
+
+  .section-subtitle {
+    text-align: left;
+    color: #718096;
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
   }
 
   /* Roster Styles */
@@ -168,7 +180,7 @@ const allCats = Object.entries(info);
   .roster-controls {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.5rem;
     margin-bottom: 2rem;
   }
@@ -184,6 +196,18 @@ const allCats = Object.entries(info);
     border-bottom: 2px solid transparent;
     margin: 0 0.5rem;
     color: #718096;
+    position: relative;
+  }
+  .roster-control-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #4299e1;
+    transition: width 0.3s ease-in-out;
   }
   .roster-control-btn:hover {
     color: #2d3748;
@@ -191,7 +215,9 @@ const allCats = Object.entries(info);
   .roster-control-btn.active {
     font-weight: 700;
     color: #2d3748;
-    border-bottom-color: #4299e1;
+  }
+  .roster-control-btn.active::after {
+    width: 100%;
   }
 
   .roster-grid {
@@ -206,7 +232,7 @@ const allCats = Object.entries(info);
     background-color: #fff;
   }
   .roster-card:hover {
-      border-color: #cbd5e0;
+    border-color: #cbd5e0;
   }
   .roster-card.highlighted {
     border-color: #4299e1;
@@ -218,7 +244,7 @@ const allCats = Object.entries(info);
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    border-radius: 7px; 
+    border-radius: 7px;
   }
   .roster-card-inner.is-deceased .roster-content {
     filter: grayscale(90%);
@@ -234,28 +260,32 @@ const allCats = Object.entries(info);
     z-index: 0;
     opacity: 0.2; /* Exactly as in Paper.astro */
     transition: opacity 0.3s ease;
-    mask-image: linear-gradient(to right, transparent 5%, black 60%); /* Exactly as in Paper.astro */
+    mask-image: linear-gradient(
+      to right,
+      transparent 5%,
+      black 60%
+    ); /* Exactly as in Paper.astro */
     -webkit-mask-image: linear-gradient(to right, transparent 5%, black 60%);
   }
   .roster-card:hover .roster-cover-image {
-      opacity: 0.7; /* Exactly as in Paper.astro */
+    opacity: 0.7; /* Exactly as in Paper.astro */
   }
   .roster-card-inner.is-deceased .roster-cover-image {
-      filter: grayscale(100%);
+    filter: grayscale(100%);
   }
 
   .roster-content {
-      position: relative;
-      z-index: 1;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    position: relative;
+    z-index: 1;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   .roster-header {
     display: flex;
-    align-items: flex-start; 
+    align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 1rem;
   }
@@ -276,14 +306,18 @@ const allCats = Object.entries(info);
     font-size: 0.9rem;
     font-weight: 500;
     padding: 0.1rem 0.5rem;
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 6px;
   }
   .gender-icon {
     font-size: 1.5rem;
   }
-  .gender-icon.male { color: #3182ce; }
-  .gender-icon.female { color: #d53f8c; }
+  .gender-icon.male {
+    color: #3182ce;
+  }
+  .gender-icon.female {
+    color: #d53f8c;
+  }
 
   .roster-bio {
     margin: 0 0 0.75rem;
@@ -297,19 +331,19 @@ const allCats = Object.entries(info);
     margin-top: 0;
     margin-bottom: 1rem; /* Restore margin */
     display: flex;
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    gap: 1rem; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
   .meta-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: #4a5568;
-    font-size: 0.85rem; 
+    font-size: 0.85rem;
   }
   .meta-item :global(svg) {
-    width: 16px; 
+    width: 16px;
     height: 16px;
   }
 
@@ -317,7 +351,7 @@ const allCats = Object.entries(info);
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: auto; 
+    margin-top: auto;
   }
   .tag {
     background-color: #edf2f7;
@@ -358,7 +392,7 @@ const allCats = Object.entries(info);
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
     color: white;
     padding: 2rem 1rem 1rem;
     opacity: 0;
