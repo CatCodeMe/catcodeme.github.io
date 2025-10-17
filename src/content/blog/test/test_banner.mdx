@@ -1,0 +1,106 @@
+---
+title: Banner 组件用法
+description: '如何使用通用的 Banner 组件来创建页面标题区域。'
+publishDate: 2025-10-17 19:45:00
+slug: yex1
+tags: ['组件', '建站']
+---
+
+import { MdxRepl, Aside } from '@/custom/components/user';
+import Banner from '@/components/banner/Banner.astro';
+import { Icon } from '@/custom/components/user';
+import bannerImage from '@/assets/shelf/desk1.png';
+
+`Banner` 是一个通用的页面横幅组件，用于快速创建一个包含左侧内容和右侧图片的标题区域。它通过 Astro 的 `slot` (插槽) 特性提供了极高的灵活性。
+
+### 基础用法
+
+`Banner` 组件接收两个主要属性：`image` 和 `imageAlt`。您需要将想要在左侧显示的任何内容放置在 `<Banner>` 和 `</Banner>` 标签之间。
+
+<MdxRepl>
+  <Banner image={bannerImage} imageAlt="示例图片">
+    <div class="flex items-center gap-3">
+      <Icon name="book" class="size-8" />
+      <h2 class="text-3xl font-bold">这是主标题</h2>
+    </div>
+    <p class="border-l-2 border-border pl-3 text-muted-foreground mt-2">
+      这是副标题，您可以在这里写一些描述性文字。
+    </p>
+  </Banner>
+  <Fragment slot="desc">
+    ```jsx
+    import Banner from '@/components/banner/Banner.astro';
+    import { Icon } from '@/custom/components/user';
+    import bannerImage from '@/assets/shelf/desk1.png';
+
+    <Banner image={bannerImage} imageAlt="示例图片">
+      <div class="flex items-center gap-3">
+        <Icon name="book" class="size-8" />
+        <h2 class="text-3xl font-bold">这是主标题</h2>
+      </div>
+      <p class="border-l-2 border-border pl-3 text-muted-foreground mt-2">
+        这是副标题，您可以在这里写一些描述性文字。
+      </p>
+    </Banner>
+    ```
+  </Fragment>
+</MdxRepl>
+
+### MDX Syntax Example
+
+When using in an `.mdx` file, you can write Markdown directly in the slot, like this:
+
+<MdxRepl prose={true}>
+  <Banner image={bannerImage} imageAlt="MDX Example Image">
+    > This is a Markdown Title
+
+  </Banner>
+  <Fragment slot="desc">
+    ```mdx
+    import Banner from '@/components/banner/Banner.astro';
+    import bannerImage from '@/assets/shelf/desk1.png';
+
+    {/* 显然这里不适合有太多的太复杂的内容 */}
+    <Banner image={bannerImage} imageAlt="MDX Example Image">
+      > This is a Markdown Title
+    
+    </Banner>
+    ```
+  </Fragment>
+</MdxRepl>
+
+### 组件属性 (Props)
+
+| 属性 | 类型 | 是否必需 | 描述 |
+|---|---|---|---|
+| `image` | `ImageMetadata` | 是 | 用于右侧展示的图片资源, 需要从 `src` 目录导入。 |
+| `imageAlt` | `string` | 是 | 图片的替代文本。 |
+| `class` | `string` | 否 | 为组件根元素添加额外的 CSS 类。 |
+| `loading` | `'lazy' \| 'eager'` | 否 | 图片的加载策略，对于首屏的 Banner，推荐设置为 `eager`。 |
+
+
+<Banner image={bannerImage} imageAlt="MDX Example Image">
+      ## This is a Markdown Title
+      This is a paragraph written in **Markdown** syntax.
+</Banner>
+
+<Banner image={bannerImage} imageAlt="MDX Example Image">
+    > This is a Markdown Title
+
+</Banner>
+
+### 插槽 (Slot)
+
+<Aside type="info">
+`Banner` 组件的核心是它的默认插槽。您可以在组件标签内放置任何有效的 HTML 或 Astro 组件，它们将被渲染在 Banner 的左侧区域。
+</Aside>
+
+<Aside type="tip" title="在 MDX 中使用">
+正如本页面一样，当您在 `.mdx` 文件中使用 `Banner` 组件时，可以直接在插槽中编写 Markdown 语法，它会被自动解析。
+```mdx
+<Banner image={...}>
+  ### 我是一个 Markdown 标题
+  这是用 **Markdown** 写的段落。
+</Banner>
+```
+</Aside>

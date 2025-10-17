@@ -2,10 +2,12 @@
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user'
 import { LightGallery } from 'astro-lightgallery'
-import bannerImage from '@/assets/cats/banner.png'
 
 import GalleryLayout from '@/layouts/GalleryLayout.astro'
+import Banner from '@/components/banner/Banner.astro'
+import bannerImage from '@/assets/cats/banner.png'
 import { info, photos } from '@/assets/cats/config/data'
+import catIcon from '@/assets/icons/android-chrome-512x512.png'
 
 const allCats = Object.entries(info)
 ---
@@ -13,13 +15,13 @@ const allCats = Object.entries(info)
 <GalleryLayout title='猫咪画廊'>
   <!-- Section 1: Cat Roster -->
   <section class='cat-roster'>
-    <div class="section-header">
-      <div class="section-header-text">
+    <Banner image={bannerImage} imageAlt='Cats banner'>
+      <div class='flex items-center gap-3'>
+        <Image src={catIcon} alt='icon' class='size-8' loading='eager' />
         <h2 class='section-title'>8cats' life</h2>
-        <p class='section-subtitle'>有了名字的猫再也不孤单 | 喵星远了些, ccm 永远爱你们</p>
       </div>
-      <Image src={bannerImage} alt="Cats banner" class="section-header-image" />
-    </div>
+      <p class='section-subtitle'>有了名字的猫再也不孤单 | 喵星远了些, ccm 永远爱你们</p>
+    </Banner>
     <div class='roster-controls'>
       <button class='roster-control-btn active' data-filter='all'>全部</button>
       {
@@ -49,7 +51,9 @@ const allCats = Object.entries(info)
           return (
             <div class='roster-card group' id={`cat-${catId}`} data-cat-name={name}>
               <div class={`roster-card-inner ${isDeceased ? 'is-deceased' : ''}`}>
-                {catImage && <Image src={catImage} alt={name} class='roster-cover-image' />}
+                {catImage && (
+                  <Image src={catImage} alt={name} class='roster-cover-image' loading='eager' />
+                )}
                 <div class='roster-content'>
                   <div class='roster-header'>
                     <h3 class='roster-name'>{name}</h3>
@@ -163,38 +167,6 @@ const allCats = Object.entries(info)
 </script>
 
 <style>
-  .section-header {
-    display: flex;
-    align-items: stretch;
-    margin-bottom: 1.5rem;
-    background-color: #f7fafc;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .section-header-text {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-  }
-  .section-header-image {
-    width: 40%;
-    object-fit: cover;
-  }
-
-  @media (max-width: 767px) {
-    .section-header {
-      flex-direction: column;
-    }
-    .section-header-image {
-      width: 100%;
-      height: 150px;
-    }
-    .section-header-text {
-      padding: 1.5rem;
-    }
-  }
   .section-title {
     font-size: 2rem;
     font-weight: bold;

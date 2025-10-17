@@ -30,7 +30,14 @@ import { Icon } from '../user'
               {item.icon ? (
                 <Icon name={item.icon as IconName} class='size-4' />
               ) : item.iconImg ? (
-                <Image src={item.iconImg} width={16} height={16} class='size-4' alt={item.title || 'icon image'} />
+                <Image
+                  src={item.iconImg}
+                  width={16}
+                  height={16}
+                  class='size-4'
+                  loading='eager'
+                  alt={item.title || 'cats icon'}
+                />
               ) : null}
               {item.title}
             </a>

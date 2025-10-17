@@ -1,13 +1,19 @@
 ---
 interface Props {
   width?: string
+  prose?: boolean
 }
 
-const { width } = Astro.props
+const { width, prose = false } = Astro.props
 ---
 
 <div class='mdx-repl overflow-hidden rounded-xl border'>
-  <div class='mdx-repl-container not-prose flex flex-col items-center justify-center p-4'>
+  <div
+    class:list={[
+      'mdx-repl-container flex flex-col items-center justify-center p-4',
+      { prose, 'not-prose': !prose }
+    ]}
+  >
     <slot />
   </div>
   <div class='bg-muted'>
