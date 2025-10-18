@@ -51,7 +51,7 @@ const postDate = data.updatedDate ?? data.publishDate
       )
     }
 
-    <FormattedDate class='min-w-[95px] py-1 text-xs' date={postDate} />
+    <FormattedDate class='min-w-[95px] py-1 text-xs' date={postDate} dateTimeOptions={{ year: 'numeric', month: '2-digit', day: '2-digit' }} />
 
     <Tag class='z-10 flex-grow'>
       {/* title */}

@@ -15,6 +15,7 @@ body.hide-scrollbar::-webkit-scrollbar {
 body {
   font-family: "JyunsaiKaai";
   font-weight: normal;
+  text-autospace: normal;
 }
 
 @font-face {

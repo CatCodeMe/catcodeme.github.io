@@ -91,7 +91,9 @@ const showToastStr = showToast.toString()
             <span>Published at</span>
             <span class='text-sm text-foreground'>
               {getFormattedDate(publishDate, {
-                month: 'long'
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
               })}
             </span>
           </div>
@@ -126,7 +128,9 @@ const showToastStr = showToast.toString()
           <span>Published at</span>
           <span class='text-sm text-foreground'>
             {getFormattedDate(publishDate, {
-              month: 'long'
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
             })}
           </span>
         </div>

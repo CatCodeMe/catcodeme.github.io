@@ -26,7 +26,9 @@ const {
 } = Astro.props
 
 const dateTimeOptions: Intl.DateTimeFormatOptions = {
-  month: 'short'
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
 }
 ---
 
