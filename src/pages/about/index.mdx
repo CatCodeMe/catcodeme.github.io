@@ -11,12 +11,69 @@ import { Spoiler, Timeline } from 'astro-pure/user'
 import Substats from '@/components/about/Substats.astro'
 import { ToolTag } from '@/components/tools/Tool.astro'
 import ToolSection from '@/components/tools/ToolSection.astro'
+import { Icon } from '@/custom/components/user'
+import { Icon as AstroIcon } from 'astro-icon/components'
 
 ## About Me
 
 *   Communist / Developer / Learner / Cat owner
 *   改造自己,进而改造世界🚩 <Spoiler>革命无罪，造反有理！</Spoiler>
 
+## Skills
+
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-4">
+    <Icon name="code" class="size-5 text-primary" />
+    <h3 class="text-lg font-semibold">Languages</h3>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:java" class="size-4" />
+      <span class="text-sm">Java</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:zig" class="size-4" />
+      <span class="text-sm">Zig</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:python" class="size-4" />
+      <span class="text-sm">Python</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:bash" class="size-4" />
+      <span class="text-sm">Shell</span>
+    </div>
+  </div>
+</div>
+
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-4">
+    <Icon name="code" class="size-5 text-primary" />
+    <h3 class="text-lg font-semibold">Backend</h3>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:spring" class="size-4" />
+      <span class="text-sm">Spring</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:redis" class="size-4" />
+      <span class="text-sm">Redis</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:clickhouse" class="size-4" />
+      <span class="text-sm">ClickHouse</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:mysql" class="size-4" />
+      <span class="text-sm">Mysql</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
+      <AstroIcon name="devicon:apachespark" class="size-4" />
+      <span class="text-sm">Apache Spark</span>
+    </div>
+  </div>
+</div>
 
 ## Tools
 

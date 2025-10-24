@@ -1,134 +1,336 @@
 ---
-import { PostPreview } from '@/custom/components/pages'
-
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
-import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import Section from '@/components/home/Section.astro'
-import SkillLayout from '@/components/home/SkillLayout.astro'
+import { Icon } from '@/custom/components/user'
+import { Image } from 'astro:assets'
+import bookshelfData from '../../public/bookshelf.json'
+import avatarImage from '@/assets/avatar_2.png'
 
-const languages = [
-  { name: 'Java', icon: 'devicon:java' },
-  { name: 'Zig', icon: 'devicon:zig' },
-  { name: 'Python', icon: 'devicon:python' },
-  { name: 'Shell', icon: 'devicon:bash' }
-]
-
-const backend = [
-  { name: 'Spring', icon: 'devicon:spring' },
-  { name: 'Redis', icon: 'devicon:redis' },
-  { name: 'ClickHouse', icon: 'devicon:clickhouse' },
-  { name: 'Mysql', icon: 'devicon:mysql' },
-  { name: 'Apache Spark', icon: 'devicon:apachespark' }
-]
-
-const MAX_POSTS = 10
+const MAX_POSTS = 5
 const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+
+// 统计文章总数和总字数
+const totalPosts = allPosts.length
+let totalWords = 0
+for (const post of allPosts) {
+  if (post.body) {
+    // 移除 HTML 标签和 Markdown 语法
+    const text = post.body
+      .replace(/<[^>]*>/g, '') // 移除 HTML 标签
+      .replace(/\[([^\]]*)\]\([^\)]*\)/g, '$1') // 移除 Markdown 链接
+      .replace(/!\[([^\]]*)\]\([^\)]*\)/g, '') // 移除图片
+      .replace(/[#*`_~]/g, '') // 移除 Markdown 标记
+      .replace(/\n/g, ' ') // 换行符替换为空格
+    // 统计中文字符和英文单词
+    const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || []
+    const englishWords = text.match(/[a-zA-Z]+/g) || []
+    totalWords += chineseChars.length + englishWords.length
+  }
+}
+
+// 获取书架数据
+const currentReading = bookshelfData.find((item: any) => item.status === 'reading')
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
   <main class='flex w-full flex-col'>
-    <!-- 第一屏 -->
-    <div id='main-content' class='relative z-10 flex flex-col items-center px-4'>
-      <!-- Motto Block -->
-      <div class='relative z-10 mt-16 flex justify-center'>
-        <div
-          class='inline-flex items-center gap-x-2 sm:gap-x-3 rounded-full border bg-background/80 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
-        >
-          <span class='relative flex items-center justify-center shrink-0'>
-            <span
-              class='absolute size-1.5 sm:size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
-            ></span>
-            <span class='size-1.5 sm:size-2 rounded-full bg-green-400'></span>
-          </span>
-          <p class='font-medium text-muted-foreground whitespace-nowrap'>
-            文字沉淀生命, 回忆勾连古今
-          </p>
-        </div>
-      </div>
+    <!-- Dashboard 首页 - 单屏布局 -->
+    <div class='w-full py-12 px-4'>
+      <div class='mx-auto max-w-6xl'>
+        <!-- 主要内容区域 -->
+        <div class='grid grid-cols-1 lg:grid-cols-5 gap-6'>
+          <!-- 左侧：最近在读 + 最新文章 -->
+          <div class='lg:col-span-3 space-y-6 order-2 lg:order-1'>
+            {/* 最近在读 - 详细信息 */}
+            {currentReading && (
+              <div class='dashboard-card reading-card group relative overflow-hidden rounded-lg border bg-background p-6 hover:border-primary/50 transition-all'>
+                <div class='absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                <div class='absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                <div class='relative'>
+                  <div class='flex items-start gap-4 mb-4'>
+                    <div class='size-12 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0'>
+                      <Icon name='book' class='size-6 text-purple-600 dark:text-purple-400' />
+                    </div>
+                    <div class='flex-1 min-w-0'>
+                      <div class='flex items-center justify-between mb-1'>
+                        <div class='flex items-center gap-2'>
+                          <span class='text-sm text-muted-foreground'>最近在读</span>
+                          <span class='text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 font-medium'>
+                            进行中
+                          </span>
+                        </div>
+                        <a href='/shelf' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>前往书架 →</a>
+                      </div>
+                      <h3 class='text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2'>
+                        {currentReading.title}
+                      </h3>
+                      {currentReading.description && (
+                        <p class='text-sm text-muted-foreground line-clamp-2 mb-3'>
+                          {currentReading.description}
+                        </p>
+                      )}
+                      {currentReading.progress !== undefined && (
+                        <div class='space-y-2'>
+                          <div class='flex items-center justify-between text-sm'>
+                            <span class='text-muted-foreground'>阅读进度</span>
+                            <span class='font-medium text-purple-600 dark:text-purple-400'>{currentReading.progress}%</span>
+                          </div>
+                          <div class='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
+                            <div class='progress-bar h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-1000' style={`width: ${currentReading.progress}%`}></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {currentReading.tags && currentReading.tags.length > 0 && (
+                    <div class='flex flex-wrap gap-2 mt-4 pt-4 border-t border-border'>
+                      {currentReading.tags.slice(0, 4).map((tag) => (
+                        <span class='text-xs px-2 py-1 rounded bg-muted text-muted-foreground'>{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-      <div class='relative w-screen'>
-        <canvas id='rive-canvas' class='w-full h-auto'></canvas>
-        <p class='absolute right-6 text-xs text-muted-foreground/50 pointer-events-none bottom-4 sm:bottom-12'>
-          Animation by <a
-            href='https://fivepathways.com/'
-            target='_blank'
-            rel='noreferrer noopener'
-            class='underline pointer-events-auto'>fivepathways.com</a
-          >
-        </p>
+            {/* 最新文章 */}
+            <div class='dashboard-card posts-card group relative overflow-hidden rounded-lg border bg-background p-6 hover:border-primary/50 transition-all'>
+              <div class='absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='relative'>
+                <div class='flex items-center justify-between mb-4'>
+                  <div class='flex items-center gap-2'>
+                    <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
+                      <Icon name='document' class='size-4 text-blue-600 dark:text-blue-400' />
+                    </div>
+                    <h2 class='text-lg font-semibold text-foreground'>最新文章</h2>
+                  </div>
+                  <a href='/blog' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>查看更多 →</a>
+                </div>
+                <ul class='space-y-2'>
+                  {allPostsByDate.map((post, index) => (
+                    <li class='post-item'>
+                      <a href={`/blog/${post.data.slug}`} class='flex items-center gap-3 p-2 rounded hover:bg-muted/50 transition-all group/item'>
+                        <div class='size-6 rounded bg-muted flex items-center justify-center group-hover/item:bg-primary/10 group-hover/item:scale-110 transition-all'>
+                          <Icon name='document' class='size-3 text-muted-foreground group-hover/item:text-primary transition-colors' />
+                        </div>
+                        <span class='text-sm text-foreground group-hover/item:text-primary transition-colors flex-1 truncate'>
+                          {post.data.title}
+                        </span>
+                        <span class='text-xs text-muted-foreground group-hover/item:text-foreground transition-colors'>
+                          {new Date(String(post.data.publishDate)).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 右侧：头像 + 技能 + GitHub 活动 -->
+          <div class='lg:col-span-2 space-y-6 order-1 lg:order-2'>
+            {/* 头像卡片 - 背景设计 */}
+            <div class='dashboard-card avatar-card group relative overflow-hidden rounded-lg border bg-background hover:border-primary/50 transition-all'>
+              <div class='absolute inset-0'>
+                <Image 
+                  src={avatarImage} 
+                  alt='Avatar' 
+                  class='w-full h-full object-cover'
+                />
+                <div class='absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500'></div>
+              </div>
+              <div class='relative p-6 z-10'>
+                <h3 class='text-xl font-semibold text-white mb-3'>CatCodeMe</h3>
+                <div class='inline-flex items-center gap-x-2 rounded-lg border bg-background/80 px-3 py-1.5 text-xs shadow-sm backdrop-blur transition-shadow hover:shadow-md mb-3'>
+                  <span class='relative flex items-center justify-center shrink-0'>
+                    <span class='absolute size-1.5 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'></span>
+                    <span class='size-1.5 rounded-full bg-green-400'></span>
+                  </span>
+                  <p class='font-medium text-muted-foreground whitespace-nowrap'>
+                    文字沉淀生命, 回忆勾连古今
+                  </p>
+                </div>
+                <div class='flex items-center gap-3'>
+                  <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors'>
+                    <Icon name='github' class='size-5' />
+                  </a>
+                  <a href='https://twitter.com' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors'>
+                    <Icon name='x' class='size-5' />
+                  </a>
+                  <a href='mailto:your@email.com' class='text-white hover:text-primary transition-colors'>
+                    <Icon name='email' class='size-5' />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* 统计卡片 */}
+            <div class='dashboard-card stats-card group relative overflow-hidden rounded-lg border bg-background p-6 hover:border-primary/50 transition-all'>
+              <div class='absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='relative'>
+                <div class='flex items-center gap-2 mb-4'>
+                  <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
+                    <Icon name='document' class='size-4 text-blue-600 dark:text-blue-400' />
+                  </div>
+                  <h2 class='text-lg font-semibold text-foreground'>博客统计</h2>
+                </div>
+                <div class='grid grid-cols-2 gap-4'>
+                  <div class='text-center p-3 rounded-lg bg-muted/50'>
+                    <div class='text-2xl font-bold text-foreground mb-1'>{totalPosts}</div>
+                    <div class='text-xs text-muted-foreground'>文章总数</div>
+                  </div>
+                  <div class='text-center p-3 rounded-lg bg-muted/50'>
+                    <div class='text-2xl font-bold text-foreground mb-1'>{totalWords.toLocaleString()}</div>
+                    <div class='text-xs text-muted-foreground'>总字数</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* GitHub 活动图 */}
+            <div class='dashboard-card github-card group relative overflow-hidden rounded-lg border bg-background p-6 hover:border-primary/50 transition-all'>
+              <div class='absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+              <div class='relative'>
+                <div class='flex items-center gap-2 mb-4'>
+                  <div class='size-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
+                    <Icon name='github' class='size-4 text-orange-600 dark:text-orange-400' />
+                  </div>
+                  <h2 class='text-lg font-semibold text-foreground'>GitHub</h2>
+                </div>
+                <div class='rounded overflow-hidden group-hover:scale-105 transition-transform duration-300'>
+                  <img
+                    class='hidden w-full dark:block'
+                    src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
+                    alt='github contribution snake dark'
+                    loading='lazy'
+                  />
+                  <img
+                    class='block w-full dark:hidden'
+                    src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
+                    alt='github contribution snake light'
+                    loading='lazy'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 第二屏：博客文章和技能 -->
-    <section class='w-full py-20 scroll-content bg-background'>
-      <div class='mx-auto max-w-4xl px-4'>
-        <!-- 博客文章部分 -->
-        <Section title='Latest Posts'>
-          {
-            allPostsByDate.length > 0 && (
-              <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-                {allPostsByDate.map((p) => (
-                  <li class='flex flex-col gap-x-2 sm:flex-row'>
-                    <PostPreview post={p} />
-                  </li>
-                ))}
-              </ul>
-            )
-          }
-          <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
-        </Section>
-
-        <!-- 技能部分 -->
-        <Section title='Skills' class='mt-20'>
-          <SkillLayout title='Languages' skills={languages} />
-          <SkillLayout title='Backend' skills={backend} />
-          <!-- <SkillLayout title='IDE' skills={ide} /> -->
-        </Section>
-
-        <!-- GitHub 活动图 -->
-        <Section title='GH-Activities' class='mt-20'>
-          <img
-            class='hidden w-full dark:block'
-            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
-            alt='github contribution snake dark'
-            loading='lazy'
-          />
-          <img
-            class='block w-full dark:hidden'
-            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
-            alt='github contribution snake light'
-            loading='lazy'
-          />
-        </Section>
-      </div>
-    </section>
 <script is:inline>
   // Force light theme on homepage
   localStorage.setItem('theme', 'light');
   document.documentElement.dataset.theme = 'light';
-  // Add class to body for homepage-specific styles
-  document.body.classList.add('hide-scrollbar');
 </script>
   </main>
 
-  <script>
-    import { Rive } from '@rive-app/canvas'
+<style>
+  /* 卡片渐入动画 */
+  .dashboard-card {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+  }
 
-    const canvas = document.getElementById('rive-canvas') as HTMLCanvasElement
-    if (canvas) {
-      const rive = new Rive({
-        src: '/clouds/hero-home.riv',
-        // src: '/clouds/footer.riv',
-        canvas: canvas,
-        autoplay: true,
-        stateMachines: 'state_home-hero',
-        // stateMachines: 'state_footer',
-        onLoad: () => {
-          rive.resizeDrawingSurfaceToCanvas()
-        }
-      })
+  .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+  .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+  .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+  .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+  .dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-  </script>
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 文章列表项动画 */
+  .post-item {
+    animation: slideInLeft 0.4s ease-out;
+    animation-fill-mode: both;
+  }
+
+  .post-item:nth-child(1) { animation-delay: 0.5s; }
+  .post-item:nth-child(2) { animation-delay: 0.6s; }
+  .post-item:nth-child(3) { animation-delay: 0.7s; }
+  .post-item:nth-child(4) { animation-delay: 0.8s; }
+  .post-item:nth-child(5) { animation-delay: 0.9s; }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+
+  /* 卡片悬停效果 */
+  .reading-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .posts-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .avatar-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .stats-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .github-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* 确保左右两列高度对齐 */
+  @media (min-width: 1024px) {
+    .grid > div:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+    }
+    
+    .grid > div:nth-child(2) > div {
+      flex: 1;
+    }
+  }
+
+  /* 进度条动画 */
+  .progress-bar {
+    animation: progressGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes progressGlow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+    }
+  }
+
+</style>
 </PageLayout>
