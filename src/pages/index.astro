@@ -53,10 +53,10 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                       <Icon name='book' class='size-6 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div class='flex-1 min-w-0'>
-                      <div class='flex items-center justify-between mb-1'>
+                      <div class='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1'>
                         <div class='flex items-center gap-2'>
                           <span class='text-sm text-muted-foreground'>最近在读</span>
-                          <span class='text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 font-medium'>
+                          <span class='text-xs px-1.5 py-0.5 sm:px-2 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 font-medium whitespace-nowrap'>
                             进行中
                           </span>
                         </div>

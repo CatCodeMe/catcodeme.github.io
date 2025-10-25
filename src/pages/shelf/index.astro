@@ -193,24 +193,28 @@ const getTagColor = (index: number) => {
                 </div>
 
                 {/* 移动端显示状态和评分 */}
-                <div class="flex items-center gap-2 sm:hidden">
-                  <div class={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium bg-${statusInfo.color}-100 text-${statusInfo.color}-800 dark:bg-${statusInfo.color}-900 dark:text-${statusInfo.color}-200`}>
-                    <Icon name={statusInfo.icon} class={`size-3.5`} />
-                    <span>
-                      {statusInfo.label}
-                      {item.progress !== undefined && ` / ${item.progress}%`}
-                    </span>
-                  </div>
-                  {item.rating && (
-                    <div class="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium">
-                      <Icon name="star" class="size-3.5 text-yellow-400" />
-                      <span>{item.rating.toFixed(1)}</span>
+                <div class="flex flex-col gap-2 sm:hidden">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <div class={`flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium bg-${statusInfo.color}-100 text-${statusInfo.color}-800 dark:bg-${statusInfo.color}-900 dark:text-${statusInfo.color}-200 whitespace-nowrap`}>
+                      <Icon name={statusInfo.icon} class={`size-3.5`} />
+                      <span>
+                        {statusInfo.label}
+                        {item.progress !== undefined && ` / ${item.progress}%`}
+                      </span>
                     </div>
-                  )}
+                    {item.rating && (
+                      <div class="flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-xs font-medium whitespace-nowrap">
+                        <Icon name="star" class="size-3.5 text-yellow-400" />
+                        <span>{item.rating.toFixed(1)}</span>
+                      </div>
+                    )}
+                  </div>
                   {item.identifier && (
-                    <div class="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium">
-                      <Icon name="hashtag" class="size-3.5" />
-                      <span class="text-xs">{item.identifier}</span>
+                    <div class="flex items-center gap-1">
+                      <div class="flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-xs font-medium">
+                        <Icon name="hashtag" class="size-3.5" />
+                        <span class="text-xs">{item.identifier}</span>
+                      </div>
                     </div>
                   )}
                 </div>
