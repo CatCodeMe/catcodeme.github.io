@@ -49,8 +49,8 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                 <div class='absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                 <div class='relative'>
                   <div class='flex items-start gap-4 mb-4'>
-                    <div class='size-12 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0'>
-                      <Icon name='book' class='size-6 text-purple-600 dark:text-purple-400' />
+                    <div class='size-8 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center group-hover:scale-110 transition-all duration-300 flex-shrink-0'>
+                      <Icon name='shelf' class='size-5 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div class='flex-1 min-w-0'>
                       <div class='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1'>
@@ -101,15 +101,15 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
               <div class='relative'>
                 <div class='flex items-center justify-between mb-4'>
                   <div class='flex items-center gap-2'>
-                    <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
-                      <Icon name='document' class='size-4 text-blue-600 dark:text-blue-400' />
+                    <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 transition-all duration-300'>
+                      <Icon name='document' class='size-5 text-blue-600 dark:text-blue-400' />
                     </div>
                     <h2 class='text-lg font-semibold text-foreground'>最新文章</h2>
                   </div>
                   <a href='/blog' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>查看更多 →</a>
                 </div>
                 <ul class='space-y-2'>
-                  {allPostsByDate.map((post, index) => (
+                  {allPostsByDate.map((post) => (
                     <li class='post-item'>
                       <a href={`/blog/${post.data.slug}`} class='flex items-center gap-3 p-2 rounded hover:bg-muted/50 transition-all group/item'>
                         <div class='size-6 rounded bg-muted flex items-center justify-center group-hover/item:bg-primary/10 group-hover/item:scale-110 transition-all'>
@@ -137,10 +137,11 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
               <div class='absolute inset-0'>
                 <Image 
                   src={avatarImage} 
-                  alt='Avatar' 
+                  alt='CatCodeMe 头像 - 个人博客作者' 
                   class='w-full h-full object-cover'
+                  loading='eager'
+                  fetchpriority='high'
                 />
-                <div class='absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500'></div>
               </div>
               <div class='relative p-6 z-10'>
                 <h3 class='text-xl font-semibold text-white mb-3'>CatCodeMe</h3>
@@ -154,13 +155,16 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                   </p>
                 </div>
                 <div class='flex items-center gap-3'>
-                  <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors'>
+                  <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors' aria-label='访问 GitHub 主页'>
                     <Icon name='github' class='size-5' />
                   </a>
-                  <a href='https://twitter.com' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors'>
+                  <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary transition-colors' aria-label='访问 Twitter 主页'>
                     <Icon name='x' class='size-5' />
                   </a>
-                  <a href='mailto:your@email.com' class='text-white hover:text-primary transition-colors'>
+                  <a href='/rss.xml' class='text-white hover:text-primary transition-colors' aria-label='订阅 RSS'>
+                    <Icon name='rss' class='size-5' />
+                  </a>
+                  <a href='#' id='email-link' class='text-white hover:text-primary transition-colors' aria-label='发送邮件'>
                     <Icon name='email' class='size-5' />
                   </a>
                 </div>
@@ -173,10 +177,10 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
               <div class='absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
               <div class='relative'>
                 <div class='flex items-center gap-2 mb-4'>
-                  <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
-                    <Icon name='document' class='size-4 text-blue-600 dark:text-blue-400' />
+                  <div class='size-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center group-hover:scale-110 transition-all duration-300'>
+                    <Icon name='content-statistic' class='size-5 text-blue-600 dark:text-blue-400' />
                   </div>
-                  <h2 class='text-lg font-semibold text-foreground'>博客统计</h2>
+                  <h2 class='text-lg font-semibold text-foreground'>统计</h2>
                 </div>
                 <div class='grid grid-cols-2 gap-4'>
                   <div class='text-center p-3 rounded-lg bg-muted/50'>
@@ -184,7 +188,9 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                     <div class='text-xs text-muted-foreground'>文章总数</div>
                   </div>
                   <div class='text-center p-3 rounded-lg bg-muted/50'>
-                    <div class='text-2xl font-bold text-foreground mb-1'>{totalWords.toLocaleString()}</div>
+                    <div class='text-2xl font-bold text-foreground mb-1'>
+                      <span id='total-words-counter' class='inline-block'>{totalWords.toLocaleString()}</span>
+                    </div>
                     <div class='text-xs text-muted-foreground'>总字数</div>
                   </div>
                 </div>
@@ -197,8 +203,8 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
               <div class='absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
               <div class='relative'>
                 <div class='flex items-center gap-2 mb-4'>
-                  <div class='size-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300'>
-                    <Icon name='github' class='size-4 text-orange-600 dark:text-orange-400' />
+                  <div class='size-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center group-hover:scale-110 transition-all duration-300'>
+                    <Icon name='github' class='size-5 text-orange-600 dark:text-orange-400' />
                   </div>
                   <h2 class='text-lg font-semibold text-foreground'>GitHub</h2>
                 </div>
@@ -206,14 +212,16 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                   <img
                     class='hidden w-full dark:block'
                     src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
-                    alt='github contribution snake dark'
+                    alt='GitHub 贡献图 - 深色模式 - 显示 CatCodeMe 的代码贡献活动'
                     loading='lazy'
+                    fetchpriority='low'
                   />
                   <img
                     class='block w-full dark:hidden'
                     src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
-                    alt='github contribution snake light'
+                    alt='GitHub 贡献图 - 浅色模式 - 显示 CatCodeMe 的代码贡献活动'
                     loading='lazy'
+                    fetchpriority='low'
                   />
                 </div>
               </div>
@@ -227,6 +235,59 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
   // Force light theme on homepage
   localStorage.setItem('theme', 'light');
   document.documentElement.dataset.theme = 'light';
+
+  // 数字滚动动画
+  function animateCounter(element, targetValue, duration = 2000) {
+    const startValue = 0;
+    const startTime = performance.now();
+    const targetNumber = parseInt(targetValue.replace(/,/g, ''));
+    
+    function updateCounter(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // 使用 easeOutCubic 缓动函数
+      const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic);
+      
+      element.textContent = currentValue.toLocaleString();
+      
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      } else {
+        element.textContent = targetValue;
+      }
+    }
+    
+    requestAnimationFrame(updateCounter);
+  }
+
+  // 邮箱混淆 - 防止爬虫抓取
+  function obfuscateEmail() {
+    // 将邮箱地址拆分成多个部分，避免明文出现
+    const parts = ['1020082805', '@', 'qq', '.', 'com'];
+    const email = parts.join('');
+    
+    const emailLink = document.getElementById('email-link');
+    if (emailLink) {
+      emailLink.href = 'mailto:' + email;
+    }
+  }
+
+  // 页面加载后启动动画
+  document.addEventListener('DOMContentLoaded', () => {
+    const counterElement = document.getElementById('total-words-counter');
+    if (counterElement) {
+      const targetValue = counterElement.textContent;
+      counterElement.textContent = '0';
+      setTimeout(() => {
+        animateCounter(counterElement, targetValue, 2000);
+      }, 500);
+    }
+    
+    // 初始化邮箱链接
+    obfuscateEmail();
+  });
 </script>
   </main>
 
@@ -330,6 +391,15 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     50% {
       box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
     }
+  }
+
+  /* 数字滚动动画 */
+  #total-words-counter {
+    transition: transform 0.1s ease-out;
+  }
+
+  #total-words-counter:hover {
+    transform: scale(1.1);
   }
 
 </style>
