@@ -29,7 +29,8 @@ export default defineConfig({
   // base: '/docs',
   trailingSlash: 'never',
   build: {
-    format: 'file'
+    format: 'file',
+    inlineStylesheets: 'auto'
   },
 
   // Adapter

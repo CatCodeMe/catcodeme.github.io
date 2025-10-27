@@ -13,7 +13,7 @@ body.hide-scrollbar::-webkit-scrollbar {
 }
 
 body {
-  font-family: "JyunsaiKaai";
+  font-family: "JyunsaiKaai", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: normal;
   text-autospace: normal;
 }

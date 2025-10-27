@@ -6,6 +6,7 @@ import { Image } from 'astro:assets'
 import { PostPreview } from '@/custom/components/pages'
 import bookshelfData from '../../public/bookshelf.json'
 import avatarImage from '@/assets/avatar_2.png'
+import config from '@/site-config'
 
 const MAX_POSTS = 6
 const allPosts = await getBlogCollection()
@@ -131,35 +132,21 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                   fetchpriority='high'
                 />
               </div>
-              <div class='relative flex-1 flex flex-col justify-end p-6 z-10'>
-                <h3 class='text-2xl font-bold text-white mb-3'>CatCodeMe</h3>
-                <div class='inline-flex items-center gap-x-2 rounded-lg border bg-background/90 px-3 py-1.5 text-sm shadow-lg backdrop-blur transition-all hover:shadow-xl mb-4'>
+              <div class='relative flex-1 flex flex-col justify-end p-3 z-10'>
+                <h3 class='text-2xl font-bold text-white mb-3'>{config.title}</h3>
+                <div class='inline-flex items-center gap-x-2 rounded-lg border bg-background/90 px-3 py-1.5 text-sm shadow-lg backdrop-blur transition-all hover:shadow-xl'>
                   <span class='relative flex items-center justify-center shrink-0'>
                     <span class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'></span>
                     <span class='size-2 rounded-full bg-green-400'></span>
                   </span>
                   <p class='font-medium text-foreground whitespace-nowrap'>
-                    文字沉淀生命, 回忆勾连古今
+                    {config.description}
                   </p>
-                </div>
-                <div class='flex items-center gap-3'>
-                  <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary hover:scale-125 transition-all duration-300' aria-label='访问 GitHub 主页'>
-                    <Icon name='github' class='size-5' />
-                  </a>
-                  <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='text-white hover:text-primary hover:scale-125 transition-all duration-300' aria-label='访问 Twitter 主页'>
-                    <Icon name='x' class='size-5' />
-                  </a>
-                  <a href='/rss.xml' class='text-white hover:text-primary hover:scale-125 transition-all duration-300' aria-label='订阅 RSS'>
-                    <Icon name='rss' class='size-5' />
-                  </a>
-                  <a href='#' id='email-link' class='text-white hover:text-primary hover:scale-125 transition-all duration-300' aria-label='发送邮件'>
-                    <Icon name='email' class='size-5' />
-                  </a>
                 </div>
               </div>
             </div>
 
-            {/* 统计和 GitHub 卡片容器 */}
+            {/* 统计和社交媒体卡片容器 */}
             <div class='flex flex-col gap-6'>
               {/* 统计卡片 */}
               <div class='dashboard-card stats-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-6 hover:border-green-500 transition-all hover:shadow-lg hover:shadow-green-500/10'>
@@ -179,7 +166,7 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                     <div class='px-3 py-1 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/30 text-left'>∑ 文章</div>
                     <div class='flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900 flex-1'>
                       <span class='text-sm font-semibold text-purple-900 dark:text-purple-100'>{totalPosts} / 100</span>
-                      <div class='h-1 flex-1 max-w-32 bg-purple-200 dark:bg-purple-800 rounded-full overflow-hidden relative'>
+                      <div class='h-1 flex-1 bg-purple-200 dark:bg-purple-800 rounded-full overflow-hidden relative'>
                         <div class='h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-1000' style={`width: ${Math.min((totalPosts / 100) * 100, 100)}%`}></div>
                       </div>
                     </div>
@@ -192,7 +179,7 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                       <span class='text-sm font-semibold text-blue-900 dark:text-blue-100'>
                         <span id='total-words-display'>{totalWords.toLocaleString()}</span> / 10万
                       </span>
-                      <div class='h-1 flex-1 max-w-32 bg-blue-200 dark:bg-blue-800 rounded-full overflow-hidden relative'>
+                      <div class='h-1 flex-1 bg-blue-200 dark:bg-blue-800 rounded-full overflow-hidden relative'>
                         <div class='h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-1000' style={`width: ${Math.min((totalWords / 100000) * 100, 100)}%`}></div>
                       </div>
                     </div>
@@ -205,7 +192,7 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                       <span class='text-sm font-semibold text-green-900 dark:text-green-100'>
                         <span id='total-views-display'>-</span> / 10万
                       </span>
-                      <div class='h-1 flex-1 max-w-32 bg-green-200 dark:bg-green-800 rounded-full overflow-hidden relative'>
+                      <div class='h-1 flex-1 bg-green-200 dark:bg-green-800 rounded-full overflow-hidden relative'>
                         <div id='total-views-progress' class='h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-1000' style='width: 0%'></div>
                       </div>
                     </div>
@@ -216,35 +203,32 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
               </div>
             </div>
 
-            {/* GitHub 活动图 */}
-            <div class='dashboard-card github-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-6 hover:border-orange-500 transition-all hover:shadow-lg hover:shadow-orange-500/10'>
-              {/* 装饰性图标 - 在右上角 */}
-              <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
-                <Icon name='github' class='w-full h-full text-orange-500 transition-all duration-500' />
-              </div>
-              
-              <div class='relative z-10'>
-                <div class='mb-4'>
-                  <h2 class='text-lg font-semibold text-foreground group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors'>GitHub</h2>
+              {/* 社交媒体卡片 */}
+              <div class='dashboard-card social-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-8 hover:border-orange-500 transition-all hover:shadow-lg hover:shadow-orange-500/10'>
+                {/* 装饰性图标 - 在右上角 */}
+                <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
+                  <Icon name='link' class='w-full h-full text-orange-500 transition-all duration-500' />
                 </div>
-                <div class='rounded overflow-hidden group-hover:scale-105 transition-transform duration-300'>
-                  <img
-                    class='hidden w-full dark:block'
-                    src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
-                    alt='GitHub 贡献图 - 深色模式 - 显示 CatCodeMe 的代码贡献活动'
-                    loading='lazy'
-                    fetchpriority='low'
-                  />
-                  <img
-                    class='block w-full dark:hidden'
-                    src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
-                    alt='GitHub 贡献图 - 浅色模式 - 显示 CatCodeMe 的代码贡献活动'
-                    loading='lazy'
-                    fetchpriority='low'
-                  />
+                
+                <div class='relative z-10'>
+                  <div class='flex flex-wrap gap-3'>
+                    <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 GitHub 主页'>
+                      <Icon name='github' class='size-6 text-[#181717] dark:text-[#ffffff] transition-transform' />
+                    </a>
+                    <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 Twitter 主页'>
+                      <Icon name='xFill' class='size-6 text-[#000000] dark:text-[#ffffff] transition-transform' />
+                    </a>
+                    <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 Bluesky 主页'>
+                      <Icon name='blueskyFill' class='size-6 text-[#00A8FF] transition-transform' />
+                    </a>
+                    <a href='/rss.xml' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='订阅 RSS'>
+                      <Icon name='rss' class='size-6 text-[#FFA500] transition-transform' />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
+
             </div>
           </div>
         </div>
@@ -381,8 +365,6 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
       }
     }
     
-    // 初始化邮箱链接
-    obfuscateEmail();
   });
 </script>
   </main>
