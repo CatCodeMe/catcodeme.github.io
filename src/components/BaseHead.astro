@@ -30,7 +30,13 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 
 {/* Font Preload */}
 <link rel="preload" href="/fonts/LinBiolinum.woff2" as="font" type="font/woff2" crossorigin />
+
+{/* External Font - Deferred Loading */}
 <link rel="preconnect" href="https://fontsapi.zeoseven.com" crossorigin />
+<link rel="dns-prefetch" href="https://fontsapi.zeoseven.com" />
+
+{/* DNS prefetch for performance */}
+<link rel="dns-prefetch" href="https://vercel.live" />
 
 {/* Canonical URL */}
 <link rel='canonical' href={canonicalURL} />
@@ -87,6 +93,17 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 
 {/* Styles */}
 <link rel='stylesheet' href='/styles/global.css' />
+
+{/* Async font loading */}
+<script is:inline>
+  // Load external font after page load to improve initial render
+  window.addEventListener('load', function() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fontsapi.zeoseven.com/89/main/result.css';
+    document.head.appendChild(link);
+  });
+</script>
 
 {
   /* User script*/

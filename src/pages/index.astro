@@ -110,8 +110,8 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
                   <a href='/blog' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>查看更多 →</a>
                 </div>
                 <ul class='flex flex-col gap-y-3'>
-                  {allPostsByDate.map((post) => (
-                    <PostPreview post={post} />
+                  {allPostsByDate.map((post, index) => (
+                    <PostPreview post={post} lazyLoadImage={index > 0} />
                   ))}
                 </ul>
               </div>
@@ -236,9 +236,11 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     </div>
 
 <script is:inline>
-  // Force light theme on homepage
-  localStorage.setItem('theme', 'light');
-  document.documentElement.dataset.theme = 'light';
+  // Force light theme on homepage - Execute immediately
+  // (function() {
+  //   localStorage.setItem('theme', 'light');
+  //   document.documentElement.dataset.theme = 'light';
+  // })();
 
   // 数字滚动动画
   function animateCounter(element, targetValue, duration = 2000) {
@@ -264,18 +266,6 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     }
     
     requestAnimationFrame(updateCounter);
-  }
-
-  // 邮箱混淆 - 防止爬虫抓取
-  function obfuscateEmail() {
-    // 将邮箱地址拆分成多个部分，避免明文出现
-    const parts = ['1020082805', '@', 'qq', '.', 'com'];
-    const email = parts.join('');
-    
-    const emailLink = document.getElementById('email-link');
-    if (emailLink) {
-      emailLink.href = 'mailto:' + email;
-    }
   }
 
   // 更新总浏览量显示和进度条
@@ -372,15 +362,15 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
 <style>
   /* 卡片渐入动画 */
   .dashboard-card {
-    animation: fadeInUp 0.6s ease-out;
-    animation-fill-mode: both;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
   }
 
-  .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
-  .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
-  .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
-  .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
-  .dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+  .reading-card { animation-delay: 0.1s; }
+  .posts-card { animation-delay: 0.2s; }
+  .avatar-card { animation-delay: 0.3s; }
+  .stats-card { animation-delay: 0.4s; }
+  .social-card { animation-delay: 0.5s; }
 
   @keyframes fadeInUp {
     from {

@@ -10,9 +10,10 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
   post: CollectionEntry<CollectionKey>
   detailed?: boolean
   class?: string
+  lazyLoadImage?: boolean
 }
 
-const { as: Tag = 'div', post, detailed = false, class: className } = Astro.props
+const { as: Tag = 'div', post, detailed = false, class: className, lazyLoadImage = true } = Astro.props
 
 const { data } = post
 
@@ -45,7 +46,7 @@ const postDate = data.updatedDate ?? data.publishDate
         <Image
           alt={data.heroImage.alt || data.title}
           class='cover-image absolute end-0 top-0 z-0 h-2/3 w-full rounded-2xl object-cover opacity-50 transition-opacity duration-300 group-hover/card:opacity-70 md:h-full md:w-3/5'
-          loading='eager'
+          loading={lazyLoadImage ? 'lazy' : 'eager'}
           {...data.heroImage}
         />
       )
