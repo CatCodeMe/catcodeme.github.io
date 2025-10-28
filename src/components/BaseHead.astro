@@ -94,17 +94,6 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 {/* Styles */}
 <link rel='stylesheet' href='/styles/global.css' />
 
-{/* Async font loading */}
-<script is:inline>
-  // Load external font after page load to improve initial render
-  window.addEventListener('load', function() {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://fontsapi.zeoseven.com/89/main/result.css';
-    document.head.appendChild(link);
-  });
-</script>
-
 {
   /* User script*/
   prod && (

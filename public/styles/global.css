@@ -1,4 +1,5 @@
 /* External font loading - Will be loaded via JavaScript */
+@import url("https://fontsapi.zeoseven.com/89/main/result.css");
 
 /* Homepage specific styles, triggered by a class added via script */
 body.hide-scrollbar {
