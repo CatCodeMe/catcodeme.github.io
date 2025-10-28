@@ -48,7 +48,7 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
     >
     </div>
 
-    <article class='min-w-0 grow'>
+    <article id='main-article' class='min-w-0 grow'>
       {/* Content header */}
       <div id='content-header' class='animate'>
         <slot name='header' />
@@ -123,6 +123,25 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
   @media (min-width: 769px) {
     #sidebar-shade {
       display: none !important;
+    }
+    
+    /* 调整整体布局 */
+    main {
+      gap: 0 2rem !important;
+    }
+    
+    /* 调整 sidebar 的位置和宽度 */
+    #sidebar {
+      width: 20rem !important;
+      min-width: 20rem !important;
+      flex-shrink: 0 !important;
+      margin-left: auto !important;
+    }
+    
+    /* 调整正文部分 */
+    #main-article {
+      flex: 1 1 auto;
+      max-width: none;
     }
   }
   @media (max-width: 769px) {
