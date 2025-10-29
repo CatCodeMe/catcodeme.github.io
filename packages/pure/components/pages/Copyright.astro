@@ -12,9 +12,7 @@ import { QRCode } from '../advanced'
 import { Icon } from '../user'
 
 interface Props<T extends CollectionKey> {
-  data: InferEntrySchema<T> & {
-    redirect_from?: string | string[]
-  }
+  data: InferEntrySchema<T>
   remarkPluginFrontmatter: Record<string, unknown>
   class?: string
 }
@@ -24,8 +22,6 @@ const {
   remarkPluginFrontmatter,
   class: className
 } = Astro.props
-
-const redirect_from = remarkPluginFrontmatter?.redirect_from
 
 const image = typeof heroImage?.src === 'string' ? heroImage?.src : (heroImage?.src?.src ?? '')
 
@@ -199,29 +195,14 @@ const showToastStr = showToast.toString()
   </a>
 </div>
 
-<script is:inline define:vars={{ redirect_from, showToastStr }}>
+<script is:inline define:vars={{ showToastStr }}>
   // 在客户端重建 showToast 函数
   const showToast = new Function(`return ${showToastStr}`)()
 
   // Copy link
   const copyLink = document.getElementById('copy-link')
   copyLink?.addEventListener('click', () => {
-    let linkToCopy = window.location.href
-
-    // 如果存在 redirect_from，使用第一个值
-    if (redirect_from) {
-      const redirectUrl = Array.isArray(redirect_from) ? redirect_from[0] : redirect_from
-
-      // 确保链接是完整的 URL
-      if (redirectUrl.startsWith('http')) {
-        linkToCopy = redirectUrl
-      } else {
-        // 如果是相对路径，转换为完整 URL
-        const baseUrl = window.location.origin
-        linkToCopy = `${baseUrl}${redirectUrl.startsWith('/') ? '' : '/'}${redirectUrl}`
-      }
-    }
-
+    const linkToCopy = window.location.href
     navigator.clipboard.writeText(linkToCopy)
     showToast({ message: 'Link copied!' })
   })
