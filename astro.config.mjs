@@ -3,6 +3,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
+import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
@@ -16,7 +17,6 @@ import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
-import { remarkMermaid } from './src/plugins/remark-mermaid';
 // Shiki
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
@@ -71,6 +71,15 @@ export default defineConfig({
     //     return slug
     //   }
     // }),
+    mermaid({
+      autoTheme: true,
+      theme: 'forest',
+      mermaidConfig: {
+        startOnLoad: false,
+        logLevel: 'error',
+        securityLevel: 'strict'
+      }
+    }),
     expressiveCode(),
     icon({
       include: {
@@ -124,9 +133,7 @@ export default defineConfig({
           }
         }
       ],
-      remarkBreaks,
-      remarkMermaid
-      // remarkAiNotice
+      remarkBreaks
     ],
     rehypePlugins: [
       [rehypeKatex, {}],

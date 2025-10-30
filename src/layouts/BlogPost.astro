@@ -1,7 +1,6 @@
 ---
 import type { MarkdownHeading } from 'astro'
 import type { CollectionEntry } from 'astro:content'
-import { Mermaid } from '@/custom/components/advanced'
 
 // Plugin styles
 import 'katex/dist/katex.min.css'
@@ -9,6 +8,7 @@ import 'katex/dist/katex.min.css'
 import { ArticleBottom, TOC, Copyright, Hero } from '@/custom/components/pages'
 
 import { MediumZoom } from 'astro-pure/advanced'
+import { MermaidEnhanced } from '@/custom/components/advanced'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import AccordionTOC from '@/components/toc/AccordionTOC.astro'
 import { Comment, PageInfo } from '@/components/waline'
@@ -81,7 +81,7 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
   </Fragment>
 
   <slot name='bottom-sidebar' slot='bottom-sidebar' />
-  <Mermaid />
+  <MermaidEnhanced />
 </PageLayout>
 
 {integ.mediumZoom.enable && <MediumZoom />}

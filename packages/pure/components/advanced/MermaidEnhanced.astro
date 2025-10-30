@@ -1,0 +1,307 @@
+---
+// Mermaid Enhanced Component
+// Adds copy and download buttons to mermaid diagrams
+// Only loads and runs when mermaid diagrams are present on the page
+---
+
+<style>
+  /* Mermaid diagram container */
+  :global(pre.mermaid) {
+    position: relative;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    overflow: visible;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+  }
+
+  /* Control buttons container */
+  :global(.mermaid-controls) {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    background: hsl(var(--background) / 0.9);
+    backdrop-filter: blur(8px);
+    border-radius: 0.375rem;
+    padding: 0.25rem;
+    border: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Show controls on hover */
+  :global(pre.mermaid:hover .mermaid-controls) {
+    opacity: 1;
+  }
+
+  /* Control button styles */
+  :global(.mermaid-control-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: hsl(var(--foreground) / 0.8);
+    transition: all 0.2s ease;
+  }
+
+  :global(.mermaid-control-btn:hover) {
+    background: hsl(var(--muted));
+    color: hsl(var(--foreground));
+  }
+
+  :global(.mermaid-control-btn:active) {
+    transform: scale(0.95);
+  }
+
+  :global(.mermaid-control-btn svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Copy success state */
+  :global(.mermaid-control-btn.copied) {
+    color: hsl(var(--primary));
+  }
+
+  :global(.mermaid-control-btn.copied svg) {
+    animation: checkmark 0.3s ease;
+  }
+
+  @keyframes checkmark {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    'use strict';
+    
+    // Early exit: Check if page has any mermaid diagrams before doing anything
+    function hasMermaidDiagrams() {
+      return document.querySelectorAll('pre.mermaid').length > 0;
+    }
+
+    // If no mermaid diagrams found, exit immediately
+    if (!hasMermaidDiagrams()) {
+      return;
+    }
+
+    // Store original code mapping
+    const originalCodeMap = new WeakMap();
+
+    function initMermaidControls() {
+      // Find all rendered mermaid diagrams (with data-processed attribute)
+      const mermaidDiagrams = document.querySelectorAll('pre.mermaid[data-processed]');
+
+      if (mermaidDiagrams.length === 0) return;
+
+      mermaidDiagrams.forEach((diagram) => {
+        // Skip if already enhanced
+        if (diagram.hasAttribute('data-enhanced')) return;
+
+        // Mark as enhanced
+        diagram.setAttribute('data-enhanced', 'true');
+
+        // Save original code from data-diagram attribute
+        if (!originalCodeMap.has(diagram)) {
+          const originalCode = diagram.getAttribute('data-diagram') || '';
+          if (originalCode) {
+            originalCodeMap.set(diagram, originalCode);
+          }
+        }
+
+        // Create controls container
+        const controls = document.createElement('div');
+        controls.className = 'mermaid-controls';
+
+        // Copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'mermaid-control-btn';
+        copyBtn.setAttribute('title', 'Copy source code');
+        copyBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        `;
+
+        // Download SVG button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'mermaid-control-btn';
+        downloadBtn.setAttribute('title', 'Download SVG');
+        downloadBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        `;
+
+        // Add buttons to controls
+        controls.appendChild(copyBtn);
+        controls.appendChild(downloadBtn);
+
+        // Add to diagram container
+        diagram.appendChild(controls);
+
+        // Copy functionality
+        copyBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          try {
+            const originalCode = originalCodeMap.get(diagram) || diagram.getAttribute('data-diagram') || '';
+            if (originalCode) {
+              await navigator.clipboard.writeText(originalCode);
+              copyBtn.classList.add('copied');
+              copyBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 6L9 17l-5-5"></path>
+                </svg>
+              `;
+              setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyBtn.innerHTML = `
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                `;
+              }, 2000);
+            }
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+        });
+
+        // Download SVG functionality
+        downloadBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          try {
+            const svgElement = diagram.querySelector('svg');
+            if (!svgElement) return;
+
+            const clonedSvg = svgElement.cloneNode(true);
+            const bbox = svgElement.getBBox();
+            clonedSvg.setAttribute('width', bbox.width.toString());
+            clonedSvg.setAttribute('height', bbox.height.toString());
+            clonedSvg.setAttribute('viewBox', bbox.x + ' ' + bbox.y + ' ' + bbox.width + ' ' + bbox.height);
+
+            const svgString = new XMLSerializer().serializeToString(clonedSvg);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const svgUrl = URL.createObjectURL(svgBlob);
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = 'mermaid-diagram-' + Date.now() + '.svg';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(svgUrl);
+          } catch (err) {
+            console.error('Failed to download:', err);
+          }
+        });
+      });
+    }
+
+    // Wait for DOM ready and check again
+    function waitForMermaid() {
+      // Check if there are any mermaid diagrams (rendered or not)
+      if (!hasMermaidDiagrams()) {
+        return; // Exit if no mermaid found
+      }
+
+      // Check for already rendered diagrams
+      const renderedDiagrams = document.querySelectorAll('pre.mermaid[data-processed]');
+      if (renderedDiagrams.length > 0) {
+        initMermaidControls();
+      }
+
+      // Only set up observer if mermaid diagrams exist
+      setupObserver();
+    }
+
+    // Set up MutationObserver only if mermaid diagrams exist
+    function setupObserver() {
+      let observer = null;
+      let checkCount = 0;
+      const MAX_CHECKS = 20; // Check for max 10 seconds (20 * 500ms)
+
+      observer = new MutationObserver((mutations) => {
+        let shouldInit = false;
+        mutations.forEach((mutation) => {
+          // Check for rendered diagrams
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-processed') {
+            if (mutation.target.classList && mutation.target.classList.contains('mermaid')) {
+              shouldInit = true;
+            }
+          }
+          // Check for new nodes
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) {
+              if (node.classList && node.classList.contains('mermaid')) {
+                if (node.hasAttribute('data-processed')) {
+                  shouldInit = true;
+                }
+              }
+              const diagrams = node.querySelectorAll && node.querySelectorAll('pre.mermaid[data-processed]');
+              if (diagrams && diagrams.length > 0) {
+                shouldInit = true;
+              }
+            }
+          });
+        });
+        
+        if (shouldInit) {
+          initMermaidControls();
+          checkCount = 0; // Reset counter when diagrams found
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['data-processed']
+      });
+
+      // Periodic check with limit
+      const checkInterval = setInterval(() => {
+        checkCount++;
+        const diagrams = document.querySelectorAll('pre.mermaid[data-processed]:not([data-enhanced])');
+        if (diagrams.length > 0) {
+          initMermaidControls();
+          checkCount = 0;
+        } else if (checkCount >= MAX_CHECKS) {
+          // Stop checking after max attempts
+          clearInterval(checkInterval);
+          observer.disconnect();
+        }
+      }, 500);
+    }
+
+    // Execute when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', waitForMermaid);
+    } else {
+      waitForMermaid();
+    }
+  })();
+</script>
