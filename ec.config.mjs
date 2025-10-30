@@ -34,7 +34,7 @@ export default defineEcConfig({
 
   /* Styles */
   styleOverrides: {
-    uiFontFamily: "'Chiron GoRound TC VF', 'Input Mono', 'Fira Code', 'monospace'",
+    uiFontFamily: "'Swei Gothic', 'Input Mono', 'Fira Code', 'monospace'",
     uiFontSize: '1em',
     codeBackground: (context) => (context.theme.name === 'vitesse-dark' ? '#0e0e0e' : '#fafafa'),
     codeFontFamily: "'Fira Code', 'monospace'",

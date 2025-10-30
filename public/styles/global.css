@@ -1,6 +1,6 @@
 /* External font loading - Will be loaded via JavaScript */
 /* @import url("https://fontsapi.zeoseven.com/89/main/result.css"); */
-@import url("https://fontsapi.zeoseven.com/545/main/result.css");
+@import url("https://fontsapi.zeoseven.com/709/main/result.css");
 
 /* Homepage specific styles, triggered by a class added via script */
 body.hide-scrollbar {
@@ -16,7 +16,7 @@ body.hide-scrollbar::-webkit-scrollbar {
 
 body {
   /* JyunsaiKaai */
-  font-family: "Chiron GoRound TC VF", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Swei Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: normal;
   text-autospace: normal;
 }

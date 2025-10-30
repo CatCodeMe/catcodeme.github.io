@@ -74,7 +74,8 @@ export default defineConfig({
     expressiveCode(),
     icon({
       include: {
-        devicon: ['*']
+        devicon: ['*'],
+        mingcute: ['*']
       }
     }),
     AstroPureIntegration(config)
