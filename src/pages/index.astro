@@ -31,127 +31,111 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
-  <main class='timeline-main'>
-    <div class='timeline-container'>
-      {/* 顶部信息区 */}
-      <header class='timeline-header'>
-        <div class='header-left'>
-          <h1 class='header-title'>{config.title}</h1>
-          <p class='header-desc'>{config.description}</p>
-        </div>
-        <div class='header-right'>
-          <div class='header-stats'>
-            <div class='stat'>
-              <span class='stat-num'>{totalPosts}</span>
-              <span class='stat-label'>文章</span>
-            </div>
-            <div class='stat'>
-              <span class='stat-num' id='total-words-display'>{totalWords.toLocaleString()}</span>
-              <span class='stat-label'>字数</span>
-            </div>
-            <div class='stat'>
-              <span class='stat-num' id='total-views-display'>-</span>
-              <span class='stat-label'>浏览</span>
-            </div>
-          </div>
-          <div class='header-meta'>
-            <span class='meta-item'>北京</span>
-            <span class='meta-item'>在线</span>
-          </div>
-        </div>
-      </header>
+  <main class='grid-main'>
+    <div class='grid-container'>
+      {/* 标题卡片 - 占据顶部整行 */}
+      <div class='grid-card grid-card-title'>
+        <h1 class='card-title'>{config.title}</h1>
+        <p class='card-subtitle'>{config.description}</p>
+      </div>
 
-      {/* 时间线主体 */}
-      <div class='timeline-body'>
-        {/* 左侧时间线 */}
-        <div class='timeline-line'>
-          <div class='timeline-start'></div>
-          <div class='timeline-progress'></div>
+      {/* 统计卡片组 - 三列 */}
+      <div class='grid-card grid-card-stats'>
+        <div class='stat-item'>
+          <div class='stat-value'>{totalPosts}</div>
+          <div class='stat-label'>文章</div>
         </div>
+        <div class='stat-item'>
+          <div class='stat-value' id='total-words-display'>{totalWords.toLocaleString()}</div>
+          <div class='stat-label'>字数</div>
+        </div>
+        <div class='stat-item'>
+          <div class='stat-value' id='total-views-display'>-</div>
+          <div class='stat-label'>浏览</div>
+        </div>
+      </div>
 
-        {/* 右侧内容 */}
-        <div class='timeline-content'>
-          {/* 最近在读节点 */}
-          {currentReading && (
-            <div class='timeline-node'>
-              <div class='node-dot'></div>
-              <div class='node-content'>
-                <div class='node-label'>最近在读</div>
-                <h3 class='node-title'>{currentReading.title}</h3>
-                {currentReading.description && (
-                  <p class='node-text'>{currentReading.description}</p>
-                )}
-                <div class='node-footer'>
-                  {currentReading.rating && (
-                    <span class='node-tag'>{currentReading.rating.toFixed(1)}</span>
-                  )}
-                  {currentReading.progress !== undefined && (
-                    <span class='node-tag'>{currentReading.progress}%</span>
-                  )}
-                  <a href='/shelf' class='node-link'>书架 →</a>
-                </div>
-              </div>
-            </div>
+      {/* 最近在读卡片 */}
+      {currentReading && (
+        <div class='grid-card grid-card-reading'>
+          <div class='card-label'>最近在读</div>
+          <h2 class='card-heading'>{currentReading.title}</h2>
+          {currentReading.description && (
+            <p class='card-text'>{currentReading.description}</p>
           )}
-
-          {/* 最新文章节点 */}
-          <div class='timeline-node'>
-            <div class='node-dot'></div>
-            <div class='node-content'>
-              <div class='node-label'>最新文章</div>
-              <div class='posts-group'>
-                {allPostsByDate.map((post, index) => (
-                  <article class='post-node' key={post.id}>
-                    <time class='post-time'>
-                      {new Date(post.data.publishDate).toLocaleDateString('zh-CN', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </time>
-                    <div class='post-body'>
-                      <h3 class='post-title'>
-                        <a href={post.url}>{post.data.title}</a>
-                      </h3>
-                      {post.data.description && (
-                        <p class='post-excerpt'>{post.data.description}</p>
-                      )}
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <div class='node-footer'>
-                <a href='/blog' class='node-link'>全部文章 →</a>
-              </div>
-            </div>
+          <div class='card-footer'>
+            {currentReading.rating && (
+              <span class='card-tag'>{currentReading.rating.toFixed(1)}</span>
+            )}
+            {currentReading.progress !== undefined && (
+              <span class='card-tag'>{currentReading.progress}%</span>
+            )}
+            <a href='/shelf' class='card-link'>书架 →</a>
           </div>
+        </div>
+      )}
 
-          {/* 联系方式节点 */}
-          <div class='timeline-node'>
-            <div class='node-dot'></div>
-            <div class='node-content'>
-              <div class='node-label'>联系方式</div>
-              <div class='links-group'>
-                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='link-item'>
-                  GitHub
-                </a>
-                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='link-item'>
-                  Twitter
-                </a>
-                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='link-item'>
-                  Bluesky
-                </a>
-                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='link-item'>
-                  Telegram
-                </a>
-                <a href='/rss.xml' class='link-item'>
-                  RSS
-                </a>
+      {/* 最新文章卡片 - 占据较大空间 */}
+      <div class='grid-card grid-card-posts'>
+        <div class='card-label'>最新文章</div>
+        <div class='posts-list'>
+          {allPostsByDate.map((post, index) => (
+            <article class='post-item' key={post.id}>
+              <div class='post-number'>{String(index + 1).padStart(2, '0')}</div>
+              <div class='post-content'>
+                <time class='post-date'>
+                  {new Date(post.data.publishDate).toLocaleDateString('zh-CN', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </time>
+                <h3 class='post-title'>
+                  <a href={post.url}>{post.data.title}</a>
+                </h3>
+                {post.data.description && (
+                  <p class='post-excerpt'>{post.data.description}</p>
+                )}
               </div>
-            </div>
-          </div>
+            </article>
+          ))}
+        </div>
+        <div class='card-footer'>
+          <a href='/blog' class='card-link'>全部文章 →</a>
+        </div>
+      </div>
 
-          <div class='timeline-end'></div>
+      {/* 联系卡片 */}
+      <div class='grid-card grid-card-links'>
+        <div class='card-label'>联系方式</div>
+        <div class='links-list'>
+          <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='link-item'>
+            GitHub
+          </a>
+          <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='link-item'>
+            Twitter
+          </a>
+          <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='link-item'>
+            Bluesky
+          </a>
+          <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='link-item'>
+            Telegram
+          </a>
+          <a href='/rss.xml' class='link-item'>
+            RSS
+          </a>
+        </div>
+      </div>
+
+      {/* 信息卡片 */}
+      <div class='grid-card grid-card-info'>
+        <div class='info-item'>
+          <span class='info-label'>位置</span>
+          <span class='info-value'>北京</span>
+        </div>
+        <div class='info-item'>
+          <span class='info-label'>状态</span>
+          <span class='info-value'>在线</span>
         </div>
       </div>
     </div>
@@ -237,9 +221,9 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
 </script>
 
 <style>
-  /* 方案B：垂直时间线风格 */
+  /* 方案C：网格系统风格 */
   /* 确保不受 BaseLayout 包装影响 */
-  .timeline-main {
+  .grid-main {
     width: 100vw !important;
     max-width: 100vw !important;
     padding: 0 !important;
@@ -249,41 +233,60 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     background: #ffffff;
   }
 
-  .timeline-container {
-    max-width: 1200px;
+  .grid-container {
+    max-width: 1400px;
     margin: 0 auto;
     padding: 4rem 3rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+    grid-auto-rows: min-content;
+  }
+
+  @media (max-width: 1200px) {
+    .grid-container {
+      grid-template-columns: repeat(8, 1fr);
+    }
   }
 
   @media (max-width: 768px) {
-    .timeline-container {
+    .grid-container {
+      grid-template-columns: repeat(4, 1fr);
       padding: 3rem 2rem;
+      gap: 1rem;
     }
   }
 
-  /* 头部区域 */
-  .timeline-header {
+  /* 网格卡片基础样式 */
+  .grid-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 2rem;
     display: flex;
-    justify-content: space-between;
-    align-items: start;
-    margin-bottom: 4rem;
-    padding-bottom: 2rem;
+    flex-direction: column;
+    transition: border-color 0.2s;
+  }
+
+  .grid-card:hover {
+    border-color: #000000;
+  }
+
+  @media (max-width: 768px) {
+    .grid-card {
+      padding: 1.5rem;
+    }
+  }
+
+  /* 标题卡片 - 占据整行 */
+  .grid-card-title {
+    grid-column: 1 / -1;
+    border: none;
+    padding: 0 0 3rem 0;
     border-bottom: 1px solid #e0e0e0;
   }
 
-  @media (max-width: 1024px) {
-    .timeline-header {
-      flex-direction: column;
-      gap: 2rem;
-    }
-  }
-
-  .header-left {
-    flex: 1;
-  }
-
-  .header-title {
-    font-size: 2.5rem;
+  .card-title {
+    font-size: 3rem;
     font-weight: 300;
     color: #000000;
     margin: 0 0 0.75rem 0;
@@ -291,7 +294,7 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     letter-spacing: -0.03em;
   }
 
-  .header-desc {
+  .card-subtitle {
     font-size: 1.125rem;
     color: #666666;
     margin: 0;
@@ -299,39 +302,35 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     font-weight: 300;
   }
 
-  .header-right {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: flex-end;
-  }
+  @media (max-width: 768px) {
+    .card-title {
+      font-size: 2rem;
+    }
 
-  @media (max-width: 1024px) {
-    .header-right {
-      align-items: flex-start;
+    .card-subtitle {
+      font-size: 1rem;
     }
   }
 
-  .header-stats {
-    display: flex;
-    gap: 2rem;
+  /* 统计卡片 - 占据整行 */
+  .grid-card-stats {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-around;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 2rem 0;
   }
 
-  .stat {
+  .stat-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  @media (max-width: 1024px) {
-    .stat {
-      align-items: flex-start;
-    }
-  }
-
-  .stat-num {
-    font-size: 1.25rem;
+  .stat-value {
+    font-size: 1.5rem;
     font-weight: 400;
     color: #000000;
     font-variant-numeric: tabular-nums;
@@ -344,187 +343,173 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     letter-spacing: 0.1em;
   }
 
-  .header-meta {
-    display: flex;
-    gap: 1rem;
+  /* 最近在读卡片 - 占据4列 */
+  .grid-card-reading {
+    grid-column: span 4;
   }
 
-  .meta-item {
-    font-size: 0.875rem;
-    color: #666666;
-  }
-
-  /* 时间线主体 */
-  .timeline-body {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    gap: 3rem;
-    position: relative;
-  }
-
-  @media (max-width: 768px) {
-    .timeline-body {
-      grid-template-columns: 40px 1fr;
-      gap: 2rem;
+  @media (max-width: 1200px) {
+    .grid-card-reading {
+      grid-column: span 4;
     }
   }
 
-  /* 时间线 */
-  .timeline-line {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .timeline-start {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #000000;
-    background: #ffffff;
-    margin-bottom: 1rem;
-  }
-
-  .timeline-progress {
-    flex: 1;
-    width: 1px;
-    background: #e0e0e0;
-    min-height: 200px;
-  }
-
-  .timeline-end {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #000000;
-    background: #ffffff;
-    margin-top: 1rem;
-  }
-
-  /* 时间线内容 */
-  .timeline-content {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    padding-bottom: 2rem;
-  }
-
-  /* 时间线节点 */
-  .timeline-node {
-    display: grid;
-    grid-template-columns: 20px 1fr;
-    gap: 2rem;
-    position: relative;
-  }
-
   @media (max-width: 768px) {
-    .timeline-node {
-      gap: 1.5rem;
+    .grid-card-reading {
+      grid-column: span 4;
     }
   }
 
-  .node-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #000000;
-    margin-top: 0.5rem;
-    flex-shrink: 0;
+  /* 最新文章卡片 - 占据8列 */
+  .grid-card-posts {
+    grid-column: span 8;
   }
 
-  .node-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-bottom: 2rem;
+  @media (max-width: 1200px) {
+    .grid-card-posts {
+      grid-column: span 4;
+    }
   }
 
-  .node-label {
+  @media (max-width: 768px) {
+    .grid-card-posts {
+      grid-column: span 4;
+    }
+  }
+
+  /* 联系卡片 - 占据4列 */
+  .grid-card-links {
+    grid-column: span 4;
+  }
+
+  @media (max-width: 1200px) {
+    .grid-card-links {
+      grid-column: span 4;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .grid-card-links {
+      grid-column: span 4;
+    }
+  }
+
+  /* 信息卡片 - 占据8列 */
+  .grid-card-info {
+    grid-column: span 8;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 3rem;
+  }
+
+  @media (max-width: 1200px) {
+    .grid-card-info {
+      grid-column: span 4;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .grid-card-info {
+      grid-column: span 4;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  /* 卡片通用元素 */
+  .card-label {
     font-size: 0.75rem;
     color: #888888;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
-  .node-title {
+  .card-heading {
     font-size: 1.5rem;
     font-weight: 400;
     color: #000000;
-    margin: 0;
+    margin: 0 0 0.75rem 0;
     line-height: 1.4;
   }
 
-  .node-text {
+  .card-text {
     font-size: 0.9375rem;
     color: #666666;
     line-height: 1.6;
-    margin: 0;
+    margin: 0 0 1rem 0;
   }
 
-  .node-footer {
+  .card-footer {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-top: 0.5rem;
+    margin-top: auto;
   }
 
-  .node-tag {
+  .card-tag {
     font-size: 0.8125rem;
     color: #666666;
   }
 
-  .node-link {
+  .card-link {
     font-size: 0.875rem;
     color: #000000;
     text-decoration: none;
     transition: opacity 0.2s;
   }
 
-  .node-link:hover {
+  .card-link:hover {
     opacity: 0.5;
   }
 
-  /* 文章组 */
-  .posts-group {
+  /* 文章列表 */
+  .posts-list {
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  .post-node {
+  .post-item {
     display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 2rem;
+    grid-template-columns: 40px 1fr;
+    gap: 1.5rem;
     padding: 1.5rem 0;
     border-top: 1px solid #f0f0f0;
   }
 
-  .post-node:first-child {
+  .post-item:first-child {
     border-top: none;
     padding-top: 0;
   }
 
   @media (max-width: 768px) {
-    .post-node {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
+    .post-item {
+      grid-template-columns: 30px 1fr;
+      gap: 1rem;
+      padding: 1rem 0;
     }
   }
 
-  .post-time {
-    font-size: 0.8125rem;
-    color: #888888;
+  .post-number {
+    font-size: 0.75rem;
+    color: #cccccc;
     font-variant-numeric: tabular-nums;
     align-self: start;
+    font-weight: 300;
   }
 
-  .post-body {
+  .post-content {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .post-date {
+    font-size: 0.75rem;
+    color: #888888;
+    font-variant-numeric: tabular-nums;
   }
 
   .post-title {
@@ -552,11 +537,11 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     margin: 0;
   }
 
-  /* 链接组 */
-  .links-group {
+  /* 链接列表 */
+  .links-list {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .link-item {
@@ -570,18 +555,23 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
     color: #000000;
   }
 
-  @media (max-width: 768px) {
-    .header-title {
-      font-size: 2rem;
-    }
+  /* 信息项 */
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
 
-    .header-desc {
-      font-size: 1rem;
-    }
+  .info-label {
+    font-size: 0.75rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 
-    .header-stats {
-      gap: 1.5rem;
-    }
+  .info-value {
+    font-size: 0.875rem;
+    color: #000000;
   }
 </style>
   </main>
