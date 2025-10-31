@@ -3,7 +3,6 @@ import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { Icon } from '@/custom/components/user'
 import { Image } from 'astro:assets'
-import { PostPreview } from '@/custom/components/pages'
 import bookshelfData from '../../public/bookshelf.json'
 import avatarImage from '@/assets/avatar_2.png'
 import config from '@/site-config'
@@ -17,334 +16,310 @@ const totalPosts = allPosts.length
 let totalWords = 0
 for (const post of allPosts) {
   if (post.body) {
-    // 移除 HTML 标签和 Markdown 语法
     const text = post.body
-      .replace(/<[^>]*>/g, '') // 移除 HTML 标签
-      .replace(/\[([^\]]*)\]\([^\)]*\)/g, '$1') // 移除 Markdown 链接
-      .replace(/!\[([^\]]*)\]\([^\)]*\)/g, '') // 移除图片
-      .replace(/[#*`_~]/g, '') // 移除 Markdown 标记
-      .replace(/\n/g, ' ') // 换行符替换为空格
-    // 统计中文字符和英文单词
+      .replace(/<[^>]*>/g, '')
+      .replace(/\[([^\]]*)\]\([^\)]*\)/g, '$1')
+      .replace(/!\[([^\]]*)\]\([^\)]*\)/g, '')
+      .replace(/[#*`_~]/g, '')
+      .replace(/\n/g, ' ')
     const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || []
     const englishWords = text.match(/[a-zA-Z]+/g) || []
     totalWords += chineseChars.length + englishWords.length
   }
 }
 
-// 获取书架数据
 const currentReading = bookshelfData.find((item: any) => item.status === 'reading')
+
+const currentDate = new Date()
+const dateStr = currentDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+const timeStr = currentDate.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 ---
 
-<PageLayout meta={{ title: 'Home' }}>
-  <main class='flex w-full flex-col'>
-    <!-- Dashboard 首页 - 单屏布局 -->
-    <div class='w-full py-12 px-4'>
-      <div class='mx-auto max-w-6xl'>
+<PageLayout meta={{ title: 'Home' }} bodyClass='receipt-homepage'>
+  <main class='receipt-main'>
+    <div class='receipt-container'>
+      <!-- 顶部锯齿 -->
+      <div class='receipt-top-teeth'></div>
+      
+      <!-- 收银纸内容 -->
+      <div class='receipt-content'>
+        <!-- 商店信息头部 -->
+        <header class='receipt-header-section'>
+          <div class='receipt-store-name'>{config.title}</div>
+          <div class='receipt-store-subtitle'>{config.description}</div>
+          <div class='receipt-divider-line'></div>
+          <div class='receipt-store-info'>
+            <div class='receipt-info-row'>
+              <span class='receipt-info-label'>日期:</span>
+              <span class='receipt-info-value'>{dateStr}</span>
+            </div>
+            <div class='receipt-info-row'>
+              <span class='receipt-info-label'>时间:</span>
+              <span class='receipt-info-value'>{timeStr}</span>
+            </div>
+            <div class='receipt-info-row'>
+              <span class='receipt-info-label'>位置:</span>
+              <span class='receipt-info-value'>北京</span>
+            </div>
+          </div>
+          <div class='receipt-divider-line'></div>
+        </header>
+
         <!-- 主要内容区域 -->
-        <div class='grid grid-cols-1 lg:grid-cols-5 gap-6'>
-          <!-- 左侧：最近在读 + 最新文章 -->
-          <div class='lg:col-span-3 space-y-6 order-2 lg:order-1'>
-            {/* 最近在读 - 详细信息 */}
+        <div class='receipt-body-section'>
+          <!-- 左侧主要内容 -->
+          <div class='receipt-main-column'>
+            {/* 最近在读 */}
             {currentReading && (
-              <div class='dashboard-card reading-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-6 hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10'>
-                {/* 装饰性图标 - 在右上角 */}
-                <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
-                  <Icon name='shelf' class='w-full h-full text-primary transition-all duration-500' />
+              <section class='receipt-section'>
+                <div class='receipt-section-header'>
+                  <Icon name='shelf' class='receipt-section-icon' />
+                  <span class='receipt-section-title'>最近在读</span>
                 </div>
-                
-                <div class='relative z-10'>
-                  <div class='flex items-center justify-between mb-4'>
-                    <h2 class='text-lg font-semibold text-foreground group-hover:text-primary transition-colors'>最近在读</h2>
-                    <a href='/shelf' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>前往书架 →</a>
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-section-content'>
+                  <div class='receipt-item-row'>
+                    <span class='receipt-item-label'>书名</span>
+                    <span class='receipt-item-value'>{currentReading.title}</span>
                   </div>
-                  
-                  <div class='mb-4'>
-                    <div class='flex items-start justify-between gap-4 mb-2'>
-                      <div class='flex-1 min-w-0'>
-                        <h3 class='text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2'>
-                          {currentReading.title}
-                        </h3>
-                        {currentReading.description && (
-                          <p class='text-sm text-muted-foreground line-clamp-2'>
-                            {currentReading.description}
-                          </p>
-                        )}
+                  {currentReading.description && (
+                    <>
+                      <div class='receipt-divider-dashed'></div>
+                      <div class='receipt-item-row'>
+                        <span class='receipt-item-label'>简介</span>
+                        <span class='receipt-item-value receipt-item-description'>{currentReading.description}</span>
                       </div>
-                      <div class='flex items-center gap-2 flex-shrink-0'>
-                        {currentReading.rating && (
-                          <div class='flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium'>
-                            <Icon name='star' class='size-3.5 text-yellow-400' />
-                            <span>{currentReading.rating.toFixed(1)}</span>
-                          </div>
-                        )}
-                        <div class='flex items-center gap-1 rounded-md bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-2 py-1 text-xs font-medium'>
-                          <Icon name='time' class='size-3.5' />
-                          <span>
-                            在读{currentReading.progress !== undefined && ` / ${currentReading.progress}%`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {currentReading.tags && currentReading.tags.length > 0 && (
-                    <div class='flex flex-wrap gap-2'>
-                      {currentReading.tags.slice(0, 4).map((tag) => (
-                        <span class='text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors'>{tag}</span>
-                      ))}
-                    </div>
+                    </>
                   )}
+                  {(currentReading.rating || currentReading.progress !== undefined) && (
+                    <>
+                      <div class='receipt-divider-dashed'></div>
+                      <div class='receipt-item-row'>
+                        <span class='receipt-item-label'>状态</span>
+                        <span class='receipt-item-value'>
+                          {currentReading.rating && `评分: ${currentReading.rating.toFixed(1)} `}
+                          {currentReading.progress !== undefined && `进度: ${currentReading.progress}%`}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {currentReading.tags && currentReading.tags.length > 0 && (
+                    <>
+                      <div class='receipt-divider-dashed'></div>
+                      <div class='receipt-item-row'>
+                        <span class='receipt-item-label'>标签</span>
+                        <span class='receipt-item-value receipt-item-tags'>
+                          {currentReading.tags.slice(0, 4).join(' / ')}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  <div class='receipt-divider-dashed'></div>
+                  <div class='receipt-link-row'>
+                    <a href='/shelf' class='receipt-link'>前往书架 →</a>
+                  </div>
                 </div>
-              </div>
+              </section>
             )}
 
             {/* 最新文章 */}
-            <div class='dashboard-card posts-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-6 hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10'>
-              {/* 装饰性图标 - 在右上角 */}
-              <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
-                <Icon name='document' class='w-full h-full text-primary transition-all duration-500' />
+            <section class='receipt-section'>
+              <div class='receipt-section-header'>
+                <Icon name='document' class='receipt-section-icon' />
+                <span class='receipt-section-title'>最新文章</span>
               </div>
-              
-              <div class='relative z-10'>
-                <div class='flex items-center justify-between mb-4'>
-                  <h2 class='text-lg font-semibold text-foreground group-hover:text-primary transition-colors'>最新文章</h2>
-                  <a href='/blog' class='text-sm text-primary hover:underline group-hover:translate-x-1 transition-transform inline-block'>查看更多 →</a>
+              <div class='receipt-divider-dashed'></div>
+              <div class='receipt-section-content'>
+                {allPostsByDate.map((post, index) => (
+                  <div key={post.id}>
+                    <div class='receipt-post-item'>
+                      <div class='receipt-post-row'>
+                        <span class='receipt-post-date'>{new Date(post.data.publishDate).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}</span>
+                        <a href={post.url} class='receipt-post-title'>{post.data.title}</a>
+                      </div>
+                      {post.data.description && (
+                        <div class='receipt-post-description'>{post.data.description}</div>
+                      )}
+                    </div>
+                    {index < allPostsByDate.length - 1 && <div class='receipt-divider-dotted'></div>}
+                  </div>
+                ))}
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-link-row'>
+                  <a href='/blog' class='receipt-link'>查看更多 →</a>
                 </div>
-                <ul class='flex flex-col gap-y-3'>
-                  {allPostsByDate.map((post, index) => (
-                    <PostPreview post={post} lazyLoadImage={index > 0} />
-                  ))}
-                </ul>
               </div>
-            </div>
-
+            </section>
           </div>
 
-          <!-- 右侧：头像 + 技能 + GitHub 活动 -->
-          <div class='lg:col-span-2 flex flex-col gap-6 order-1 lg:order-2'>
-            {/* 头像卡片 - 背景设计 */}
-            <div class='dashboard-card avatar-card group relative overflow-hidden rounded-xl border bg-background hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10 flex-1 flex flex-col'>
-              <div class='absolute inset-0'>
+          <!-- 右侧统计和联系 -->
+          <div class='receipt-sidebar-column'>
+            {/* 头像卡片 */}
+            <section class='receipt-section receipt-avatar-section'>
+              <div class='receipt-avatar-wrapper'>
                 <Image 
                   src={avatarImage} 
-                  alt='CatCodeMe 头像 - 个人博客作者' 
-                  class='w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700'
+                  alt='CatCodeMe 头像' 
+                  class='receipt-avatar-image'
                   loading='eager'
                   fetchpriority='high'
                 />
               </div>
-              <div class='relative flex-1 flex flex-col justify-end p-3 z-10'>
-                <div class='flex items-center gap-3 mb-3'>
-                  <h3 class='text-2xl font-bold text-white'>{config.title}</h3>
-                  <div class='flex items-center gap-1 text-white/80'>
-                    <Icon name='location' class='size-4' />
-                    <span class='text-sm'>北京</span>
-                  </div>
+              <div class='receipt-divider-dashed'></div>
+              <div class='receipt-avatar-info'>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>姓名</span>
+                  <span class='receipt-item-value'>{config.title}</span>
                 </div>
-                <div class='inline-flex items-center gap-x-2 rounded-lg border bg-background/90 px-3 py-1.5 text-sm shadow-lg backdrop-blur transition-all hover:shadow-xl'>
-                  <span class='relative flex items-center justify-center shrink-0'>
-                    <span class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'></span>
-                    <span class='size-2 rounded-full bg-green-400'></span>
-                  </span>
-                  <p class='font-medium text-foreground whitespace-nowrap'>
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>状态</span>
+                  <span class='receipt-item-value'>
+                    <span class='receipt-status-dot'></span>
                     {config.description}
-                  </p>
+                  </span>
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* 统计和社交媒体卡片容器 */}
-            <div class='flex flex-col gap-6'>
-              {/* 统计卡片 */}
-              <div class='dashboard-card stats-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-6 hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10'>
-              {/* 装饰性图标 - 在右上角 */}
-              <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
-                <Icon name='content-statistic' class='w-full h-full text-primary transition-all duration-500' />
+            {/* 统计卡片 */}
+            <section class='receipt-section receipt-stats-section'>
+              <div class='receipt-section-header'>
+                <Icon name='content-statistic' class='receipt-section-icon' />
+                <span class='receipt-section-title'>站点统计</span>
               </div>
-              
-              <div class='relative z-10'>
-                <div class='mb-4'>
-                  <h2 class='text-lg font-semibold text-foreground group-hover:text-primary transition-colors'>站点统计</h2>
+              <div class='receipt-divider-dashed'></div>
+              <div class='receipt-section-content'>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>文章总数</span>
+                  <span class='receipt-item-value receipt-number'>{String(totalPosts).padStart(6, ' ')}</span>
                 </div>
-                
-                <div class='space-y-2'>
-                  {/* 文章总数 */}
-                  <div class='flex items-center gap-0 overflow-hidden rounded-md border border-purple-200 dark:border-purple-800'>
-                    <div class='px-3 py-1 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/30 text-left'>∑ 文章</div>
-                    <div class='flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900 flex-1'>
-                      <span class='text-sm font-semibold text-purple-900 dark:text-purple-100'>{totalPosts} / 100</span>
-                      <div class='h-1 flex-1 bg-purple-200 dark:bg-purple-800 rounded-full overflow-hidden relative'>
-                        <div class='h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-1000' style={`width: ${Math.min((totalPosts / 100) * 100, 100)}%`}></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* 总字数 */}
-                  <div class='flex items-center gap-0 overflow-hidden rounded-md border border-blue-200 dark:border-blue-800'>
-                    <div class='px-3 py-1 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 text-left'>∑ 字数</div>
-                    <div class='flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900 flex-1'>
-                      <span class='text-sm font-semibold text-blue-900 dark:text-blue-100'>
-                        <span id='total-words-display'>{totalWords.toLocaleString()}</span> / 10万
-                      </span>
-                      <div class='h-1 flex-1 bg-blue-200 dark:bg-blue-800 rounded-full overflow-hidden relative'>
-                        <div class='h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-1000' style={`width: ${Math.min((totalWords / 100000) * 100, 100)}%`}></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* 总浏览量 */}
-                  <div class='flex items-center gap-0 overflow-hidden rounded-md border border-green-200 dark:border-green-800'>
-                    <div class='px-3 py-1 text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/30 text-left'>∑ 浏览</div>
-                    <div class='flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900 flex-1'>
-                      <span class='text-sm font-semibold text-green-900 dark:text-green-100'>
-                        <span id='total-views-display'>-</span> / 10万
-                      </span>
-                      <div class='h-1 flex-1 bg-green-200 dark:bg-green-800 rounded-full overflow-hidden relative'>
-                        <div id='total-views-progress' class='h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-1000' style='width: 0%'></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <span id='vercount_value_site_pv' class='hidden'></span>
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>总字数</span>
+                  <span class='receipt-item-value receipt-number' id='total-words-display'>{String(totalWords).padStart(12, ' ')}</span>
+                </div>
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>总浏览量</span>
+                  <span class='receipt-item-value receipt-number' id='total-views-display'>            -</span>
+                </div>
+                <div class='receipt-divider-dashed'></div>
+                <div class='receipt-item-row'>
+                  <span class='receipt-item-label'>最后更新</span>
+                  <span class='receipt-item-value receipt-date-value'>{dateStr}</span>
                 </div>
               </div>
-            </div>
+            </section>
 
-              {/* 社交媒体卡片 */}
-              <div class='dashboard-card social-card group relative overflow-hidden rounded-xl border-2 border-transparent bg-background p-8 hover:border-primary transition-all hover:shadow-lg hover:shadow-primary/10'>
-                {/* 装饰性图标 - 在右上角 */}
-                <div class='absolute top-4 right-4 w-12 h-12 opacity-10 group-hover:opacity-20 transition-all duration-500'>
-                  <Icon name='link' class='w-full h-full text-primary transition-all duration-500' />
-                </div>
-                
-                <div class='relative z-10'>
-                  <div class='flex flex-wrap gap-3'>
-                    <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 GitHub 主页'>
-                      <Icon name='github' class='size-6 transition-transform' />
-                    </a>
-                    <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 Twitter 主页'>
-                      <Icon name='x' class='size-6 transition-transform' />
-                    </a>
-                    <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 Bluesky 主页'>
-                      <Icon name='bluesky' class='size-6 transition-transform' />
-                    </a>
-                    <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='访问 Telegram 频道'>
-                      <Icon name='telegram' class='size-6 transition-transform' />
-                    </a>
-                    <a href='/rss.xml' class='group/link flex size-10 items-center justify-center transition-all hover:scale-110' aria-label='订阅 RSS'>
-                      <Icon name='rss' class='size-6 transition-transform' />
-                    </a>
-                  </div>
-                </div>
+            {/* 联系方式 */}
+            <section class='receipt-section receipt-social-section'>
+              <div class='receipt-section-header'>
+                <Icon name='link' class='receipt-section-icon' />
+                <span class='receipt-section-title'>联系方式</span>
               </div>
-            </div>
-
-            </div>
+              <div class='receipt-divider-dashed'></div>
+              <div class='receipt-social-links'>
+                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 GitHub 主页'>
+                  <Icon name='github' class='receipt-social-icon' />
+                  <span>GitHub</span>
+                </a>
+                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Twitter 主页'>
+                  <Icon name='x' class='receipt-social-icon' />
+                  <span>Twitter</span>
+                </a>
+                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Bluesky 主页'>
+                  <Icon name='bluesky' class='receipt-social-icon' />
+                  <span>Bluesky</span>
+                </a>
+                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Telegram 频道'>
+                  <Icon name='telegram' class='receipt-social-icon' />
+                  <span>Telegram</span>
+                </a>
+                <a href='/rss.xml' class='receipt-social-link' aria-label='订阅 RSS'>
+                  <Icon name='rss' class='receipt-social-icon' />
+                  <span>RSS</span>
+                </a>
+              </div>
+            </section>
           </div>
         </div>
+
+        <!-- 底部信息 -->
+        <footer class='receipt-footer-section'>
+          <div class='receipt-divider-line'></div>
+          <div class='receipt-thanks'>感谢您的访问</div>
+          <div class='receipt-divider-line'></div>
+        </footer>
       </div>
+
+      <!-- 底部锯齿 -->
+      <div class='receipt-bottom-teeth'></div>
+      
+      <span id='vercount_value_site_pv' class='hidden'></span>
     </div>
 
 <script is:inline>
-  // Force light theme on homepage - Execute immediately
-  // (function() {
-  //   localStorage.setItem('theme', 'light');
-  //   document.documentElement.dataset.theme = 'light';
-  // })();
-
-  // 数字滚动动画
   function animateCounter(element, targetValue, duration = 2000) {
     const startValue = 0;
     const startTime = performance.now();
-    const targetNumber = parseInt(targetValue.replace(/,/g, ''));
+    const targetNumber = parseInt(targetValue.replace(/,/g, '').replace(/\s/g, ''));
     
     function updateCounter(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
-      // 使用 easeOutCubic 缓动函数
       const easeOutCubic = 1 - Math.pow(1 - progress, 3);
       const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic);
-      
-      element.textContent = currentValue.toLocaleString();
+      const formatted = currentValue.toLocaleString().padStart(12, ' ');
+      element.textContent = formatted;
       
       if (progress < 1) {
         requestAnimationFrame(updateCounter);
       } else {
-        element.textContent = targetValue;
+        element.textContent = targetValue.replace(/,/g, '').padStart(12, ' ');
       }
     }
     
     requestAnimationFrame(updateCounter);
   }
 
-  // 更新总浏览量显示和进度条
-  function updateViewsDisplay(viewsElement, progressElement, newValue, hasAnimated = false) {
-    if (viewsElement && progressElement && newValue && newValue !== '-') {
+  function updateViewsDisplay(viewsElement, newValue, hasAnimated = false) {
+    if (viewsElement && newValue && newValue !== '-') {
       const views = parseInt(newValue.replace(/,/g, ''));
       
-      // 如果是第一次加载，执行滚动动画
       if (!hasAnimated) {
-        viewsElement.textContent = '0';
+        viewsElement.textContent = '           0';
         setTimeout(() => {
-          animateCounter(viewsElement, views.toLocaleString(), 2000);
-          
-          // 进度条动画
-          const percentage = Math.min((views / 100000) * 100, 100);
-          let currentProgress = 0;
-          const startTime = performance.now();
-          const duration = 2000;
-          
-          function updateProgress(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-            currentProgress = percentage * easeOutCubic;
-            
-            progressElement.style.width = currentProgress + '%';
-            
-            if (progress < 1) {
-              requestAnimationFrame(updateProgress);
-            } else {
-              progressElement.style.width = percentage + '%';
-            }
-          }
-          
-          requestAnimationFrame(updateProgress);
+          const formatted = views.toLocaleString().padStart(12, ' ');
+          animateCounter(viewsElement, formatted, 2000);
         }, 500);
       } else {
-        // 后续更新直接显示
-        viewsElement.textContent = views.toLocaleString();
-        const percentage = Math.min((views / 100000) * 100, 100);
-        progressElement.style.width = percentage + '%';
+        viewsElement.textContent = views.toLocaleString().padStart(12, ' ');
       }
     }
   }
 
-  // 页面加载后启动动画
   document.addEventListener('DOMContentLoaded', () => {
-    // 总字数滚动动画
     const wordsDisplayElement = document.getElementById('total-words-display');
     if (wordsDisplayElement) {
-      const targetValue = wordsDisplayElement.textContent;
-      wordsDisplayElement.textContent = '0';
+      const targetValue = wordsDisplayElement.textContent.replace(/\s/g, '');
+      wordsDisplayElement.textContent = '           0';
       setTimeout(() => {
-        animateCounter(wordsDisplayElement, targetValue, 2000);
+        const formatted = targetValue.replace(/,/g, '').padStart(12, ' ');
+        animateCounter(wordsDisplayElement, formatted, 2000);
       }, 500);
     }
     
-    // 监听总浏览量更新
     const viewsDisplayElement = document.getElementById('total-views-display');
-    const viewsProgressElement = document.getElementById('total-views-progress');
     const vercountElement = document.getElementById('vercount_value_site_pv');
     let hasAnimatedViews = false;
     
-    if (viewsDisplayElement && viewsProgressElement && vercountElement) {
-      // 使用 MutationObserver 监听 vercount 元素的变化
+    if (viewsDisplayElement && vercountElement) {
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           if (mutation.type === 'childList' || mutation.type === 'characterData') {
             const newValue = vercountElement.textContent;
-            updateViewsDisplay(viewsDisplayElement, viewsProgressElement, newValue, hasAnimatedViews);
+            updateViewsDisplay(viewsDisplayElement, newValue, hasAnimatedViews);
             hasAnimatedViews = true;
           }
         });
@@ -356,120 +331,533 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
         subtree: true
       });
       
-      // 立即检查一次（如果值已经加载）
       const currentValue = vercountElement.textContent;
       if (currentValue && currentValue !== '-') {
-        updateViewsDisplay(viewsDisplayElement, viewsProgressElement, currentValue, hasAnimatedViews);
+        updateViewsDisplay(viewsDisplayElement, currentValue, hasAnimatedViews);
         hasAnimatedViews = true;
       }
     }
-    
   });
 </script>
-  </main>
 
 <style>
-  /* 卡片渐入动画 */
-  .dashboard-card {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
+  /* 收银纸主容器 */
+  .receipt-main {
+    width: 100%;
+    padding: 2rem 0;
+    position: relative;
+    z-index: 1;
   }
 
-  .reading-card { animation-delay: 0.1s; }
-  .posts-card { animation-delay: 0.2s; }
-  .avatar-card { animation-delay: 0.3s; }
-  .stats-card { animation-delay: 0.4s; }
-  .social-card { animation-delay: 0.5s; }
+  .receipt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
 
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+  /* 锯齿边缘 */
+  .receipt-top-teeth,
+  .receipt-bottom-teeth {
+    height: 8px;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .receipt-top-teeth::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 3px,
+      #ffffff 3px,
+      #ffffff 6px
+    );
+    clip-path: polygon(
+      0% 100%,
+      1.5% 0%,
+      3% 100%,
+      4.5% 0%,
+      6% 100%,
+      7.5% 0%,
+      9% 100%,
+      10.5% 0%,
+      12% 100%,
+      13.5% 0%,
+      15% 100%,
+      16.5% 0%,
+      18% 100%,
+      19.5% 0%,
+      21% 100%,
+      22.5% 0%,
+      24% 100%,
+      25.5% 0%,
+      27% 100%,
+      28.5% 0%,
+      30% 100%,
+      31.5% 0%,
+      33% 100%,
+      34.5% 0%,
+      36% 100%,
+      37.5% 0%,
+      39% 100%,
+      40.5% 0%,
+      42% 100%,
+      43.5% 0%,
+      45% 100%,
+      46.5% 0%,
+      48% 100%,
+      49.5% 0%,
+      51% 100%,
+      52.5% 0%,
+      54% 100%,
+      55.5% 0%,
+      57% 100%,
+      58.5% 0%,
+      60% 100%,
+      61.5% 0%,
+      63% 100%,
+      64.5% 0%,
+      66% 100%,
+      67.5% 0%,
+      69% 100%,
+      70.5% 0%,
+      72% 100%,
+      73.5% 0%,
+      75% 100%,
+      76.5% 0%,
+      78% 100%,
+      79.5% 0%,
+      81% 100%,
+      82.5% 0%,
+      84% 100%,
+      85.5% 0%,
+      87% 100%,
+      88.5% 0%,
+      90% 100%,
+      91.5% 0%,
+      93% 100%,
+      94.5% 0%,
+      96% 100%,
+      97.5% 0%,
+      100% 100%
+    );
+  }
+
+  .receipt-bottom-teeth::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 3px,
+      #ffffff 3px,
+      #ffffff 6px
+    );
+    clip-path: polygon(
+      0% 0%,
+      1.5% 100%,
+      3% 0%,
+      4.5% 100%,
+      6% 0%,
+      7.5% 100%,
+      9% 0%,
+      10.5% 100%,
+      12% 0%,
+      13.5% 100%,
+      15% 0%,
+      16.5% 100%,
+      18% 0%,
+      19.5% 100%,
+      21% 0%,
+      22.5% 100%,
+      24% 0%,
+      25.5% 100%,
+      27% 0%,
+      28.5% 100%,
+      30% 0%,
+      31.5% 100%,
+      33% 0%,
+      34.5% 100%,
+      36% 0%,
+      37.5% 100%,
+      39% 0%,
+      40.5% 100%,
+      42% 0%,
+      43.5% 100%,
+      45% 0%,
+      46.5% 100%,
+      48% 0%,
+      49.5% 100%,
+      51% 0%,
+      52.5% 100%,
+      54% 0%,
+      55.5% 100%,
+      57% 0%,
+      58.5% 100%,
+      60% 0%,
+      61.5% 100%,
+      63% 0%,
+      64.5% 100%,
+      66% 0%,
+      67.5% 100%,
+      69% 0%,
+      70.5% 100%,
+      72% 0%,
+      73.5% 100%,
+      75% 0%,
+      76.5% 100%,
+      78% 0%,
+      79.5% 100%,
+      81% 0%,
+      82.5% 100%,
+      84% 0%,
+      85.5% 100%,
+      87% 0%,
+      88.5% 100%,
+      90% 0%,
+      91.5% 100%,
+      93% 0%,
+      94.5% 100%,
+      96% 0%,
+      97.5% 100%,
+      100% 0%
+    );
+  }
+
+  /* 收银纸内容 */
+  .receipt-content {
+    padding: 3rem 4rem;
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+    background: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .receipt-content {
+      padding: 2rem 1.5rem;
     }
-    to {
+  }
+
+  /* 头部区域 */
+  .receipt-header-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .receipt-store-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000000;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .receipt-store-subtitle {
+    font-size: 1rem;
+    color: #666666;
+    margin-bottom: 1rem;
+  }
+
+  .receipt-divider-line {
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0px,
+      transparent 2px,
+      #000000 2px,
+      #000000 4px
+    );
+    margin: 1rem 0;
+  }
+
+  .receipt-store-info {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .receipt-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+  }
+
+  .receipt-info-label {
+    color: #666666;
+  }
+
+  .receipt-info-value {
+    color: #000000;
+    font-weight: 600;
+  }
+
+  /* 主体区域 */
+  .receipt-body-section {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 1024px) {
+    .receipt-body-section {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* 章节 */
+  .receipt-section {
+    margin-bottom: 2rem;
+  }
+
+  .receipt-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .receipt-section-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #000000;
+  }
+
+  .receipt-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #000000;
+    letter-spacing: 1px;
+  }
+
+  .receipt-section-content {
+    padding-left: 0.25rem;
+  }
+
+  /* 分隔线 */
+  .receipt-divider-dashed {
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0px,
+      transparent 3px,
+      #cccccc 3px,
+      #cccccc 6px
+    );
+    margin: 0.75rem 0;
+  }
+
+  .receipt-divider-dotted {
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0px,
+      transparent 1px,
+      #cccccc 1px,
+      #cccccc 2px
+    );
+    margin: 0.5rem 0;
+  }
+
+  /* 行项目 */
+  .receipt-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  .receipt-item-label {
+    color: #666666;
+    min-width: 80px;
+    text-align: left;
+  }
+
+  .receipt-item-value {
+    color: #000000;
+    text-align: right;
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .receipt-item-description {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .receipt-item-tags {
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+
+  .receipt-number {
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+    white-space: pre;
+    letter-spacing: 1px;
+  }
+
+  .receipt-date-value {
+    font-size: 0.75rem;
+    white-space: normal;
+  }
+
+  /* 链接 */
+  .receipt-link-row {
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+
+  .receipt-link {
+    color: #000000;
+    text-decoration: underline;
+    font-size: 0.875rem;
+    transition: opacity 0.2s;
+  }
+
+  .receipt-link:hover {
+    opacity: 0.6;
+  }
+
+  /* 文章列表 */
+  .receipt-post-item {
+    padding: 0.5rem 0;
+  }
+
+  .receipt-post-row {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .receipt-post-date {
+    font-size: 0.75rem;
+    color: #666666;
+    min-width: 40px;
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+  }
+
+  .receipt-post-title {
+    color: #000000;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex: 1;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .receipt-post-title:hover {
+    opacity: 0.6;
+  }
+
+  .receipt-post-description {
+    font-size: 0.75rem;
+    color: #666666;
+    margin-top: 0.25rem;
+    padding-left: 52px;
+    line-height: 1.4;
+  }
+
+  /* 头像区域 */
+  .receipt-avatar-section {
+    text-align: center;
+  }
+
+  .receipt-avatar-wrapper {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #000000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .receipt-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .receipt-avatar-info {
+    text-align: left;
+  }
+
+  .receipt-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    margin-right: 0.5rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
       opacity: 1;
-      transform: translateY(0);
+    }
+    50% {
+      opacity: 0.5;
     }
   }
 
-
-  /* 首页文章预览优化 */
-  .posts-card .post-preview {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-  }
-
-  .posts-card .post-preview:hover {
-    background-color: hsl(var(--muted) / 0.5);
-  }
-
-  .posts-card .post-preview a {
+  /* 社交媒体链接 */
+  .receipt-social-links {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
 
-  .posts-card .post-preview .min-w-\[95px\] {
-    min-width: 70px;
-    font-size: 0.75rem;
+  .receipt-social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    color: #000000;
+    text-decoration: none;
+    font-size: 0.875rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
   }
 
-  .posts-card .post-preview .preview-redirect {
-    width: 12px;
-    height: 12px;
+  .receipt-social-link:hover {
+    border-color: #000000;
+    background: rgba(0, 0, 0, 0.02);
   }
 
-  /* 卡片悬停效果 */
-  .reading-card:hover {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
+  .receipt-social-icon {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
-  .posts-card:hover {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
+  /* 底部 */
+  .receipt-footer-section {
+    text-align: center;
+    margin-top: 2rem;
   }
 
-  .avatar-card:hover {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
+  .receipt-thanks {
+    font-size: 0.875rem;
+    color: #666666;
+    margin: 1rem 0;
+    letter-spacing: 1px;
   }
-
-  .stats-card:hover {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
-  }
-
-  .social-card:hover {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
-  }
-
-  /* 确保左右两列高度对齐 */
-  @media (min-width: 1024px) {
-    .grid > div:nth-child(2) {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: stretch;
-    }
-    
-    .grid > div:nth-child(2) > div {
-      flex: 1;
-    }
-  }
-
-  /* 进度条动画 */
-  .progress-bar {
-    animation: progressGlow 2s ease-in-out infinite;
-  }
-
-  @keyframes progressGlow {
-    0%, 100% {
-      box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
-    }
-    50% {
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
-    }
-  }
-
 </style>
+  </main>
 </PageLayout>
