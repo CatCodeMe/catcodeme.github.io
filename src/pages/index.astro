@@ -11,7 +11,6 @@ const MAX_POSTS = 6
 const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
-// 统计文章总数和总字数
 const totalPosts = allPosts.length
 let totalWords = 0
 for (const post of allPosts) {
@@ -29,254 +28,153 @@ for (const post of allPosts) {
 }
 
 const currentReading = bookshelfData.find((item: any) => item.status === 'reading')
-
-const currentDate = new Date()
-const dateStr = currentDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
-const timeStr = currentDate.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 ---
 
-<PageLayout meta={{ title: 'Home' }} bodyClass='receipt-homepage'>
-  <main class='receipt-main'>
-    <div class='receipt-container'>
-      <!-- 顶部锯齿 -->
-      <div class='receipt-top-teeth'></div>
-      
-      <!-- 收银纸内容 -->
-      <div class='receipt-content'>
-        <!-- 商店信息头部 -->
-        <header class='receipt-header-section'>
-          <div class='receipt-store-name'>{config.title}</div>
-          <div class='receipt-store-subtitle'>{config.description}</div>
-          <div class='receipt-divider-line'></div>
-          <div class='receipt-store-info'>
-            <div class='receipt-info-row'>
-              <span class='receipt-info-label'>日期:</span>
-              <span class='receipt-info-value'>{dateStr}</span>
+<PageLayout meta={{ title: 'Home' }}>
+  <main class='timeline-main'>
+    <div class='timeline-container'>
+      {/* 顶部信息区 */}
+      <header class='timeline-header'>
+        <div class='header-left'>
+          <h1 class='header-title'>{config.title}</h1>
+          <p class='header-desc'>{config.description}</p>
+        </div>
+        <div class='header-right'>
+          <div class='header-stats'>
+            <div class='stat'>
+              <span class='stat-num'>{totalPosts}</span>
+              <span class='stat-label'>文章</span>
             </div>
-            <div class='receipt-info-row'>
-              <span class='receipt-info-label'>时间:</span>
-              <span class='receipt-info-value'>{timeStr}</span>
+            <div class='stat'>
+              <span class='stat-num' id='total-words-display'>{totalWords.toLocaleString()}</span>
+              <span class='stat-label'>字数</span>
             </div>
-            <div class='receipt-info-row'>
-              <span class='receipt-info-label'>位置:</span>
-              <span class='receipt-info-value'>北京</span>
+            <div class='stat'>
+              <span class='stat-num' id='total-views-display'>-</span>
+              <span class='stat-label'>浏览</span>
             </div>
           </div>
-          <div class='receipt-divider-line'></div>
-        </header>
-
-        <!-- 主要内容区域 -->
-        <div class='receipt-body-section'>
-          <!-- 左侧主要内容 -->
-          <div class='receipt-main-column'>
-            {/* 最近在读 */}
-            {currentReading && (
-              <section class='receipt-section'>
-                <div class='receipt-section-header'>
-                  <Icon name='shelf' class='receipt-section-icon' />
-                  <span class='receipt-section-title'>最近在读</span>
-                </div>
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-section-content'>
-                  <div class='receipt-item-row'>
-                    <span class='receipt-item-label'>书名</span>
-                    <span class='receipt-item-value'>{currentReading.title}</span>
-                  </div>
-                  {currentReading.description && (
-                    <>
-                      <div class='receipt-divider-dashed'></div>
-                      <div class='receipt-item-row'>
-                        <span class='receipt-item-label'>简介</span>
-                        <span class='receipt-item-value receipt-item-description'>{currentReading.description}</span>
-                      </div>
-                    </>
-                  )}
-                  {(currentReading.rating || currentReading.progress !== undefined) && (
-                    <>
-                      <div class='receipt-divider-dashed'></div>
-                      <div class='receipt-item-row'>
-                        <span class='receipt-item-label'>状态</span>
-                        <span class='receipt-item-value'>
-                          {currentReading.rating && `评分: ${currentReading.rating.toFixed(1)} `}
-                          {currentReading.progress !== undefined && `进度: ${currentReading.progress}%`}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                  {currentReading.tags && currentReading.tags.length > 0 && (
-                    <>
-                      <div class='receipt-divider-dashed'></div>
-                      <div class='receipt-item-row'>
-                        <span class='receipt-item-label'>标签</span>
-                        <span class='receipt-item-value receipt-item-tags'>
-                          {currentReading.tags.slice(0, 4).join(' / ')}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                  <div class='receipt-divider-dashed'></div>
-                  <div class='receipt-link-row'>
-                    <a href='/shelf' class='receipt-link'>前往书架 →</a>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* 最新文章 */}
-            <section class='receipt-section'>
-              <div class='receipt-section-header'>
-                <Icon name='document' class='receipt-section-icon' />
-                <span class='receipt-section-title'>最新文章</span>
-              </div>
-              <div class='receipt-divider-dashed'></div>
-              <div class='receipt-section-content'>
-                {allPostsByDate.map((post, index) => (
-                  <div key={post.id}>
-                    <div class='receipt-post-item'>
-                      <div class='receipt-post-row'>
-                        <span class='receipt-post-date'>{new Date(post.data.publishDate).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}</span>
-                        <a href={post.url} class='receipt-post-title'>{post.data.title}</a>
-                      </div>
-                      {post.data.description && (
-                        <div class='receipt-post-description'>{post.data.description}</div>
-                      )}
-                    </div>
-                    {index < allPostsByDate.length - 1 && <div class='receipt-divider-dotted'></div>}
-                  </div>
-                ))}
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-link-row'>
-                  <a href='/blog' class='receipt-link'>查看更多 →</a>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <!-- 右侧统计和联系 -->
-          <div class='receipt-sidebar-column'>
-            {/* 头像卡片 */}
-            <section class='receipt-section receipt-avatar-section'>
-              <div class='receipt-avatar-wrapper'>
-                <Image 
-                  src={avatarImage} 
-                  alt='CatCodeMe 头像' 
-                  class='receipt-avatar-image'
-                  loading='eager'
-                  fetchpriority='high'
-                />
-              </div>
-              <div class='receipt-divider-dashed'></div>
-              <div class='receipt-avatar-info'>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>姓名</span>
-                  <span class='receipt-item-value'>{config.title}</span>
-                </div>
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>状态</span>
-                  <span class='receipt-item-value'>
-                    <span class='receipt-status-dot'></span>
-                    {config.description}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* 统计卡片 */}
-            <section class='receipt-section receipt-stats-section'>
-              <div class='receipt-section-header'>
-                <Icon name='content-statistic' class='receipt-section-icon' />
-                <span class='receipt-section-title'>站点统计</span>
-              </div>
-              <div class='receipt-divider-dashed'></div>
-              <div class='receipt-section-content'>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>文章总数</span>
-                  <span class='receipt-item-value receipt-number'>{String(totalPosts).padStart(6, ' ')}</span>
-                </div>
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>总字数</span>
-                  <span class='receipt-item-value receipt-number' id='total-words-display'>{String(totalWords).padStart(12, ' ')}</span>
-                </div>
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>总浏览量</span>
-                  <span class='receipt-item-value receipt-number' id='total-views-display'>            -</span>
-                </div>
-                <div class='receipt-divider-dashed'></div>
-                <div class='receipt-item-row'>
-                  <span class='receipt-item-label'>最后更新</span>
-                  <span class='receipt-item-value receipt-date-value'>{dateStr}</span>
-                </div>
-              </div>
-            </section>
-
-            {/* 联系方式 */}
-            <section class='receipt-section receipt-social-section'>
-              <div class='receipt-section-header'>
-                <Icon name='link' class='receipt-section-icon' />
-                <span class='receipt-section-title'>联系方式</span>
-              </div>
-              <div class='receipt-divider-dashed'></div>
-              <div class='receipt-social-links'>
-                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 GitHub 主页'>
-                  <Icon name='github' class='receipt-social-icon' />
-                  <span>GitHub</span>
-                </a>
-                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Twitter 主页'>
-                  <Icon name='x' class='receipt-social-icon' />
-                  <span>Twitter</span>
-                </a>
-                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Bluesky 主页'>
-                  <Icon name='bluesky' class='receipt-social-icon' />
-                  <span>Bluesky</span>
-                </a>
-                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='receipt-social-link' aria-label='访问 Telegram 频道'>
-                  <Icon name='telegram' class='receipt-social-icon' />
-                  <span>Telegram</span>
-                </a>
-                <a href='/rss.xml' class='receipt-social-link' aria-label='订阅 RSS'>
-                  <Icon name='rss' class='receipt-social-icon' />
-                  <span>RSS</span>
-                </a>
-              </div>
-            </section>
+          <div class='header-meta'>
+            <span class='meta-item'>北京</span>
+            <span class='meta-item'>在线</span>
           </div>
         </div>
+      </header>
 
-        <!-- 底部信息 -->
-        <footer class='receipt-footer-section'>
-          <div class='receipt-divider-line'></div>
-          <div class='receipt-thanks'>感谢您的访问</div>
-          <div class='receipt-divider-line'></div>
-        </footer>
+      {/* 时间线主体 */}
+      <div class='timeline-body'>
+        {/* 左侧时间线 */}
+        <div class='timeline-line'>
+          <div class='timeline-start'></div>
+          <div class='timeline-progress'></div>
+        </div>
+
+        {/* 右侧内容 */}
+        <div class='timeline-content'>
+          {/* 最近在读节点 */}
+          {currentReading && (
+            <div class='timeline-node'>
+              <div class='node-dot'></div>
+              <div class='node-content'>
+                <div class='node-label'>最近在读</div>
+                <h3 class='node-title'>{currentReading.title}</h3>
+                {currentReading.description && (
+                  <p class='node-text'>{currentReading.description}</p>
+                )}
+                <div class='node-footer'>
+                  {currentReading.rating && (
+                    <span class='node-tag'>{currentReading.rating.toFixed(1)}</span>
+                  )}
+                  {currentReading.progress !== undefined && (
+                    <span class='node-tag'>{currentReading.progress}%</span>
+                  )}
+                  <a href='/shelf' class='node-link'>书架 →</a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 最新文章节点 */}
+          <div class='timeline-node'>
+            <div class='node-dot'></div>
+            <div class='node-content'>
+              <div class='node-label'>最新文章</div>
+              <div class='posts-group'>
+                {allPostsByDate.map((post, index) => (
+                  <article class='post-node' key={post.id}>
+                    <time class='post-time'>
+                      {new Date(post.data.publishDate).toLocaleDateString('zh-CN', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </time>
+                    <div class='post-body'>
+                      <h3 class='post-title'>
+                        <a href={post.url}>{post.data.title}</a>
+                      </h3>
+                      {post.data.description && (
+                        <p class='post-excerpt'>{post.data.description}</p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div class='node-footer'>
+                <a href='/blog' class='node-link'>全部文章 →</a>
+              </div>
+            </div>
+          </div>
+
+          {/* 联系方式节点 */}
+          <div class='timeline-node'>
+            <div class='node-dot'></div>
+            <div class='node-content'>
+              <div class='node-label'>联系方式</div>
+              <div class='links-group'>
+                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='link-item'>
+                  GitHub
+                </a>
+                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='link-item'>
+                  Twitter
+                </a>
+                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='link-item'>
+                  Bluesky
+                </a>
+                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='link-item'>
+                  Telegram
+                </a>
+                <a href='/rss.xml' class='link-item'>
+                  RSS
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class='timeline-end'></div>
+        </div>
       </div>
-
-      <!-- 底部锯齿 -->
-      <div class='receipt-bottom-teeth'></div>
-      
-      <span id='vercount_value_site_pv' class='hidden'></span>
     </div>
+
+    <span id='vercount_value_site_pv' class='hidden'></span>
 
 <script is:inline>
   function animateCounter(element, targetValue, duration = 2000) {
     const startValue = 0;
     const startTime = performance.now();
-    const targetNumber = parseInt(targetValue.replace(/,/g, '').replace(/\s/g, ''));
+    const targetNumber = parseInt(targetValue.replace(/,/g, ''));
     
     function updateCounter(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOutCubic = 1 - Math.pow(1 - progress, 3);
       const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic);
-      const formatted = currentValue.toLocaleString().padStart(12, ' ');
-      element.textContent = formatted;
+      element.textContent = currentValue.toLocaleString();
       
       if (progress < 1) {
         requestAnimationFrame(updateCounter);
       } else {
-        element.textContent = targetValue.replace(/,/g, '').padStart(12, ' ');
+        element.textContent = targetValue;
       }
     }
     
@@ -288,13 +186,12 @@ const timeStr = currentDate.toLocaleTimeString('zh-CN', { hour: '2-digit', minut
       const views = parseInt(newValue.replace(/,/g, ''));
       
       if (!hasAnimated) {
-        viewsElement.textContent = '           0';
+        viewsElement.textContent = '0';
         setTimeout(() => {
-          const formatted = views.toLocaleString().padStart(12, ' ');
-          animateCounter(viewsElement, formatted, 2000);
+          animateCounter(viewsElement, views.toLocaleString(), 2000);
         }, 500);
       } else {
-        viewsElement.textContent = views.toLocaleString().padStart(12, ' ');
+        viewsElement.textContent = views.toLocaleString();
       }
     }
   }
@@ -302,11 +199,10 @@ const timeStr = currentDate.toLocaleTimeString('zh-CN', { hour: '2-digit', minut
   document.addEventListener('DOMContentLoaded', () => {
     const wordsDisplayElement = document.getElementById('total-words-display');
     if (wordsDisplayElement) {
-      const targetValue = wordsDisplayElement.textContent.replace(/\s/g, '');
-      wordsDisplayElement.textContent = '           0';
+      const targetValue = wordsDisplayElement.textContent;
+      wordsDisplayElement.textContent = '0';
       setTimeout(() => {
-        const formatted = targetValue.replace(/,/g, '').padStart(12, ' ');
-        animateCounter(wordsDisplayElement, formatted, 2000);
+        animateCounter(wordsDisplayElement, targetValue, 2000);
       }, 500);
     }
     
@@ -341,522 +237,351 @@ const timeStr = currentDate.toLocaleTimeString('zh-CN', { hour: '2-digit', minut
 </script>
 
 <style>
-  /* 收银纸主容器 */
-  .receipt-main {
-    width: 100%;
-    padding: 2rem 0;
-    position: relative;
-    z-index: 1;
+  /* 方案B：垂直时间线风格 */
+  /* 确保不受 BaseLayout 包装影响 */
+  .timeline-main {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    background: #ffffff;
   }
 
-  .receipt-container {
+  .timeline-container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #ffffff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-  }
-
-  /* 锯齿边缘 */
-  .receipt-top-teeth,
-  .receipt-bottom-teeth {
-    height: 8px;
-    background: #ffffff;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .receipt-top-teeth::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 3px,
-      #ffffff 3px,
-      #ffffff 6px
-    );
-    clip-path: polygon(
-      0% 100%,
-      1.5% 0%,
-      3% 100%,
-      4.5% 0%,
-      6% 100%,
-      7.5% 0%,
-      9% 100%,
-      10.5% 0%,
-      12% 100%,
-      13.5% 0%,
-      15% 100%,
-      16.5% 0%,
-      18% 100%,
-      19.5% 0%,
-      21% 100%,
-      22.5% 0%,
-      24% 100%,
-      25.5% 0%,
-      27% 100%,
-      28.5% 0%,
-      30% 100%,
-      31.5% 0%,
-      33% 100%,
-      34.5% 0%,
-      36% 100%,
-      37.5% 0%,
-      39% 100%,
-      40.5% 0%,
-      42% 100%,
-      43.5% 0%,
-      45% 100%,
-      46.5% 0%,
-      48% 100%,
-      49.5% 0%,
-      51% 100%,
-      52.5% 0%,
-      54% 100%,
-      55.5% 0%,
-      57% 100%,
-      58.5% 0%,
-      60% 100%,
-      61.5% 0%,
-      63% 100%,
-      64.5% 0%,
-      66% 100%,
-      67.5% 0%,
-      69% 100%,
-      70.5% 0%,
-      72% 100%,
-      73.5% 0%,
-      75% 100%,
-      76.5% 0%,
-      78% 100%,
-      79.5% 0%,
-      81% 100%,
-      82.5% 0%,
-      84% 100%,
-      85.5% 0%,
-      87% 100%,
-      88.5% 0%,
-      90% 100%,
-      91.5% 0%,
-      93% 100%,
-      94.5% 0%,
-      96% 100%,
-      97.5% 0%,
-      100% 100%
-    );
-  }
-
-  .receipt-bottom-teeth::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 3px,
-      #ffffff 3px,
-      #ffffff 6px
-    );
-    clip-path: polygon(
-      0% 0%,
-      1.5% 100%,
-      3% 0%,
-      4.5% 100%,
-      6% 0%,
-      7.5% 100%,
-      9% 0%,
-      10.5% 100%,
-      12% 0%,
-      13.5% 100%,
-      15% 0%,
-      16.5% 100%,
-      18% 0%,
-      19.5% 100%,
-      21% 0%,
-      22.5% 100%,
-      24% 0%,
-      25.5% 100%,
-      27% 0%,
-      28.5% 100%,
-      30% 0%,
-      31.5% 100%,
-      33% 0%,
-      34.5% 100%,
-      36% 0%,
-      37.5% 100%,
-      39% 0%,
-      40.5% 100%,
-      42% 0%,
-      43.5% 100%,
-      45% 0%,
-      46.5% 100%,
-      48% 0%,
-      49.5% 100%,
-      51% 0%,
-      52.5% 100%,
-      54% 0%,
-      55.5% 100%,
-      57% 0%,
-      58.5% 100%,
-      60% 0%,
-      61.5% 100%,
-      63% 0%,
-      64.5% 100%,
-      66% 0%,
-      67.5% 100%,
-      69% 0%,
-      70.5% 100%,
-      72% 0%,
-      73.5% 100%,
-      75% 0%,
-      76.5% 100%,
-      78% 0%,
-      79.5% 100%,
-      81% 0%,
-      82.5% 100%,
-      84% 0%,
-      85.5% 100%,
-      87% 0%,
-      88.5% 100%,
-      90% 0%,
-      91.5% 100%,
-      93% 0%,
-      94.5% 100%,
-      96% 0%,
-      97.5% 100%,
-      100% 0%
-    );
-  }
-
-  /* 收银纸内容 */
-  .receipt-content {
-    padding: 3rem 4rem;
-    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-    background: #ffffff;
+    padding: 4rem 3rem;
   }
 
   @media (max-width: 768px) {
-    .receipt-content {
-      padding: 2rem 1.5rem;
+    .timeline-container {
+      padding: 3rem 2rem;
     }
   }
 
   /* 头部区域 */
-  .receipt-header-section {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .receipt-store-name {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #000000;
-    letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-  }
-
-  .receipt-store-subtitle {
-    font-size: 1rem;
-    color: #666666;
-    margin-bottom: 1rem;
-  }
-
-  .receipt-divider-line {
-    height: 1px;
-    background: repeating-linear-gradient(
-      to right,
-      transparent 0px,
-      transparent 2px,
-      #000000 2px,
-      #000000 4px
-    );
-    margin: 1rem 0;
-  }
-
-  .receipt-store-info {
-    text-align: left;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-
-  .receipt-info-row {
+  .timeline-header {
     display: flex;
     justify-content: space-between;
-    padding: 0.25rem 0;
-    font-size: 0.875rem;
-  }
-
-  .receipt-info-label {
-    color: #666666;
-  }
-
-  .receipt-info-value {
-    color: #000000;
-    font-weight: 600;
-  }
-
-  /* 主体区域 */
-  .receipt-body-section {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 3rem;
-    margin-bottom: 2rem;
+    align-items: start;
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
   }
 
   @media (max-width: 1024px) {
-    .receipt-body-section {
-      grid-template-columns: 1fr;
+    .timeline-header {
+      flex-direction: column;
       gap: 2rem;
     }
   }
 
-  /* 章节 */
-  .receipt-section {
-    margin-bottom: 2rem;
+  .header-left {
+    flex: 1;
   }
 
-  .receipt-section-header {
+  .header-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #000000;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .header-desc {
+    font-size: 1.125rem;
+    color: #666666;
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-end;
+  }
+
+  @media (max-width: 1024px) {
+    .header-right {
+      align-items: flex-start;
+    }
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  @media (max-width: 1024px) {
+    .stat {
+      align-items: flex-start;
+    }
+  }
+
+  .stat-num {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #000000;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .meta-item {
+    font-size: 0.875rem;
+    color: #666666;
+  }
+
+  /* 时间线主体 */
+  .timeline-body {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 3rem;
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-body {
+      grid-template-columns: 40px 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* 时间线 */
+  .timeline-line {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .timeline-start {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    background: #ffffff;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-progress {
+    flex: 1;
+    width: 1px;
+    background: #e0e0e0;
+    min-height: 200px;
+  }
+
+  .timeline-end {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    background: #ffffff;
+    margin-top: 1rem;
+  }
+
+  /* 时间线内容 */
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    padding-bottom: 2rem;
+  }
+
+  /* 时间线节点 */
+  .timeline-node {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 2rem;
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-node {
+      gap: 1.5rem;
+    }
+  }
+
+  .node-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #000000;
+    margin-top: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .node-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+  }
+
+  .node-label {
+    font-size: 0.75rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .node-title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .node-text {
+    font-size: 0.9375rem;
+    color: #666666;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .node-footer {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .receipt-section-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: #000000;
-  }
-
-  .receipt-section-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #000000;
-    letter-spacing: 1px;
-  }
-
-  .receipt-section-content {
-    padding-left: 0.25rem;
-  }
-
-  /* 分隔线 */
-  .receipt-divider-dashed {
-    height: 1px;
-    background: repeating-linear-gradient(
-      to right,
-      transparent 0px,
-      transparent 3px,
-      #cccccc 3px,
-      #cccccc 6px
-    );
-    margin: 0.75rem 0;
-  }
-
-  .receipt-divider-dotted {
-    height: 1px;
-    background: repeating-linear-gradient(
-      to right,
-      transparent 0px,
-      transparent 1px,
-      #cccccc 1px,
-      #cccccc 2px
-    );
-    margin: 0.5rem 0;
-  }
-
-  /* 行项目 */
-  .receipt-item-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0.5rem 0;
-    font-size: 0.875rem;
-  }
-
-  .receipt-item-label {
-    color: #666666;
-    min-width: 80px;
-    text-align: left;
-  }
-
-  .receipt-item-value {
-    color: #000000;
-    text-align: right;
-    flex: 1;
-    font-weight: 600;
-  }
-
-  .receipt-item-description {
-    font-size: 0.8125rem;
-    font-weight: 400;
-    line-height: 1.5;
-    text-align: left;
-  }
-
-  .receipt-item-tags {
-    font-size: 0.8125rem;
-    font-weight: 400;
-  }
-
-  .receipt-number {
-    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-    white-space: pre;
-    letter-spacing: 1px;
-  }
-
-  .receipt-date-value {
-    font-size: 0.75rem;
-    white-space: normal;
-  }
-
-  /* 链接 */
-  .receipt-link-row {
-    text-align: right;
+    gap: 1rem;
+    flex-wrap: wrap;
     margin-top: 0.5rem;
   }
 
-  .receipt-link {
-    color: #000000;
-    text-decoration: underline;
-    font-size: 0.875rem;
-    transition: opacity 0.2s;
-  }
-
-  .receipt-link:hover {
-    opacity: 0.6;
-  }
-
-  /* 文章列表 */
-  .receipt-post-item {
-    padding: 0.5rem 0;
-  }
-
-  .receipt-post-row {
-    display: flex;
-    gap: 1rem;
-    align-items: baseline;
-  }
-
-  .receipt-post-date {
-    font-size: 0.75rem;
+  .node-tag {
+    font-size: 0.8125rem;
     color: #666666;
-    min-width: 40px;
-    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
   }
 
-  .receipt-post-title {
-    color: #000000;
-    font-weight: 600;
+  .node-link {
     font-size: 0.875rem;
-    flex: 1;
+    color: #000000;
     text-decoration: none;
     transition: opacity 0.2s;
   }
 
-  .receipt-post-title:hover {
-    opacity: 0.6;
+  .node-link:hover {
+    opacity: 0.5;
   }
 
-  .receipt-post-description {
-    font-size: 0.75rem;
-    color: #666666;
-    margin-top: 0.25rem;
-    padding-left: 52px;
-    line-height: 1.4;
+  /* 文章组 */
+  .posts-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  /* 头像区域 */
-  .receipt-avatar-section {
-    text-align: center;
+  .post-node {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid #f0f0f0;
   }
 
-  .receipt-avatar-wrapper {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 1rem;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid #000000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .post-node:first-child {
+    border-top: none;
+    padding-top: 0;
   }
 
-  .receipt-avatar-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .receipt-avatar-info {
-    text-align: left;
-  }
-
-  .receipt-status-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #10b981;
-    margin-right: 0.5rem;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
+  @media (max-width: 768px) {
+    .post-node {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
     }
   }
 
-  /* 社交媒体链接 */
-  .receipt-social-links {
+  .post-time {
+    font-size: 0.8125rem;
+    color: #888888;
+    font-variant-numeric: tabular-nums;
+    align-self: start;
+  }
+
+  .post-body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .receipt-social-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
+  .post-title {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .post-title a {
     color: #000000;
     text-decoration: none;
-    font-size: 0.875rem;
-    border: 1px solid transparent;
-    transition: all 0.2s;
+    transition: opacity 0.2s;
   }
 
-  .receipt-social-link:hover {
-    border-color: #000000;
-    background: rgba(0, 0, 0, 0.02);
+  .post-title a:hover {
+    opacity: 0.5;
   }
 
-  .receipt-social-icon {
-    width: 1.25rem;
-    height: 1.25rem;
+  .post-excerpt {
+    font-size: 0.9375rem;
+    color: #666666;
+    line-height: 1.6;
+    margin: 0;
   }
 
-  /* 底部 */
-  .receipt-footer-section {
-    text-align: center;
-    margin-top: 2rem;
+  /* 链接组 */
+  .links-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
   }
 
-  .receipt-thanks {
+  .link-item {
     font-size: 0.875rem;
     color: #666666;
-    margin: 1rem 0;
-    letter-spacing: 1px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .link-item:hover {
+    color: #000000;
+  }
+
+  @media (max-width: 768px) {
+    .header-title {
+      font-size: 2rem;
+    }
+
+    .header-desc {
+      font-size: 1rem;
+    }
+
+    .header-stats {
+      gap: 1.5rem;
+    }
   }
 </style>
   </main>
