@@ -28,115 +28,220 @@ for (const post of allPosts) {
 }
 
 const currentReading = bookshelfData.find((item: any) => item.status === 'reading')
+
+// 计算建站时间（从2025-07-11开始）
+const siteStartDate = new Date('2025-07-11')
+const now = new Date()
+const diffTime = now.getTime() - siteStartDate.getTime()
+const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+const diffYears = Math.floor(diffDays / 365)
+const diffMonths = Math.floor((diffDays % 365) / 30)
+const diffRemainingDays = diffDays % 30
+
+let siteAgeText = ''
+if (diffYears > 0) {
+  siteAgeText = `${diffYears}y`
+  if (diffMonths > 0) {
+    siteAgeText += ` ${diffMonths}M`
+  }
+} else if (diffMonths > 0) {
+  siteAgeText = ` ${diffMonths}M`
+  if (diffRemainingDays > 0) {
+    siteAgeText += ` ${diffRemainingDays}d`
+  }
+} else {
+  siteAgeText = `${diffDays} d`
+}
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
-  <main class='grid-main'>
-    <div class='grid-container'>
-      {/* 标题卡片 - 占据顶部整行 */}
-      <div class='grid-card grid-card-title'>
-        <h1 class='card-title'>{config.title}</h1>
-        <p class='card-subtitle'>{config.description}</p>
-      </div>
-
-      {/* 统计卡片组 - 三列 */}
-      <div class='grid-card grid-card-stats'>
-        <div class='stat-item'>
-          <div class='stat-value'>{totalPosts}</div>
-          <div class='stat-label'>文章</div>
-        </div>
-        <div class='stat-item'>
-          <div class='stat-value' id='total-words-display'>{totalWords.toLocaleString()}</div>
-          <div class='stat-label'>字数</div>
-        </div>
-        <div class='stat-item'>
-          <div class='stat-value' id='total-views-display'>-</div>
-          <div class='stat-label'>浏览</div>
-        </div>
-      </div>
-
-      {/* 最近在读卡片 */}
-      {currentReading && (
-        <div class='grid-card grid-card-reading'>
-          <div class='card-label'>最近在读</div>
-          <h2 class='card-heading'>{currentReading.title}</h2>
-          {currentReading.description && (
-            <p class='card-text'>{currentReading.description}</p>
-          )}
-          <div class='card-footer'>
-            {currentReading.rating && (
-              <span class='card-tag'>{currentReading.rating.toFixed(1)}</span>
-            )}
-            {currentReading.progress !== undefined && (
-              <span class='card-tag'>{currentReading.progress}%</span>
-            )}
-            <a href='/shelf' class='card-link'>书架 →</a>
+  <main class='w-screen max-w-screen overflow-x-hidden -mx-[calc(50vw-50%)] bg-white'>
+    <div class='max-w-6xl mx-auto px-4 py-6 md:px-12 md:py-10'>
+      {/* 封面区域 - 杂志风格设计 */}
+      <header class='relative mb-8 pb-6 md:mb-12 md:pb-8 border-b-2 border-black'>
+        {/* 移动端：头像在上方，桌面端：头像在右下角重叠 */}
+        <div class='relative'>
+          {/* 移动端头像 - 顶部居中 */}
+          <div class='flex justify-center mb-4 md:hidden'>
+            <div class='w-20 h-20 border-2 border-black overflow-hidden bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)] transform rotate-2'>
+              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-cover block' />
+            </div>
+          </div>
+          
+          {/* 左侧：文字内容 */}
+          <div class='flex-1 flex flex-col min-w-0 md:pr-56' style='flex: 1 1 auto;'>
+            {/* 标题 */}
+            <div class='mb-8'>
+              <h1 class='text-4xl md:text-7xl font-light text-black m-0 leading-none tracking-tight'>{config.title}</h1>
+            </div>
+            
+            {/* 副标题 */}
+            {
+              config.subtitle && (
+                <div class='mb-4 md:mb-5 max-w-2xl'>
+                  <h2 class='text-lg md:text-2xl font-normal text-gray-800 m-0 leading-snug tracking-tight'>{config.subtitle}</h2>
+                </div>
+              )
+            }
+            
+            {/* 格言 - 优雅的页脚引用 */}
+            <div class='mt-auto pt-4 md:pt-5 border-t border-gray-300 max-w-xl md:ml-auto'>
+              <div class='text-left md:text-right'>
+                <div class='text-xs md:text-base font-light text-gray-500 leading-relaxed font-serif italic tracking-wide'>
+                  <span class='text-gray-400 text-base md:text-xl leading-none mr-1'>"</span>
+                  {config.description}
+                  <span class='text-gray-400 text-base md:text-xl leading-none ml-1'>"</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 桌面端头像 - 右下角重叠装饰 */}
+          <div class='absolute bottom-0 right-0 z-10 hidden md:block'>
+            <div class='w-36 h-36 border-2 border-black overflow-hidden bg-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] transform rotate-3 hover:rotate-0 transition-transform duration-300'>
+              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-cover block' />
+            </div>
           </div>
         </div>
-      )}
+      </header>
 
-      {/* 最新文章卡片 - 占据较大空间 */}
-      <div class='grid-card grid-card-posts'>
-        <div class='card-label'>最新文章</div>
-        <div class='posts-list'>
-          {allPostsByDate.map((post, index) => (
-            <article class='post-item' key={post.id}>
-              <div class='post-number'>{String(index + 1).padStart(2, '0')}</div>
-              <div class='post-content'>
-                <time class='post-date'>
-                  {new Date(post.data.publishDate).toLocaleDateString('zh-CN', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    year: 'numeric'
-                  })}
-                </time>
-                <h3 class='post-title'>
-                  <a href={post.url}>{post.data.title}</a>
-                </h3>
-                {post.data.description && (
-                  <p class='post-excerpt'>{post.data.description}</p>
-                )}
+      {/* 主要内容区域 - 多栏布局 */}
+      <div class='grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-8'>
+        {/* 主栏 - 文章列表 */}
+        <main class='flex flex-col md:order-1'>
+          <div class='flex items-center gap-2 mb-4 md:mb-5 pb-2 md:pb-3 border-b border-gray-200'>
+            <Icon name='document'/>
+            <span class='text-xs text-gray-500 uppercase tracking-wider'>最新文章</span>
+          </div>
+          <div class='flex flex-col gap-0'>
+            {allPostsByDate.map((post, index) => (
+              <a href={`/blog/${post.data.slug}`} class='block no-underline group relative z-10' key={post.id}>
+                <article class='grid grid-cols-[32px_1fr] gap-3 md:grid-cols-[40px_1fr] md:gap-5 py-2.5 md:py-3 border-b border-gray-100 last:border-b-0 transition-colors hover:bg-gray-50 cursor-pointer'>
+                  <div class='text-sm md:text-xl font-light text-gray-300 tabular-nums self-start leading-none'>{String(index + 1).padStart(2, '0')}</div>
+                  <div class='flex flex-col gap-1 md:gap-1.5'>
+                    <div class='flex flex-col gap-0.5 md:gap-1'>
+                      <time class='text-xs text-gray-500 tabular-nums'>
+                        {new Date(post.data.publishDate).toLocaleDateString('zh-CN', { 
+                          year: 'numeric',
+                          month: '2-digit', 
+                          day: '2-digit'
+                        })}
+                      </time>
+                      <h3 class='text-lg md:text-xl font-normal text-black m-0 leading-snug transition-colors group-hover:text-primary'>
+                        {post.data.title}
+                      </h3>
+                    </div>
+                    {post.data.description && (
+                      <p class='text-xs md:text-sm text-gray-600 leading-relaxed m-0'>{post.data.description}</p>
+                    )}
+                  </div>
+                </article>
+              </a>
+            ))}
+          </div>
+          <div class='mt-4 md:mt-5 pt-3 md:pt-4 border-t border-gray-200'>
+            <a href='/blog' class='text-sm text-black no-underline transition-colors hover:text-primary'>全部文章 →</a>
+          </div>
+        </main>
+
+        {/* 右栏 - 侧边栏 */}
+        <aside class='flex flex-col gap-3 md:gap-8 md:order-2' style='overflow: visible;'>
+          {/* 最近在读 - 小票样式 */}
+          {currentReading && (
+            <a href='/shelf' class='block no-underline group'>
+              <div class='receipt-style transition-colors hover:bg-gray-50 cursor-pointer'>
+                <div class='border-l border-r border-dashed border-gray-400 px-3 md:px-5'>
+                  <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
+                    <Icon name='shelf' size='1.25em' />
+                    <span>最近在读</span>
+                  </div>
+                  <div class='font-mono text-sm'>
+                    <div class='mb-2 md:mb-3'>
+                      <div class='text-black font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors'>{currentReading.title}</div>
+                      {currentReading.description && (
+                        <div class='text-gray-600 text-xs leading-relaxed'>{currentReading.description}</div>
+                      )}
+                    </div>
+                    <div class='flex justify-between items-center py-1 border-t border-dashed border-gray-300 mt-2 pt-2'>
+                      {currentReading.rating && (
+                        <span class='text-gray-600 text-xs flex items-center gap-1'>
+                          <Icon name='star' size='0.875em' />
+                          <span>{currentReading.rating.toFixed(1)}</span>
+                        </span>
+                      )}
+                      {currentReading.progress !== undefined && (
+                        <span class='text-gray-600 text-xs tabular-nums'>{currentReading.progress}%</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </article>
-          ))}
-        </div>
-        <div class='card-footer'>
-          <a href='/blog' class='card-link'>全部文章 →</a>
-        </div>
-      </div>
+            </a>
+          )}
 
-      {/* 联系卡片 */}
-      <div class='grid-card grid-card-links'>
-        <div class='card-label'>联系方式</div>
-        <div class='links-list'>
-          <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='link-item'>
-            GitHub
-          </a>
-          <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='link-item'>
-            Twitter
-          </a>
-          <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='link-item'>
-            Bluesky
-          </a>
-          <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='link-item'>
-            Telegram
-          </a>
-          <a href='/rss.xml' class='link-item'>
-            RSS
-          </a>
-        </div>
-      </div>
+          {/* 统计信息 - 小票样式 - 移动端隐藏 */}
+          <div class='receipt-style hidden md:block'>
+            <div class='border-l border-r border-dashed border-gray-400 px-3 md:px-5'>
+              <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
+                <Icon name='content-statistic' size='1.25em' />
+                <span>站点统计</span>
+              </div>
+              {/* 移动端：2x2网格布局，桌面端：垂直列表 */}
+              <div class='grid grid-cols-2 gap-2 md:grid-cols-1 md:gap-1 font-mono text-sm md:flex md:flex-col'>
+                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
+                  <span class='text-gray-600 text-xs md:text-sm'>Articles</span>
+                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm'>{totalPosts}</span>
+                </div>
+                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
+                  <span class='text-gray-600 text-xs md:text-sm'>Words</span>
+                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm' id='total-words-display'>{totalWords.toLocaleString()}</span>
+                </div>
+                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
+                  <span class='text-gray-600 text-xs md:text-sm'>PV</span>
+                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm' id='total-views-display'>-</span>
+                </div>
+                <div class='flex justify-between items-center py-1 pb-3 md:pb-4 md:border-b-0'>
+                  <span class='text-gray-600 text-xs md:text-sm'>UpTime</span>
+                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm'>{siteAgeText}</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* 信息卡片 */}
-      <div class='grid-card grid-card-info'>
-        <div class='info-item'>
-          <span class='info-label'>位置</span>
-          <span class='info-value'>北京</span>
-        </div>
-        <div class='info-item'>
-          <span class='info-label'>状态</span>
-          <span class='info-value'>在线</span>
-        </div>
+          {/* 联系我 */}
+          <div style='padding: 12px 20px;'>
+            <div class='px-3 md:px-5'>
+              <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
+                <Icon name='link' size='1.25em' />
+                <span>联系我</span>
+              </div>
+              {/* 移动端：紧凑的图标按钮布局，桌面端：带文字的链接 */}
+              <div class='grid grid-cols-5 gap-2 md:flex md:flex-row md:flex-wrap md:gap-3 md:gap-4 pb-3 md:pb-4'>
+                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                  <Icon name='github' size='1.25em' />
+                  <span class='hidden md:inline'>GitHub</span>
+                </a>
+                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                  <Icon name='x' size='1.25em' />
+                  <span class='hidden md:inline'>Twitter</span>
+                </a>
+                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                  <Icon name='bluesky' size='1.25em' />
+                  <span class='hidden md:inline'>Bluesky</span>
+                </a>
+                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                  <Icon name='telegram' size='1.25em' />
+                  <span class='hidden md:inline'>Telegram</span>
+                </a>
+                <a href='/rss.xml' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-orange-600 md:text-orange-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                  <Icon name='rss' size='1.25em' />
+                  <span class='hidden md:inline'>RSS</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+         </aside>
       </div>
     </div>
 
@@ -220,359 +325,49 @@ const currentReading = bookshelfData.find((item: any) => item.status === 'readin
   });
 </script>
 
+  </main>
+
 <style>
-  /* 方案C：网格系统风格 */
-  /* 确保不受 BaseLayout 包装影响 */
-  .grid-main {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    margin-left: calc(-50vw + 50%) !important;
-    margin-right: calc(-50vw + 50%) !important;
-    background: #ffffff;
-  }
-
-  .grid-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 4rem 3rem;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1.5rem;
-    grid-auto-rows: min-content;
-  }
-
-  @media (max-width: 1200px) {
-    .grid-container {
-      grid-template-columns: repeat(8, 1fr);
+  /* 确保封面区域在桌面端是左右布局 */
+  @media (min-width: 768px) {
+    header > div:first-child {
+      display: flex !important;
+      flex-direction: row !important;
     }
   }
-
+  
+  /* 移动端垂直布局 */
+  @media (max-width: 767px) {
+    header > div:first-child {
+      flex-direction: column !important;
+    }
+  }
+  
+  /* 小票样式 - 简洁左右虚线边框 */
+  .receipt-style {
+    width: 100%;
+    max-width: 100%;
+    background: white;
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    border: none !important;
+  }
+  
+  @media (min-width: 768px) {
+    .receipt-style {
+      padding: 20px;
+    }
+  }
+  
+  /* 侧边栏最大宽度限制，自适应但不会过宽 */
+  aside {
+    max-width: 380px;
+  }
+  
   @media (max-width: 768px) {
-    .grid-container {
-      grid-template-columns: repeat(4, 1fr);
-      padding: 3rem 2rem;
-      gap: 1rem;
+    aside {
+      max-width: 100%;
     }
-  }
-
-  /* 网格卡片基础样式 */
-  .grid-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.2s;
-  }
-
-  .grid-card:hover {
-    border-color: #000000;
-  }
-
-  @media (max-width: 768px) {
-    .grid-card {
-      padding: 1.5rem;
-    }
-  }
-
-  /* 标题卡片 - 占据整行 */
-  .grid-card-title {
-    grid-column: 1 / -1;
-    border: none;
-    padding: 0 0 3rem 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .card-title {
-    font-size: 3rem;
-    font-weight: 300;
-    color: #000000;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
-  }
-
-  .card-subtitle {
-    font-size: 1.125rem;
-    color: #666666;
-    margin: 0;
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  @media (max-width: 768px) {
-    .card-title {
-      font-size: 2rem;
-    }
-
-    .card-subtitle {
-      font-size: 1rem;
-    }
-  }
-
-  /* 统计卡片 - 占据整行 */
-  .grid-card-stats {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    justify-content: space-around;
-    border: none;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 2rem 0;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #000000;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .stat-label {
-    font-size: 0.75rem;
-    color: #888888;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  /* 最近在读卡片 - 占据4列 */
-  .grid-card-reading {
-    grid-column: span 4;
-  }
-
-  @media (max-width: 1200px) {
-    .grid-card-reading {
-      grid-column: span 4;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .grid-card-reading {
-      grid-column: span 4;
-    }
-  }
-
-  /* 最新文章卡片 - 占据8列 */
-  .grid-card-posts {
-    grid-column: span 8;
-  }
-
-  @media (max-width: 1200px) {
-    .grid-card-posts {
-      grid-column: span 4;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .grid-card-posts {
-      grid-column: span 4;
-    }
-  }
-
-  /* 联系卡片 - 占据4列 */
-  .grid-card-links {
-    grid-column: span 4;
-  }
-
-  @media (max-width: 1200px) {
-    .grid-card-links {
-      grid-column: span 4;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .grid-card-links {
-      grid-column: span 4;
-    }
-  }
-
-  /* 信息卡片 - 占据8列 */
-  .grid-card-info {
-    grid-column: span 8;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 3rem;
-  }
-
-  @media (max-width: 1200px) {
-    .grid-card-info {
-      grid-column: span 4;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .grid-card-info {
-      grid-column: span 4;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  }
-
-  /* 卡片通用元素 */
-  .card-label {
-    font-size: 0.75rem;
-    color: #888888;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 1rem;
-  }
-
-  .card-heading {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #000000;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.4;
-  }
-
-  .card-text {
-    font-size: 0.9375rem;
-    color: #666666;
-    line-height: 1.6;
-    margin: 0 0 1rem 0;
-  }
-
-  .card-footer {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: auto;
-  }
-
-  .card-tag {
-    font-size: 0.8125rem;
-    color: #666666;
-  }
-
-  .card-link {
-    font-size: 0.875rem;
-    color: #000000;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-
-  .card-link:hover {
-    opacity: 0.5;
-  }
-
-  /* 文章列表 */
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .post-item {
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-    border-top: 1px solid #f0f0f0;
-  }
-
-  .post-item:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-
-  @media (max-width: 768px) {
-    .post-item {
-      grid-template-columns: 30px 1fr;
-      gap: 1rem;
-      padding: 1rem 0;
-    }
-  }
-
-  .post-number {
-    font-size: 0.75rem;
-    color: #cccccc;
-    font-variant-numeric: tabular-nums;
-    align-self: start;
-    font-weight: 300;
-  }
-
-  .post-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .post-date {
-    font-size: 0.75rem;
-    color: #888888;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .post-title {
-    font-size: 1.125rem;
-    font-weight: 400;
-    color: #000000;
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .post-title a {
-    color: #000000;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-
-  .post-title a:hover {
-    opacity: 0.5;
-  }
-
-  .post-excerpt {
-    font-size: 0.9375rem;
-    color: #666666;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  /* 链接列表 */
-  .links-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .link-item {
-    font-size: 0.875rem;
-    color: #666666;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .link-item:hover {
-    color: #000000;
-  }
-
-  /* 信息项 */
-  .info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .info-label {
-    font-size: 0.75rem;
-    color: #888888;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .info-value {
-    font-size: 0.875rem;
-    color: #000000;
   }
 </style>
-  </main>
 </PageLayout>

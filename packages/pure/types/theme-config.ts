@@ -14,6 +14,8 @@ export const ThemeConfigSchema = () =>
     title: z
       .string()
       .describe('Title for your website. Will be used in metadata and as browser tab title.'),
+    
+    subtitle: z.string().optional().describe('Subtitle for homepage'),  
 
     /** Will be used in index page & copyright declaration */
     author: z.string().describe('Will be used in index page & copyright declaration'),
@@ -23,7 +25,7 @@ export const ThemeConfigSchema = () =>
       .string()
       .default('Built with Astro-Pure')
       .describe('Description metadata for your website. Can be used in page metadata.'),
-
+      
     /** The default favicon for your site which should be a path to an image in the `public/` directory. */
     favicon: FaviconSchema(),
 

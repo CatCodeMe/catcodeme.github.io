@@ -25,6 +25,7 @@ export const theme: ThemeUserConfig = {
   title: 'CCM',
   /** Will be used in index page & copyright declaration */
   author: 'ccm',
+  subtitle: '写代码，读闲书，想问题',
   /** Description metadata for your website. Can be used in page metadata. */
   description: '文字沉淀生命, 回忆勾连古今',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
@@ -40,13 +41,13 @@ export const theme: ThemeUserConfig = {
     dateOptions: {
       day: 'numeric',
       month: 'short',
-      year: 'numeric',
-    },
+      year: 'numeric'
+    }
   },
   /** Set a logo image to show in the homepage. */
   logo: {
     src: 'src/assets/avatar.png',
-    alt: 'Avatar',
+    alt: 'Avatar'
   },
 
   // === Global configuration ===
@@ -67,7 +68,7 @@ export const theme: ThemeUserConfig = {
 
   /** Configure the header of your site. */
   header: {
-    menu,
+    menu
   },
 
   /** Configure the footer of your site. */
@@ -79,8 +80,8 @@ export const theme: ThemeUserConfig = {
       {
         title: '京ICP备2025143479号-1',
         link: 'https://beian.miit.gov.cn/',
-        style: 'text-sm',
-      },
+        style: 'text-sm'
+      }
       // {
       //   title: 'CC BY-NC-SA 4.0',
       //   link: '/terms/list',
@@ -88,22 +89,22 @@ export const theme: ThemeUserConfig = {
       // }
     ],
     credits: true,
-    social: { github: 'https://github.com/catcodeme' },
+    social: { github: 'https://github.com/catcodeme' }
   },
 
   content: {
     externalLinks: {
       content: '',
       customIcons: {
-        'github.com': 'github',
-      },
+        'github.com': 'github'
+      }
     },
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
     // Currently support weibo, x, bluesky
-    share: ['x', 'bluesky'],
-  },
-};
+    share: ['x', 'bluesky']
+  }
+}
 
 export const integ: IntegrationUserConfig = {
   // Links management
@@ -128,12 +129,9 @@ export const integ: IntegrationUserConfig = {
   // Add a random quote to the footer (default on homepage footer)
   // See: https://astro-pure.js.org/docs/integrations/advanced#web-content-render
   quote: {
-    // https://developer.hitokoto.cn/sentence/#%E8%AF%B7%E6%B1%82%E5%9C%B0%E5%9D%80
-    // server: 'https://v1.hitokoto.cn/?c=i',
-    // target: (data) => (data as { hitokoto: string }).hitokoto || 'Error'
-    // https://github.com/lukePeavey/quotable
-    server: 'https://api.quotable.io/quotes/random?maxLength=60',
-    target: `(data) => data[0].content || 'Error'`,
+    // 固定显示格言
+    server: 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify([{ content: '文字沉淀生命, 回忆勾连古今' }])),
+    target: `(data) => data[0].content || '文字沉淀生命, 回忆勾连古今'`,
   },
   // UnoCSS typography
   // See: https://unocss.dev/presets/typography
