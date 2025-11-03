@@ -104,10 +104,6 @@ const tagColors = [
   'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 border-teal-200 dark:border-teal-700',
 ];
 
-const getTagColor = (index: number) => {
-  return tagColors[index % tagColors.length];
-};
-
 ---
 
 <PageLayout {meta}>
@@ -155,7 +151,7 @@ const getTagColor = (index: number) => {
 
       <!-- 书籍列表 -->
       <div class="space-y-3">
-        {await Promise.all(typedBookshelfData.map(async (item, index) => {
+        {await Promise.all(typedBookshelfData.map(async (item) => {
           const statusInfo = statusLabels[item.status];
           const linkedPosts = item.links?.map(link => {
             // 拼接 host，添加 blog/ 前缀
