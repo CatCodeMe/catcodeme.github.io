@@ -1,13 +1,6 @@
 import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'packages/pure/types';
-
-
-
 import type { CardListData } from 'astro-pure/types';
-
-
-
 import type { IconName } from '../packages/pure/libs/icons';
-
 
 const menu: { title: string; link: string; icon?: IconName; iconImg?: string }[] = [
   { title: '文章', link: '/blog', icon: 'document' },
@@ -25,7 +18,7 @@ export const theme: ThemeUserConfig = {
   title: 'CCM',
   /** Will be used in index page & copyright declaration */
   author: 'ccm',
-  subtitle: '写代码，读闲书，想问题',
+  about: '写代码赖以生存，读闲书文明精神，想问题认识世界',
   /** Description metadata for your website. Can be used in page metadata. */
   description: '文字沉淀生命, 回忆勾连古今',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */

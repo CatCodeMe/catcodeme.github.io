@@ -1,11 +1,13 @@
 ---
+import { Image } from 'astro:assets'
+import { Icon } from '@/custom/components/user'
+
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { Icon } from '@/custom/components/user'
-import { Image } from 'astro:assets'
-import bookshelfData from '../../public/bookshelf.json'
 import avatarImage from '@/assets/avatar_2.png'
 import config from '@/site-config'
+
+import bookshelfData from '../../public/bookshelf.json'
 
 const MAX_POSTS = 6
 const allPosts = await getBlogCollection()
@@ -32,23 +34,23 @@ const currentReading = (bookshelfData as any[])
   .sort((a: any, b: any) => {
     // 按 startDate 倒序（最新的在前）
     if (a.startDate && b.startDate) {
-      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
     }
     // 如果只有 a 有 startDate，a 排在前面
-    if (a.startDate && !b.startDate) return -1;
+    if (a.startDate && !b.startDate) return -1
     // 如果只有 b 有 startDate，b 排在前面
-    if (!a.startDate && b.startDate) return 1;
+    if (!a.startDate && b.startDate) return 1
     // 如果都有 order，按 order 倒序
     if (a.order !== undefined && b.order !== undefined) {
-      return b.order - a.order;
+      return b.order - a.order
     }
     // 如果只有 a 有 order，a 排在前面
-    if (a.order !== undefined && b.order === undefined) return -1;
+    if (a.order !== undefined && b.order === undefined) return -1
     // 如果只有 b 有 order，b 排在前面
-    if (a.order === undefined && b.order !== undefined) return 1;
+    if (a.order === undefined && b.order !== undefined) return 1
     // 默认保持原顺序
-    return 0;
-  })[0];
+    return 0
+  })[0]
 
 // 计算建站时间（从2025-07-11开始）
 const siteStartDate = new Date('2025-07-11')
@@ -73,54 +75,77 @@ if (diffYears > 0) {
 } else {
   siteAgeText = `${diffDays} d`
 }
+
+// 使用主题色作为 highlight color
+const highlightColor = 'hsl(var(--primary) / var(--un-text-opacity, 1))'
 ---
 
-<PageLayout meta={{ title: 'Home' }}>
-  <main class='w-screen max-w-screen overflow-x-hidden -mx-[calc(50vw-50%)] bg-white'>
+<PageLayout meta={{ title: 'Home' }} highlightColor={highlightColor}>
+  <main class='w-screen max-w-screen overflow-x-hidden -mx-[calc(50vw-50%)] bg-background'>
     <div class='max-w-6xl mx-auto px-4 py-6 md:px-12 md:py-10'>
-      {/* 封面区域 - 杂志风格设计 */}
-      <header class='relative mb-8 pb-6 md:mb-12 md:pb-8 border-b-2 border-black'>
-        {/* 移动端：头像在上方，桌面端：头像在右下角重叠 */}
-        <div class='relative'>
-          {/* 移动端头像 - 顶部居中 */}
-          <div class='flex justify-center mb-4 md:hidden'>
-            <div class='w-20 h-20 border-2 border-black overflow-hidden bg-white shadow-[3px_3px_0_0_rgba(0,0,0,1)] transform rotate-2'>
+      {/* 封面区域 - Hero 风格设计 */}
+      <header class='relative mb-8 pb-6 md:mb-12 md:pb-8 border-b border-border'>
+        <div class='grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-center'>
+          {/* 左侧：头像 - 大尺寸 */}
+          <div class='flex justify-center md:justify-start'>
+            <div
+              class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 border border-border overflow-hidden bg-card rounded-lg shadow-lg'
+            >
               <Image src={avatarImage} alt='Avatar' class='w-full h-full object-cover block' />
             </div>
           </div>
-          
-          {/* 左侧：文字内容 */}
-          <div class='flex-1 flex flex-col min-w-0 md:pr-56' style='flex: 1 1 auto;'>
-            {/* 标题 */}
-            <div class='mb-8'>
-              <h1 class='text-4xl md:text-7xl font-light text-black m-0 leading-none tracking-tight'>{config.title}</h1>
-            </div>
-            
-            {/* 副标题 */}
-            {
-              config.subtitle && (
-                <div class='mb-4 md:mb-5 max-w-2xl'>
-                  <h2 class='text-lg md:text-2xl font-normal text-gray-800 m-0 leading-snug tracking-tight'>{config.subtitle}</h2>
-                </div>
-              )
-            }
-            
-            {/* 格言 - 优雅的页脚引用 */}
-            <div class='mt-auto pt-4 md:pt-5 border-t border-gray-300 max-w-xl md:ml-auto'>
-              <div class='text-left md:text-right'>
-                <div class='text-xs md:text-base font-light text-gray-500 leading-relaxed font-serif italic tracking-wide'>
-                  <span class='text-gray-400 text-base md:text-xl leading-none mr-1'>"</span>
-                  {config.description}
-                  <span class='text-gray-400 text-base md:text-xl leading-none ml-1'>"</span>
-                </div>
+
+          {/* 右侧：文字内容 */}
+          <div class='flex flex-col justify-center space-y-4 md:space-y-6'>
+            {/* 主标题 */}
+            <h1
+              class='text-3xl md:text-5xl lg:text-6xl font-light text-foreground m-0 leading-tight tracking-tight'
+            >
+              {config.title}
+            </h1>
+
+            {/* 格言 */}
+            <div class='pt-2 md:pt-4 border-t border-border'>
+              <div
+                class='text-sm md:text-base font-serif italic text-foreground/80 leading-relaxed max-w-xl'
+              >
+                <span class='text-primary/50 text-lg md:text-xl leading-none mr-2'>"</span>
+                {config.description}
+                <span class='text-primary/50 text-lg md:text-xl leading-none ml-2'>"</span>
               </div>
             </div>
-          </div>
-          
-          {/* 桌面端头像 - 右下角重叠装饰 */}
-          <div class='absolute bottom-0 right-0 z-10 hidden md:block'>
-            <div class='w-36 h-36 border-2 border-black overflow-hidden bg-white shadow-[6px_6px_0_0_rgba(0,0,0,1)] transform rotate-3 hover:rotate-0 transition-transform duration-300'>
-              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-cover block' />
+
+            {/* 位置信息 */}
+            <div class='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-x-2 text-sm text-muted-foreground pt-2'>
+              {/* 位置信息 */}
+              <div class='flex items-center gap-2'>
+                <Icon name='location' size='1em' />
+                <span>China</span>
+              </div>
+              
+              {/* PC端分隔符 */}
+              <span class='hidden sm:inline'>|</span>
+              
+              {/* 自我介绍 */}
+              <span class='break-words'>{(config as any).about}</span>
+              
+              {/* PC端分隔符 */}
+              <span class='hidden sm:inline'>|</span>
+              
+              {/* 猫咪链接 */}
+              <a
+                href='/cats'
+                class='inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors underline'
+              >
+                <Image
+                  src='/favicon/android-chrome-512x512.png'
+                  alt='Cat'
+                  width={16}
+                  height={16}
+                  class='inline-block align-middle'
+                />
+                <span>永远爱我的猫</span>
+              </a>
             </div>
           </div>
         </div>
@@ -130,100 +155,140 @@ if (diffYears > 0) {
       <div class='grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-8'>
         {/* 主栏 - 文章列表 */}
         <main class='flex flex-col md:order-1'>
-          <div class='flex items-center gap-2 mb-4 md:mb-5 pb-2 md:pb-3 border-b border-gray-200'>
-            <Icon name='document'/>
-            <span class='text-xs text-gray-500 uppercase tracking-wider'>最新文章</span>
+          <div class='flex items-center gap-2 mb-4 md:mb-5 pb-2 md:pb-3 border-b border-border'>
+            <Icon name='document' />
+            <span class='text-xs text-muted-foreground uppercase tracking-wider'>最新文章</span>
           </div>
           <div class='flex flex-col gap-0'>
-            {allPostsByDate.map((post, index) => (
-              <a href={`/blog/${post.data.slug}`} class='block no-underline group relative z-10'>
-                <article class='grid grid-cols-[32px_1fr] gap-3 md:grid-cols-[40px_1fr] md:gap-5 py-2.5 md:py-3 border-b border-gray-100 last:border-b-0 transition-colors hover:bg-gray-50 cursor-pointer'>
-                  <div class='text-sm md:text-xl font-light text-gray-300 tabular-nums self-start leading-none'>{String(index + 1).padStart(2, '0')}</div>
-                  <div class='flex flex-col gap-1 md:gap-1.5'>
-                    <div class='flex flex-col gap-0.5 md:gap-1'>
-                      <time class='text-xs text-gray-500 tabular-nums'>
-                        {new Date(post.data.publishDate as string | number | Date).toLocaleDateString('zh-CN', { 
-                          year: 'numeric',
-                          month: '2-digit', 
-                          day: '2-digit'
-                        })}
-                      </time>
-                      <h3 class='text-lg md:text-xl font-normal text-black m-0 leading-snug transition-colors group-hover:text-primary'>
-                        {post.data.title}
-                      </h3>
+            {
+              allPostsByDate.map((post, index) => (
+                <a href={`/blog/${post.data.slug}`} class='block no-underline group relative z-10'>
+                  <article class='grid grid-cols-[32px_1fr] gap-3 md:grid-cols-[40px_1fr] md:gap-5 py-2.5 md:py-3 border-b border-border last:border-b-0 transition-colors hover:bg-muted/50 cursor-pointer'>
+                    <div class='text-sm md:text-xl font-light text-muted-foreground/50 tabular-nums self-start leading-none'>
+                      {String(index + 1).padStart(2, '0')}
                     </div>
-                    {post.data.description && (
-                      <p class='text-xs md:text-sm text-gray-600 leading-relaxed m-0'>{post.data.description}</p>
-                    )}
-                  </div>
-                </article>
-              </a>
-            ))}
+                    <div class='flex flex-col gap-1 md:gap-1.5'>
+                      <div class='flex flex-col gap-0.5 md:gap-1'>
+                        <time class='text-xs text-muted-foreground tabular-nums'>
+                          {new Date(
+                            post.data.publishDate as string | number | Date
+                          ).toLocaleDateString('zh-CN', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                          })}
+                        </time>
+                        <h3 class='text-lg md:text-xl font-normal text-foreground m-0 leading-snug transition-colors group-hover:text-primary'>
+                          {post.data.title}
+                        </h3>
+                      </div>
+                      {post.data.description && (
+                        <p class='text-xs md:text-sm text-muted-foreground leading-relaxed m-0'>
+                          {post.data.description}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                </a>
+              ))
+            }
           </div>
-          <div class='mt-4 md:mt-5 pt-3 md:pt-4 border-t border-gray-200'>
-            <a href='/blog' class='text-sm text-black no-underline transition-colors hover:text-primary'>全部文章 →</a>
+          <div class='mt-4 md:mt-5 pt-3 md:pt-4 border-t border-border'>
+            <a
+              href='/blog'
+              class='text-sm text-foreground no-underline transition-colors hover:text-primary'
+              >全部文章 →</a
+            >
           </div>
         </main>
 
         {/* 右栏 - 侧边栏 */}
         <aside class='flex flex-col gap-3 md:gap-8 md:order-2' style='overflow: visible;'>
           {/* 最近在读 - 小票样式 */}
-          {currentReading && (
-            <a href='/shelf' class='block no-underline group'>
-              <div class='receipt-style transition-colors hover:bg-gray-50 cursor-pointer'>
-                <div class='border-l border-r border-dashed border-gray-400 px-3 md:px-5'>
-                  <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
-                    <Icon name='shelf' size='1.25em' />
-                    <span>最近在读</span>
-                  </div>
-                  <div class='font-mono text-sm'>
-                    <div class='mb-2 md:mb-3'>
-                      <div class='text-black font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors'>{currentReading.title}</div>
-                      {currentReading.description && (
-                        <div class='text-gray-600 text-xs leading-relaxed'>{currentReading.description}</div>
-                      )}
+          {
+            currentReading && (
+              <a href='/shelf' class='block no-underline group'>
+                <div class='receipt-style transition-colors hover:bg-muted/50 cursor-pointer'>
+                  <div class='border-l border-r border-dashed border-border px-3 md:px-5'>
+                    <div class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'>
+                      <Icon name='shelf' size='1.25em' />
+                      <span>最近在读</span>
                     </div>
-                    <div class='flex justify-between items-center py-1 border-t border-dashed border-gray-300 mt-2 pt-2'>
-                      {currentReading.rating && (
-                        <span class='text-gray-600 text-xs flex items-center gap-1'>
-                          <Icon name='star' size='0.875em' />
-                          <span>{currentReading.rating.toFixed(1)}</span>
-                        </span>
-                      )}
-                      {currentReading.progress !== undefined && (
-                        <span class='text-gray-600 text-xs tabular-nums'>{currentReading.progress}%</span>
-                      )}
+                    <div class='font-mono text-sm'>
+                      <div class='mb-2 md:mb-3'>
+                        <div class='text-foreground font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors'>
+                          {currentReading.title}
+                        </div>
+                        {currentReading.description && (
+                          <div class='text-muted-foreground text-xs leading-relaxed'>
+                            {currentReading.description}
+                          </div>
+                        )}
+                      </div>
+                      <div class='flex justify-between items-center py-1 border-t border-dashed border-border mt-2 pt-2'>
+                        {currentReading.rating && (
+                          <span class='text-muted-foreground text-xs flex items-center gap-1'>
+                            <Icon name='star' size='0.875em' />
+                            <span>{currentReading.rating.toFixed(1)}</span>
+                          </span>
+                        )}
+                        {currentReading.progress !== undefined && (
+                          <span class='text-muted-foreground text-xs tabular-nums'>
+                            {currentReading.progress}%
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </a>
-          )}
+              </a>
+            )
+          }
 
           {/* 统计信息 - 小票样式 - 移动端隐藏 */}
           <div class='receipt-style hidden md:block'>
-            <div class='border-l border-r border-dashed border-gray-400 px-3 md:px-5'>
-              <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
+            <div class='border-l border-r border-dashed border-border px-3 md:px-5'>
+              <div
+                class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'
+              >
                 <Icon name='content-statistic' size='1.25em' />
                 <span>站点统计</span>
               </div>
               {/* 移动端：2x2网格布局，桌面端：垂直列表 */}
-              <div class='grid grid-cols-2 gap-2 md:grid-cols-1 md:gap-1 font-mono text-sm md:flex md:flex-col'>
-                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
-                  <span class='text-gray-600 text-xs md:text-sm'>Articles</span>
-                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm'>{totalPosts}</span>
+              <div
+                class='grid grid-cols-2 gap-2 md:grid-cols-1 md:gap-1 font-mono text-sm md:flex md:flex-col'
+              >
+                <div
+                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
+                >
+                  <span class='text-muted-foreground text-xs md:text-sm'>Articles</span>
+                  <span class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    >{totalPosts}</span
+                  >
                 </div>
-                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
-                  <span class='text-gray-600 text-xs md:text-sm'>Words</span>
-                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm' id='total-words-display'>{totalWords.toLocaleString()}</span>
+                <div
+                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
+                >
+                  <span class='text-muted-foreground text-xs md:text-sm'>Words</span>
+                  <span
+                    class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    id='total-words-display'>{totalWords.toLocaleString()}</span
+                  >
                 </div>
-                <div class='flex justify-between items-center py-1 border-b border-dashed border-gray-300 md:border-b md:border-dashed md:border-gray-300'>
-                  <span class='text-gray-600 text-xs md:text-sm'>PV</span>
-                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm' id='total-views-display'>-</span>
+                <div
+                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
+                >
+                  <span class='text-muted-foreground text-xs md:text-sm'>PV</span>
+                  <span
+                    class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    id='total-views-display'>-</span
+                  >
                 </div>
                 <div class='flex justify-between items-center py-1 pb-3 md:pb-4 md:border-b-0'>
-                  <span class='text-gray-600 text-xs md:text-sm'>UpTime</span>
-                  <span class='text-black font-semibold tabular-nums text-xs md:text-sm'>{siteAgeText}</span>
+                  <span class='text-muted-foreground text-xs md:text-sm'>UpTime</span>
+                  <span class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    >{siteAgeText}</span
+                  >
                 </div>
               </div>
             </div>
@@ -232,163 +297,172 @@ if (diffYears > 0) {
           {/* 联系我 */}
           <div style='padding: 12px 20px;'>
             <div class='px-3 md:px-5'>
-              <div class='text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-gray-400'>
+              <div
+                class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'
+              >
                 <Icon name='link' size='1.25em' />
                 <span>联系我</span>
               </div>
               {/* 移动端：紧凑的图标按钮布局，桌面端：带文字的链接 */}
-              <div class='grid grid-cols-5 gap-2 md:flex md:flex-row md:flex-wrap md:gap-3 md:gap-4 pb-3 md:pb-4'>
-                <a href='https://github.com/CatCodeMe' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+              <div
+                class='grid grid-cols-5 gap-2 md:flex md:flex-row md:flex-wrap md:gap-3 md:gap-4 pb-3 md:pb-4'
+              >
+                <a
+                  href='https://github.com/CatCodeMe'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
+                >
                   <Icon name='github' size='1.25em' />
                   <span class='hidden md:inline'>GitHub</span>
                 </a>
-                <a href='https://twitter.com/hulj13' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                <a
+                  href='https://twitter.com/hulj13'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
+                >
                   <Icon name='x' size='1.25em' />
                   <span class='hidden md:inline'>Twitter</span>
                 </a>
-                <a href='https://bsky.app/profile/catcodeme.bsky.social' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                <a
+                  href='https://bsky.app/profile/catcodeme.bsky.social'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
+                >
                   <Icon name='bluesky' size='1.25em' />
                   <span class='hidden md:inline'>Bluesky</span>
                 </a>
-                <a href='https://t.me/ccm_life' target='_blank' rel='noopener noreferrer' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-gray-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                <a
+                  href='https://t.me/ccm_life'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
+                >
                   <Icon name='telegram' size='1.25em' />
                   <span class='hidden md:inline'>Telegram</span>
                 </a>
-                <a href='/rss.xml' class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-orange-600 md:text-orange-600 no-underline transition-colors hover:text-primary py-2 md:py-2'>
+                <a
+                  href='/rss.xml'
+                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-primary no-underline transition-colors hover:text-primary/80 py-2 md:py-2'
+                >
                   <Icon name='rss' size='1.25em' />
                   <span class='hidden md:inline'>RSS</span>
                 </a>
               </div>
             </div>
           </div>
-
-         </aside>
+        </aside>
       </div>
     </div>
 
     <span id='vercount_value_site_pv' class='hidden'></span>
 
-<script is:inline>
-  function animateCounter(element, targetValue, duration = 2000) {
-    const startValue = 0;
-    const startTime = performance.now();
-    const targetNumber = parseInt(targetValue.replace(/,/g, ''));
-    
-    function updateCounter(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-      const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic);
-      element.textContent = currentValue.toLocaleString();
-      
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      } else {
-        element.textContent = targetValue;
-      }
-    }
-    
-    requestAnimationFrame(updateCounter);
-  }
+    <script is:inline>
+      function animateCounter(element, targetValue, duration = 2000) {
+        const startValue = 0
+        const startTime = performance.now()
+        const targetNumber = parseInt(targetValue.replace(/,/g, ''))
 
-  function updateViewsDisplay(viewsElement, newValue, hasAnimated = false) {
-    if (viewsElement && newValue && newValue !== '-') {
-      const views = parseInt(newValue.replace(/,/g, ''));
-      
-      if (!hasAnimated) {
-        viewsElement.textContent = '0';
-        setTimeout(() => {
-          animateCounter(viewsElement, views.toLocaleString(), 2000);
-        }, 500);
-      } else {
-        viewsElement.textContent = views.toLocaleString();
-      }
-    }
-  }
+        function updateCounter(currentTime) {
+          const elapsed = currentTime - startTime
+          const progress = Math.min(elapsed / duration, 1)
+          const easeOutCubic = 1 - Math.pow(1 - progress, 3)
+          const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic)
+          element.textContent = currentValue.toLocaleString()
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const wordsDisplayElement = document.getElementById('total-words-display');
-    if (wordsDisplayElement) {
-      const targetValue = wordsDisplayElement.textContent;
-      wordsDisplayElement.textContent = '0';
-      setTimeout(() => {
-        animateCounter(wordsDisplayElement, targetValue, 2000);
-      }, 500);
-    }
-    
-    const viewsDisplayElement = document.getElementById('total-views-display');
-    const vercountElement = document.getElementById('vercount_value_site_pv');
-    let hasAnimatedViews = false;
-    
-    if (viewsDisplayElement && vercountElement) {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'childList' || mutation.type === 'characterData') {
-            const newValue = vercountElement.textContent;
-            updateViewsDisplay(viewsDisplayElement, newValue, hasAnimatedViews);
-            hasAnimatedViews = true;
+          if (progress < 1) {
+            requestAnimationFrame(updateCounter)
+          } else {
+            element.textContent = targetValue
           }
-        });
-      });
-      
-      observer.observe(vercountElement, {
-        childList: true,
-        characterData: true,
-        subtree: true
-      });
-      
-      const currentValue = vercountElement.textContent;
-      if (currentValue && currentValue !== '-') {
-        updateViewsDisplay(viewsDisplayElement, currentValue, hasAnimatedViews);
-        hasAnimatedViews = true;
-      }
-    }
-  });
-</script>
+        }
 
+        requestAnimationFrame(updateCounter)
+      }
+
+      function updateViewsDisplay(viewsElement, newValue, hasAnimated = false) {
+        if (viewsElement && newValue && newValue !== '-') {
+          const views = parseInt(newValue.replace(/,/g, ''))
+
+          if (!hasAnimated) {
+            viewsElement.textContent = '0'
+            setTimeout(() => {
+              animateCounter(viewsElement, views.toLocaleString(), 2000)
+            }, 500)
+          } else {
+            viewsElement.textContent = views.toLocaleString()
+          }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const wordsDisplayElement = document.getElementById('total-words-display')
+        if (wordsDisplayElement) {
+          const targetValue = wordsDisplayElement.textContent
+          wordsDisplayElement.textContent = '0'
+          setTimeout(() => {
+            animateCounter(wordsDisplayElement, targetValue, 2000)
+          }, 500)
+        }
+
+        const viewsDisplayElement = document.getElementById('total-views-display')
+        const vercountElement = document.getElementById('vercount_value_site_pv')
+        let hasAnimatedViews = false
+
+        if (viewsDisplayElement && vercountElement) {
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                const newValue = vercountElement.textContent
+                updateViewsDisplay(viewsDisplayElement, newValue, hasAnimatedViews)
+                hasAnimatedViews = true
+              }
+            })
+          })
+
+          observer.observe(vercountElement, {
+            childList: true,
+            characterData: true,
+            subtree: true
+          })
+
+          const currentValue = vercountElement.textContent
+          if (currentValue && currentValue !== '-') {
+            updateViewsDisplay(viewsDisplayElement, currentValue, hasAnimatedViews)
+            hasAnimatedViews = true
+          }
+        }
+      })
+    </script>
   </main>
 
-<style>
-  /* 确保封面区域在桌面端是左右布局 */
-  @media (min-width: 768px) {
-    header > div:first-child {
-      display: flex !important;
-      flex-direction: row !important;
-    }
-  }
-  
-  /* 移动端垂直布局 */
-  @media (max-width: 767px) {
-    header > div:first-child {
-      flex-direction: column !important;
-    }
-  }
-  
-  /* 小票样式 - 简洁左右虚线边框 */
-  .receipt-style {
-    width: 100%;
-    max-width: 100%;
-    background: white;
-    padding: 12px 16px;
-    font-family: 'Courier New', monospace;
-    border: none !important;
-  }
-  
-  @media (min-width: 768px) {
+  <style>
+    /* 小票样式 - 简洁左右虚线边框 */
     .receipt-style {
-      padding: 20px;
-    }
-  }
-  
-  /* 侧边栏最大宽度限制，自适应但不会过宽 */
-  aside {
-    max-width: 380px;
-  }
-  
-  @media (max-width: 768px) {
-    aside {
+      width: 100%;
       max-width: 100%;
+      padding: 12px 16px;
+      font-family: 'Courier New', monospace;
+      border: none !important;
     }
-  }
-</style>
+
+    @media (min-width: 768px) {
+      .receipt-style {
+        padding: 20px;
+      }
+    }
+
+    /* 侧边栏最大宽度限制，自适应但不会过宽 */
+    aside {
+      max-width: 380px;
+    }
+
+    @media (max-width: 768px) {
+      aside {
+        max-width: 100%;
+      }
+    }
+  </style>
 </PageLayout>

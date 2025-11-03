@@ -15,7 +15,7 @@ export const ThemeConfigSchema = () =>
       .string()
       .describe('Title for your website. Will be used in metadata and as browser tab title.'),
     
-    subtitle: z.string().optional().describe('Subtitle for homepage'),  
+    about: z.string().optional().describe('about me'),  
 
     /** Will be used in index page & copyright declaration */
     author: z.string().describe('Will be used in index page & copyright declaration'),
