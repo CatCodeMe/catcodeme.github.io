@@ -6,12 +6,25 @@
     "description": "中国历史中的真实游戏. 作者吴思通过历史案例, 揭示了中国社会运行中的潜规则, 探讨了正式制度背后的非正式规则.",
     "tags": ["历史", "社会学", "中国历史", "政治", "文化", "社会规则", "制度分析"],
     "identifier": "9787506331744",
-    "rating": 3.5,
+    "rating": 8.1,
     "progress": 20,
+    "startDate": "2025-10-25",
+    "order": 1,
+    "coverImage": "/src/assets/shelf/1_qian_gui_ze.png",
     "sourceUrl": "https://book.douban.com/subject/1025723/",
-    "links":[
-      "igv0",
-      "o2yb"
-    ]
+    "links": ["igv0", "o2yb"]
+  },
+  {
+    "title": "雪国",
+    "type": "book",
+    "status": "reading",
+    "description": "川端康成的经典作品, 描绘了日本雪国地区凄美的爱情故事. 小说以细腻的笔触展现了人物的内心世界和雪国独特的自然风光.",
+    "tags": ["文学", "日本文学", "小说", "川端康成", "诺贝尔文学奖"],
+    "rating": 8.3,
+    "progress": 25,
+    "startDate": "2025-11-03",
+    "order": 2,
+    "coverImage": "/src/assets/shelf/2_xue_guo.png",
+    "sourceUrl": "https://book.douban.com/subject/1007305/"
   }
 ]

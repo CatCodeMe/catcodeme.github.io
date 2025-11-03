@@ -7,7 +7,7 @@ info:
   comment: true
   view: true
 ---
-import { Spoiler, Timeline } from 'astro-pure/user'
+import { Collapse, Spoiler, Timeline } from 'astro-pure/user'
 import Substats from '@/components/about/Substats.astro'
 import { ToolTag } from '@/components/tools/Tool.astro'
 import ToolSection from '@/components/tools/ToolSection.astro'
@@ -214,8 +214,7 @@ Current support tools as follow:
 
 ## About Blog
 
-Website history:
-
+<Collapse title='Website history:'>
 <Timeline
   events={[
     {
@@ -233,9 +232,9 @@ Website history:
     }
   ]}
 />
+</Collapse>
 
-The smooth operation and personalized customization of website also rely on the resources and
-technical support provided by the following excellent projects/service providers:
+### 建站工具链:
 
 *   Framework & Theme: [Astro](https://astro.build/) + [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure)
 *   Site hosting: [EdgeOne Pages(Tencent)](https://edgeone.cloud.tencent.com)

@@ -27,7 +27,28 @@ for (const post of allPosts) {
   }
 }
 
-const currentReading = bookshelfData.find((item: any) => item.status === 'reading')
+const currentReading = (bookshelfData as any[])
+  .filter((item: any) => item.status === 'reading')
+  .sort((a: any, b: any) => {
+    // 按 startDate 倒序（最新的在前）
+    if (a.startDate && b.startDate) {
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    }
+    // 如果只有 a 有 startDate，a 排在前面
+    if (a.startDate && !b.startDate) return -1;
+    // 如果只有 b 有 startDate，b 排在前面
+    if (!a.startDate && b.startDate) return 1;
+    // 如果都有 order，按 order 倒序
+    if (a.order !== undefined && b.order !== undefined) {
+      return b.order - a.order;
+    }
+    // 如果只有 a 有 order，a 排在前面
+    if (a.order !== undefined && b.order === undefined) return -1;
+    // 如果只有 b 有 order，b 排在前面
+    if (a.order === undefined && b.order !== undefined) return 1;
+    // 默认保持原顺序
+    return 0;
+  })[0];
 
 // 计算建站时间（从2025-07-11开始）
 const siteStartDate = new Date('2025-07-11')

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content'
+import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import { Icon, Button } from '@/custom/components/user';
 import type { IconName } from 'packages/pure/libs/icons';
@@ -8,12 +9,27 @@ import bookshelfData from 'public/bookshelf.json';
 import PageLayout from '@/layouts/BaseLayout.astro';
 import Banner from '@/components/banner/Banner.astro';
 import bannerImage from '@/assets/shelf/desk1.png';
-import testCoverImage from '@/assets/cats/3-1.png';
 
-// 封面图片映射
-const coverImageMap: Record<string, any> = {
-  '/src/assets/cats/3-1.png': testCoverImage
-};
+// 动态加载所有可能的封面图片
+const coverImagesGlob = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.{jpeg,jpg,png,gif,webp,svg}',
+  { eager: false }
+);
+
+// 根据路径获取图片的辅助函数
+async function getCoverImage(imagePath: string | undefined): Promise<ImageMetadata | undefined> {
+  if (!imagePath) return undefined;
+  
+  // 确保路径格式正确（以 /src/ 开头）
+  const normalizedPath = imagePath.startsWith('/src/') ? imagePath : `/src/${imagePath}`;
+  
+  const imageLoader = coverImagesGlob[normalizedPath];
+  if (imageLoader) {
+    return (await imageLoader()).default;
+  }
+  
+  return undefined;
+}
 
 const meta = {
   title: '书架',
@@ -35,9 +51,32 @@ type ShelfItem = {
   tags?: string[];
   coverImage?: string;
   progress?: number;
+  order?: number;
+  startDate?: string;
+  endDate?: string;
 };
 
-const typedBookshelfData = bookshelfData as ShelfItem[];
+// 排序：优先按 startDate，如果没有则按 order，最后按添加顺序
+const typedBookshelfData = (bookshelfData as ShelfItem[]).sort((a, b) => {
+  // 如果都有 startDate，按 startDate 排序（升序）
+  if (a.startDate && b.startDate) {
+    return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+  }
+  // 如果只有 a 有 startDate，a 排在前面
+  if (a.startDate && !b.startDate) return -1;
+  // 如果只有 b 有 startDate，b 排在前面
+  if (!a.startDate && b.startDate) return 1;
+  // 如果都有 order，按 order 排序
+  if (a.order !== undefined && b.order !== undefined) {
+    return a.order - b.order;
+  }
+  // 如果只有 a 有 order，a 排在前面
+  if (a.order !== undefined && b.order === undefined) return -1;
+  // 如果只有 b 有 order，b 排在前面
+  if (a.order === undefined && b.order !== undefined) return 1;
+  // 默认保持原顺序
+  return 0;
+});
 
 // 统计信息
 const stats = {
@@ -114,21 +153,9 @@ const getTagColor = (index: number) => {
         </div>
       </div>
 
-      <!-- 搜索框 -->
-      <div class="mb-6">
-        <div class="relative">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="搜索书名、标签或描述..."
-            class="w-full rounded-lg border bg-background pl-10 pr-4 py-2.5 text-sm focus:border-primary focus:outline-none"
-          />
-        </div>
-      </div>
-
       <!-- 书籍列表 -->
       <div class="space-y-3">
-        {typedBookshelfData.map((item) => {
+        {await Promise.all(typedBookshelfData.map(async (item) => {
           const statusInfo = statusLabels[item.status];
           const linkedPosts = item.links?.map(link => {
             // 拼接 host，添加 blog/ 前缀
@@ -139,27 +166,42 @@ const getTagColor = (index: number) => {
             };
           }) || [];
           
+          // 动态加载封面图片
+          const coverImage = await getCoverImage(item.coverImage);
+          
           return (
             <div
-              class="book-row group relative flex flex-col overflow-hidden rounded-lg border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:bg-muted/30"
+              class="book-row group relative flex flex-col sm:flex-row overflow-hidden rounded-lg border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:bg-muted/30"
               data-title={item.title.toLowerCase()}
               data-description={(item.description || '').toLowerCase()}
               data-tags={(item.tags || []).join(' ').toLowerCase()}
               data-status={item.status}
               data-type={item.type}
             >
-              {/* 封面图片作为背景 */}
-              {item.coverImage && coverImageMap[item.coverImage] && (
-                <Image
-                  src={coverImageMap[item.coverImage]}
-                  alt={item.title}
-                  class="cover-image absolute end-0 top-0 z-0 h-full w-3/5 rounded-lg object-cover opacity-30 transition-opacity duration-300 group-hover:opacity-50"
-                  loading="lazy"
-                />
+              {/* 封面图片 - PC端左侧显示，移动端作为背景 */}
+              {coverImage && (
+                <>
+                  {/* PC端：左侧显示完整图片 */}
+                  <div class="hidden sm:block flex-shrink-0 w-28 md:w-32 h-40 md:h-44 bg-muted/30 overflow-hidden">
+                    <Image
+                      src={coverImage}
+                      alt={item.title}
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  {/* 移动端：作为背景，渐变遮罩 */}
+                  <Image
+                    src={coverImage}
+                    alt={item.title}
+                    class="cover-image-bg sm:hidden absolute inset-0 z-0 w-full h-full object-cover opacity-50 transition-opacity duration-300 group-hover:opacity-70"
+                    loading="lazy"
+                  />
+                </>
               )}
 
               {/* 内容区域 */}
-              <div class="relative z-10 flex flex-col gap-3 p-5">
+              <div class="relative flex flex-col gap-3 p-5 flex-1 min-w-0 z-10">
                 {/* 标题和右上角信息 */}
                 <div class="flex items-start justify-between gap-4">
                   <div class="flex-1 min-w-0">
@@ -267,7 +309,7 @@ const getTagColor = (index: number) => {
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   </main>
@@ -275,19 +317,10 @@ const getTagColor = (index: number) => {
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input') as HTMLInputElement;
     const bookRows = document.querySelectorAll('.book-row');
     const statCards = document.querySelectorAll('.stat-card');
     
     let currentFilter = 'all';
-
-    // 搜索功能
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
-        filterBooks(query, currentFilter);
-      });
-    }
 
     // 统计卡片点击过滤
     statCards.forEach((card) => {
@@ -295,8 +328,7 @@ const getTagColor = (index: number) => {
         const filter = card.getAttribute('data-filter');
         if (filter) {
           currentFilter = filter;
-          const query = searchInput?.value.toLowerCase().trim() || '';
-          filterBooks(query, currentFilter);
+          filterBooks(currentFilter);
           
           // 更新统计卡片样式
           statCards.forEach((c) => {
@@ -315,42 +347,26 @@ const getTagColor = (index: number) => {
       });
     });
 
-    function filterBooks(query: string, filter: string) {
+    function filterBooks(filter: string) {
       bookRows.forEach((row) => {
-        const title = row.getAttribute('data-title') || '';
-        const description = row.getAttribute('data-description') || '';
-        const tags = row.getAttribute('data-tags') || '';
         const status = row.getAttribute('data-status') || '';
-
-        const matchesQuery = !query || 
-          title.includes(query) || 
-          description.includes(query) || 
-          tags.includes(query);
-
         const matchesFilter = filter === 'all' || status === filter;
-
-        const matches = matchesQuery && matchesFilter;
-        (row as HTMLElement).style.display = matches ? 'block' : 'none';
+        (row as HTMLElement).style.display = matchesFilter ? 'block' : 'none';
       });
     }
   });
 </script>
 
 <style>
-  .cover-image {
-    mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-  }
-
-  @media (max-width: 768px) {
-    .cover-image {
-      width: 100%;
-      height: 40%;
-      top: auto;
-      bottom: 0;
-      border-radius: 0.5rem;
-      mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-    }
+  /* 移动端：封面图片作为背景，使用渐变遮罩 */
+  .cover-image-bg {
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    -ms-mask-image: -ms-linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    -webkit-mask-image: -webkit-linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) 100%
+    );
   }
 </style>
+
