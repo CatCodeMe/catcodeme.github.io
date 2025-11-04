@@ -1,28 +1,3 @@
-.inner-link {
-        text-decoration: none;
-        position: relative;
-        border-bottom: 1px dashed rgba(120, 120, 120, 0.4);
-        transition:
-          border-bottom-color 0.3s cubic-bezier(0.4,0,0.2,1),
-          border-bottom-width 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-.inner-link:hover {
-        border-bottom-color: rgba(120, 120, 120, 1); 
-        border-bottom-width: 1px;
-}
-
-.inner-link::before,
-.inner-link::after {
-        opacity: 0.8;
-        transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-.inner-link:hover::before,
-.inner-link:hover::after {
-        opacity: 1;
-}
-
 .inner-link::before {
         content: "{";
         margin-right: 0.25em;

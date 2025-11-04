@@ -6,11 +6,9 @@ import icon from 'astro-icon';
 import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 // Others
-// import { visualizer } from 'rollup-plugin-visualizer'
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import remarkMath from 'remark-math';
-
 
 
 import AstroPureIntegration from './packages/pure/index.ts';
@@ -20,7 +18,6 @@ import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 // Shiki
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
-
 
 // https://astro.build/config
 export default defineConfig({
@@ -55,22 +52,6 @@ export default defineConfig({
   },
 
   integrations: [
-    // redircetFrom({
-    //   contentDir: './src/content',
-    //   getSlug: (filePath) => {
-    //     const parsedPath = path.parse(filePath)
-    //     let slug
-    //     // construct slug as full path from either:
-    //     // - folder name if file name is index.md, or
-    //     // - file name
-    //     if (parsedPath.base === 'index.md' || parsedPath.base === 'index.mdx') {
-    //       slug = `${parsedPath.dir}`
-    //     } else {
-    //       slug = `${parsedPath.dir}/${parsedPath.name}`
-    //     }
-    //     return slug
-    //   }
-    // }),
     mermaid({
       autoTheme: true,
       theme: 'forest',
@@ -93,14 +74,6 @@ export default defineConfig({
 
   // Prefetch Options
   prefetch: true,
-  // Server Options
-  // server: {
-  //   host: true,
-  //   https: {
-  //       key: fs.readFileSync('./localhost+2-key.pem'),
-  //       cert: fs.readFileSync('./localhost+2.pem')
-  //     },
-  // },
 
   // Markdown Options
   markdown: {
