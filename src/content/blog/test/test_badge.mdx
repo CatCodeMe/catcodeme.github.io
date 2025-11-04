@@ -13,15 +13,15 @@ badge:
       value: 'Felix'
     - key: { icon: 'github' }
       value: 'GitHub'  
-    - key: { image: '/src/assets/avatar.webp' }
-    - key: { image: '/src/assets/avatar.webp' }
+    - key: { image: '/src/assets/avatar.jpge' }
+    - key: { image: '/src/assets/avatar.jpeg' }
       value: 'CatCodeMe'
     - key: 'Featured'
       color: '#ea9a45ff'
 ---
 import { MdxRepl } from 'astro-pure/user'
 import Badge from '@/components/Badge.astro'
-import avatar from '/src/assets/avatar.webp'
+import avatar from '/src/assets/avatar.jpeg'
 
 `Badge` 是一个灵活的组件，用于显示各种徽章。在 MDX 中，你可以直接调用该组件并传入 `item` 属性来渲染徽章。
 
@@ -111,7 +111,7 @@ import avatar from '/src/assets/avatar.webp'
   <Fragment slot='desc'>
   ````jsx
   import Badge from '@/components/Badge.astro';
-  import avatar from '/src/assets/avatar.webp';
+  import avatar from '/src/assets/avatar.jpeg';
 
   <Badge item={{ key: { image: avatar } }} />
   ````
@@ -125,7 +125,7 @@ import avatar from '/src/assets/avatar.webp'
   <Fragment slot='desc'>
   ````jsx
   import Badge from '@/components/Badge.astro';
-  import avatar from '/src/assets/avatar.webp';
+  import avatar from '/src/assets/avatar.jpeg';
 
   <Badge item={{ key: { image: avatar }, value: 'CatCodeMe' }} />
   ````

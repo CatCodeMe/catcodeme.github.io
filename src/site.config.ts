@@ -74,15 +74,21 @@ export const theme: ThemeUserConfig = {
         title: '京ICP备2025143479号-1',
         link: 'https://beian.miit.gov.cn/',
         style: 'text-sm'
+      },
+      {
+        title: 'Site Policy',
+        link: '/terms/list',
+        pos: 1
       }
-      // {
-      //   title: 'CC BY-NC-SA 4.0',
-      //   link: '/terms/list',
-      //   pos: 2
-      // }
     ],
     credits: true,
-    social: { github: 'https://github.com/catcodeme' }
+    social: {
+      travelling: {
+        label: '🚇 Travelling',
+        url: 'https://www.travellings.cn/go.html',
+        textOnly: true
+      }
+    }
   },
 
   content: {

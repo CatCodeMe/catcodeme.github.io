@@ -82,29 +82,13 @@ starlight-tabs {
   margin-top: .5em;
 }
 
-/* Add a decorative pattern in the middle of the top border */
-/* starlight-tabs::before {
-  content: '/ / /';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: hsl(var(--background));
-  padding: 0 0.5rem;
-  color: hsl(var(--border));
-  z-index: -1;
-} */
-
-
 /* inline code css , config font in uno.config.ts*/
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
   border-radius: .25rem;
-  padding: .15rem .3rem;
+  padding: .15rem;
   --un-bg-opacity: .13;
-  background-color: rgb(136 136 136 / var(--un-bg-opacity)) !important;
+  background-color: hsl(var(--foreground) / var(--un-bg-opacity)) !important;
   color: hsl(var(--foreground)) !important;
-  transition: background-color 0.2s, color 0.2s;
-
   &::before, &::after {
     content: '' !important;
   }

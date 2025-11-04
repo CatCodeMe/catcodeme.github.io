@@ -2,82 +2,26 @@
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user'
 
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import { getBlogCollection } from 'astro-pure/server'
+import { getCurrentReading, getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
 import avatarImage from '@/assets/avatar_2.png'
 import config from '@/site-config'
 
-import bookshelfData from '../../public/bookshelf.json'
-
 const MAX_POSTS = 6
 const allPosts = await getBlogCollection()
-const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+const allPostsByDate = await getLatestPosts(MAX_POSTS)
 
 const totalPosts = allPosts.length
-let totalWords = 0
-for (const post of allPosts) {
-  if (post.body) {
-    const text = post.body
-      .replace(/<[^>]*>/g, '')
-      .replace(/\[([^\]]*)\]\([^\)]*\)/g, '$1')
-      .replace(/!\[([^\]]*)\]\([^\)]*\)/g, '')
-      .replace(/[#*`_~]/g, '')
-      .replace(/\n/g, ' ')
-    const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || []
-    const englishWords = text.match(/[a-zA-Z]+/g) || []
-    totalWords += chineseChars.length + englishWords.length
-  }
-}
+const totalWords = await getTotalWords()
+const currentReading = getCurrentReading()
 
-const currentReading = (bookshelfData as any[])
-  .filter((item: any) => item.status === 'reading')
-  .sort((a: any, b: any) => {
-    // 按 startDate 倒序（最新的在前）
-    if (a.startDate && b.startDate) {
-      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    }
-    // 如果只有 a 有 startDate，a 排在前面
-    if (a.startDate && !b.startDate) return -1
-    // 如果只有 b 有 startDate，b 排在前面
-    if (!a.startDate && b.startDate) return 1
-    // 如果都有 order，按 order 倒序
-    if (a.order !== undefined && b.order !== undefined) {
-      return b.order - a.order
-    }
-    // 如果只有 a 有 order，a 排在前面
-    if (a.order !== undefined && b.order === undefined) return -1
-    // 如果只有 b 有 order，b 排在前面
-    if (a.order === undefined && b.order !== undefined) return 1
-    // 默认保持原顺序
-    return 0
-  })[0]
+// Calculate site age (from 2025-07-11)
+const siteAgeText = calculateSiteAge('2025-07-11')
 
-// 计算建站时间（从2025-07-11开始）
-const siteStartDate = new Date('2025-07-11')
-const now = new Date()
-const diffTime = now.getTime() - siteStartDate.getTime()
-const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-const diffYears = Math.floor(diffDays / 365)
-const diffMonths = Math.floor((diffDays % 365) / 30)
-const diffRemainingDays = diffDays % 30
-
-let siteAgeText = ''
-if (diffYears > 0) {
-  siteAgeText = `${diffYears}y`
-  if (diffMonths > 0) {
-    siteAgeText += ` ${diffMonths}M`
-  }
-} else if (diffMonths > 0) {
-  siteAgeText = ` ${diffMonths}M`
-  if (diffRemainingDays > 0) {
-    siteAgeText += ` ${diffRemainingDays}d`
-  }
-} else {
-  siteAgeText = `${diffDays} d`
-}
-
-// 使用主题色作为 highlight color
-const highlightColor = 'hsl(var(--primary) / var(--un-text-opacity, 1))'
+// Use theme color as highlight color
+const highlightColor = getHighlightColor()
 ---
 
 <PageLayout meta={{ title: 'Home' }} highlightColor={highlightColor}>
@@ -116,22 +60,24 @@ const highlightColor = 'hsl(var(--primary) / var(--un-text-opacity, 1))'
             </div>
 
             {/* 位置信息 */}
-            <div class='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-x-2 text-sm text-muted-foreground pt-2'>
+            <div
+              class='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-x-2 text-sm text-muted-foreground pt-2'
+            >
               {/* 位置信息 */}
               <div class='flex items-center gap-2'>
                 <Icon name='location' size='1em' />
                 <span>China</span>
               </div>
-              
+
               {/* PC端分隔符 */}
               <span class='hidden sm:inline'>|</span>
-              
+
               {/* 自我介绍 */}
               <span class='break-words'>{(config as any).about}</span>
-              
+
               {/* PC端分隔符 */}
               <span class='hidden sm:inline'>|</span>
-              
+
               {/* 猫咪链接 */}
               <a
                 href='/cats'
@@ -252,7 +198,7 @@ const highlightColor = 'hsl(var(--primary) / var(--un-text-opacity, 1))'
                 class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'
               >
                 <Icon name='content-statistic' size='1.25em' />
-                <span>站点统计</span>
+                <span>站点统计 from 2025/07/17</span>
               </div>
               {/* 移动端：2x2网格布局，桌面端：垂直列表 */}
               <div

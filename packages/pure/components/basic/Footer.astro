@@ -3,17 +3,52 @@ import { Icon as DevIcon } from 'astro-icon/components'
 import config from 'virtual:config'
 
 import { Icon } from '../user'
+import { hasIcon, getPlatformLabel } from '../../libs/social'
 
 const footerConf = config.footer
-let social = footerConf.social || {}
+const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
 
-// If the list does not contain rss, add it
-social.rss = {
-  label: 'RSS',
-  url: '/rss.xml'
+// Normalize social links data format to unified structure
+// Schema transform may return array or object, handle both cases
+const normalizeSocialLinks = (
+  social: any
+): Array<{ platform: string; label: string; url: string; textOnly: boolean }> => {
+  if (!social) return []
+
+  // If array format (already transformed by schema or user config)
+  if (Array.isArray(social)) {
+    return social
+  }
+
+  // If object format (old format or not transformed), convert to array
+  const result: Array<{ platform: string; label: string; url: string; textOnly: boolean }> = []
+
+  for (const [platform, item] of Object.entries(social)) {
+    if (typeof item === 'string') {
+      result.push({
+        platform,
+        label: getPlatformLabel(platform),
+        url: item,
+        textOnly: false
+      })
+    } else if (item && typeof item === 'object' && item !== null) {
+      // Type guard for custom format
+      const customItem = item as { url?: string; label?: string; textOnly?: boolean }
+      if (customItem.url) {
+        result.push({
+          platform,
+          label: customItem.label || getPlatformLabel(platform),
+          url: customItem.url,
+          textOnly: customItem.textOnly === true
+        })
+      }
+    }
+  }
+
+  return result
 }
 
-const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
+const socialLinks = normalizeSocialLinks(footerConf.social)
 ---
 
 <footer class='mx-auto mb-5 mt-16 w-full'>
@@ -64,21 +99,12 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
           footerConf.credits && (
             <span class='inline-flex items-center gap-x-2'>
               <a
-                href='https://github.com/withastro/astro'
-                target='_blank'
-                class='inline-flex items-center gap-x-1 hover:text-primary external-link'
-              >
-                {/* {Astro.generator}  */}
-                <DevIcon name='devicon:astro' class='size-4' />
-                Astro
-              </a>
-              <span>&</span>
-              <a
                 href='https://github.com/cworld1/astro-theme-pure'
                 target='_blank'
                 class='hover:text-primary external-link'
               >
-                Pure theme
+                <DevIcon name='devicon:astro' class='size-4' />
+                Astro & Pure theme
               </a>
               <span class='inline-flex items-center gap-x-1'>
                 <Icon name='heart' class='size-4' />
@@ -92,20 +118,32 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
       {/* Version */}
 
       {/* Social Brands */}
-      <!-- <div class='flex items-center gap-x-4'>
+      <div class='flex items-center gap-x-4'>
         {
-          footerConf.social &&
-            Object.entries(footerConf.social).map(([platform, { label, url }]) => (
-              <a
-                class='inline-block text-muted-foreground transition-all hover:text-muted-foreground/75'
-                href={url}
-                aria-label={label}
-              >
-                <Icon name={platform as keyof typeof footerConf.social} />
-              </a>
-            ))
+          socialLinks.length > 0
+            ? socialLinks.map(({ platform, label, url, textOnly }) => {
+                // If textOnly is true or icon doesn't exist, show text
+                const shouldShowText = textOnly || !hasIcon(platform)
+
+                return (
+                  <a
+                    class='inline-block external-link text-muted-foreground transition-all hover:text-muted-foreground/75'
+                    href={url}
+                    aria-label={label}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    {shouldShowText ? (
+                      <span class='text-sm'>{label}</span>
+                    ) : (
+                      <Icon name={platform as any} />
+                    )}
+                  </a>
+                )
+              })
+            : null
         }
-      </div> -->
+      </div>
     </div>
   </div>
 </footer>

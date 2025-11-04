@@ -4,7 +4,7 @@ import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user';
 import type { IconName } from 'packages/pure/libs/icons';
-import bookshelfData from 'public/bookshelf.json';
+import { getAllBookshelfItems, getBookshelfStats } from '@/components/shelf/utils';
 
 import PageLayout from '@/layouts/BaseLayout.astro';
 import Banner from '@/components/banner/Banner.astro';
@@ -39,25 +39,8 @@ const meta = {
 const allPosts = await getCollection('blog');
 const postsMap = new Map(allPosts.map((post) => [post.data.slug, { title: post.data.title }]));
 
-type ShelfItem = {
-  title: string;
-  type: "book" | "paper" | "article";
-  status: "read" | "reading" | "to-read";
-  description?: string;
-  rating?: number;
-  identifier?: string;
-  sourceUrl?: string;
-  links?: string[];
-  tags?: string[];
-  coverImage?: string;
-  progress?: number;
-  order?: number;
-  startDate?: string;
-  endDate?: string;
-};
-
-// 排序：优先按 startDate，如果没有则按 order，最后按添加顺序
-const typedBookshelfData = (bookshelfData as ShelfItem[]).sort((a, b) => {
+// Get bookshelf items sorted by startDate (ascending), then by order
+const typedBookshelfData = getAllBookshelfItems().sort((a, b) => {
   // 如果都有 startDate，按 startDate 排序（升序）
   if (a.startDate && b.startDate) {
     return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
@@ -79,31 +62,13 @@ const typedBookshelfData = (bookshelfData as ShelfItem[]).sort((a, b) => {
 });
 
 // 统计信息
-const stats = {
-  total: typedBookshelfData.length,
-  toRead: typedBookshelfData.filter(item => item.status === 'to-read').length,
-  reading: typedBookshelfData.filter(item => item.status === 'reading').length,
-  read: typedBookshelfData.filter(item => item.status === 'read').length
-};
+const stats = getBookshelfStats();
 
 const statusLabels: { [key: string]: { label: string; icon: IconName; color: string } } = {
   'to-read': { label: '想读', icon: 'list', color: 'blue' },
   'reading': { label: '在读', icon: 'time', color: 'purple' },
   'read': { label: '已读', icon: 'package', color: 'green' }
 };
-
-// 标签色卡
-const tagColors = [
-  'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-700',
-  'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-700',
-  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-700',
-  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-200 dark:border-red-700',
-  'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 border-purple-200 dark:border-purple-700',
-  'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200 border-pink-200 dark:border-pink-700',
-  'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 border-indigo-200 dark:border-indigo-700',
-  'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 border-teal-200 dark:border-teal-700',
-];
-
 ---
 
 <PageLayout {meta}>

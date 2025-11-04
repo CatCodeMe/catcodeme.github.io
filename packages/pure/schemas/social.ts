@@ -1,42 +1,48 @@
 import { z } from 'astro/zod'
 
-import { socialLinks } from '../types/constants'
+import { getPlatformLabel } from '../libs/social'
+
+// Support two formats:
+// 1. Simple format: { platform: 'url' } - uses icon
+// 2. Custom format: { platform: { url: 'url', label: 'label', textOnly?: true } } - supports text links
+const SocialLinkValueSchema = z.union([
+  z.string().url(), // Simple format: URL only
+  z.object({
+    url: z.string().url(),
+    label: z.string(),
+    textOnly: z.boolean().optional().default(false) // true means text only, no icon
+  })
+])
 
 export const SocialLinksSchema = () =>
   z
-    .record(
-      z.enum(socialLinks),
-      // Link to the respective social profile for this site
-      z.string().url()
-    )
+    .record(z.string(), SocialLinkValueSchema) // Allow any string as key, not limited to predefined platforms
     .transform((links) => {
-      const labelledLinks: Partial<Record<keyof typeof links, { label: string; url: string }>> = {}
-      for (const _k in links) {
-        const key = _k as keyof typeof links
-        const url = links[key]
-        if (!url) continue
-        const label = {
-          github: 'GitHub',
-          gitlab: 'GitLab',
-          discord: 'Discord',
-          youtube: 'YouTube',
-          instagram: 'Instagram',
-          x: 'X',
-          telegram: 'Telegram',
-          rss: 'RSS',
-          email: 'Email',
-          reddit: 'Reddit',
-          bluesky: 'BlueSky',
-          tiktok: 'TikTok',
-          weibo: 'Weibo',
-          steam: 'Steam',
-          bilibili: 'Bilibili',
-          zhihu: 'Zhihu',
-          coolapk: 'Coolapk',
-          netease: 'NetEase'
-        }[key]
-        labelledLinks[key] = { label, url }
+      const result: Array<{ platform: string; label: string; url: string; textOnly: boolean }> = []
+      
+      for (const key in links) {
+        const value = links[key]
+        if (!value) continue
+        
+        if (typeof value === 'string') {
+          // Simple format: URL only
+          result.push({
+            platform: key,
+            label: getPlatformLabel(key),
+            url: value,
+            textOnly: false
+          })
+        } else {
+          // Custom format
+          result.push({
+            platform: key,
+            label: value.label,
+            url: value.url,
+            textOnly: value.textOnly ?? false
+          })
+        }
       }
-      return labelledLinks
+      
+      return result
     })
     .optional()

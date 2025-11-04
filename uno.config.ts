@@ -1,4 +1,4 @@
-import { defineConfig, presetTypography, presetUno } from 'unocss'
+import { defineConfig, presetTypography, presetUno } from 'unocss';
 
 const fg = 'hsl(var(--foreground) / var(--un-text-opacity, 1))'
 const fgMuted = 'hsl(var(--muted-foreground) / var(--un-text-opacity, 1))'
@@ -8,13 +8,13 @@ const typographyConfig = {
   cssExtend: {
     // 覆盖 UnoCSS reset 中的默认 monospace 字体
     'code, kbd, samp, pre': {
-      'font-family': '"Swei Gothic", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
+      'font-family': '"Noto Serif CJK", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
       'font-size': '1.015em',
       'font-weight': '600'
     },
-    'details':{
-        'margin': '0',
-        'padding': '0',
+    details: {
+      margin: '0',
+      padding: '0'
     },
     // Title
     'h2,h3,h4,h5,h6': {
@@ -115,7 +115,7 @@ const typographyConfig = {
     },
     strong: {
       'font-weight': '600',
-      color: fg
+      color: '#a34c4c'
     },
     a: {
       'font-weight': '500',
