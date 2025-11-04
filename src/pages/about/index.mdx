@@ -7,86 +7,86 @@ info:
   comment: true
   view: true
 ---
-import { Collapse, Spoiler, Timeline } from 'astro-pure/user'
-import Substats from '@/components/about/Substats.astro'
-import { ToolTag } from '@/components/tools/Tool.astro'
-import ToolSection from '@/components/tools/ToolSection.astro'
+
 import { Icon } from '@/custom/components/user'
 import { Icon as AstroIcon } from 'astro-icon/components'
 
+import { Collapse, Spoiler, Timeline } from 'astro-pure/user'
+import Substats from '@/components/about/Substats.astro'
+import FriendList from '@/components/links/FriendList.astro'
+import { ToolTag } from '@/components/tools/Tool.astro'
+import ToolSection from '@/components/tools/ToolSection.astro'
+
 ## About Me
 
-*   Communist / Developer / Learner / Cat Lover
-*   改造自己,进而改造世界🚩 <Spoiler>革命无罪，造反有理！</Spoiler>
+- Communist / Developer / Learner / Cat Lover
+- 改造自己,进而改造世界🚩 <Spoiler>革命无罪，造反有理！</Spoiler>
 
 ## Skills
 
-<div class="mb-6">
-  
-  <div class="flex flex-wrap gap-2">
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:java" class="size-4" />
-      <span class="text-sm">Java</span>
+<div class='mb-6'>
+  <div class='flex flex-wrap gap-2'>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:java' class='size-4' />
+      <span class='text-sm'>Java</span>
     </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:zig" class="size-4" />
-      <span class="text-sm">Zig</span>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:zig' class='size-4' />
+      <span class='text-sm'>Zig</span>
     </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:python" class="size-4" />
-      <span class="text-sm">Python</span>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:python' class='size-4' />
+      <span class='text-sm'>Python</span>
     </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:bash" class="size-4" />
-      <span class="text-sm">Shell</span>
-    </div>
-  </div>
-</div>
-
-<div class="mb-6">
-  
-  <div class="flex flex-wrap gap-2">
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:spring" class="size-4" />
-      <span class="text-sm">Spring</span>
-    </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:redis" class="size-4" />
-      <span class="text-sm">Redis</span>
-    </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:clickhouse" class="size-4" />
-      <span class="text-sm">ClickHouse</span>
-    </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:mysql" class="size-4" />
-      <span class="text-sm">Mysql</span>
-    </div>
-    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all">
-      <AstroIcon name="devicon:apachespark" class="size-4" />
-      <span class="text-sm">Apache Spark</span>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:bash' class='size-4' />
+      <span class='text-sm'>Shell</span>
     </div>
   </div>
 </div>
 
-## GitHub Activity
+<div class='mb-6'>
+  <div class='flex flex-wrap gap-2'>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:spring' class='size-4' />
+      <span class='text-sm'>Spring</span>
+    </div>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:redis' class='size-4' />
+      <span class='text-sm'>Redis</span>
+    </div>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:clickhouse' class='size-4' />
+      <span class='text-sm'>ClickHouse</span>
+    </div>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:mysql' class='size-4' />
+      <span class='text-sm'>Mysql</span>
+    </div>
+    <div class='flex items-center gap-1.5 px-3 py-1.5 rounded-lg border bg-muted/50 hover:bg-muted hover:border-primary/50 transition-all'>
+      <AstroIcon name='devicon:apachespark' class='size-4' />
+      <span class='text-sm'>Apache Spark</span>
+    </div>
+  </div>
+</div>
 
-<div class="mb-6 rounded-lg border bg-background p-4">
-  <div class="rounded overflow-hidden">
+{/* ## GitHub Activity
+<div class='mb-6 rounded-lg border bg-background p-4'>
+  <div class='rounded overflow-hidden'>
     <img
-      class="hidden w-full dark:block"
-      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg"
-      alt="GitHub 贡献图 - 深色模式 - 显示 CatCodeMe 的代码贡献活动"
-      loading="lazy"
+      class='hidden w-full dark:block'
+      src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
+      alt='GitHub 贡献图 - 深色模式 - 显示 CatCodeMe 的代码贡献活动'
+      loading='lazy'
     />
     <img
-      class="block w-full dark:hidden"
-      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg"
-      alt="GitHub 贡献图 - 浅色模式 - 显示 CatCodeMe 的代码贡献活动"
-      loading="lazy"
+      class='block w-full dark:hidden'
+      src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
+      alt='GitHub 贡献图 - 浅色模式 - 显示 CatCodeMe 的代码贡献活动'
+      loading='lazy'
     />
   </div>
-</div>
+</div> */}
 
 ## Tools
 
@@ -189,59 +189,53 @@ Current support tools as follow:
   ]}
 />
 
-## Social Networks
-
-<Substats
-  stats={[
-    {
-      platform: 'GitHub',
-      icon: 'github',
-      link: 'https://github.com/catcodeme',
-      text: 'followers',
-      api: 'github/catcodeme'
-    },
-    {
-      platform: 'Bilibili',
-      icon: 'bilibili',
-      link: 'https://space.bilibili.com/19080963',
-      text: 'fans',
-      // api: 'bilibili/19080963',
-      color: '#fe7398',
-      count: 18
-    }
-  ]}
-/>
-
 ## About Blog
 
 <Collapse title='Website history:'>
-<Timeline
-  events={[
-    {
-      date: '2025-09-17',
-      content: '迁移到Tencent EdgeOne CDN'
-    },
-    {
-      date: '2025-09-16',
-      content: '添加备案号'
-    },
-    {
-      date: '2025-07-11',
-      content:
-        'Website refactored from <a href="https://github.com/srleom/astro-theme-resume" target="_blank">Astro Theme Pure</a>'
-    }
-  ]}
-/>
+  <Timeline
+    events={[
+      {
+        date: '2025-09-17',
+        content: '迁移到Tencent EdgeOne CDN'
+      },
+      {
+        date: '2025-09-16',
+        content: '添加备案号'
+      },
+      {
+        date: '2025-07-11',
+        content:
+          'Website refactored from <a href="https://github.com/srleom/astro-theme-resume" target="_blank">Astro Theme Pure</a>'
+      }
+    ]}
+  />
 </Collapse>
 
 ### 建站工具链:
 
-*   Framework & Theme: [Astro](https://astro.build/) + [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure)
-*   Site hosting: [EdgeOne Pages(Tencent)](https://edgeone.cloud.tencent.com)
-*   CI/CD: [EdgeOne](https://edgeone.cloud.tencent.com)
-*   Resources speedup: [EdgeOne](https://edgeone.cloud.tencent.com)
-*   Comment system: [Waline](https://waline.js.org)
-*   TotalPV: [Vercount](https://github.com/EvanNotFound/vercount)
-*   PagePV & Comment: [Waline](https://waline.js.org/next/guide/features/pageview.html)
-*   Icons & OgImage: from [Iconify](https://iconify.design/) & [lobehub](https://lobehub.com/icons), some icons from ai
-*   Fonts: from [ZSFT](https://fonts.zeoseven.com), current font is `Noto Serif CJK / 思源宋体`, 标题字体是 `ZSFT-e`
+- Framework & Theme: [Astro](https://astro.build/) + [Astro Theme Pure](https://github.com/cworld1/astro-theme-pure)
+- Site hosting: [EdgeOne Pages(Tencent)](https://edgeone.cloud.tencent.com)
+- CI/CD: [EdgeOne](https://edgeone.cloud.tencent.com)
+- Resources speedup: [EdgeOne](https://edgeone.cloud.tencent.com)
+- Comment system: [Waline](https://waline.js.org)
+- TotalPV: [Vercount](https://github.com/EvanNotFound/vercount)
+- PagePV & Comment: [Waline](https://waline.js.org/next/guide/features/pageview.html)
+- Icons & OgImage: from [Iconify](https://iconify.design/) & [lobehub](https://lobehub.com/icons), some icons from ai
+- Fonts: from [ZSFT](https://fonts.zeoseven.com), current font is `Noto Serif CJK / 思源宋体`, 标题字体是 `ZSFT-e`
+
+## Special Links
+
+<FriendList
+  list={{
+    id_name: 'kaiwang',
+    desc: '开往 - 开往下一站',
+    link_list: [
+      {
+        name: '开往',
+        intro: '随机前往开往的成员博客',
+        link: 'https://www.travellings.cn/train.html',
+        avatar: 'https://www.travellings.cn/assets/travelling-dark.png'
+      }
+    ]
+  }}
+/>
