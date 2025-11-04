@@ -85,7 +85,7 @@ export const theme: ThemeUserConfig = {
     social: {
       travelling: {
         label: '🚇 Travelling',
-        url: 'https://www.travellings.cn/go.html',
+        url: 'https://www.travellings.cn/train.html',
         textOnly: true
       }
     }
