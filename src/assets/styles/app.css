@@ -82,21 +82,34 @@ starlight-tabs {
   margin-top: .5em;
 }
 
-/* inline code css , config font in uno.config.ts*/
+/* Inline code styles */
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
-  border-radius: .25rem;
-  padding: .15rem;
-  --un-bg-opacity: .13;
-  background-color: hsl(var(--foreground) / var(--un-bg-opacity)) !important;
+  font-size: 0.9em !important;
+  font-weight: 500 !important;
+  border-radius: 0.25rem !important;
+  padding: 0.1rem 0.35rem !important;
+  border: 1px solid hsl(var(--border)) !important;
+  background-color: hsl(45 25% 92%) !important;
+  background-image: 
+    repeating-linear-gradient(45deg, transparent, transparent 2px, hsl(45 20% 88%) 2px, hsl(45 20% 88%) 4px),
+    repeating-linear-gradient(-45deg, transparent, transparent 2px, hsl(45 20% 88%) 2px, hsl(45 20% 88%) 4px) !important;
   color: hsl(var(--foreground)) !important;
+  display: inline-block !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
+  line-height: 1.6 !important;
   &::before, &::after {
     content: '' !important;
   }
 }
 
 html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
-  background-color: rgba(220, 220, 220, 0.13) !important;
-  color: #f8fafc;
+  border-color: hsl(var(--border)) !important;
+  background-color: hsl(30 15% 18%) !important;
+  background-image: 
+    repeating-linear-gradient(45deg, transparent, transparent 2px, hsl(30 12% 22%) 2px, hsl(30 12% 22%) 4px),
+    repeating-linear-gradient(-45deg, transparent, transparent 2px, hsl(30 12% 22%) 2px, hsl(30 12% 22%) 4px) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Reading progress bar using modern CSS scroll-driven animations */

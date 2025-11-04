@@ -6,11 +6,17 @@ const bgMuted = 'hsl(var(--muted) / var(--un-bg-opacity, 1))'
 
 const typographyConfig = {
   cssExtend: {
-    // 覆盖 UnoCSS reset 中的默认 monospace 字体
+    // Code styles
     'code, kbd, samp, pre': {
-      'font-family': '"Noto Serif CJK", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace',
+      'font-family': '"Noto Serif CJK", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace'
+    },
+    'pre code': {
       'font-size': '1.015em',
       'font-weight': '600'
+    },
+    'code:not(pre code)': {
+      // 解决 inline code 在长单词时换行的问题
+      'word-break': 'break-all!important'
     },
     details: {
       margin: '0',
@@ -40,24 +46,29 @@ const typographyConfig = {
     // Blockquote
     blockquote: {
       position: 'relative',
-      overflow: 'hidden',
+      overflow: 'visible',
       'border-width': '1px',
       'border-left': 'inherit',
       'border-radius': 'var(--radius)',
       'padding-inline': '1.6rem',
-      'box-shadow': '0 5px 0 ' + bgMuted
+      'font-style': 'normal'
     },
-    'blockquote::after': {
+    'blockquote::before': {
       color: fgMuted,
       position: 'absolute',
-      content: '"”"',
-      top: '2.6rem',
-      right: '-1.4rem',
-      'font-size': '10rem',
-      'font-family':
-        '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
-      transform: 'rotate(-15deg)',
-      opacity: '0.1'
+      content: '"\\201C"',
+      top: '0',
+      left: '0.5rem',
+      'font-size': '4rem',
+      'font-family': 'serif',
+      'line-height': '1',
+      opacity: '0.3',
+      'pointer-events': 'none',
+      'z-index': '0'
+    },
+    'blockquote p': {
+      position: 'relative',
+      'z-index': '1'
     },
     // Table
     table: {
