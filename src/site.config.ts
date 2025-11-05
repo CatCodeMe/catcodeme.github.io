@@ -152,7 +152,7 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: true,
+    enable: false,
     server: 'https://waline.8cat.life',
     emoji: ['qq'],
     additionalConfigs: {
