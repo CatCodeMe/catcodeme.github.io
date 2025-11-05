@@ -89,10 +89,11 @@ starlight-tabs {
   border-radius: 0.25rem !important;
   padding: 0.1rem 0.35rem !important;
   border: 1px solid hsl(var(--border)) !important;
-  background-color: hsl(45 25% 92%) !important;
+  background-color: hsl(140 20% 92%) !important;
   background-image: 
-    repeating-linear-gradient(45deg, transparent, transparent 2px, hsl(45 20% 88%) 2px, hsl(45 20% 88%) 4px),
-    repeating-linear-gradient(-45deg, transparent, transparent 2px, hsl(45 20% 88%) 2px, hsl(45 20% 88%) 4px) !important;
+    repeating-linear-gradient(45deg, transparent, transparent 1.5px, hsl(140 18% 86%) 1.5px, hsl(140 18% 86%) 3px),
+    repeating-linear-gradient(-45deg, transparent, transparent 1.5px, hsl(140 18% 86%) 1.5px, hsl(140 18% 86%) 3px) !important;
+  background-size: 4px 4px !important;
   color: hsl(var(--foreground)) !important;
   display: inline-block !important;
   box-decoration-break: clone !important;
@@ -105,11 +106,33 @@ starlight-tabs {
 
 html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
   border-color: hsl(var(--border)) !important;
-  background-color: hsl(30 15% 18%) !important;
+  background-color: hsl(140 15% 18%) !important;
   background-image: 
-    repeating-linear-gradient(45deg, transparent, transparent 2px, hsl(30 12% 22%) 2px, hsl(30 12% 22%) 4px),
-    repeating-linear-gradient(-45deg, transparent, transparent 2px, hsl(30 12% 22%) 2px, hsl(30 12% 22%) 4px) !important;
+    repeating-linear-gradient(45deg, transparent, transparent 1.5px, hsl(140 12% 26%) 1.5px, hsl(140 12% 26%) 3px),
+    repeating-linear-gradient(-45deg, transparent, transparent 1.5px, hsl(140 12% 26%) 1.5px, hsl(140 12% 26%) 3px) !important;
+  background-size: 4px 4px !important;
   color: hsl(var(--foreground)) !important;
+}
+
+/* Blockquote styles */
+.prose blockquote {
+  background-color: hsl(140 20% 94%) !important;
+  background-image: 
+    repeating-linear-gradient(0deg, hsl(140 18% 88%) 0px, hsl(140 18% 88%) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(90deg, hsl(140 18% 88%) 0px, hsl(140 18% 88%) 1px, transparent 1px, transparent 20px) !important;
+  border: none !important;
+  padding-top: .15em !important;
+  padding-bottom: .15em !important;
+}
+
+html.dark .prose blockquote {
+  background-color: hsl(140 15% 16%) !important;
+  background-image: 
+    repeating-linear-gradient(0deg, hsl(140 12% 22%) 0px, hsl(140 12% 22%) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(90deg, hsl(140 12% 22%) 0px, hsl(140 12% 22%) 1px, transparent 1px, transparent 20px) !important;
+  border: none !important;
+  padding-top: 1.25em !important;
+  padding-bottom: 1.25em !important;
 }
 
 /* Reading progress bar using modern CSS scroll-driven animations */

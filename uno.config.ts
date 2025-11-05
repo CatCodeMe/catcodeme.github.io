@@ -47,11 +47,10 @@ const typographyConfig = {
     blockquote: {
       position: 'relative',
       overflow: 'visible',
-      'border-width': '1px',
-      'border-left': 'inherit',
       'border-radius': 'var(--radius)',
       'padding-inline': '1.6rem',
-      'font-style': 'normal'
+      'font-style': 'normal',
+      'font-weight': '500'
     },
     'blockquote::before': {
       color: fgMuted,
@@ -132,11 +131,7 @@ const typographyConfig = {
       'font-weight': '500',
       color: fg
     },
-    'code:not(pre code)': {
-      // 解决 inline code 在长单词时换行的问题
-      // 'white-space': 'pre-wrap!important',
-      'word-break': 'break-all!important'
-    },
+    
     '.katex-html': {
       overflow: 'auto hidden',
       padding: '3px'
