@@ -230,15 +230,6 @@ const highlightColor = getHighlightColor()
                     id='total-words-display'>{totalWords.toLocaleString()}</span
                   >
                 </div>
-                <div
-                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
-                >
-                  <span class='text-muted-foreground text-xs md:text-sm'>PV</span>
-                  <span
-                    class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
-                    id='total-views-display'>-</span
-                  >
-                </div>
                 <div class='flex justify-between items-center py-1 pb-3 md:pb-4 md:border-b-0'>
                   <span class='text-muted-foreground text-xs md:text-sm'>UpTime</span>
                   <span class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
@@ -311,36 +302,7 @@ const highlightColor = getHighlightColor()
         </aside>
       </div>
     </div>
-
-    <span id='vercount_value_site_pv' class='hidden'></span>
-
-    {/* 数字动画效果已移除，直接显示数字以优化性能 */}
-    <script is:inline>
-      // 简化的 PV 统计更新 - 不使用动画，直接显示数字
-      document.addEventListener('DOMContentLoaded', function () {
-        const viewsEl = document.getElementById('total-views-display')
-        const vercountEl = document.getElementById('vercount_value_site_pv')
-
-        if (viewsEl && vercountEl) {
-          function updateViews() {
-            const val = vercountEl.textContent
-            if (val && val !== '-') {
-              viewsEl.textContent = parseInt(val.replace(/,/g, '')).toLocaleString()
-            }
-          }
-
-          // 检查初始值
-          updateViews()
-
-          // 监听一次更新后断开
-          const obs = new MutationObserver(function () {
-            updateViews()
-            obs.disconnect()
-          })
-          obs.observe(vercountEl, { childList: true, characterData: true, subtree: true })
-        }
-      })
-    </script>
+    
   </main>
 
   <style>
