@@ -2,8 +2,8 @@
 import { Icon as DevIcon } from 'astro-icon/components'
 import config from 'virtual:config'
 
+import { getPlatformLabel, hasIcon } from '../../libs/social'
 import { Icon } from '../user'
-import { hasIcon, getPlatformLabel } from '../../libs/social'
 
 const footerConf = config.footer
 const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
@@ -101,15 +101,12 @@ const socialLinks = normalizeSocialLinks(footerConf.social)
               <a
                 href='https://github.com/cworld1/astro-theme-pure'
                 target='_blank'
-                class='hover:text-primary external-link'
+                class='hover:text-primary external-link italic'
               >
                 <DevIcon name='devicon:astro' class='size-4' />
                 Astro & Pure theme
               </a>
-              <span class='inline-flex items-center gap-x-1'>
-                <Icon name='heart' class='size-4' />
-                powered
-              </span>
+              <span class='inline-flex items-center gap-x-1'>powered</span>
             </span>
           )
         }

@@ -1,5 +1,5 @@
 ---
-import { Footer, Header, ThemeProvider } from '@/custom/components/basic'
+import { Footer, Header } from '@/custom/components/basic'
 
 import type { SiteMeta } from 'astro-pure/types'
 import BaseHead from '@/components/BaseHead.astro'
@@ -33,7 +33,7 @@ const {
 <html lang={config.locale.lang}>
   <head>
     <BaseHead {articleDate} {description} {ogImage} {title} />
-    <ThemeProvider />
+    <!-- <ThemeProvider /> -->
   </head>
 
   <body class:list={['flex justify-center bg-background text-foreground', bodyClass]} {...props}>
