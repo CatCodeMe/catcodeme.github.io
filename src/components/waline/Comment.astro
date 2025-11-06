@@ -7,12 +7,21 @@ import { cn } from 'astro-pure/utils'
 
 import commentFlag from '@/assets/other/comment_flag.png'
 
-const { class: className } = Astro.props
+interface Props {
+  class?: string
+  /** 是否启用评论，优先级高于全局配置 */
+  enable?: boolean
+}
+
+const { class: className, enable } = Astro.props
+
+// 优先使用传入的 enable，如果没有则使用全局配置
+const isEnabled = enable !== undefined ? enable : config.integ.waline.enable
 ---
 
 {
-  config.integ.waline.enable && (
-    <comment-component>
+  isEnabled && (
+    <comment-component data-enabled={isEnabled}>
       <div id='waline' class={cn('not-prose', className)} style={`--comment-flag-url: url(${commentFlag.src})`}>
         Comment seems to stuck. Try to refresh?✨
       </div>
@@ -33,6 +42,16 @@ const { class: className } = Astro.props
     }
 
     connectedCallback() {
+      // 组件已经渲染说明服务端已经判断为启用，直接初始化
+      // 这里保留检查以防御性编程
+      const componentEnabled = this.dataset.enabled !== undefined 
+        ? this.dataset.enabled === 'true'
+        : undefined
+      const isEnabled = componentEnabled !== undefined ? componentEnabled : walineConfig.enable
+
+      // 如果禁用了，则不初始化
+      if (!isEnabled) return
+
       // Prevent Vue log errors
       ;(globalThis as unknown as { __VUE_OPTIONS_API__: boolean }).__VUE_OPTIONS_API__ = true
       ;(globalThis as unknown as { __VUE_PROD_DEVTOOLS__: boolean }).__VUE_PROD_DEVTOOLS__ = false
@@ -54,7 +73,8 @@ const { class: className } = Astro.props
     }
   }
 
-  if (walineConfig.enable) customElements.define('comment-component', Comment)
+  // 始终注册组件，由组件内部判断是否启用
+  customElements.define('comment-component', Comment)
 </script>
 
 <style>
