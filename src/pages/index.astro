@@ -32,8 +32,16 @@ const highlightColor = getHighlightColor()
         <div class='grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-center'>
           {/* 左侧：头像 - 大尺寸 */}
           <div class='flex justify-center md:justify-start'>
-            <div class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg'>
-              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-contain block' />
+            <div class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg flex items-center justify-center bg-muted/30'>
+              <Image 
+                src={avatarImage} 
+                alt='Avatar' 
+                width={224}
+                height={224}
+                class='w-full h-full object-contain block'
+                loading='eager'
+                fetchpriority='high'
+              />
             </div>
           </div>
 
