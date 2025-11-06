@@ -1,10 +1,8 @@
-/* External font loading - Will be loaded via JavaScript */
-/* @import url("https://fontsapi.zeoseven.com/89/main/result.css"); */
-/* @import url("https://fontsapi.zeoseven.com/709/main/result.css"); */
-@import url("https://fontsapi.zeoseven.com/285/main/result.css");
+/* External font loading - Loaded asynchronously via JavaScript to avoid blocking render */
+/* Font CSS will be loaded dynamically in BaseHead.astro */
 
 body {
-  /* JyunsaiKaai */
+  /* JyunsaiKaai - Fallback fonts ensure text is visible even if external font hasn't loaded */
   font-family: "Noto Serif CJK", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: normal;
   text-autospace: normal;

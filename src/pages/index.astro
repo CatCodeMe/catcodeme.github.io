@@ -2,10 +2,10 @@
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user'
 
-import PageLayout from '@/layouts/BaseLayout.astro'
 import { getBlogCollection } from 'astro-pure/server'
-import { getCurrentReading, getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import PageLayout from '@/layouts/BaseLayout.astro'
 import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
+import { getCurrentReading, getLatestPosts, getTotalWords } from '@/components/shelf/utils'
 import avatarImage from '@/assets/home.png'
 import config from '@/site-config'
 
@@ -32,10 +32,8 @@ const highlightColor = getHighlightColor()
         <div class='grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-center'>
           {/* 左侧：头像 - 大尺寸 */}
           <div class='flex justify-center md:justify-start'>
-            <div
-              class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg'
-            >
-              <Image src={avatarImage} alt='Avatar' class='object-contain block' />
+            <div class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg'>
+              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-contain block' />
             </div>
           </div>
 
@@ -308,80 +306,30 @@ const highlightColor = getHighlightColor()
 
     <span id='vercount_value_site_pv' class='hidden'></span>
 
+    {/* 数字动画效果已移除，直接显示数字以优化性能 */}
     <script is:inline>
-      function animateCounter(element, targetValue, duration = 2000) {
-        const startValue = 0
-        const startTime = performance.now()
-        const targetNumber = parseInt(targetValue.replace(/,/g, ''))
+      // 简化的 PV 统计更新 - 不使用动画，直接显示数字
+      document.addEventListener('DOMContentLoaded', function () {
+        const viewsEl = document.getElementById('total-views-display')
+        const vercountEl = document.getElementById('vercount_value_site_pv')
 
-        function updateCounter(currentTime) {
-          const elapsed = currentTime - startTime
-          const progress = Math.min(elapsed / duration, 1)
-          const easeOutCubic = 1 - Math.pow(1 - progress, 3)
-          const currentValue = Math.floor(startValue + (targetNumber - startValue) * easeOutCubic)
-          element.textContent = currentValue.toLocaleString()
-
-          if (progress < 1) {
-            requestAnimationFrame(updateCounter)
-          } else {
-            element.textContent = targetValue
+        if (viewsEl && vercountEl) {
+          function updateViews() {
+            const val = vercountEl.textContent
+            if (val && val !== '-') {
+              viewsEl.textContent = parseInt(val.replace(/,/g, '')).toLocaleString()
+            }
           }
-        }
 
-        requestAnimationFrame(updateCounter)
-      }
+          // 检查初始值
+          updateViews()
 
-      function updateViewsDisplay(viewsElement, newValue, hasAnimated = false) {
-        if (viewsElement && newValue && newValue !== '-') {
-          const views = parseInt(newValue.replace(/,/g, ''))
-
-          if (!hasAnimated) {
-            viewsElement.textContent = '0'
-            setTimeout(() => {
-              animateCounter(viewsElement, views.toLocaleString(), 2000)
-            }, 500)
-          } else {
-            viewsElement.textContent = views.toLocaleString()
-          }
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        const wordsDisplayElement = document.getElementById('total-words-display')
-        if (wordsDisplayElement) {
-          const targetValue = wordsDisplayElement.textContent
-          wordsDisplayElement.textContent = '0'
-          setTimeout(() => {
-            animateCounter(wordsDisplayElement, targetValue, 2000)
-          }, 500)
-        }
-
-        const viewsDisplayElement = document.getElementById('total-views-display')
-        const vercountElement = document.getElementById('vercount_value_site_pv')
-        let hasAnimatedViews = false
-
-        if (viewsDisplayElement && vercountElement) {
-          const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-              if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                const newValue = vercountElement.textContent
-                updateViewsDisplay(viewsDisplayElement, newValue, hasAnimatedViews)
-                hasAnimatedViews = true
-              }
-            })
+          // 监听一次更新后断开
+          const obs = new MutationObserver(function () {
+            updateViews()
+            obs.disconnect()
           })
-
-          observer.observe(vercountElement, {
-            childList: true,
-            characterData: true,
-            subtree: true
-          })
-
-          const currentValue = vercountElement.textContent
-          if (currentValue && currentValue !== '-') {
-            updateViewsDisplay(viewsDisplayElement, currentValue, hasAnimatedViews)
-            hasAnimatedViews = true
-          }
+          obs.observe(vercountEl, { childList: true, characterData: true, subtree: true })
         }
       })
     </script>
