@@ -34,5 +34,9 @@ export function calculateSiteAge(startDate: string): string {
  * Get default highlight color using theme primary color
  */
 export function getHighlightColor(): string {
-  return 'hsl(var(--primary) / var(--un-text-opacity, 1))'
+  return '#f6eac5'
+  // 之前的代码使用 hsl(var(--primary) / var(--un-text-opacity, 1))
+  // 这是使用 CSS 变量获取主题主色，并通过除法运算控制透明度
+  // var(--un-text-opacity, 1) 是 UnoCSS 的透明度变量，默认值为 1（完全不透明）
+  // 除法运算用于将 HSL 颜色值与透明度值结合，实现颜色透明度的动态控制
 }

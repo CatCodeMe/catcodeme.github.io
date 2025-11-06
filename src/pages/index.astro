@@ -6,7 +6,7 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import { getBlogCollection } from 'astro-pure/server'
 import { getCurrentReading, getLatestPosts, getTotalWords } from '@/components/shelf/utils'
 import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
-import avatarImage from '@/assets/avatar_2.png'
+import avatarImage from '@/assets/home.png'
 import config from '@/site-config'
 
 const MAX_POSTS = 6
@@ -33,9 +33,9 @@ const highlightColor = getHighlightColor()
           {/* 左侧：头像 - 大尺寸 */}
           <div class='flex justify-center md:justify-start'>
             <div
-              class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 border border-border overflow-hidden bg-card rounded-lg shadow-lg'
+              class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg'
             >
-              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-cover block' />
+              <Image src={avatarImage} alt='Avatar' class='w-full h-full object-contain block' />
             </div>
           </div>
 
