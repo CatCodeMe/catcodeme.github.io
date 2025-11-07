@@ -100,9 +100,8 @@ const socialLinks = normalizeSocialLinks(footerConf.social)
               <a
                 href='https://github.com/cworld1/astro-theme-pure'
                 target='_blank'
-                class='hover:text-primary'
+                class='hover:text-primary external-link'
               >
-                {/* <DevIcon name='devicon:astro' class='size-4' /> */}
                 Astro & Pure theme
               </a>
               <span class='inline-flex items-center gap-x-1'>powered</span>
@@ -123,9 +122,9 @@ const socialLinks = normalizeSocialLinks(footerConf.social)
 
                 return (
                   <a
-                    class='inline-block text-muted-foreground transition-all hover:text-muted-foreground/75'
+                    class='inline-block external-link text-muted-foreground transition-all hover:text-muted-foreground/75'
                     href={url}
-                    aria-label={label}
+                    aria-labelledby={label}
                     target='_blank'
                     rel='noopener noreferrer'
                   >
