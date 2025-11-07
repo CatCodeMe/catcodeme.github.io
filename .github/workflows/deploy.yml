@@ -28,9 +28,14 @@ jobs:
       - name: Install fonttools
         run: |
           pip install fonttools brotli
-          # 验证安装
-          python -m fontTools.subset --version || {
+          # 验证安装 - 使用 Python 导入模块的方式验证
+          python -c "import fontTools; print('✅ fonttools 版本:', fontTools.__version__)" || {
             echo "❌ fonttools 安装失败"
+            exit 1
+          }
+          # 验证 subset 模块是否可用
+          python -m fontTools.subset --help > /dev/null 2>&1 || {
+            echo "❌ fontTools.subset 模块不可用"
             exit 1
           }
           echo "✅ fonttools 安装成功"

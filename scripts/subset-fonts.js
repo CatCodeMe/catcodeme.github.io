@@ -72,14 +72,27 @@ function getAllHTMLFiles(dir, fileList = []) {
 }
 
 /**
- * 检查 pyftsubset 是否可用
+ * 检查 pyftsubset 是否可用，返回可用的命令
  */
 function checkPyftsubset() {
   try {
-    execSync('pyftsubset --version', { stdio: 'ignore' })
-    return true
+    // 先尝试直接调用 pyftsubset
+    execSync('pyftsubset --help', { stdio: 'ignore' })
+    return 'pyftsubset'
   } catch {
-    return false
+    try {
+      // 如果直接调用失败，尝试使用 python -m fontTools.subset
+      execSync('python -m fontTools.subset --help', { stdio: 'ignore' })
+      return 'python -m fontTools.subset'
+    } catch {
+      try {
+        // 尝试 python3
+        execSync('python3 -m fontTools.subset --help', { stdio: 'ignore' })
+        return 'python3 -m fontTools.subset'
+      } catch {
+        return null
+      }
+    }
   }
 }
 
