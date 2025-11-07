@@ -28,6 +28,19 @@ jobs:
       - name: Install fonttools
         run: pip install fonttools brotli
       
+      - name: Download font file
+        run: |
+          mkdir -p fonts-source
+          echo "📥 下载思源宋体字体文件..."
+          # 从 GitHub 直接下载 Noto Serif SC Regular TTF
+          curl -L "https://github.com/google/fonts/raw/main/ofl/notoserifsc/NotoSerifSC-Regular.ttf" \
+            -o fonts-source/NotoSerifSC-Regular.ttf || {
+            echo "❌ 字体文件下载失败"
+            exit 1
+          }
+          ls -lh fonts-source/
+          echo "✅ 字体文件下载完成"
+      
       - name: Install dependencies
         run: bun install
         # edgeone CLI 已包含在 devDependencies 中
@@ -37,7 +50,7 @@ jobs:
       
       - name: Generate font subset (post-build script)
         run: node scripts/subset-fonts.js
-        continue-on-error: true  # 如果字体子集化失败，不影响部署
+        # 如果字体子集化失败，会终止整个流程（已移除 continue-on-error）
       
       - name: Verify build output
         run: |
