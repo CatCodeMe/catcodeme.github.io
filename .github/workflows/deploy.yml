@@ -1,0 +1,54 @@
+name: Build and Deploy to EdgeOne
+
+# 向主干分支推送代码时触发部署
+on:
+  push:
+    branches:
+      - astro-pure-v4_0_3
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Setup Python (for font subsetting)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install fonttools
+        run: pip install fonttools brotli
+      
+      - name: Install dependencies
+        run: bun install
+        # edgeone CLI 已包含在 devDependencies 中
+      
+      - name: Build project
+        run: bun run build
+      
+      - name: Generate font subset (post-build script)
+        run: node scripts/subset-fonts.js
+        continue-on-error: true  # 如果字体子集化失败，不影响部署
+      
+      - name: Verify build output
+        run: |
+          echo "📦 Build output directory contents:"
+          ls -lh dist/ | head -20
+          echo ""
+          echo "🔤 Font files:"
+          ls -lh public/fonts/ 2>/dev/null || echo "No font files found"
+      
+      - name: Deploy to EdgeOne Pages
+        run: bunx edgeone pages deploy dist -n ${{ secrets.EDGEONE_PROJECT_NAME }} -t ${{ secrets.EDGEONE_API_TOKEN }}
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
+          EDGEONE_PROJECT_NAME: ${{ secrets.EDGEONE_PROJECT_NAME }}

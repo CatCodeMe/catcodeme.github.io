@@ -31,38 +31,6 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 {/* Font Preload */}
 <link rel='preload' href='/fonts/LinBiolinum.woff2' as='font' type='font/woff2' crossorigin />
 
-{/* External Font - Deferred Loading */}
-<link rel='preconnect' href='https://fontsapi.zeoseven.com' crossorigin />
-<link rel='dns-prefetch' href='https://fontsapi.zeoseven.com' />
-
-{/* Async font loading - non-blocking, executes immediately */}
-<script is:inline>
-  // Load font CSS asynchronously to avoid blocking render
-  // Using media="print" trick: CSS loads but doesn't apply until media is changed to "all"
-  ;(function () {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = 'https://fontsapi.zeoseven.com/285/main/result.css'
-    link.media = 'print'
-    link.onload = function () {
-      this.media = 'all'
-    }
-    // Fallback: if onload doesn't fire (some browsers), set media to all after a short delay
-    setTimeout(function () {
-      if (link.media === 'print') {
-        link.media = 'all'
-      }
-    }, 100)
-    // Insert before other stylesheets to maintain order
-    const firstStylesheet = document.querySelector('link[rel="stylesheet"]')
-    if (firstStylesheet) {
-      document.head.insertBefore(link, firstStylesheet)
-    } else {
-      document.head.appendChild(link)
-    }
-  })()
-</script>
-
 {/* DNS prefetch for performance */}
 <link rel='dns-prefetch' href='https://vercel.live' />
 
@@ -119,7 +87,8 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 
 <meta content={Astro.generator} name='generator' />
 
-{/* Styles */}
+{/* Styles - Astro will inline small CSS files automatically via inlineStylesheets: 'auto' */}
+<link rel='stylesheet' href='/styles/fonts.css' />
 <link rel='stylesheet' href='/styles/global.css' />
 
 {

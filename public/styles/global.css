@@ -1,8 +1,7 @@
-/* External font loading - Loaded asynchronously via JavaScript to avoid blocking render */
-/* Font CSS will be loaded dynamically in BaseHead.astro */
+/* 字体定义已移至 /styles/fonts.css */
+/* 这里只保留 body 样式，字体通过 fonts.css 加载 */
 
 body {
-  /* JyunsaiKaai - Fallback fonts ensure text is visible even if external font hasn't loaded */
   font-family: "Noto Serif CJK", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: normal;
   text-autospace: normal;

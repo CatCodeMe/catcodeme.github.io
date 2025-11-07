@@ -92,3 +92,11 @@ b.html
 localhost*
 public/fonts/crjk*
 bun.lockb
+
+# Lighthouse reports
+lighthouse-reports/
+
+# Font source files (large files, should be downloaded separately)
+fonts-source/*.ttf
+fonts-source/*.otf
+!fonts-source/.gitkeep

@@ -25,6 +25,9 @@ const highlightColor = getHighlightColor()
 ---
 
 <PageLayout meta={{ title: 'Home' }} highlightColor={highlightColor}>
+  {/* Preload LCP image */}
+  <link rel='preload' as='image' href={avatarImage.src} fetchpriority='high' />
+
   <main class='w-screen max-w-screen overflow-x-hidden -mx-[calc(50vw-50%)] bg-background'>
     <div class='max-w-6xl mx-auto px-4 py-6 md:px-12 md:py-10'>
       {/* 封面区域 - Hero 风格设计 */}
@@ -32,12 +35,16 @@ const highlightColor = getHighlightColor()
         <div class='grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-center'>
           {/* 左侧：头像 - 大尺寸 */}
           <div class='flex justify-center md:justify-start'>
-            <div class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg flex items-center justify-center bg-muted/30'>
-              <Image 
-                src={avatarImage} 
-                alt='Avatar' 
+            <div
+              class='w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56 overflow-hidden rounded-lg flex items-center justify-center bg-muted/30'
+            >
+              <Image
+                src={avatarImage}
+                alt='Avatar'
                 width={224}
                 height={224}
+                format='webp'
+                quality={90}
                 class='w-full h-full object-contain block'
                 loading='eager'
                 fetchpriority='high'
@@ -116,7 +123,7 @@ const highlightColor = getHighlightColor()
               allPostsByDate.map((post, index) => (
                 <a href={`/blog/${post.data.slug}`} class='block no-underline group relative z-10'>
                   <article class='grid grid-cols-[32px_1fr] gap-3 md:grid-cols-[40px_1fr] md:gap-5 py-2.5 md:py-3 border-b border-border last:border-b-0 transition-colors hover:bg-muted/50 cursor-pointer'>
-                    <div class='text-sm md:text-xl font-light text-muted-foreground/50 tabular-nums self-start leading-none'>
+                    <div class='text-sm md:text-xl font-light text-muted-foreground/90 tabular-nums self-start leading-none'>
                       {String(index + 1).padStart(2, '0')}
                     </div>
                     <div class='flex flex-col gap-1 md:gap-1.5'>
@@ -130,9 +137,9 @@ const highlightColor = getHighlightColor()
                             day: '2-digit'
                           })}
                         </time>
-                        <h3 class='text-lg md:text-xl font-normal text-foreground m-0 leading-snug transition-colors group-hover:text-primary'>
+                        <div class='text-lg md:text-xl font-normal text-foreground m-0 leading-snug transition-colors group-hover:text-primary'>
                           {post.data.title}
-                        </h3>
+                        </div>
                       </div>
                       {post.data.description && (
                         <p class='text-xs md:text-sm text-muted-foreground leading-relaxed m-0'>
@@ -180,8 +187,8 @@ const highlightColor = getHighlightColor()
                       <div class='flex justify-between items-center py-1 border-t border-dashed border-border mt-2 pt-2'>
                         {currentReading.rating && (
                           <span class='text-muted-foreground text-xs flex items-center gap-1'>
-                            <Icon name='star' size='0.875em' />
-                            <span>{currentReading.rating.toFixed(1)}</span>
+                            {/* <Icon name='star' size='0.875em' /> */}
+                            <span>⭐️ {currentReading.rating.toFixed(1)}</span>
                           </span>
                         )}
                         {currentReading.progress !== undefined && (
@@ -257,6 +264,7 @@ const highlightColor = getHighlightColor()
                   href='https://github.com/CatCodeMe'
                   target='_blank'
                   rel='noopener noreferrer'
+                  aria-label='GitHub'
                   class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
                 >
                   <Icon name='github' size='1.25em' />
@@ -266,15 +274,17 @@ const highlightColor = getHighlightColor()
                   href='https://twitter.com/hulj13'
                   target='_blank'
                   rel='noopener noreferrer'
+                  aria-label='X'
                   class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
                 >
                   <Icon name='x' size='1.25em' />
-                  <span class='hidden md:inline'>Twitter</span>
+                  <span class='hidden md:inline'>X</span>
                 </a>
                 <a
                   href='https://bsky.app/profile/catcodeme.bsky.social'
                   target='_blank'
                   rel='noopener noreferrer'
+                  aria-label='Bluesky'
                   class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
                 >
                   <Icon name='bluesky' size='1.25em' />
@@ -284,6 +294,7 @@ const highlightColor = getHighlightColor()
                   href='https://t.me/ccm_life'
                   target='_blank'
                   rel='noopener noreferrer'
+                  aria-label='Telegram'
                   class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
                 >
                   <Icon name='telegram' size='1.25em' />
@@ -291,6 +302,9 @@ const highlightColor = getHighlightColor()
                 </a>
                 <a
                   href='/rss.xml'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  aria-label='RSS'
                   class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-primary no-underline transition-colors hover:text-primary/80 py-2 md:py-2'
                 >
                   <Icon name='rss' size='1.25em' />
@@ -302,7 +316,6 @@ const highlightColor = getHighlightColor()
         </aside>
       </div>
     </div>
-    
   </main>
 
   <style>
