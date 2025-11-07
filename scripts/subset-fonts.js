@@ -87,7 +87,8 @@ function checkPyftsubset() {
  * 使用 pyftsubset 生成字体子集
  */
 function generateFontSubset(characters) {
-  if (!checkPyftsubset()) {
+  const pyftsubsetCmd = checkPyftsubset()
+  if (!pyftsubsetCmd) {
     console.error('❌ 错误: 未找到 pyftsubset 工具')
     console.error('请安装: pip install fonttools brotli')
     console.error('或使用: npm install -g pyftsubset')
@@ -99,6 +100,7 @@ function generateFontSubset(characters) {
   const text = charArray.join('')
   
   console.log(`📝 提取到 ${charArray.length} 个唯一字符`)
+  console.log(`🔧 使用命令: ${pyftsubsetCmd}`)
   
   // 确保输出目录存在
   if (!fs.existsSync(fontsOutputDir)) {
@@ -106,7 +108,7 @@ function generateFontSubset(characters) {
   }
   
   // 生成字体子集
-  const command = `pyftsubset "${sourceFontPath}" \
+  const command = `${pyftsubsetCmd} "${sourceFontPath}" \
     --text="${text}" \
     --flavor=woff2 \
     --output-file="${outputFontPath}" \
