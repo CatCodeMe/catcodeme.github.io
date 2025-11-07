@@ -1,8 +1,9 @@
 import fs from 'fs'
-import { readFileSync, readdirSync, statSync } from 'fs'
+import { readFileSync, readdirSync, statSync, writeFileSync, unlinkSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { execSync } from 'child_process'
+import { execSync, spawn } from 'child_process'
+import { tmpdir } from 'os'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -120,29 +121,89 @@ function generateFontSubset(characters) {
     fs.mkdirSync(fontsOutputDir, { recursive: true })
   }
   
-  // 生成字体子集
-  const command = `${pyftsubsetCmd} "${sourceFontPath}" \
-    --text="${text}" \
-    --flavor=woff2 \
-    --output-file="${outputFontPath}" \
-    --layout-features='*' \
-    --glyph-names \
-    --symbol-cmap \
-    --legacy-cmap \
-    --notdef-glyph \
-    --notdef-outline \
-    --recommended-glyphs`
-  
+  // 创建临时文件来存储文本内容，避免 shell 引号转义问题
+  const tempTextFile = join(tmpdir(), `font-subset-text-${Date.now()}.txt`)
   try {
-    execSync(command, { stdio: 'inherit' })
-    console.log(`✅ 字体子集已生成: ${outputFontPath}`)
+    writeFileSync(tempTextFile, text, 'utf-8')
     
-    // 显示文件大小
-    const stats = fs.statSync(outputFontPath)
-    const sizeKB = (stats.size / 1024).toFixed(2)
-    const sizeMB = (stats.size / 1024 / 1024).toFixed(2)
-    console.log(`📦 文件大小: ${sizeKB} KB (${sizeMB} MB)`)
+    // 使用 --text-file 参数而不是 --text，避免 shell 引号问题
+    // 将命令拆分为数组，避免 shell 解析
+    const cmdParts = pyftsubsetCmd.split(' ')
+    const args = [
+      ...cmdParts.slice(1), // 如果是 "python -m fontTools.subset"，这里会包含 "-m", "fontTools.subset"
+      sourceFontPath,
+      '--text-file=' + tempTextFile,
+      '--flavor=woff2',
+      '--output-file=' + outputFontPath,
+      '--layout-features=*',
+      '--glyph-names',
+      '--symbol-cmap',
+      '--legacy-cmap',
+      '--notdef-glyph',
+      '--notdef-outline',
+      '--recommended-glyphs'
+    ]
+    
+    // 如果 pyftsubsetCmd 是单个命令（如 "pyftsubset"），则 cmdParts[0] 是命令本身
+    const command = cmdParts.length > 1 ? cmdParts[0] : pyftsubsetCmd
+    
+    // 使用 spawn 方式执行，避免 shell 解析问题
+    const child = spawn(command, args, {
+      stdio: 'inherit',
+      shell: false
+    })
+    
+    return new Promise((resolve, reject) => {
+      child.on('close', (code) => {
+        // 清理临时文件
+        try {
+          if (fs.existsSync(tempTextFile)) {
+            unlinkSync(tempTextFile)
+          }
+        } catch (e) {
+          // 忽略清理错误
+        }
+        
+        if (code !== 0) {
+          console.error(`❌ 生成字体子集失败，退出码: ${code}`)
+          process.exit(1)
+        }
+        
+        console.log(`✅ 字体子集已生成: ${outputFontPath}`)
+        
+        // 显示文件大小
+        const stats = fs.statSync(outputFontPath)
+        const sizeKB = (stats.size / 1024).toFixed(2)
+        const sizeMB = (stats.size / 1024 / 1024).toFixed(2)
+        console.log(`📦 文件大小: ${sizeKB} KB (${sizeMB} MB)`)
+        
+        resolve()
+      })
+      
+      child.on('error', (error) => {
+        // 清理临时文件
+        try {
+          if (fs.existsSync(tempTextFile)) {
+            unlinkSync(tempTextFile)
+          }
+        } catch (e) {
+          // 忽略清理错误
+        }
+        
+        console.error('❌ 生成字体子集失败:', error.message)
+        reject(error)
+      })
+    })
   } catch (error) {
+    // 清理临时文件
+    try {
+      if (fs.existsSync(tempTextFile)) {
+        unlinkSync(tempTextFile)
+      }
+    } catch (e) {
+      // 忽略清理错误
+    }
+    
     console.error('❌ 生成字体子集失败:', error.message)
     process.exit(1)
   }
@@ -196,8 +257,8 @@ async function main() {
   console.log(`   - HTML 文件数: ${htmlFiles.length}`)
   console.log(`   - 提取字符数: ${allCharacters.size}`)
   
-  // 生成字体子集
-  generateFontSubset(allCharacters)
+  // 生成字体子集（现在是异步的）
+  await generateFontSubset(allCharacters)
   
   console.log('\n✨ 字体子集化完成！')
   console.log('💡 字体文件已生成，可以直接部署')
