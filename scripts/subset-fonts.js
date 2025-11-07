@@ -1,9 +1,8 @@
 import fs from 'fs'
-import { readFileSync, readdirSync, statSync, writeFileSync, unlinkSync, copyFileSync } from 'fs'
+import { readFileSync, readdirSync, statSync, copyFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { execSync, spawn } from 'child_process'
-import { tmpdir } from 'os'
+import Fontmin from 'fontmin'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -74,100 +73,85 @@ function getAllHTMLFiles(dir, fileList = []) {
 }
 
 /**
- * 检查 pyftsubset 是否可用，返回可用的命令
+ * 使用 fontmin 生成字体子集（纯 JS 方案）
  */
-function checkPyftsubset() {
-  try {
-    // 先尝试直接调用 pyftsubset
-    execSync('pyftsubset --help', { stdio: 'ignore' })
-    return 'pyftsubset'
-  } catch {
-    try {
-      // 如果直接调用失败，尝试使用 python -m fontTools.subset
-      execSync('python -m fontTools.subset --help', { stdio: 'ignore' })
-      return 'python -m fontTools.subset'
-    } catch {
-      try {
-        // 尝试 python3
-        execSync('python3 -m fontTools.subset --help', { stdio: 'ignore' })
-        return 'python3 -m fontTools.subset'
-      } catch {
-        return null
-      }
-    }
-  }
-}
-
-/**
- * 使用 pyftsubset 生成字体子集
- */
-function generateFontSubset(characters) {
-  const pyftsubsetCmd = checkPyftsubset()
-  if (!pyftsubsetCmd) {
-    console.error('❌ 错误: 未找到 pyftsubset 工具')
-    console.error('请安装: pip install fonttools brotli')
-    console.error('或使用: npm install -g pyftsubset')
-    process.exit(1)
-  }
-  
-  // 将字符集转换为 Unicode 范围字符串
+async function generateFontSubset(characters) {
+  // 将字符集转换为字符串
   const charArray = Array.from(characters).sort()
   const text = charArray.join('')
   
   console.log(`📝 提取到 ${charArray.length} 个唯一字符`)
-  console.log(`🔧 使用命令: ${pyftsubsetCmd}`)
+  console.log(`🔧 使用 fontmin 生成字体子集...`)
   
   // 确保输出目录存在
   if (!fs.existsSync(fontsOutputDir)) {
     fs.mkdirSync(fontsOutputDir, { recursive: true })
   }
   
-  // 创建临时文件来存储文本内容，避免 shell 引号转义问题
-  const tempTextFile = join(tmpdir(), `font-subset-text-${Date.now()}.txt`)
-  try {
-    writeFileSync(tempTextFile, text, 'utf-8')
+  return new Promise((resolve, reject) => {
+    // 第一步：生成 TTF 子集
+    const fontmin = new Fontmin()
+      .src(sourceFontPath)
+      .use(Fontmin.glyph({
+        text: text,
+        hinting: false // 禁用 hinting 以加快速度
+      }))
+      .dest(fontsOutputDir)
     
-    // 使用 --text-file 参数而不是 --text，避免 shell 引号问题
-    // 将命令拆分为数组，避免 shell 解析
-    const cmdParts = pyftsubsetCmd.split(' ')
-    const args = [
-      ...cmdParts.slice(1), // 如果是 "python -m fontTools.subset"，这里会包含 "-m", "fontTools.subset"
-      sourceFontPath,
-      '--text-file=' + tempTextFile,
-      '--flavor=woff2',
-      '--output-file=' + outputFontPath,
-      '--layout-features=*',
-      '--glyph-names',
-      '--symbol-cmap',
-      '--legacy-cmap',
-      '--notdef-glyph',
-      '--notdef-outline',
-      '--recommended-glyphs'
-    ]
-    
-    // 如果 pyftsubsetCmd 是单个命令（如 "pyftsubset"），则 cmdParts[0] 是命令本身
-    const command = cmdParts.length > 1 ? cmdParts[0] : pyftsubsetCmd
-    
-    // 使用 spawn 方式执行，避免 shell 解析问题
-    const child = spawn(command, args, {
-      stdio: 'inherit',
-      shell: false
-    })
-    
-    return new Promise((resolve, reject) => {
-      child.on('close', (code) => {
-        // 清理临时文件
+    fontmin.run((err, files) => {
+      if (err) {
+        console.error('❌ 生成字体子集失败:', err.message)
+        reject(err)
+        return
+      }
+      
+      // 找到生成的 TTF 文件
+      const ttfFile = files.find(f => f.path.endsWith('.ttf') || f.path.endsWith('.otf'))
+      if (!ttfFile) {
+        reject(new Error('未找到生成的 TTF 文件'))
+        return
+      }
+      
+      const generatedTtfPath = ttfFile.path
+      
+      // 第二步：转换为 WOFF2
+      const fontminWoff2 = new Fontmin()
+        .src(generatedTtfPath)
+        .use(Fontmin.ttf2woff2({
+          deflate: {
+            level: 11 // 最高压缩级别
+          }
+        }))
+        .dest(fontsOutputDir)
+      
+      fontminWoff2.run((err2, files2) => {
+        // 清理临时 TTF 文件
         try {
-          if (fs.existsSync(tempTextFile)) {
-            unlinkSync(tempTextFile)
+          if (fs.existsSync(generatedTtfPath)) {
+            fs.unlinkSync(generatedTtfPath)
           }
         } catch (e) {
           // 忽略清理错误
         }
         
-        if (code !== 0) {
-          console.error(`❌ 生成字体子集失败，退出码: ${code}`)
-          process.exit(1)
+        if (err2) {
+          console.error('❌ 转换为 WOFF2 失败:', err2.message)
+          reject(err2)
+          return
+        }
+        
+        // 找到生成的 WOFF2 文件
+        const woff2File = files2.find(f => f.path.endsWith('.woff2'))
+        if (!woff2File) {
+          reject(new Error('未找到生成的 WOFF2 文件'))
+          return
+        }
+        
+        const generatedWoff2Path = woff2File.path
+        
+        // 重命名为目标文件名
+        if (generatedWoff2Path !== outputFontPath) {
+          fs.renameSync(generatedWoff2Path, outputFontPath)
         }
         
         console.log(`✅ 字体子集已生成: ${outputFontPath}`)
@@ -196,41 +180,15 @@ function generateFontSubset(characters) {
         
         resolve()
       })
-      
-      child.on('error', (error) => {
-        // 清理临时文件
-        try {
-          if (fs.existsSync(tempTextFile)) {
-            unlinkSync(tempTextFile)
-          }
-        } catch (e) {
-          // 忽略清理错误
-        }
-        
-        console.error('❌ 生成字体子集失败:', error.message)
-        reject(error)
-      })
     })
-  } catch (error) {
-    // 清理临时文件
-    try {
-      if (fs.existsSync(tempTextFile)) {
-        unlinkSync(tempTextFile)
-      }
-    } catch (e) {
-      // 忽略清理错误
-    }
-    
-    console.error('❌ 生成字体子集失败:', error.message)
-    process.exit(1)
-  }
+  })
 }
 
 /**
  * 主函数
  */
 async function main() {
-  console.log('🚀 开始字体子集化流程...\n')
+  console.log('🚀 开始字体子集化流程（纯 JS 方案）...\n')
   
   // 检查源字体文件是否存在
   if (!fs.existsSync(sourceFontPath)) {
@@ -274,7 +232,7 @@ async function main() {
   console.log(`   - HTML 文件数: ${htmlFiles.length}`)
   console.log(`   - 提取字符数: ${allCharacters.size}`)
   
-  // 生成字体子集（现在是异步的）
+  // 生成字体子集
   await generateFontSubset(allCharacters)
   
   console.log('\n✨ 字体子集化完成！')

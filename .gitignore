@@ -99,3 +99,4 @@ lighthouse-reports/
 # Font source files (large files, should be downloaded separately)
 fonts-source/*.otf
 !fonts-source/.gitkeep
+public/fonts/N*

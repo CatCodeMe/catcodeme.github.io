@@ -13,6 +13,7 @@ import remarkMath from 'remark-math';
 
 import AstroPureIntegration from './packages/pure/index.ts';
 // Local integrations
+import { fontSubsetting } from './src/integrations/font-subsetting.ts';
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 // Shiki
@@ -68,7 +69,8 @@ export default defineConfig({
         mingcute: ['*']
       }
     }),
-    AstroPureIntegration(config)
+    AstroPureIntegration(config),
+    fontSubsetting() // 构建后自动运行字体子集化
   ],
   // root: './my-project-directory',
 
