@@ -3,9 +3,14 @@
 @font-face {
   font-family: 'Noto Serif CJK';
   src: url('/fonts/NotoSerifCJK-Subset.woff2') format('woff2');
-  font-display: swap;
+  font-display: optional; /* 使用 optional 减少布局偏移，如果字体未加载完成则使用 fallback */
   font-weight: normal;
   font-style: normal;
+  /* 使用 size-adjust 来匹配 fallback 字体的尺寸，减少布局偏移 */
+  size-adjust: 100%;
+  ascent-override: 100%;
+  descent-override: 0%;
+  line-gap-override: 0%;
 }
 
 body {

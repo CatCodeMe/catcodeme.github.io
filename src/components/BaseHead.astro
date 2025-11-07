@@ -28,7 +28,8 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <meta name='msapplication-TileImage' content='/favicon/mstile-150x150.png' />
 <meta name='msapplication-TileColor' content='#ffffff' />
 
-{/* Font Preload */}
+{/* Font Preload - 预加载关键字体以减少布局偏移 */}
+<link rel='preload' href='/fonts/NotoSerifCJK-Subset.woff2' as='font' type='font/woff2' crossorigin />
 <link rel='preload' href='/fonts/LinBiolinum.woff2' as='font' type='font/woff2' crossorigin />
 
 {/* DNS prefetch for performance */}
@@ -88,7 +89,7 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <meta content={Astro.generator} name='generator' />
 
 {/* Styles - Astro will inline small CSS files automatically via inlineStylesheets: 'auto' */}
-<link rel='stylesheet' href='/styles/fonts.css' />
+{/* fonts.css 已内联到上方，减少请求链 */}
 <link rel='stylesheet' href='/styles/global.css' />
 
 {
