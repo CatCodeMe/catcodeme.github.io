@@ -56,8 +56,11 @@ jobs:
           echo "📦 Build output directory contents:"
           ls -lh dist/ | head -20
           echo ""
-          echo "🔤 Font files:"
-          ls -lh public/fonts/ 2>/dev/null || echo "No font files found"
+          echo "🔤 Font files in dist/fonts/:"
+          ls -lh dist/fonts/ 2>/dev/null || echo "No font files found in dist/fonts/"
+          echo ""
+          echo "🔤 Font files in public/fonts/:"
+          ls -lh public/fonts/ 2>/dev/null || echo "No font files found in public/fonts/"
       
       - name: Deploy to EdgeOne Pages
         run: bunx edgeone pages deploy dist -n ${{ secrets.EDGEONE_PROJECT_NAME }} -t ${{ secrets.EDGEONE_API_TOKEN }}

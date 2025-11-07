@@ -11,6 +11,7 @@ const projectRoot = join(__dirname, '..')
 const distDir = join(projectRoot, 'dist')
 const fontsSourceDir = join(projectRoot, 'fonts-source')
 const fontsOutputDir = join(projectRoot, 'public', 'fonts')
+const distFontsDir = join(distDir, 'fonts')
 
 // 思源宋体字体文件路径（支持 TTF 和 OTF）
 let sourceFontPath = ''
@@ -176,6 +177,22 @@ function generateFontSubset(characters) {
         const sizeKB = (stats.size / 1024).toFixed(2)
         const sizeMB = (stats.size / 1024 / 1024).toFixed(2)
         console.log(`📦 文件大小: ${sizeKB} KB (${sizeMB} MB)`)
+        
+        // 复制字体文件到 dist/fonts/ 目录（构建后生成的文件需要手动复制）
+        if (!fs.existsSync(distFontsDir)) {
+          fs.mkdirSync(distFontsDir, { recursive: true })
+        }
+        const distFontPath = join(distFontsDir, 'NotoSerifCJK-Subset.woff2')
+        copyFileSync(outputFontPath, distFontPath)
+        console.log(`📋 字体文件已复制到: ${distFontPath}`)
+        
+        // 同时复制 LinBiolinum.woff2（如果存在）
+        const linBiolinumPath = join(fontsOutputDir, 'LinBiolinum.woff2')
+        if (fs.existsSync(linBiolinumPath)) {
+          const distLinBiolinumPath = join(distFontsDir, 'LinBiolinum.woff2')
+          copyFileSync(linBiolinumPath, distLinBiolinumPath)
+          console.log(`📋 LinBiolinum 字体已复制到: ${distLinBiolinumPath}`)
+        }
         
         resolve()
       })
