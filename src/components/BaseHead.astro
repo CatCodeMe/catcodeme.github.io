@@ -32,6 +32,36 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <link rel='preload' href='/fonts/NotoSerifCJK-Subset.woff2' as='font' type='font/woff2' crossorigin />
 <link rel='preload' href='/fonts/LinBiolinum.woff2' as='font' type='font/woff2' crossorigin />
 
+{/* Font CSS - 内联以减少请求链 */}
+<style is:global>
+  /* 思源宋体 - 使用本地子集字体文件 */
+  @font-face {
+    font-family: 'Noto Serif CJK';
+    src: url('/fonts/NotoSerifCJK-Subset.woff2') format('woff2');
+    font-display: normal; /* 使用 optional 减少布局偏移，如果字体未加载完成则使用 fallback */
+    font-weight: normal;
+    font-style: normal;
+    /* 使用 size-adjust 来匹配 fallback 字体的尺寸，减少布局偏移 */
+    /* size-adjust: 100%;
+    ascent-override: 100%;
+    descent-override: 0%;
+    line-gap-override: 0%; */
+  }
+
+  body {
+    /* 使用本地字体，fallback 到系统字体 */
+    font-family: "Noto Serif CJK", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: normal;
+    text-autospace: normal;
+  }
+
+  @font-face {
+    font-family: 'ZSFT-e';
+    src: url('/fonts/LinBiolinum.woff2') format('woff2');
+    font-display: normal;
+  }
+</style>
+
 {/* DNS prefetch for performance */}
 <link rel='dns-prefetch' href='https://vercel.live' />
 
@@ -44,7 +74,7 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <meta content={config.author} name='author' />
 
 {/* Theme Color */}
-<meta content='' name='theme-color' />
+<meta content='light' name='theme-color' />
 
 {/* Open Graph / Facebook */}
 <meta content={articleDate ? 'article' : 'website'} property='og:type' />
@@ -89,7 +119,6 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <meta content={Astro.generator} name='generator' />
 
 {/* Styles - Astro will inline small CSS files automatically via inlineStylesheets: 'auto' */}
-{/* fonts.css 已内联到上方，减少请求链 */}
 <link rel='stylesheet' href='/styles/global.css' />
 
 {

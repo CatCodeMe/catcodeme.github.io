@@ -28,7 +28,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'always' // 强制内联所有 CSS，减少文件数量（但会增加 HTML 文件大小）
+    inlineStylesheets: 'auto' 
   },
 
   // Adapter

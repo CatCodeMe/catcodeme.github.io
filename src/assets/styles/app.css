@@ -117,9 +117,8 @@ html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) 
 /* Blockquote styles */
 .prose blockquote {
   background-color: hsl(140 20% 94%) !important;
-  background-image: 
-    repeating-linear-gradient(0deg, hsl(140 18% 88%) 0px, hsl(140 18% 88%) 1px, transparent 1px, transparent 20px),
-    repeating-linear-gradient(90deg, hsl(140 18% 88%) 0px, hsl(140 18% 88%) 1px, transparent 1px, transparent 20px) !important;
+  background-image: radial-gradient(circle, hsl(140 18% 88%) 1px, transparent 1px) !important;
+  background-size: 12px 12px !important;
   border: none !important;
   padding-top: .15em !important;
   padding-bottom: .15em !important;
@@ -127,9 +126,8 @@ html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) 
 
 html.dark .prose blockquote {
   background-color: hsl(140 15% 16%) !important;
-  background-image: 
-    repeating-linear-gradient(0deg, hsl(140 12% 22%) 0px, hsl(140 12% 22%) 1px, transparent 1px, transparent 20px),
-    repeating-linear-gradient(90deg, hsl(140 12% 22%) 0px, hsl(140 12% 22%) 1px, transparent 1px, transparent 20px) !important;
+  background-image: radial-gradient(circle, hsl(140 12% 22%) 1px, transparent 1px) !important;
+  background-size: 12px 12px !important;
   border: none !important;
   padding-top: 1.25em !important;
   padding-bottom: 1.25em !important;
