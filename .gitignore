@@ -100,3 +100,9 @@ lighthouse-reports/
 fonts-source/*.otf
 !fonts-source/.gitkeep
 public/fonts/N*
+# Tencent Cloud EdgeOne
+.env
+.edgeone/*
+!.edgeone/project.json
+.tef_dist/*
+  

@@ -40,12 +40,14 @@
     "astro-lightgallery": "^2.0.1",
     "astro-mermaid": "^1.1.0",
     "astro-pure": "1.3.1",
+    "edgeone": "^1.1.20",
     "katex": "^0.16.22",
     "mermaid": "^11.12.1",
     "rehype-katex": "^7.0.1",
     "remark-breaks": "^4.0.0",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.3",
+    "toml": "^3.0.0",
     "typescript": "^5.8.3"
   },
   "devDependencies": {

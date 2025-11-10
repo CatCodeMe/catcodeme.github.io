@@ -209,11 +209,13 @@ const statusLabels: { [key: string]: { label: string; icon: IconName; color: str
                   </div>
                 </div>
 
-                {/* 描述 - 左侧边框样式 */}
+                {/* 描述 - 左侧边框样式，支持长文本显示，最多300字 */}
                 {item.description && (
-                  <p class="mt-2 border-l-2 border-border pl-3 text-sm text-muted-foreground line-clamp-2">
-                    {item.description}
-                  </p>
+                  <div class="mt-2 border-l-2 border-border pl-3">
+                    <p class="text-sm text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
+                      {item.description}
+                    </p>
+                  </div>
                 )}
 
                 {/* 标签 */}

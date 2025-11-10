@@ -10,15 +10,15 @@ import { MdxRepl, Aside } from '@/custom/components/user';
 import { TabItem, Tabs } from 'astro-pure/user';
 import ReadingCard from '@/components/shelf/ReadingCard.astro';
 
-"书架"页面是一个独立的看板, 用于展示您的阅读轨迹. 其所有内容都通过一个单独的 JSON 文件进行管理, 不依赖于任何文章的 frontmatter.
+"书架"页面是一个独立的看板, 用于展示您的阅读轨迹. 其所有内容都通过一个单独的 TOML 文件进行管理, 不依赖于任何文章的 frontmatter.
 
 ## 1. 核心配置文件
 
-您需要维护的唯一文件是位于项目根目录下 `public/` 文件夹中的 `bookshelf.json`。
+您需要维护的唯一文件是位于 `src/components/shelf/` 目录下的 `bookshelf.toml` 文件。
 
 ## 2. 数据结构详解
 
-该 JSON 文件是一个包含多个“阅读条目”对象的数组. 每个对象代表一张卡片, 其结构如下:
+该 TOML 文件是一个包含多个“阅读条目”对象的数组. 每个对象代表一张卡片, 其结构如下:
 
 <Aside type="note" title="字段说明">
 | 字段 | 类型 | 是否必需 | 说明 |
@@ -40,9 +40,9 @@ import ReadingCard from '@/components/shelf/ReadingCard.astro';
 
 1.  **撰写笔记**: 像往常一样, 在 `src/content/blog/` 目录下创建您的 `.mdx` 笔记文件. 完成文章后, 记下您在 frontmatter 中为它设置的 `slug`.
 
-2.  **打开配置文件**: 打开 `public/bookshelf.json` 文件.
+2.  **打开配置文件**: 打开 `src/components/shelf/bookshelf.toml` 文件.
 
-3.  **添加新条目**: 在 JSON 数组中添加一个新的对象, 代表您读完的这本书. 填写 `title`, `type`, `status` 等信息.
+3.  **添加新条目**: 在 TOML 文件中添加一个新的 `[[items]]` 条目, 代表您读完的这本书. 填写 `title`, `type`, `status` 等信息.
 
 4.  **关联笔记**: 在该对象的 `links` 数组中, 添加您刚刚记下的笔记 `slug` 字符串.
 
@@ -50,7 +50,7 @@ import ReadingCard from '@/components/shelf/ReadingCard.astro';
 
 ## 4. 卡片效果预览
 
-下面是不同类型卡片的渲染效果和对应的 JSON 数据结构。
+下面是不同类型卡片的渲染效果和对应的 TOML 数据结构。
 
 ### 书籍 (Book) 示例
 
@@ -70,17 +70,16 @@ import ReadingCard from '@/components/shelf/ReadingCard.astro';
     index={1}
   />
   <Fragment slot="desc">
-  ````json
-  {
-    "title": "人类简史",
-    "type": "book",
-    "status": "read",
-    "description": "从石器时代到人工智能, 一部宏大的人类历史.",
-    "rating": 5,
-    "identifier": "978-7-5086-6074-3",
-    "tags": ["历史", "人类学"],
-    "links": ["sapiens-note-1"]
-  }
+  ````toml
+  [[items]]
+  title = "人类简史"
+  type = "book"
+  status = "read"
+  description = "从石器时代到人工智能, 一部宏大的人类历史."
+  rating = 5
+  identifier = "978-7-5086-6074-3"
+  tags = ["历史", "人类学"]
+  links = ["sapiens-note-1"]
   ````
   </Fragment>
 </MdxRepl>
@@ -103,17 +102,16 @@ import ReadingCard from '@/components/shelf/ReadingCard.astro';
     index={2}
   />
   <Fragment slot="desc">
-  ````json
-  {
-    "title": "Attention Is All You Need",
-    "type": "paper",
-    "status": "read",
-    "description": "Transformer 架构的开山之作, 奠定了现代大语言模型的基础.",
-    "rating": 5,
-    "identifier": "10.48550/arXiv.1706.03762",
-    "tags": ["NLP", "Transformer"],
-    "links": ["transformer-explained"]
-  }
+  ````toml
+  [[items]]
+  title = "Attention Is All You Need"
+  type = "paper"
+  status = "read"
+  description = "Transformer 架构的开山之作, 奠定了现代大语言模型的基础."
+  rating = 5
+  identifier = "10.48550/arXiv.1706.03762"
+  tags = ["NLP", "Transformer"]
+  links = ["transformer-explained"]
   ````
   </Fragment>
 </MdxRepl>
@@ -134,15 +132,14 @@ import ReadingCard from '@/components/shelf/ReadingCard.astro';
     index={3}
   />
   <Fragment slot="desc">
-  ````json
-  {
-    "title": "Working with TCP Sockets",
-    "type": "article",
-    "status": "reading",
-    "description": "一篇关于 TCP Socket 编程的优秀文章.",
-    "sourceUrl": "https://www.google.com",
-    "tags": ["Network", "Socket"]
-  }
+  ````toml
+  [[items]]
+  title = "Working with TCP Sockets"
+  type = "article"
+  status = "reading"
+  description = "一篇关于 TCP Socket 编程的优秀文章."
+  sourceUrl = "https://www.google.com"
+  tags = ["Network", "Socket"]
   ````
   </Fragment>
 </MdxRepl>

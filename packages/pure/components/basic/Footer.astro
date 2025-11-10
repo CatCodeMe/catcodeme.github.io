@@ -3,6 +3,7 @@ import config from 'virtual:config'
 
 import { getPlatformLabel, hasIcon } from '../../libs/social'
 import { Icon } from '../user'
+import type { IconName } from '../../libs/icons'
 
 const footerConf = config.footer
 const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
@@ -10,7 +11,7 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
 // Normalize social links data format to unified structure
 // Schema transform may return array or object, handle both cases
 const normalizeSocialLinks = (
-  social: any
+  social: typeof footerConf.social
 ): Array<{ platform: string; label: string; url: string; textOnly: boolean }> => {
   if (!social) return []
 
@@ -131,7 +132,7 @@ const socialLinks = normalizeSocialLinks(footerConf.social)
                     {shouldShowText ? (
                       <span class='text-sm'>{label}</span>
                     ) : (
-                      <Icon name={platform as any} />
+                      <Icon name={platform as IconName} />
                     )}
                   </a>
                 )

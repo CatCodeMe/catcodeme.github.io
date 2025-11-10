@@ -1,11 +1,13 @@
-import bookshelfData from './bookshelf.json'
+import bookshelfToml from './bookshelf.toml?raw'
+import { parse } from 'toml'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 
 export type ShelfItem = {
   title: string
   type: 'book' | 'paper' | 'article'
   status: 'read' | 'reading' | 'to-read'
-  description?: string
+  description?: string  // 详细描述，最多300字，用于书卡展示
+  summary?: string      // 一句话描述，用于首页等简短展示场景
   rating?: number
   identifier?: string
   sourceUrl?: string
@@ -18,11 +20,14 @@ export type ShelfItem = {
   endDate?: string
 }
 
+// 解析 TOML 数据
+const bookshelfData = parse(bookshelfToml).items as ShelfItem[]
+
 /**
  * Get all bookshelf items
  */
 export function getAllBookshelfItems(): ShelfItem[] {
-  return bookshelfData as ShelfItem[]
+  return bookshelfData
 }
 
 /**
@@ -99,8 +104,8 @@ export async function getTotalWords(): Promise<number> {
     if (post.body) {
       const text = post.body
         .replace(/<[^>]*>/g, '')
-        .replace(/\[([^\]]*)\]\([^\)]*\)/g, '$1')
-        .replace(/!\[([^\]]*)\]\([^\)]*\)/g, '')
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '')
         .replace(/[#*`_~]/g, '')
         .replace(/\n/g, ' ')
       const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || []

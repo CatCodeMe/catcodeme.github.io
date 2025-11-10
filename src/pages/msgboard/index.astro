@@ -13,6 +13,17 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
+  <style is:global>
+    @import url("https://fontsapi.zeoseven.com/285/main/result.css");
+
+    /* 留言板页面使用 CDN 字体，覆盖全局字体设置 */
+    body {
+      font-family: "Noto Serif CJK" !important;
+      font-weight: normal !important;
+      /* font-feature-settings: "hwid"; 启用等宽变化字形 */
+    }
+  </style>
+
   <main class='mt-6 lg:mt-10'>
     <Banner image={bannerImage} imageAlt="留言板横幅">
       <div class='flex items-center gap-3'>

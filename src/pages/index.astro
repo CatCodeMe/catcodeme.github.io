@@ -86,7 +86,7 @@ const highlightColor = getHighlightColor()
               <span class='hidden sm:inline'>|</span>
 
               {/* 自我介绍 */}
-              <span class='break-words'>{(config as any).about}</span>
+              <span class='break-words'>{config.about}</span>
 
               {/* PC端分隔符 */}
               <span class='hidden sm:inline'>|</span>
@@ -166,7 +166,10 @@ const highlightColor = getHighlightColor()
           {/* 最近在读 - 小票样式 */}
           {
             currentReading && (
-              <a href='/shelf' class='receipt-style block no-underline group transition-colors hover:bg-muted/50 cursor-pointer border-l border-r border-dashed border-border px-3 md:px-5'>
+              <a
+                href='/shelf'
+                class='receipt-style block no-underline group transition-colors hover:bg-muted/50 cursor-pointer border-l border-r border-dashed border-border px-3 md:px-5'
+              >
                 <div class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'>
                   <Icon name='shelf' size='1.25em' />
                   <span>最近在读</span>
@@ -175,9 +178,9 @@ const highlightColor = getHighlightColor()
                   <div class='text-foreground font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors'>
                     {currentReading.title}
                   </div>
-                  {currentReading.description && (
+                  {(currentReading.summary || currentReading.description) && (
                     <div class='text-muted-foreground text-xs leading-relaxed mb-2 md:mb-3'>
-                      {currentReading.description}
+                      {currentReading.summary || currentReading.description}
                     </div>
                   )}
                   <div class='flex justify-between items-center py-1 border-t border-dashed border-border mt-2 pt-2'>
@@ -230,10 +233,28 @@ const highlightColor = getHighlightColor()
                     id='total-words-display'>{totalWords.toLocaleString()}</span
                   >
                 </div>
-                <div class='flex justify-between items-center py-1 pb-3 md:pb-4 md:border-b-0'>
+                <div
+                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
+                >
                   <span class='text-muted-foreground text-xs md:text-sm'>UpTime</span>
                   <span class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
                     >{siteAgeText}</span
+                  >
+                </div>
+                <div
+                  class='flex justify-between items-center py-1 border-b border-dashed border-border md:border-b md:border-dashed md:border-border'
+                >
+                  <span class='text-muted-foreground text-xs md:text-sm'>∑ PV</span>
+                  <span
+                    class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    id='vercount_value_site_pv'>Loading</span
+                  >
+                </div>
+                <div class='flex justify-between items-center py-1 pb-3 md:pb-4 md:border-b-0'>
+                  <span class='text-muted-foreground text-xs md:text-sm'>∑ UV</span>
+                  <span
+                    class='text-foreground font-semibold tabular-nums text-xs md:text-sm'
+                    id='vercount_value_site_uv'>Loading</span
                   >
                 </div>
               </div>
