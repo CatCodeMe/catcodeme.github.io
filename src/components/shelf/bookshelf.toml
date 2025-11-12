@@ -37,3 +37,14 @@ startDate = "2025-11-03"
 order = 2
 coverImage = "/src/assets/shelf/2_xue_guo.png"
 sourceUrl = "https://book.douban.com/subject/1007305/"
+
+[[items]]
+title = "动物农场"
+type = "book"
+status = "read"
+summary = "经典的政治寓言小说"
+tags = ["文学", "小说", "政治", "反乌托邦", "乔治·奥威尔", "英国文学", "寓言"]
+rating = 9.3
+progress = 100
+order = 3
+sourceUrl = "https://book.douban.com/subject/1002385/"
