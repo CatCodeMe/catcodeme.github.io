@@ -5,7 +5,6 @@ import config from 'virtual:config'
 import { Collapse, Timeline } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
-// import Comment from '@/components/Comment.astro'
 import { Comment } from '@/components/waline'
 
 const headings = [
@@ -22,7 +21,6 @@ const linksConf = config.integ.links
   frontmatter={{ title: 'Links', info: { slug: '/links', comment: true } }}
   headings={headings}
 >
-  <p>怎么可能有顺序呢，当然是随机的~ It's random</p>
   <h2 id='common-links'>Common Links</h2>
   <FriendList list={friends[0]} />
   <Collapse title='Links with Bad Status'>
@@ -52,11 +50,10 @@ const linksConf = config.integ.links
       })
     }
   </blockquote>
-
   <p>
     申请时还请按照这个模板留言（<a
-      href='https://github.com/cworld1/astro-theme-pure/blob/main/public/links.json'
-      target='_blank'>提交 PR</a
+      href='https://github.com/CatCodeMe/catcodeme.github.io/blob/astro-pure-v4_0_3/public/links.json'
+      target='_blank' class="external-link not-prose">提交 PR</a
     > 或许也是个更快的办法）。此外有关申请说明：
   </p>
   <ul>
@@ -64,5 +61,5 @@ const linksConf = config.integ.links
     <li>请确保你的站点活着；</li>
     <li>博客内容不违反国家法律。</li>
   </ul>
-  <Comment slot='bottom' />
+  <Comment slot='bottom' enable={true}/>
 </PageLayout>

@@ -118,7 +118,7 @@ const highlightColor = getHighlightColor()
             <Icon name='document' />
             <span class='text-xs text-muted-foreground uppercase tracking-wider'>最新文章</span>
           </div>
-          <div class='flex flex-col gap-0'>
+          <div class='flex flex-col gap-0.5'>
             {
               allPostsByDate.map((post, index) => (
                 <a href={`/blog/${post.data.slug}`} class='block no-underline group relative z-10'>
@@ -276,7 +276,7 @@ const highlightColor = getHighlightColor()
               <div
                 class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'
               >
-                <Icon name='link' size='1.25em' />
+                <Icon name='contract' size='1.25em' />
                 <span>联系我</span>
               </div>
               {/* 移动端：紧凑的图标按钮布局，桌面端：带文字的链接 */}
