@@ -16,7 +16,8 @@ draft: true
 
 import Paper from '@/custom/components/pages/Paper.astro'
 
-import { Steps, Timeline } from 'astro-pure/user'
+import { Steps } from 'astro-pure/user'
+import { Timeline, TimelineItem } from '@/custom/components/user'
 
 > [!quote] Bloom Filter 简介
 > 布隆过滤器(Bloom Filter)是一种开创性的概率型数据结构,其核心价值在于提供了一种在空间和时间上都极具效率的近似集合成员关系测试方法。
@@ -24,32 +25,23 @@ import { Steps, Timeline } from 'astro-pure/user'
 
 ## 演变历程
 
-<Timeline
-  events={[
-    {
-      date: '1970s',
-      content: 'Burton Howard Bloom 提出了布隆过滤器的概念。'
-    },
-    {
-      date: '1990s',
-      content: '布隆过滤器开始被广泛应用于缓存系统和网络协议中。'
-    },
-    {
-      date: '2000s',
-      content: '布隆过滤器的变种和优化算法陆续被提出，如计数布隆过滤器、分布式布隆过滤器等。'
-    },
-    {
-      date: '2010s',
-      content:
-        '布隆过滤器在大数据处理、机器学习等领域得到了更广泛的应用，如 Apache Hadoop、Apache Spark 等大数据框架中都集成了布隆过滤器。'
-    },
-    {
-      date: '2020s',
-      content:
-        '随着云计算和边缘计算的发展，布隆过滤器在分布式系统中的应用越来越普遍，成为处理大规模数据集时的重要工具。'
-    }
-  ]}
-/>
+<Timeline>
+  <TimelineItem date="1970s">
+    Burton Howard Bloom 提出了布隆过滤器的概念。
+  </TimelineItem>
+  <TimelineItem date="1990s">
+    布隆过滤器开始被广泛应用于缓存系统和网络协议中。
+  </TimelineItem>
+  <TimelineItem date="2000s">
+    布隆过滤器的变种和优化算法陆续被提出，如计数布隆过滤器、分布式布隆过滤器等。
+  </TimelineItem>
+  <TimelineItem date="2010s">
+    布隆过滤器在大数据处理、机器学习等领域得到了更广泛的应用，如 Apache Hadoop、Apache Spark 等大数据框架中都集成了布隆过滤器。
+  </TimelineItem>
+  <TimelineItem date="2020s">
+    随着云计算和边缘计算的发展，布隆过滤器在分布式系统中的应用越来越普遍，成为处理大规模数据集时的重要工具。
+  </TimelineItem>
+</Timeline>
 
 ## 历史背景
 

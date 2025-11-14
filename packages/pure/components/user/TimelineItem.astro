@@ -1,0 +1,45 @@
+---
+/**
+ * Timeline 单个事件项组件
+ * 使用 slot 支持嵌套任意组件
+ * 
+ * 使用示例：
+ * <Timeline>
+ *   <TimelineItem date="2025-01-01">
+ *     内容可以使用任意组件，如 <ExternalLink href="...">链接</ExternalLink>
+ *   </TimelineItem>
+ *   <TimelineItem date="2025-01-01" milestone>
+ *     里程碑节点，会有特殊样式
+ *   </TimelineItem>
+ * </Timeline>
+ */
+
+interface Props {
+  date: string
+  class?: string
+  milestone?: boolean
+}
+
+const { date, class: className, milestone = false } = Astro.props
+---
+
+<li class:list={['group relative flex list-none gap-x-3 rounded-full ps-0 sm:gap-x-2', className]} data-timeline-item data-milestone={milestone}>
+  {/* circle container */}
+  <div class='relative flex items-start pt-0.5'>
+    {/* circle */}
+    <span class:list={[
+      'z-10 ms-2 h-3 w-3 min-w-3 rounded-full border-2 transition-all duration-300',
+      milestone 
+        ? 'border-primary bg-primary' 
+        : 'border-muted-foreground bg-background group-hover:border-primary group-hover:scale-110'
+    ]} />
+  </div>
+  <div class='flex flex-col gap-0 flex-1 timeline-content py-0.5'>
+    <samp class='w-fit rounded-md py-0 text-sm max-sm:bg-primary-foreground max-sm:px-2 sm:min-w-[82px] leading-tight'>
+      {date}
+    </samp>
+    <div class='leading-tight timeline-text-content'>
+      <slot />
+    </div>
+  </div>
+</li>

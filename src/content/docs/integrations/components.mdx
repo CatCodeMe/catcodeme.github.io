@@ -229,25 +229,29 @@ import { CardList } from 'astro-pure/user'
 ### Timeline
 
 <MdxRepl>
-import { Timeline } from 'astro-pure/user'
+import { Timeline, TimelineItem } from '@/custom/components/user'
 
-<Timeline events={
-  [
-    { date: 'August 2021', content: 'Hello' },
-    { date: 'August 2022', content: '<i>World!</i>' },
-  ]
-} />
+<Timeline>
+  <TimelineItem date="August 2021">
+    Hello
+  </TimelineItem>
+  <TimelineItem date="August 2022">
+    <i>World!</i>
+  </TimelineItem>
+</Timeline>
 
 <Fragment slot='desc'>
   ```jsx
-  import { Timeline } from 'astro-pure/user'
+  import { Timeline, TimelineItem } from '@/custom/components/user'
 
-  <Timeline events={
-    [
-      { date: 'August 2021', content: 'Hello' },
-      { date: 'August 2022', content: '<i>World!</i>' },
-    ]
-  } />
+  <Timeline>
+    <TimelineItem date="August 2021">
+      Hello
+    </TimelineItem>
+    <TimelineItem date="August 2022">
+      <i>World!</i>
+    </TimelineItem>
+  </Timeline>
   ```
 </Fragment>
 </MdxRepl>

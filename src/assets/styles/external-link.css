@@ -11,6 +11,8 @@
   background-color: transparent;
   border-bottom-color: hsla(200, 29%, 45%, 0.3);
   margin: 0.1em;
+  white-space: nowrap; 
+  vertical-align: baseline;
 }
 
 .external-link:hover {
@@ -22,6 +24,13 @@
   display: inline-block;
   vertical-align: text-bottom;
   transition: transform 0.2s ease-in-out;
+}
+
+.external-link-icon-emoji {
+  display: inline-block;
+  vertical-align: text-bottom;
+  font-size: 1em;
+  line-height: 1;
 }
 
 .external-link:hover .external-link-icon {

@@ -1,0 +1,249 @@
+---
+title: '建站: ExternalLink 组件'
+description: '展示 ExternalLink 组件的用法和效果，自动为外部链接添加图标'
+publishDate: 2025-11-14 17:00:16
+slug: 7f83
+tags: ['建站', 'external-link', 'icon']
+---
+
+import ExternalLink from '@/components/ExternalLink.astro'
+import { MdxRepl } from 'astro-pure/user'
+
+本页面展示了 `<ExternalLink>` 组件的各种用法和效果。
+
+## 1. 基础用法 (Basic Usage)
+
+### 1.1. 外部链接（自动添加图标）
+
+<MdxRepl>
+  <p>
+    访问 <ExternalLink href="https://www.google.com">Google</ExternalLink> 搜索信息。
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  import ExternalLink from '@/components/ExternalLink.astro'
+
+  <ExternalLink href="https://www.google.com">Google</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 1.2. 内部链接（不添加图标）
+
+<MdxRepl>
+  <p>
+    这是一个 <ExternalLink href="/about">内部链接</ExternalLink>，不会添加图标。
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="/about">内部链接</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 2. 自定义属性 (Custom Attributes)
+
+### 2.1. 自定义 target 和 rel
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 2.2. 自定义 CSS 类
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 3. 自定义图标 (Custom Icons)
+
+### 3.1. 全局配置
+
+你可以在 `src/site.config.ts` 中配置全局的自定义图标映射，这样所有使用 `<ExternalLink>` 组件的地方都会自动应用这些配置。
+
+**配置示例：**
+
+````typescript
+// src/site.config.ts
+export const theme: ThemeUserConfig = {
+  // ... 其他配置
+  content: {
+    externalLinks: {
+      customIcons: {
+        'github.com': 'github',        // GitHub 使用 github 图标
+        'www.google.com': 'google',    // Google 使用 google 图标
+        'stackoverflow.com': 'stack',  // Stack Overflow 使用 stack 图标
+        // ... 更多配置
+      }
+    }
+  }
+}
+````
+
+**可用的图标名称：**
+
+常用的图标包括：`github`, `gitlab`, `discord`, `youtube`, `instagram`, `x`, `telegram`, `rss`, `email`, `reddit`, `bluesky`, `tiktok`, `weibo`, `steam`, `bilibili`, `zhihu`, `coolapk`, `netease`, `link`, `qrcode`, `copyright`, `receive-money`, `alipay`, `wechat-pay` 等。
+
+完整的图标列表请参考 `packages/pure/libs/icons.ts` 文件中的 `BuiltInIcons` 对象。
+
+**优先级说明：**
+
+图标获取的优先级顺序为：
+1. 组件级别的 `customIcons` prop（最高优先级）
+2. 全局配置中的 `customIcons`
+3. favicon 服务（`https://favicon.im/{hostname}`）
+
+### 3.2. 使用全局配置的自定义图标
+
+<MdxRepl>
+  <p>
+    访问 <ExternalLink href="https://github.com">GitHub</ExternalLink>（使用全局配置的自定义图标）。
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://github.com">GitHub</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 3.3. 组件级别的自定义图标
+
+组件级别的配置会覆盖全局配置，适用于需要为特定链接使用不同图标的场景。
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 4. 图标大小 (Icon Size)
+
+### 4.1. 默认大小（16px）
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="https://www.google.com">默认图标大小</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://www.google.com">默认图标大小</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 4.2. 自定义图标大小
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 5. 实际应用场景 (Real-world Examples)
+
+### 5.1. 在段落中使用
+
+<MdxRepl>
+  <p>
+    本网站使用 <ExternalLink href="https://astro.build">Astro</ExternalLink> 框架构建，
+    主题基于 <ExternalLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</ExternalLink>。
+    评论系统使用 <ExternalLink href="https://waline.js.org">Waline</ExternalLink>。
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <p>
+    本网站使用 <ExternalLink href="https://astro.build">Astro</ExternalLink> 框架构建，
+    主题基于 <ExternalLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</ExternalLink>。
+    评论系统使用 <ExternalLink href="https://waline.js.org">Waline</ExternalLink>。
+  </p>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 5.2. 在列表中使用
+
+<MdxRepl>
+  <ul>
+    <li><ExternalLink href="https://www.google.com">Google</ExternalLink></li>
+    <li><ExternalLink href="https://github.com">GitHub</ExternalLink></li>
+    <li><ExternalLink href="https://stackoverflow.com">Stack Overflow</ExternalLink></li>
+  </ul>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ul>
+    <li><ExternalLink href="https://www.google.com">Google</ExternalLink></li>
+    <li><ExternalLink href="https://github.com">GitHub</ExternalLink></li>
+    <li><ExternalLink href="https://stackoverflow.com">Stack Overflow</ExternalLink></li>
+  </ul>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 5.3. 协议相对链接
+
+<MdxRepl>
+  <p>
+    <ExternalLink href="//www.google.com">协议相对链接</ExternalLink>
+  </p>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <ExternalLink href="//www.google.com">协议相对链接</ExternalLink>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 6. 组件属性说明 (Props)
+
+| 属性 | 类型 | 默认值 | 描述 |
+|---|---|---|---|
+| `href` | `string` | 必需 | 链接地址 |
+| `target` | `string` | `'_blank'` | 链接打开方式 |
+| `rel` | `string \| string[]` | `['nofollow', 'noopener', 'noreferrer']` | rel 属性 |
+| `class` | `string` | `''` | 自定义 CSS 类 |
+| `customIcons` | `Record<string, string>` | `undefined` | 组件级别的自定义图标映射 |
+| `iconSize` | `number` | `16` | 图标大小（像素） |
+
+## 7. 工作原理 (How It Works)
+
+1. **自动识别外部链接**：组件会自动判断链接是否为外部链接（绝对 URL 或协议相对 URL）
+2. **图标获取优先级**：
+   - 首先检查组件级别的 `customIcons` prop
+   - 然后检查全局配置中的 `customIcons`
+   - 最后使用 favicon 服务（`https://favicon.im/{hostname}`）
+3. **图标显示**：图标显示在链接文本的左侧
+4. **内部链接**：内部链接不会添加图标，保持普通链接样式

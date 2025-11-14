@@ -1,0 +1,110 @@
+---
+/**
+ * 外部链接组件，自动添加图标和属性
+ * 
+ * 使用示例：
+ * <ExternalLink href="https://google.com">Google</ExternalLink>
+ */
+
+import { Icons } from 'astro-pure/libs'
+import config from 'virtual:config'
+
+interface Props {
+  href: string
+  target?: string
+  rel?: string | string[]
+  class?: string
+  customIcons?: Record<string, string>
+  iconSize?: number
+}
+
+const {
+  href,
+  target = '_blank',
+  rel = ['nofollow', 'noopener', 'noreferrer'],
+  class: className = '',
+  customIcons,
+  iconSize = 16
+} = Astro.props
+
+// 获取全局配置
+const globalCustomIcons = config.content?.externalLinks?.customIcons || {}
+const mergedCustomIcons = { ...globalCustomIcons, ...customIcons }
+const relString = Array.isArray(rel) ? rel.join(' ') : rel
+
+// 检查是否为绝对 URL
+function isAbsoluteUrl(url: string): boolean {
+  if (typeof url !== 'string') return false
+  if (/^[a-zA-Z]:\\/.test(url)) return false
+  return /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(url)
+}
+
+// 获取 hostname
+function getHostname(href: string): string | null {
+  try {
+    const url = href.startsWith('//') ? `http:${href}` : href
+    return new URL(url).hostname
+  } catch {
+    return null
+  }
+}
+
+// 判断是否为外部链接
+const protocolRelative = href.startsWith('//')
+const isAbsolute = isAbsoluteUrl(href)
+let hostname: string | null = null
+let iconSrc: string | null = null
+
+if (protocolRelative || isAbsolute) {
+  hostname = getHostname(href)
+  if (hostname) {
+    // 处理自定义图标
+    const customIconKey = mergedCustomIcons[hostname]
+    if (customIconKey) {
+      const iconSvg = Icons[customIconKey as keyof typeof Icons]
+      if (iconSvg) {
+        let svgString = iconSvg
+        if (!svgString.trim().startsWith('<svg')) {
+          svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
+        }
+        iconSrc = `data:image/svg+xml;base64,${Buffer.from(svgString).toString('base64')}`
+      }
+    }
+    
+    // 如果没有自定义图标，使用 favicon 服务
+    if (!iconSrc) {
+      iconSrc = `https://favicon.im/${hostname}`
+    }
+  }
+}
+
+// 如果是外部链接，添加图标和属性
+const isExternal = !!(protocolRelative || (isAbsolute && hostname))
+---
+
+{isExternal ? (
+  <a
+    href={href}
+    target={target}
+    rel={relString}
+    class:list={['external-link', 'not-prose', className]}
+    data-external-link-processed="true"
+  >
+    {iconSrc ? (
+      <img
+        src={iconSrc}
+        alt=""
+        width={iconSize}
+        height={iconSize}
+        class="external-link-icon"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'"
+      />
+    ) : null}
+    <span class="external-link-icon-emoji" style={iconSrc ? 'display:none' : 'display:inline-block'} aria-hidden="true">🌐</span>
+    <slot />
+  </a>
+) : (
+  <a href={href} class={className}>
+    <slot />
+  </a>
+)}

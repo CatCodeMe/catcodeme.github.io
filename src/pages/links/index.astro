@@ -2,7 +2,8 @@
 import links from 'public/links.json'
 import config from 'virtual:config'
 
-import { Collapse, Timeline } from 'astro-pure/user'
+import { Collapse } from 'astro-pure/user'
+import { Timeline, TimelineItem } from '@/custom/components/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 import FriendList from '@/components/links/FriendList.astro'
 import { Comment } from '@/components/waline'
@@ -27,7 +28,13 @@ const linksConf = config.integ.links
     <FriendList list={friends[1]} />
   </Collapse>
   <Collapse title='Link History Book'>
-    <Timeline events={linksConf.logbook} />
+    <Timeline>
+      {linksConf.logbook && Array.isArray(linksConf.logbook) && linksConf.logbook.map((item) => (
+        <TimelineItem date={item.date}>
+          <Fragment set:html={item.content} />
+        </TimelineItem>
+      ))}
+    </Timeline>
   </Collapse>
   <h2 id='special-links'>Special Links</h2>
   <FriendList list={friends[2]} />

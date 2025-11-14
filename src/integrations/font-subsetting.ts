@@ -8,7 +8,7 @@ export function fontSubsetting(): AstroIntegration {
   return {
     name: 'font-subsetting',
     hooks: {
-      'astro:build:done': async ({ dir }) => {
+      'astro:build:done': async () => {
         console.log('\n🔤 开始字体子集化...')
         try {
           // 运行字体子集化脚本

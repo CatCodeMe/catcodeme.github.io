@@ -11,11 +11,13 @@ info:
 import { Icon } from '@/custom/components/user'
 import { Icon as AstroIcon } from 'astro-icon/components'
 
-import { Collapse, Spoiler, Timeline } from 'astro-pure/user'
+import { Collapse, Spoiler } from 'astro-pure/user'
+import { Timeline, TimelineItem } from '@/custom/components/user'
 import Substats from '@/components/about/Substats.astro'
 import FriendList from '@/components/links/FriendList.astro'
 import { ToolTag } from '@/components/tools/Tool.astro'
 import ToolSection from '@/components/tools/ToolSection.astro'
+import ExternalLink from '@/components/ExternalLink.astro'
 
 ## About Me
 
@@ -190,29 +192,21 @@ Current support tools as follow:
 />
 
 ## About Blog
-
 <Collapse title='Website history:'>
-  <Timeline
-    events={[
-      {
-        date: '2025-11-08',
-        content: '加入开往'
-      },
-      {
-        date: '2025-09-17',
-        content: '迁移到Tencent EdgeOne CDN'
-      },
-      {
-        date: '2025-09-16',
-        content: '添加备案号'
-      },
-      {
-        date: '2025-07-11',
-        content:
-          'Website refactored from <a href="https://github.com/srleom/astro-theme-resume" target="_blank">Astro Theme Pure</a>'
-      }
-    ]}
-  />
+  <Timeline>
+    <TimelineItem date="2025-11-08">
+      加入<ExternalLink href="https://www.travellings.cn/train.html">开往</ExternalLink>
+    </TimelineItem>
+    <TimelineItem date="2025-09-17">
+      从 <ExternalLink href="https://pages.cloudflare.com"> CloudFlare Pages </ExternalLink> 迁移到 <ExternalLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</ExternalLink>
+    </TimelineItem>
+    <TimelineItem date="2025-09-16">
+      添加备案号
+    </TimelineItem>
+    <TimelineItem date="2025-07-11">
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink>
+    </TimelineItem>
+  </Timeline>
 </Collapse>
 
 ### 建站工具链:
@@ -226,7 +220,3 @@ Current support tools as follow:
 - PagePV & Comment: [Waline](https://waline.js.org/next/guide/features/pageview.html)
 - Icons & OgImage: from [Iconify](https://iconify.design/) & [lobehub](https://lobehub.com/icons), some icons from ai
 - Fonts: from [ZSFT](https://fonts.zeoseven.com), current font is `Noto Serif CJK / 思源宋体`, 标题字体是 `ZSFT-e`
-
-### 其他
-- 开往友链计划成员博客: [开往](https://www.travellings.cn/train.html)
-

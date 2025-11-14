@@ -9,6 +9,7 @@ export { default as MdxRepl } from './MdxRepl.astro'
 // List
 export { default as CardList } from './CardList.astro'
 export { default as Timeline } from './Timeline.astro'
+export { default as TimelineItem } from './TimelineItem.astro'
 export { default as Steps } from './Steps.astro'
 
 // Simple text rerender

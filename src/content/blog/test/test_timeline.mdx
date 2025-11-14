@@ -1,0 +1,333 @@
+---
+title: '建站: Timeline 组件'
+description: '展示 Timeline 组件的用法和效果，用于展示时间线事件'
+publishDate: 2025-11-14 19:32:06
+slug: etqp
+tags: ['建站', 'timeline', '组件']
+---
+
+import { Timeline, TimelineItem } from '@/custom/components/user'
+import ExternalLink from '@/components/ExternalLink.astro'
+import { MdxRepl } from 'astro-pure/user'
+
+本页面展示了 `<Timeline>` 和 `<TimelineItem>` 组件的各种用法和效果。
+
+## 1. 基础用法 (Basic Usage)
+
+### 1.1. 简单时间线
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      新年的第一天
+    </TimelineItem>
+    <TimelineItem date="2025-06-15">
+      年中总结
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      年末回顾
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  import { Timeline, TimelineItem } from '@/custom/components/user'
+
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      新年的第一天
+    </TimelineItem>
+    <TimelineItem date="2025-06-15">
+      年中总结
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      年末回顾
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 1.2. 多行内容
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-07-11">
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+    <TimelineItem date="2025-01-01">
+      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <ExternalLink href="https://www.google.com">外部链接</ExternalLink>。
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2025-07-11">
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+    <TimelineItem date="2025-01-01">
+      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <ExternalLink href="https://www.google.com">外部链接</ExternalLink>。
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 2. 里程碑节点 (Milestone Nodes)
+
+里程碑节点使用 `milestone` 属性，会有特殊的视觉样式（实心圆点和背景高亮）。
+
+### 2.1. 单个里程碑
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      普通事件
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      重要里程碑：网站重构完成
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      普通事件
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      普通事件
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      重要里程碑：网站重构完成
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      普通事件
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 2.2. 多个里程碑
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2024-06-01">
+      项目启动
+    </TimelineItem>
+    <TimelineItem date="2024-12-25" milestone>
+      测试里程碑节点：包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 和 <ExternalLink href="https://www.google.com">Google</ExternalLink> 等多个链接。
+    </TimelineItem>
+    <TimelineItem date="2025-01-01">
+      新功能开发
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      项目完成
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2024-06-01">
+      项目启动
+    </TimelineItem>
+    <TimelineItem date="2024-12-25" milestone>
+      测试里程碑节点：包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 和 <ExternalLink href="https://www.google.com">Google</ExternalLink> 等多个链接。
+    </TimelineItem>
+    <TimelineItem date="2025-01-01">
+      新功能开发
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+    <TimelineItem date="2025-12-31">
+      项目完成
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 3. 在内容中使用其他组件 (Using Other Components)
+
+TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML 标签和其他 Astro 组件。
+
+### 3.1. 使用 ExternalLink 组件
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-07-11">
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink>
+    </TimelineItem>
+    <TimelineItem date="2025-09-17">
+      迁移到 <ExternalLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</ExternalLink>
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  import ExternalLink from '@/components/ExternalLink.astro'
+
+  <Timeline>
+    <TimelineItem date="2025-07-11">
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink>
+    </TimelineItem>
+    <TimelineItem date="2025-09-17">
+      迁移到 <ExternalLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</ExternalLink>
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 3.2. 使用 Markdown 格式
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      这是一段包含<strong>粗体</strong>、<em>斜体</em>和<code>代码</code>的内容。
+    </TimelineItem>
+    <TimelineItem date="2025-06-15">
+      可以使用<mark>高亮</mark>、<del>删除线</del>等格式。
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2025-01-01">
+      这是一段包含<strong>粗体</strong>、<em>斜体</em>和<code>代码</code>的内容。
+    </TimelineItem>
+    <TimelineItem date="2025-06-15">
+      可以使用<mark>高亮</mark>、<del>删除线</del>等格式。
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 4. 实际应用场景 (Real-world Examples)
+
+### 4.1. 网站历史记录
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2025-11-08">
+      加入开往
+    </TimelineItem>
+    <TimelineItem date="2025-09-17">
+      迁移到Tencent EdgeOne CDN
+    </TimelineItem>
+    <TimelineItem date="2025-09-16">
+      添加备案号
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2025-11-08">
+      加入开往
+    </TimelineItem>
+    <TimelineItem date="2025-09-17">
+      迁移到Tencent EdgeOne CDN
+    </TimelineItem>
+    <TimelineItem date="2025-09-16">
+      添加备案号
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+### 4.2. 项目开发时间线
+
+<MdxRepl>
+  <Timeline>
+    <TimelineItem date="2024-06-01">
+      项目启动，确定技术栈
+    </TimelineItem>
+    <TimelineItem date="2024-08-15">
+      完成核心功能开发
+    </TimelineItem>
+    <TimelineItem date="2024-12-25" milestone>
+      第一个版本发布，包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 集成
+    </TimelineItem>
+    <TimelineItem date="2025-03-20">
+      性能优化和 Bug 修复
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      重大重构完成，提升用户体验
+    </TimelineItem>
+  </Timeline>
+
+  <Fragment slot='desc'>
+  ````mdx
+  <Timeline>
+    <TimelineItem date="2024-06-01">
+      项目启动，确定技术栈
+    </TimelineItem>
+    <TimelineItem date="2024-08-15">
+      完成核心功能开发
+    </TimelineItem>
+    <TimelineItem date="2024-12-25" milestone>
+      第一个版本发布，包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 集成
+    </TimelineItem>
+    <TimelineItem date="2025-03-20">
+      性能优化和 Bug 修复
+    </TimelineItem>
+    <TimelineItem date="2025-07-11" milestone>
+      重大重构完成，提升用户体验
+    </TimelineItem>
+  </Timeline>
+  ````
+  </Fragment>
+</MdxRepl>
+
+## 5. 组件属性说明 (Props)
+
+### Timeline 组件
+
+| 属性 | 类型 | 默认值 | 描述 |
+|---|---|---|---|
+| `class` | `string` | `''` | 自定义 CSS 类 |
+
+### TimelineItem 组件
+
+| 属性 | 类型 | 默认值 | 描述 |
+|---|---|---|---|
+| `date` | `string` | 必需 | 日期字符串 |
+| `milestone` | `boolean` | `false` | 是否为里程碑节点（会有特殊样式） |
+| `class` | `string` | `''` | 自定义 CSS 类 |
+
+## 6. 工作原理 (How It Works)
+
+1. **Timeline 容器**：`<Timeline>` 组件是一个容器，使用 `<ul>` 元素包裹所有时间线项
+2. **TimelineItem 项**：每个 `<TimelineItem>` 渲染为一个 `<li>` 元素，包含：
+   - 左侧的圆点（普通节点为空心，里程碑节点为实心）
+   - 日期标签（`<samp>` 元素）
+   - 内容区域（支持任意组件和 Markdown）
+3. **连接线**：通过 CSS `::after` 伪元素自动生成连接线，连接相邻的圆点
+4. **里程碑样式**：里程碑节点有特殊的背景高亮效果，圆点为实心主色调
+5. **响应式设计**：在小屏幕上，日期标签会有背景色和 padding，提升可读性
+
+## 7. 样式特性 (Styling Features)
+
+- **圆点样式**：
+  - 普通节点：空心圆点，hover 时会有边框颜色变化和缩放效果
+  - 里程碑节点：实心主色调圆点
+- **连接线**：垂直连接线，对齐圆点中心
+- **里程碑高亮**：渐变背景，从左侧主色调到透明
+- **响应式**：移动端日期标签有背景色，提升可读性

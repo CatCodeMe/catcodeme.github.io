@@ -1,38 +1,53 @@
 ---
-import type { TimelineEvent } from '../../types'
-
 interface Props {
   class?: string
-  events: TimelineEvent[]
 }
 
-const { class: className, events, ...props } = Astro.props
+const { class: className, ...props } = Astro.props
 ---
 
 <div class={className} {...props}>
-  <ul class='ps-0 sm:ps-2'>
-    {
-      events.map((event, index) => (
-        <li class='group relative flex list-none gap-x-3 rounded-full ps-0 sm:gap-x-2'>
-          {/* circle */}
-          <span class='z-10 my-2 ms-2 h-3 w-3 min-w-3 rounded-full border-2 border-muted-foreground transition-transform group-hover:scale-125' />
-          {/* line */}
-          {index !== events.length - 1 && (
-            <span
-              class='absolute start-[12px] top-[20px] w-1 bg-border'
-              style={{ height: 'calc(100% - 4px)' }}
-            />
-          )}
-          <div class='flex gap-2 max-sm:flex-col'>
-            <samp class='w-fit grow-0 rounded-md py-1 text-sm max-sm:bg-primary-foreground max-sm:px-2 sm:min-w-[82px] sm:text-right'>
-              {event.date}
-            </samp>
-            <div>
-              <Fragment set:html={event.content} />
-            </div>
-          </div>
-        </li>
-      ))
-    }
+  <ul class='ps-0 sm:ps-2 timeline-list m-0 p-0'>
+    <slot />
   </ul>
 </div>
+
+<style>
+  /* 重置 ul 和 li 的默认样式 */
+  :global(.timeline-list) {
+    margin: 0;
+    padding: 0;
+  }
+  
+  :global(.timeline-list > li) {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+  
+  /* 为 TimelineItem 添加连接线（除了最后一个） */
+  /* 竖线对齐圆点：从当前圆点中心到下一个圆点中心 */
+  :global(.timeline-list > li[data-timeline-item]:not(:last-child)::after) {
+    content: '';
+    position: absolute;
+    left: 14px; /* ms-2 (8px) + 圆圈半径 (6px) = 14px，使竖线在圆圈中心 */
+    top: 20px; /* 从当前圆点中心开始（pt-0.5 + 圆点中心约20px） */
+    width: 1px;
+    height: calc(100% - 20px); /* 延伸到下一个圆点中心 */
+    background-color: hsl(var(--border));
+    z-index: 0;
+  }
+  
+  /* 里程碑节点的背景高亮 */
+  :global(.timeline-list > li[data-milestone="true"]) {
+    background: linear-gradient(
+      to right,
+      hsl(var(--primary) / 0.05),
+      transparent 20%
+    );
+    border-radius: 0.375rem;
+    padding: 0.25rem 0;
+    margin: 0.125rem 0;
+  }
+</style>
+
