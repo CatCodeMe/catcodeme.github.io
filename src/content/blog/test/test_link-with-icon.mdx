@@ -1,15 +1,15 @@
 ---
-title: '建站: ExternalLink 组件'
-description: '展示 ExternalLink 组件的用法和效果，自动为外部链接添加图标'
+title: '建站: IconLink 组件'
+description: '展示 IconLink 组件的用法和效果，自动为外部链接添加图标'
 publishDate: 2025-11-14 17:00:16
 slug: 7f83
-tags: ['建站', 'external-link', 'icon']
+tags: ['建站', 'icon-link', 'icon']
 ---
 
-import ExternalLink from '@/components/ExternalLink.astro'
+import IconLink from '@/components/IconLink.astro'
 import { MdxRepl } from 'astro-pure/user'
 
-本页面展示了 `<ExternalLink>` 组件的各种用法和效果。
+本页面展示了 `<IconLink>` 组件的各种用法和效果。
 
 ## 1. 基础用法 (Basic Usage)
 
@@ -17,14 +17,14 @@ import { MdxRepl } from 'astro-pure/user'
 
 <MdxRepl>
   <p>
-    访问 <ExternalLink href="https://www.google.com">Google</ExternalLink> 搜索信息。
+    访问 <IconLink href="https://www.google.com">Google</IconLink> 搜索信息。
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  import ExternalLink from '@/components/ExternalLink.astro'
+  import IconLink from '@/components/IconLink.astro'
 
-  <ExternalLink href="https://www.google.com">Google</ExternalLink>
+  <IconLink href="https://www.google.com">Google</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -33,12 +33,12 @@ import { MdxRepl } from 'astro-pure/user'
 
 <MdxRepl>
   <p>
-    这是一个 <ExternalLink href="/about">内部链接</ExternalLink>，不会添加图标。
+    这是一个 <IconLink href="/about">内部链接</IconLink>，不会添加图标。
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="/about">内部链接</ExternalLink>
+  <IconLink href="/about">内部链接</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -49,12 +49,12 @@ import { MdxRepl } from 'astro-pure/user'
 
 <MdxRepl>
   <p>
-    <ExternalLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</ExternalLink>
+    <IconLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</ExternalLink>
+  <IconLink href="https://github.com" target="_self" rel="nofollow">在当前窗口打开</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -63,12 +63,12 @@ import { MdxRepl } from 'astro-pure/user'
 
 <MdxRepl>
   <p>
-    <ExternalLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</ExternalLink>
+    <IconLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</ExternalLink>
+  <IconLink href="https://www.google.com" class="text-primary font-bold">带自定义样式的链接</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -77,7 +77,7 @@ import { MdxRepl } from 'astro-pure/user'
 
 ### 3.1. 全局配置
 
-你可以在 `src/site.config.ts` 中配置全局的自定义图标映射，这样所有使用 `<ExternalLink>` 组件的地方都会自动应用这些配置。
+你可以在 `src/site.config.ts` 中配置全局的自定义图标映射，这样所有使用 `<IconLink>` 组件的地方都会自动应用这些配置。
 
 **配置示例：**
 
@@ -115,12 +115,12 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    访问 <ExternalLink href="https://github.com">GitHub</ExternalLink>（使用全局配置的自定义图标）。
+    访问 <IconLink href="https://github.com">GitHub</IconLink>（使用全局配置的自定义图标）。
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://github.com">GitHub</ExternalLink>
+  <IconLink href="https://github.com">GitHub</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -131,12 +131,12 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    <ExternalLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</ExternalLink>
+    <IconLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</ExternalLink>
+  <IconLink href="https://www.google.com" customIcons={{ 'www.google.com': 'github' }}>Google（使用 GitHub 图标）</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -147,12 +147,12 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    <ExternalLink href="https://www.google.com">默认图标大小</ExternalLink>
+    <IconLink href="https://www.google.com">默认图标大小</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://www.google.com">默认图标大小</ExternalLink>
+  <IconLink href="https://www.google.com">默认图标大小</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -161,12 +161,12 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    <ExternalLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</ExternalLink>
+    <IconLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</ExternalLink>
+  <IconLink href="https://www.google.com" iconSize={24}>更大的图标（24px）</IconLink>
   ````
   </Fragment>
 </MdxRepl>
@@ -177,17 +177,17 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    本网站使用 <ExternalLink href="https://astro.build">Astro</ExternalLink> 框架构建，
-    主题基于 <ExternalLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</ExternalLink>。
-    评论系统使用 <ExternalLink href="https://waline.js.org">Waline</ExternalLink>。
+    本网站使用 <IconLink href="https://astro.build">Astro</IconLink> 框架构建，
+    主题基于 <IconLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</IconLink>。
+    评论系统使用 <IconLink href="https://waline.js.org">Waline</IconLink>。
   </p>
 
   <Fragment slot='desc'>
   ````mdx
   <p>
-    本网站使用 <ExternalLink href="https://astro.build">Astro</ExternalLink> 框架构建，
-    主题基于 <ExternalLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</ExternalLink>。
-    评论系统使用 <ExternalLink href="https://waline.js.org">Waline</ExternalLink>。
+    本网站使用 <IconLink href="https://astro.build">Astro</IconLink> 框架构建，
+    主题基于 <IconLink href="https://github.com/cworld1/astro-theme-pure">Astro Theme Pure</IconLink>。
+    评论系统使用 <IconLink href="https://waline.js.org">Waline</IconLink>。
   </p>
   ````
   </Fragment>
@@ -197,17 +197,17 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <ul>
-    <li><ExternalLink href="https://www.google.com">Google</ExternalLink></li>
-    <li><ExternalLink href="https://github.com">GitHub</ExternalLink></li>
-    <li><ExternalLink href="https://stackoverflow.com">Stack Overflow</ExternalLink></li>
+    <li><IconLink href="https://www.google.com">Google</IconLink></li>
+    <li><IconLink href="https://github.com">GitHub</IconLink></li>
+    <li><IconLink href="https://stackoverflow.com">Stack Overflow</IconLink></li>
   </ul>
 
   <Fragment slot='desc'>
   ````mdx
   <ul>
-    <li><ExternalLink href="https://www.google.com">Google</ExternalLink></li>
-    <li><ExternalLink href="https://github.com">GitHub</ExternalLink></li>
-    <li><ExternalLink href="https://stackoverflow.com">Stack Overflow</ExternalLink></li>
+    <li><IconLink href="https://www.google.com">Google</IconLink></li>
+    <li><IconLink href="https://github.com">GitHub</IconLink></li>
+    <li><IconLink href="https://stackoverflow.com">Stack Overflow</IconLink></li>
   </ul>
   ````
   </Fragment>
@@ -217,12 +217,12 @@ export const theme: ThemeUserConfig = {
 
 <MdxRepl>
   <p>
-    <ExternalLink href="//www.google.com">协议相对链接</ExternalLink>
+    <IconLink href="//www.google.com">协议相对链接</IconLink>
   </p>
 
   <Fragment slot='desc'>
   ````mdx
-  <ExternalLink href="//www.google.com">协议相对链接</ExternalLink>
+  <IconLink href="//www.google.com">协议相对链接</IconLink>
   ````
   </Fragment>
 </MdxRepl>

@@ -7,7 +7,7 @@ tags: ['建站', 'timeline', '组件']
 ---
 
 import { Timeline, TimelineItem } from '@/custom/components/user'
-import ExternalLink from '@/components/ExternalLink.astro'
+import IconLink from '@/components/IconLink.astro'
 import { MdxRepl } from 'astro-pure/user'
 
 本页面展示了 `<Timeline>` 和 `<TimelineItem>` 组件的各种用法和效果。
@@ -53,10 +53,10 @@ import { MdxRepl } from 'astro-pure/user'
 <MdxRepl>
   <Timeline>
     <TimelineItem date="2025-07-11">
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
     <TimelineItem date="2025-01-01">
-      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <ExternalLink href="https://www.google.com">外部链接</ExternalLink>。
+      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <IconLink href="https://www.google.com">外部链接</IconLink>。
     </TimelineItem>
   </Timeline>
 
@@ -64,10 +64,10 @@ import { MdxRepl } from 'astro-pure/user'
   ````mdx
   <Timeline>
     <TimelineItem date="2025-07-11">
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
     <TimelineItem date="2025-01-01">
-      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <ExternalLink href="https://www.google.com">外部链接</ExternalLink>。
+      测试多行内容：这是一段比较长的内容，用来测试 Timeline 组件在内容较长时的显示效果。可以包含<strong>粗体</strong>、<em>斜体</em>等格式，也可以包含 <IconLink href="https://www.google.com">外部链接</IconLink>。
     </TimelineItem>
   </Timeline>
   ````
@@ -118,13 +118,13 @@ import { MdxRepl } from 'astro-pure/user'
       项目启动
     </TimelineItem>
     <TimelineItem date="2024-12-25" milestone>
-      测试里程碑节点：包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 和 <ExternalLink href="https://www.google.com">Google</ExternalLink> 等多个链接。
+      测试里程碑节点：包含 <IconLink href="https://github.com">GitHub</IconLink> 和 <IconLink href="https://www.google.com">Google</IconLink> 等多个链接。
     </TimelineItem>
     <TimelineItem date="2025-01-01">
       新功能开发
     </TimelineItem>
     <TimelineItem date="2025-07-11" milestone>
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
     <TimelineItem date="2025-12-31">
       项目完成
@@ -138,13 +138,13 @@ import { MdxRepl } from 'astro-pure/user'
       项目启动
     </TimelineItem>
     <TimelineItem date="2024-12-25" milestone>
-      测试里程碑节点：包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 和 <ExternalLink href="https://www.google.com">Google</ExternalLink> 等多个链接。
+      测试里程碑节点：包含 <IconLink href="https://github.com">GitHub</IconLink> 和 <IconLink href="https://www.google.com">Google</IconLink> 等多个链接。
     </TimelineItem>
     <TimelineItem date="2025-01-01">
       新功能开发
     </TimelineItem>
     <TimelineItem date="2025-07-11" milestone>
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
     <TimelineItem date="2025-12-31">
       项目完成
@@ -158,28 +158,28 @@ import { MdxRepl } from 'astro-pure/user'
 
 TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML 标签和其他 Astro 组件。
 
-### 3.1. 使用 ExternalLink 组件
+### 3.1. 使用 IconLink 组件
 
 <MdxRepl>
   <Timeline>
     <TimelineItem date="2025-07-11">
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink>
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink>
     </TimelineItem>
     <TimelineItem date="2025-09-17">
-      迁移到 <ExternalLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</ExternalLink>
+      迁移到 <IconLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</IconLink>
     </TimelineItem>
   </Timeline>
 
   <Fragment slot='desc'>
   ````mdx
-  import ExternalLink from '@/components/ExternalLink.astro'
+  import IconLink from '@/components/IconLink.astro'
 
   <Timeline>
     <TimelineItem date="2025-07-11">
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink>
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink>
     </TimelineItem>
     <TimelineItem date="2025-09-17">
-      迁移到 <ExternalLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</ExternalLink>
+      迁移到 <IconLink href="https://edgeone.cloud.tencent.com">Tencent EdgeOne CDN</IconLink>
     </TimelineItem>
   </Timeline>
   ````
@@ -228,7 +228,7 @@ TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML �
       添加备案号
     </TimelineItem>
     <TimelineItem date="2025-07-11" milestone>
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
   </Timeline>
 
@@ -245,7 +245,7 @@ TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML �
       添加备案号
     </TimelineItem>
     <TimelineItem date="2025-07-11" milestone>
-      Website refactored from <ExternalLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</ExternalLink> - 重要里程碑
+      Website refactored from <IconLink href="https://github.com/srleom/astro-theme-resume">Astro Theme Pure</IconLink> - 重要里程碑
     </TimelineItem>
   </Timeline>
   ````
@@ -263,7 +263,7 @@ TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML �
       完成核心功能开发
     </TimelineItem>
     <TimelineItem date="2024-12-25" milestone>
-      第一个版本发布，包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 集成
+      第一个版本发布，包含 <IconLink href="https://github.com">GitHub</IconLink> 集成
     </TimelineItem>
     <TimelineItem date="2025-03-20">
       性能优化和 Bug 修复
@@ -283,7 +283,7 @@ TimelineItem 的内容支持嵌套任意组件，包括 Markdown 语法、HTML �
       完成核心功能开发
     </TimelineItem>
     <TimelineItem date="2024-12-25" milestone>
-      第一个版本发布，包含 <ExternalLink href="https://github.com">GitHub</ExternalLink> 集成
+      第一个版本发布，包含 <IconLink href="https://github.com">GitHub</IconLink> 集成
     </TimelineItem>
     <TimelineItem date="2025-03-20">
       性能优化和 Bug 修复

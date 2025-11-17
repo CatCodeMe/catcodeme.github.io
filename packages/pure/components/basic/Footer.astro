@@ -4,7 +4,7 @@ import config from 'virtual:config'
 import { getPlatformLabel, hasIcon } from '../../libs/social'
 import { Icon } from '../user'
 import type { IconName } from '../../libs/icons'
-import ExternalLink from '@/components/ExternalLink.astro'
+import IconLink from '@/components/IconLink.astro'
 
 const footerConf = config.footer
 const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
@@ -99,12 +99,12 @@ const socialLinks = normalizeSocialLinks(footerConf.social)
         {
           footerConf.credits && (
             <span class='inline-flex items-center gap-x-2'>
-              <ExternalLink
+              <IconLink
                 href='https://github.com/cworld1/astro-theme-pure'
                 class='hover:text-primary'
               >
                 Astro & Pure theme
-              </ExternalLink>
+              </IconLink>
               <span class='inline-flex items-center gap-x-1'>powered</span>
             </span>
           )

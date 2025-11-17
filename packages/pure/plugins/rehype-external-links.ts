@@ -26,7 +26,7 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
   return function transformer(tree: Root): void {
     visit(tree, 'element', (node: Element) => {
       if (node.tagName === 'a' && typeof node.properties?.href === 'string') {
-        // 跳过已经处理过的链接（由 ExternalLink 组件处理的）
+        // 跳过已经处理过的链接（由 IconLink 组件处理的）
         if (node.properties['data-external-link-processed']) {
           return
         }
