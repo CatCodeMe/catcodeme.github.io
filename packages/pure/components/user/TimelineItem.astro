@@ -23,18 +23,18 @@ interface Props {
 const { date, class: className, milestone = false } = Astro.props
 ---
 
-<li class:list={['group relative flex list-none gap-x-3 rounded-full ps-0 sm:gap-x-2', className]} data-timeline-item data-milestone={milestone}>
+<li class:list={['group relative flex list-none gap-x-3 rounded-full ps-0 sm:gap-x-2 mb-2', className]} data-timeline-item data-milestone={milestone}>
   {/* circle container */}
-  <div class='relative flex items-start pt-0.5'>
+  <div class='relative flex items-start'>
     {/* circle */}
     <span class:list={[
-      'z-10 ms-2 h-3 w-3 min-w-3 rounded-full border-2 transition-all duration-300',
+      'z-10 ms-2 mt-[0.125rem] h-3 w-3 min-w-3 rounded-full border-2 transition-all duration-300',
       milestone 
         ? 'border-primary bg-primary' 
         : 'border-muted-foreground bg-background group-hover:border-primary group-hover:scale-110'
     ]} />
   </div>
-  <div class='flex flex-col gap-0 flex-1 timeline-content py-0.5'>
+  <div class='flex flex-col gap-0 flex-1 timeline-content'>
     <samp class='w-fit rounded-md py-0 text-sm max-sm:bg-primary-foreground max-sm:px-2 sm:min-w-[82px] leading-tight'>
       {date}
     </samp>
