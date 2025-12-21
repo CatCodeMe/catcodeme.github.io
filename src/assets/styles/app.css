@@ -87,7 +87,7 @@ starlight-tabs {
   font-size: 0.9em !important;
   font-weight: 500 !important;
   border-radius: 0.25rem !important;
-  padding: 0.25rem 0.375rem !important;
+  padding: 0.15rem 0.175rem !important;
   margin: 0.125rem 0 !important;
   background-color: hsl(var(--secondary)) !important;
   border: 1px solid hsl(var(--border)) !important;
