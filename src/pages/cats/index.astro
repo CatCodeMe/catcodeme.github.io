@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import { Icon } from '@/custom/components/user'
-import { LightGallery } from 'astro-lightgallery'
+// Removed LightGallery import
 
 import GalleryLayout from '@/layouts/GalleryLayout.astro'
 import Banner from '@/components/banner/Banner.astro'
@@ -94,15 +94,7 @@ const allCats = Object.entries(info)
   <!-- Section 2: Photo Gallery -->
   <section class='photo-gallery'>
     <h2 class='section-title'>📸 生活瞬间</h2>
-    <LightGallery
-      class='masonry-grid'
-      options={{
-        thumbnail: true,
-        autoplay: true,
-        slideShowInterval: 500
-      }}
-      addPlugins={['zoom']}
-    >
+    <div class='masonry-grid'>
       {
         photos.map((photo) => {
           const subjects = photo.subjects?.join(' ') || 'unknown'
@@ -124,7 +116,7 @@ const allCats = Object.entries(info)
           )
         })
       }
-    </LightGallery>
+    </div>
   </section>
 </GalleryLayout>
 
@@ -376,21 +368,37 @@ const allCats = Object.entries(info)
     padding: 2rem 1rem;
   }
   .masonry-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
+    column-count: 1;
+    column-gap: 1rem;
   }
+  @media (min-width: 640px) {
+    .masonry-grid {
+      column-count: 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .masonry-grid {
+      column-count: 3;
+    }
+  }
+  @media (min-width: 1280px) {
+    .masonry-grid {
+      column-count: 4;
+    }
+  }
+
   .masonry-item {
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    display: block; /* For filtering */
-    height: 300px;
+    display: inline-block; /* Important for column layout to prevent splitting */
+    width: 100%;
+    margin-bottom: 1rem;
+    break-inside: avoid;
   }
   .masonry-item img {
-    height: 100%;
-    width: auto;
+    width: 100%;
+    height: auto;
     display: block;
     transition: transform 0.3s ease;
   }
