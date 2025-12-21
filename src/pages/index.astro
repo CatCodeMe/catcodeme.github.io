@@ -5,7 +5,8 @@ import { Icon } from '@/custom/components/user'
 import { getBlogCollection } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
-import { getCurrentReading, getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import { getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import HomeHeroImage from '@/components/home/HomeHeroImage.astro'
 import avatarImage from '@/assets/home.png'
 import config from '@/site-config'
 
@@ -15,7 +16,6 @@ const allPostsByDate = await getLatestPosts(MAX_POSTS)
 
 const totalPosts = allPosts.length
 const totalWords = await getTotalWords()
-const currentReading = getCurrentReading()
 
 // Calculate site age (from 2025-01-27)
 const siteAgeText = calculateSiteAge('2025-01-27')
@@ -172,42 +172,9 @@ const highlightColor = getHighlightColor()
 
         {/* 右栏 - 侧边栏 */}
         <aside class='flex flex-col gap-3 md:gap-8 md:order-2' style='overflow: visible;'>
-          {/* 最近在读 - 小票样式 */}
-          {
-            currentReading && (
-              <a
-                href='/shelf'
-                class='receipt-style block no-underline group transition-colors hover:bg-muted/50 cursor-pointer border-l border-r border-dashed border-border px-3 md:px-5'
-              >
-                <div class='text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-2 pt-3 pb-2 mb-2 md:pt-4 md:mb-3 border-b-2 border-dashed border-border'>
-                  <Icon name='shelf' size='1.25em' />
-                  <span>最近在读</span>
-                </div>
-                <div class='text-sm'>
-                  <div class='text-foreground font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors'>
-                    {currentReading.title}
-                  </div>
-                  {(currentReading.summary || currentReading.description) && (
-                    <div class='text-muted-foreground text-xs leading-relaxed mb-2 md:mb-3'>
-                      {currentReading.summary || currentReading.description}
-                    </div>
-                  )}
-                  <div class='flex justify-between items-center py-1 border-t border-dashed border-border mt-2 pt-2'>
-                    {currentReading.rating && (
-                      <span class='text-muted-foreground text-xs'>
-                        ⭐️ {currentReading.rating.toFixed(1)}
-                      </span>
-                    )}
-                    {currentReading.progress !== undefined && (
-                      <span class='text-muted-foreground text-xs tabular-nums'>
-                        {currentReading.progress}%
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </a>
-            )
-          }
+          
+          {/* Home Hero Image */}
+          <HomeHeroImage />
 
           {/* 统计信息 - 小票样式 - 移动端隐藏 */}
           <div class='receipt-style hidden md:block'>

@@ -1,0 +1,118 @@
+---
+---
+<div class="plant-container group relative w-full h-[240px] md:h-[300px] overflow-hidden rounded-xl border border-border/30 bg-secondary/10 flex items-center justify-center select-none">
+  
+  <!-- Subtle Background Circle -->
+  <div class="absolute w-40 h-40 bg-primary/5 rounded-full blur-3xl transform translate-y-10 group-hover:bg-primary/10 transition-colors duration-700"></div>
+
+  <!-- The CSS Plant -->
+  <div class="art-canvas relative w-40 h-52 flex flex-col items-center justify-end animate-breathe">
+    
+    <!-- Leaves Wrapper -->
+    <div class="leaves-container absolute bottom-[70px] w-full h-full flex justify-center">
+      
+      <!-- Leaf 1 (Left) -->
+      <div class="leaf leaf-1 absolute bottom-0 left-2 w-16 h-20 bg-primary rounded-tl-[80%] rounded-br-[80%] rounded-tr-[10%] rounded-bl-[10%] transform -rotate-45 origin-bottom-right opacity-90 animate-sway-1 group-hover:animate-shake-1">
+        <div class="leaf-line absolute w-[2px] h-full bg-black/10 left-1/2 transform -translate-x-1/2"></div>
+      </div>
+      
+      <!-- Leaf 2 (Right) -->
+      <div class="leaf leaf-2 absolute bottom-4 right-2 w-14 h-18 bg-primary/80 rounded-tr-[80%] rounded-bl-[80%] rounded-tl-[10%] rounded-br-[10%] transform rotate-[30deg] origin-bottom-left opacity-90 animate-sway-2 group-hover:animate-shake-2">
+         <div class="leaf-line absolute w-[2px] h-full bg-black/10 left-1/2 transform -translate-x-1/2"></div>
+      </div>
+      
+      <!-- Leaf 3 (Top Center) -->
+      <div class="leaf leaf-3 absolute bottom-10 w-12 h-16 bg-primary/90 rounded-full rounded-b-none transform -rotate-10 origin-bottom animate-sway-3 group-hover:animate-shake-3">
+         <div class="leaf-line absolute w-[2px] h-full bg-black/10 left-1/2 transform -translate-x-1/2"></div>
+      </div>
+      
+      <!-- Stems -->
+      <div class="stem absolute bottom-[-10px] w-1 h-20 bg-primary/60 transform -rotate-12 left-[45%] -z-10"></div>
+      <div class="stem absolute bottom-[-5px] w-1 h-16 bg-primary/60 transform rotate-12 right-[45%] -z-10"></div>
+      <div class="stem absolute bottom-0 w-1.5 h-12 bg-primary/60 -z-10"></div>
+
+    </div>
+
+    <!-- Flower Pot -->
+    <div class="pot relative z-10 flex flex-col items-center">
+      <!-- Rim -->
+      <div class="pot-rim w-24 h-4 bg-white border border-border rounded-full shadow-sm relative z-20"></div>
+      <!-- Body -->
+      <div class="pot-body w-20 h-24 bg-gradient-to-b from-white to-gray-50 border-l border-r border-b border-border rounded-b-3xl relative z-10 -mt-2 shadow-md flex items-center justify-center overflow-hidden">
+        <!-- Shine/Reflection -->
+        <div class="absolute top-2 right-2 w-2 h-16 bg-white/60 rotate-12 rounded-full blur-[1px]"></div>
+        <!-- Face (Kawaii style - optional, minimal here) -->
+        <div class="face opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+          <div class="eye w-1.5 h-1.5 bg-foreground/60 rounded-full animate-blink"></div>
+          <div class="eye w-1.5 h-1.5 bg-foreground/60 rounded-full animate-blink animation-delay-200"></div>
+        </div>
+      </div>
+      <!-- Shadow -->
+      <div class="shadow w-20 h-2 bg-black/10 rounded-full mt-[-2px] blur-[2px]"></div>
+    </div>
+    
+  </div>
+</div>
+
+<style>
+  /* Gentle Swaying Animations */
+  @keyframes sway-1 {
+    0%, 100% { transform: rotate(-45deg); }
+    50% { transform: rotate(-40deg); }
+  }
+  @keyframes sway-2 {
+    0%, 100% { transform: rotate(30deg); }
+    50% { transform: rotate(35deg); }
+  }
+  @keyframes sway-3 {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(-5deg); }
+  }
+
+  /* Faster Shake on Hover */
+  @keyframes shake-1 {
+    0%, 100% { transform: rotate(-45deg); }
+    25% { transform: rotate(-48deg); }
+    75% { transform: rotate(-42deg); }
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  /* Breathing effect for the whole plant */
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  .animate-sway-1 { animation: sway-1 4s ease-in-out infinite; }
+  .animate-sway-2 { animation: sway-2 5s ease-in-out infinite; }
+  .animate-sway-3 { animation: sway-3 6s ease-in-out infinite; }
+  
+  .animate-shake-1 { animation: shake-1 0.5s ease-in-out infinite; }
+  
+  .animate-blink { animation: blink 4s infinite; }
+  .animation-delay-200 { animation-delay: 0.2s; }
+  .animate-breathe { animation: breathe 8s ease-in-out infinite; }
+  
+  .leaf {
+    /* Use theme primary color dynamically */
+    background-color: hsl(var(--primary));
+  }
+  .leaf.leaf-2 { background-color: hsl(var(--primary) / 0.8); }
+  .leaf.leaf-3 { background-color: hsl(var(--primary) / 0.9); }
+  
+  .stem { background-color: hsl(var(--primary) / 0.6); }
+
+  /* Ensure colors adapt to dark mode */
+  :global(.dark) .pot-rim, 
+  :global(.dark) .pot-body {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+  :global(.dark) .pot-body {
+    background: linear-gradient(to bottom, #2a2a2a, #222);
+  }
+</style>
