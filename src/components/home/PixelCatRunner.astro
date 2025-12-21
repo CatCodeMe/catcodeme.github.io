@@ -1,0 +1,275 @@
+---
+interface Props {
+  posts: Array<{
+    title: string;
+    date: Date;
+    slug: string;
+  }>;
+}
+
+const { posts } = Astro.props;
+
+// Sort posts by date ascending
+const sortedPosts = posts.sort((a, b) => a.date.getTime() - b.date.getTime());
+const startDate = new Date('2025-01-01').getTime();
+const endDate = new Date().getTime();
+
+const gameData = {
+  posts: sortedPosts.map(p => ({ date: p.date.getTime() })),
+  startDate,
+  endDate
+};
+---
+
+<div class="pixel-runner-container mb-8 select-none">
+  <!-- Minimal Header -->
+  <div class="flex justify-between items-center mb-2 px-1 font-mono text-xs text-muted-foreground">
+    <div class="tracking-widest">OFFLINE_CAT.EXE</div>
+    <div id="runner-score" class="font-bold">00000</div>
+  </div>
+  
+  <div class="canvas-wrapper relative w-full h-[150px] bg-background border-b-2 border-foreground/10 overflow-hidden">
+    <canvas id="runner-canvas" class="w-full h-full block rendering-pixelated"></canvas>
+    
+    <!-- Start Overlay (Chrome Dino Style) -->
+    <div id="runner-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-20 cursor-pointer">
+      <div class="text-foreground font-mono text-lg font-bold tracking-wider animate-pulse">PRESS TO START</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rendering-pixelated {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+</style>
+
+<script define:vars={{ gameData }}>
+  const canvas = document.getElementById('runner-canvas');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('runner-score');
+  const overlay = document.getElementById('runner-overlay');
+  
+  let animationId;
+  let isRunning = false;
+  let isFinished = false;
+  
+  // Constants
+  const PIXEL_SCALE = 3; 
+  const GROUND_Y = 120;   
+  const CAT_X = 40;      
+  const DAY_WIDTH = 15;   
+  
+  // State
+  let startTime = gameData.startDate;
+  let currentTime = startTime;
+  let endTime = gameData.endDate;
+  let speed = 0.3; 
+  
+  // Physics
+  let catY = GROUND_Y;
+  let velocityY = 0;
+  let isJumping = false;
+  let frame = 0;
+  
+  // Colors (Theme Aware)
+  const getThemeColors = () => {
+      const style = getComputedStyle(document.documentElement);
+      return {
+          bg: style.getPropertyValue('--background').trim(),
+          fg: style.getPropertyValue('--foreground').trim(),
+          muted: style.getPropertyValue('--muted-foreground').trim()
+      };
+  };
+
+  // --- Sprites (1 bit) ---
+  // 1 = FG
+  
+  // Cat Stand (15x16)
+  const catStand = [
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,1,0,0,0,0,0,1,0,0], // Ears
+      [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0],
+      [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0],
+      [0,0,0,0,0,1,1,1,1,1,1,1,1,0,0], // Head
+      [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0],
+      [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0], // Body
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [0,1,0,1,0,0,1,0,1,0,0,1,0,1,0], // Legs
+      [0,1,0,1,0,0,1,0,1,0,0,1,0,1,0]
+  ];
+
+  const catRun1 = [...catStand];
+  catRun1[13] = [0,0,0,1,0,0,1,0,1,0,0,0,0,1,0]; // Legs move
+  catRun1[14] = [0,0,0,1,0,0,1,0,1,0,0,0,0,1,0];
+
+  const catRun2 = [...catStand];
+  catRun2[13] = [0,1,0,0,0,0,1,0,1,0,0,1,0,1,0];
+  catRun2[14] = [0,1,0,0,0,0,1,0,1,0,0,1,0,1,0];
+  
+  // Obstacle: Cactus/Post (Simple Block)
+  const obstacleSprite = [
+      [0,0,1,1,0,0],
+      [0,1,1,1,1,0],
+      [1,1,1,1,1,1],
+      [1,1,1,1,1,1],
+      [0,1,1,1,1,0],
+      [0,1,1,1,1,0],
+      [0,1,1,1,1,0],
+      [0,1,1,1,1,0],
+      [0,1,1,1,1,0],
+      [0,1,1,1,1,0]
+  ];
+  
+  // Cloud (Simple Line Art)
+  const cloudSprite = [
+      [0,0,0,0,0,1,1,1,1,0,0,0],
+      [0,0,1,1,1,0,0,0,0,1,1,0],
+      [0,1,0,0,0,0,0,0,0,0,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,1],
+      [0,1,1,1,1,1,1,1,1,1,1,0]
+  ];
+
+  // --- Rendering ---
+  
+  function drawSprite(ctx, sprite, x, y, color) {
+      ctx.fillStyle = color;
+      sprite.forEach((row, r) => {
+          row.forEach((pixel, c) => {
+              if (pixel === 1) {
+                ctx.fillRect(Math.floor(x + c * PIXEL_SCALE), Math.floor(y + r * PIXEL_SCALE), PIXEL_SCALE, PIXEL_SCALE);
+              }
+          });
+      });
+  }
+
+  // Generate Cloud Positions
+  const clouds = [];
+  for(let i=0; i<20; i++) {
+      clouds.push({
+          x: Math.random() * 2000,
+          y: Math.random() * 60 + 20
+      });
+  }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = false;
+  }
+  window.addEventListener('resize', resize);
+
+  function update() {
+    if (!isRunning) return;
+    
+    const colors = getThemeColors();
+    const oneDay = 1000 * 60 * 60 * 24;
+    currentTime += oneDay * speed; 
+    
+    // Update Score (Days)
+    const daysPassed = Math.floor((currentTime - startTime) / oneDay);
+    scoreEl.textContent = String(daysPassed).padStart(5, '0');
+
+    if (currentTime >= endTime) {
+        currentTime = endTime;
+        isRunning = false;
+        overlay.innerHTML = '<div class="text-foreground font-mono">GAME OVER</div>';
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
+    }
+
+    // Logic
+    const nextPost = gameData.posts.find(p => {
+          const diff = (p.date - currentTime) / oneDay;
+          return diff > 0 && diff < 8; 
+    });
+
+    if (nextPost && !isJumping && catY === GROUND_Y) {
+          velocityY = -5.5; 
+          isJumping = true;
+    }
+
+    catY += velocityY;
+    velocityY += 0.25; 
+    if (catY > GROUND_Y) {
+          catY = GROUND_Y;
+          velocityY = 0;
+          isJumping = false;
+    }
+
+    // Draw
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Clouds (Parallax)
+    // Cloud X = BaseX - (CurrentTime / TotalTime) * Factor
+    const progress = (currentTime - startTime) / (endTime - startTime);
+    clouds.forEach(c => {
+        let cx = c.x - (progress * 1000); 
+        // Wrap
+        const canvasW = canvas.width / window.devicePixelRatio;
+        while(cx < -50) cx += canvasW + 100;
+        if(cx < canvasW) {
+            drawSprite(ctx, cloudSprite, cx, c.y, colors.muted); // Muted color for background
+        }
+    });
+
+    // Ground Line
+    ctx.fillStyle = colors.fg;
+    ctx.fillRect(0, GROUND_Y + 15 * PIXEL_SCALE, canvas.width, 1 * PIXEL_SCALE); // 1px line
+    
+    // Obstacles
+    const canvasW = canvas.width / window.devicePixelRatio;
+    gameData.posts.forEach(p => {
+          const daysDiff = (p.date - currentTime) / oneDay;
+          const obsX = CAT_X + daysDiff * DAY_WIDTH;
+          if (obsX > -50 && obsX < canvasW + 50) {
+              drawSprite(ctx, obstacleSprite, obsX, GROUND_Y + 5 * PIXEL_SCALE, colors.fg); // Offset to sit on line
+          }
+    });
+
+    // Cat
+    let pose = catStand;
+    if (isJumping) pose = catStand; // Simple jump
+    else if (Math.floor(frame / 6) % 2 === 0) pose = catRun1;
+    else pose = catRun2;
+    
+    // Draw Cat
+    // Cat is 15x16. Feet at bottom.
+    // Ground Line is at GROUND_Y + 15*SCALE.
+    // We want feet to touch line.
+    drawSprite(ctx, pose, CAT_X, catY, colors.fg);
+
+    frame++;
+    animationId = requestAnimationFrame(update);
+  }
+
+  function start() {
+      if (isRunning) return;
+      currentTime = startTime; // Reset always on start for demo
+      isRunning = true;
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      resize();
+      update();
+  }
+
+  // Init
+  resize();
+  const colors = getThemeColors();
+  drawSprite(ctx, catStand, CAT_X, GROUND_Y, colors.fg);
+  ctx.fillStyle = colors.fg;
+  ctx.fillRect(0, GROUND_Y + 15 * PIXEL_SCALE, canvas.width, 1 * PIXEL_SCALE);
+
+  overlay.addEventListener('click', start);
+  
+</script>

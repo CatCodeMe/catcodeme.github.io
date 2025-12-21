@@ -25,7 +25,7 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
     style='back'
     class='fixed bottom-4 left-4 z-50 md:bottom-8 md:left-8'
   />
-  <main class='mt-6 items-start gap-x-10 md:flex'>
+  <main class='mt-6 items-start gap-x-6 md:flex'>
     {/* 新增 handletoc slot，支持手风琴贴边布局 */}
     <slot name='handletoc' />
 
@@ -63,7 +63,7 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
     </article>
   </main>
 
-  <div class='bottom mt-6 items-start gap-x-10 md:flex'>
+  <div class='bottom mt-6 items-start gap-x-6 md:flex'>
     {/* Bottom */}
     <div class='mt-8 flex-1 text-muted-foreground md:min-w-[50ch]'>
       <slot name='bottom' />
@@ -123,13 +123,13 @@ const { meta, highlightColor, back = '/', hasToc = false, ...props } = Astro.pro
     
     /* 调整整体布局 */
     main {
-      gap: 0 2rem !important;
+      gap: 0 1.5rem !important; /* Reduced gap */
     }
     
     /* 调整 sidebar 的位置和宽度 */
     #sidebar {
-      width: 20rem !important;
-      min-width: 20rem !important;
+      width: 17rem !important; /* Reduced width */
+      min-width: 17rem !important;
       flex-shrink: 0 !important;
       margin-left: auto !important;
     }

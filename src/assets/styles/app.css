@@ -1,49 +1,76 @@
 /* Theme */
 :root {
-  --background: 50 25% 98%;
-  --foreground: 30 10% 8%;
+  /* Shopify-inspired "Polaris" Theme */
+  /* Clean, Trustworthy, Professional */
+  
+  --background: 0 0% 100%; /* Pure White Surface */
+  --foreground: 200 6% 10%; /* Ink Black (almost black, slight cool tone) */
+  
   --card: 0 0% 100%;
-  --card-foreground: 30 10% 8%;
+  --card-foreground: 200 6% 10%;
+  
   --popover: 0 0% 100%;
-  --popover-foreground: 30 10% 8%;
-  --primary: 28 85% 55%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 90 25% 92%;
-  --secondary-foreground: 30 10% 8%;
-  --muted: 50 15% 95%;
-  --muted-foreground: 30 8% 30%;
-  --accent: 100 45% 75%;
-  --accent-foreground: 30 10% 8%;
-  --destructive: 0 72.22% 50.59%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 45 20% 85%;
-  --input: 45 15% 90%;
-  --ring: 28 85% 55%;
+  --popover-foreground: 200 6% 10%;
+  
+  /* Shopify Green-ish Primary - Trust & Growth */
+  /* #008060 is approx HSL(165, 100%, 25%) but strictly meant for buttons */
+  /* Let's use a slightly more vibrant/modern web accessible green */
+  --primary: 165 67% 28%; /* #178260 - Deep Teal/Green */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 150 14% 97%; /* Very subtle green tint background */
+  --secondary-foreground: 165 67% 28%;
+  
+  --muted: 210 12% 96%; /* Slate 50/100 */
+  --muted-foreground: 210 9% 45%; /* Slate 500 */
+  
+  --accent: 150 20% 94%;
+  --accent-foreground: 165 67% 28%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 210 14% 89%; /* Slate 200 */
+  --input: 210 14% 89%;
+  --ring: 165 67% 28%;
+  
   --radius: 0.5rem;
   --callout-background: 0 0% 100%;
 }
+
 .dark {
-  --background: 30 15% 8%;
-  --foreground: 0 0% 95%;
-  --card: 30 12% 10%;
-  --card-foreground: 0 0% 95%;
-  --popover: 30 12% 10%;
-  --popover-foreground: 0 0% 95%;
-  --primary: 32 90% 65%;
-  --primary-foreground: 30 15% 8%;
-  --secondary: 95 35% 20%;
-  --secondary-foreground: 0 0% 95%;
-  --muted: 30 10% 15%;
-  --muted-foreground: 45 10% 65%;
-  --accent: 100 50% 50%;
-  --accent-foreground: 30 15% 8%;
-  --destructive: 0 62.8% 50%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 30 15% 25%;
-  --input: 30 12% 18%;
-  --ring: 32 90% 65%;
-  --callout-background: 30 12% 10%;
+  /* Dark Mode - Deep Slate/Green */
+  --background: 200 10% 10%; /* Dark Ink */
+  --foreground: 0 0% 98%;
+  
+  --card: 200 10% 10%;
+  --card-foreground: 0 0% 98%;
+  
+  --popover: 200 10% 10%;
+  --popover-foreground: 0 0% 98%;
+  
+  --primary: 160 50% 45%; /* Brighter Green for Dark Mode */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 200 10% 16%;
+  --secondary-foreground: 0 0% 98%;
+  
+  --muted: 200 10% 16%;
+  --muted-foreground: 210 10% 65%;
+  
+  --accent: 200 10% 16%;
+  --accent-foreground: 0 0% 98%;
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 200 10% 20%;
+  --input: 200 10% 20%;
+  --ring: 160 50% 45%;
+  
+  --callout-background: 200 10% 16%;
 }
+
 :root {
   --un-default-border-color: hsl(var(--border) / 1);
 }
@@ -53,9 +80,11 @@ html.dark {
 
 /* Global */
 a {
+  text-decoration: none;
   transition: color 0.2s ease;
   &:hover {
     color: hsl(var(--primary) / var(--un-text-opacity, 1));
+    text-decoration: none; /* Explicitly remove underline */
   }
 }
 
@@ -82,20 +111,20 @@ starlight-tabs {
   margin-top: .5em;
 }
 
-/* Inline code styles */
+/* Inline code styles - Clean & Minimal */
 .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) {
-  font-size: 0.9em !important;
+  font-size: 0.875em !important;
   font-weight: 500 !important;
   border-radius: 0.25rem !important;
-  padding: 0.15rem 0.175rem !important;
-  margin: 0.125rem 0 !important;
-  background-color: hsl(var(--secondary)) !important;
+  padding: 0.15rem 0.3rem !important;
+  margin: 0 !important;
+  background-color: hsl(var(--muted)) !important; 
   border: 1px solid hsl(var(--border)) !important;
-  color: hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)) !important; /* Keep it readable/neutral */
   display: inline-block !important;
   box-decoration-break: clone !important;
   -webkit-box-decoration-break: clone !important;
-  line-height: 1.6 !important;
+  line-height: 1.4 !important;
   vertical-align: baseline !important;
   &::before, &::after {
     content: '' !important;
@@ -108,23 +137,32 @@ html.dark .prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *)) 
   color: hsl(var(--foreground)) !important;
 }
 
-/* Blockquote styles */
+/* Blockquote styles - Simple & Elegant */
+/* Overrides UnoCSS/Tailwind Prose defaults */
 .prose blockquote {
-  background-color: hsl(140 20% 94%) !important;
-  background-image: radial-gradient(circle, hsl(140 18% 88%) 1px, transparent 1px) !important;
-  background-size: 12px 12px !important;
-  border: none !important;
-  padding-top: .15em !important;
-  padding-bottom: .15em !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  padding: 0.5rem 0 0.5rem 1.25rem !important;
+  border-left: 3px solid hsl(var(--primary)) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border-radius: 0 !important;
+  color: hsl(var(--muted-foreground)) !important;
+  margin-top: 1.5em !important;
+  margin-bottom: 1.5em !important;
+}
+
+/* Remove quotes */
+.prose blockquote::before,
+.prose blockquote::after {
+  content: none !important;
 }
 
 html.dark .prose blockquote {
-  background-color: hsl(140 15% 16%) !important;
-  background-image: radial-gradient(circle, hsl(140 12% 22%) 1px, transparent 1px) !important;
-  background-size: 12px 12px !important;
-  border: none !important;
-  padding-top: 1.25em !important;
-  padding-bottom: 1.25em !important;
+  background: transparent !important;
+  background-image: none !important;
+  border-left-color: hsl(var(--primary)) !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 /* Reading progress bar using modern CSS scroll-driven animations */
@@ -134,7 +172,7 @@ html.dark .prose blockquote {
     position: fixed;
     bottom: 0;
     left: 0;
-    height: 2px;
+    height: 3px;
     background: hsl(var(--primary));
     width: 0%;
     z-index: 9999;

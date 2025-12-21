@@ -8,7 +8,11 @@ const typographyConfig = {
   cssExtend: {
     // Code styles
     'code, kbd, samp, pre': {
-      'font-family': '"Noto Serif CJK", "Input Mono", "Fira Code", "Consolas", "Monaco", monospace'
+      'font-family': '"Input Mono", "Fira Code", "Consolas", "Monaco", monospace' // Removed Serif font from code blocks
+    },
+    'p': {
+      'line-height': '1.8', // Ensure relaxed line height for readability
+      'margin-bottom': '1.25em'
     },
     'pre code': {
       'font-size': '1.015em',
@@ -45,26 +49,13 @@ const typographyConfig = {
     },
     // Blockquote
     blockquote: {
-      position: 'relative',
-      overflow: 'visible',
-      'border-radius': 'var(--radius)',
-      'padding-inline': '1.6rem',
-      'font-style': 'normal',
-      'font-weight': '500'
+      'border-left': '4px solid hsl(var(--primary))',
+      'padding-left': '1rem',
+      'margin-left': '0',
+      'font-style': 'italic',
+      color: fgMuted
     },
-    'blockquote::before': {
-      color: fgMuted,
-      position: 'absolute',
-      content: '"\\201C"',
-      top: '0',
-      left: '0.5rem',
-      'font-size': '4rem',
-      'font-family': 'serif',
-      'line-height': '1',
-      opacity: '0.3',
-      'pointer-events': 'none',
-      'z-index': '0'
-    },
+    // Removed blockquote::before
     'blockquote p': {
       position: 'relative',
       'z-index': '1'
@@ -125,7 +116,7 @@ const typographyConfig = {
     },
     strong: {
       'font-weight': '600',
-      color: '#a34c4c'
+      color: 'hsl(225, 70%, 35%)' // Deep Indigo Blue for distinct but professional emphasis
     },
     a: {
       'font-weight': '500',

@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets'
+import homeImage from '@/assets/home_2.png'
+---
+
+<div class="home-hero-image-container mb-4 group transition-colors px-3 md:px-5">
+  <Image 
+    src={homeImage} 
+    alt="Sleeping cat with plants" 
+    class="w-full h-full object-cover rounded-md" 
+    loading="eager"
+  />
+</div>
+
+<style>
+  .home-hero-image-container {
+    height: 200px; /* Adjusted height slightly smaller */
+    display: flex;
+    align-items: flex-start; /* Align to top */
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+  }
+  .home-hero-image-container img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+  }
+</style>
