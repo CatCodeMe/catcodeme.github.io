@@ -1,11 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import LZString from 'lz-string';
+
+const ResetIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+    <path d="M3 3v5h5" />
+  </svg>
+);
+
+const OverviewIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="7" height="7" x="3" y="3" rx="1" />
+    <rect width="7" height="7" x="14" y="3" rx="1" />
+    <rect width="7" height="7" x="14" y="14" rx="1" />
+    <rect width="7" height="7" x="3" y="14" rx="1" />
+  </svg>
+);
 
 const ExcalidrawIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-    <path d="M2 2l7.586 7.586"></path>
-    <circle cx="11" cy="11" r="2"></circle>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" {...props}>
+    <path fill="#6965db" d="M29.937 25.078a.19.19 0 0 0-.185-.042c-1.464-2.162-3.325-4.213-5.128-6.193l-.297-.325a.17.17 0 0 0-.042-.105a.2.2 0 0 0-.118-.07l-.06-.063l-.042-.031c-.052-.112-.185-.196-.332-.122c-.551.283-1.047.688-1.536 1.062c-.654.5-1.293 1.02-1.894 1.579a6 6 0 0 0-.688.73c-.098.129-.024.251.095.303q-.64.63-1.286 1.307a.2.2 0 0 0-.056.154a.2.2 0 0 0 .077.143l.755.576s.003.01.01.014c1.08 1.065 2.973 2.543 4.978 4.108q.446.351.897.702q.204.247.392.49a.2.2 0 0 0 .279.038c.045.034.09.073.136.108a.2.2 0 0 0 .28-.035a.2.2 0 0 0 .038-.108c.014 0 .025.01.035.01a.2.2 0 0 0 .147-.063l3.556-3.884a.196.196 0 0 0-.014-.28zm-10.21-1.345q.037.047.073.088c.406.342.839.712 1.279 1.09l-1.789-1.366l-.181-.126a2 2 0 0 1-.108-.084l-.133-.112s.024-.024.035-.038l.122-.123c.6-.607 1.631-1.62 2.162-2.116c-.562.566-1.7 2.225-1.456 2.787zm6.123 4.824l-1.474-1.125a37 37 0 0 0-1.83-1.757c.796.615 1.477 1.135 1.579 1.226c.772.689.737.563 1.268 1.017l.639.464c-.063.056-.126.116-.185.172zm.37.283l-.027-.02l.17-.134l-.139.154zM2.843 6.031l.14.737c.24 1.292.464 2.456.89 3.34l.168.67c.066.255.16.573.248.64c.995.88 2.522 2.193 4.153 3.43a.2.2 0 0 0 .245-.004q.006.01.014.014a.2.2 0 0 0 .132.052a.2.2 0 0 0 .147-.066c2.089-2.323 3.643-4.234 4.75-5.834a.44.44 0 0 0 .102-.293c.07-.084.143-.168.21-.237a.195.195 0 0 0-.035-.3a.2.2 0 0 0-.06-.127a95 95 0 0 0-1.208-1.145a104 104 0 0 1-2.715-2.624L10 4.264a.2.2 0 0 0-.077-.05c-.388-.136-1.184-.272-2.186-.447c-1.475-.251-3.493-.6-5.31-1.142h-.014v-.003s-.007 0-.01.007h-.004l.014-.007s-.108.003-.13.014a.2.2 0 0 0-.065.052c-.018.021-.032.042-.165.07c-.132.028.028 0 .039 0h-.039v.01c.025.12.018.203.056.34c-.007.034.074.356.084.387l.64 2.536zm10.81 2.284l-.013.018l-.224-.248q.114.107.238.23zm-2.476 3.28l-.035.042l-.007-.007q.02-.017.045-.034zm-1.415-7.02c.123.122.608.576.72.688c-.507-.231-1.768-.818-2.354-1.006c.576.1 1.372.23 1.634.317zm-6.7-.968c.294.503.525 2.267.755 3.982c-.13-.552-.24-1.09-.346-1.607c-.181-.894-.349-1.694-.583-2.403q.075.006.171.017q-.002.006.007.01zm-.1-.423q-.122-.012-.217-.017q-.01-.021-.014-.042l.23.063zm-.776.157v-.007zm27.434-.412c.014-.08-.384-.433-.259-.44c.297-.014.3-.471 0-.458c-.394.021-.793.112-1.177.186q-1.036.195-2.068.422a85 85 0 0 0-4.576 1.087c-.475.129-.999.244-1.435.475c-.147.076-.14.234-.06.331a.3.3 0 0 1-.097.032q-.195.035-.388.066a.198.198 0 0 0-.136.3c-.81 1.084-1.733 2.25-2.732 3.476a351 351 0 0 0-3.046 3.543c-3.287 3.863-7.014 8.243-11.143 12.1a.2.2 0 0 0-.01.279a.2.2 0 0 0 .066.045l-.168.154a.18.18 0 0 0-.056.112l-.08.087a.2.2 0 0 0 .01.28a.2.2 0 0 0 .28-.01l.042-.046a.293.293 0 0 1 .426 0l.681.73l-.482-.402a.2.2 0 0 0-.28.024a.2.2 0 0 0 .025.28l5.177 4.342a.2.2 0 0 0 .269-.014l.126-.126a.2.2 0 0 0 .22-.042c7.017-7.049 12.669-12.376 19.142-17.137a.2.2 0 0 0 .08-.178a.2.2 0 0 0 .168-.136c1.194-3.654 1.425-6.889 1.495-8.478l.007-.024q.01-.027.014-.05l.017-.065a.95.95 0 0 0-.052-.751zM17.072 8.647q.471-.54.933-1.055C15.993 10.24 12.66 14.32 7.942 19.168c3.213-3.555 6.451-7.24 9.13-10.52zM5.702 27.094l-.01-.01l.07.014a.2.2 0 0 0-.06 0zm2.41 2.243l-.017-.014l.01-.01c.007 0 .01.006.014.006c0 .007-.007.01-.01.018zm2.92-2.519l.482-.503l.01.018c-.163.16-.328.325-.495.485zm.783-.772l.304-.356q.004-.006.014-.014a201 201 0 0 1 3.555-3.58l.025-.021l.95-.727a520 520 0 0 0-4.848 4.702zm7.562-19.519c-.65.846-1.362 1.942-1.966 2.82c-1.908 2.762-8.048 9.528-8.185 9.657c-.946.916-3.8 3.654-5.62 5.37a1 1 0 0 0-.119.122a.277.277 0 0 1 .01-.395c8.67-8.174 13.93-14.982 16.069-17.947c-.046.115-.084.24-.192.38zm5.767 2.48l-.003.007c0-.007-.007-.024.003-.007m-2.375 1.51c-.79-.458-1.16-1.143-.947-1.834l.067-.23q.041-.1.098-.2c.206-.342.52-.646.88-.824q.026-.01.052-.014a.3.3 0 0 1-.014-.15c.018-.109.088-.203.23-.203c.235 0 .961.216 1.237.454q.127.1.238.22c.105.122.258.321.335.465c.046.02.08.216.133.317q.073.242.063.49c0 .006 0 .006.003.01c-.01.024 0 .13-.014.14c-.035.251-.126.5-.262.716l-.038.056c0 .003-.007.007-.01.014a1.6 1.6 0 0 1-.378.394c-.44.311-.953.406-1.467.276a2 2 0 0 1-.2-.087zm5.683-.57c-.171.716-.38 1.464-.629 2.229c-.01.028-.01.055-.01.08a.2.2 0 0 0-.094.038a106 106 0 0 0-4.535 3.532a250 250 0 0 1 3.923-3.476a2.24 2.24 0 0 0 .737-1.306l.196-1.178l.01-.035c.088-.248.468-.14.409.116z" />
   </svg>
 );
 
@@ -15,9 +29,16 @@ interface ExcalidrawSlidesProps {
   width?: string | number;
   title?: string;
   subtitle?: string;
+  fontFamily?: string;
 }
 
-export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, width = "100%" }: ExcalidrawSlidesProps) {
+export function ExcalidrawSlides({ 
+  snapshotUrl, 
+  title, 
+  height = 500, 
+  width = "100%", 
+  fontFamily = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif' 
+}: ExcalidrawSlidesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -51,7 +72,31 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
         try {
             const res = await fetch(`${snapshotUrl}?t=${Date.now()}`);
             if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
-            const json = await res.json();
+            
+            const textContent = await res.text();
+            let json;
+
+            // Try parsing as standard JSON first
+            try {
+                json = JSON.parse(textContent);
+            } catch (e) {
+                // If not JSON, try parsing as Obsidian-Excalidraw Markdown
+                // Look for ```compressed-json ... ``` block
+                const match = textContent.match(/```compressed-json\s*([\s\S]*?)```/);
+                if (match) {
+                    // Remove all whitespace (newlines, spaces) as LZString expects a continuous string
+                    const compressed = match[1].replace(/\s/g, '');
+                    const decompressed = LZString.decompressFromBase64(compressed);
+                    if (decompressed) {
+                        json = JSON.parse(decompressed);
+                    } else {
+                        throw new Error("Failed to decompress Excalidraw data");
+                    }
+                } else {
+                    throw new Error("Invalid Excalidraw file format");
+                }
+            }
+
             const elements = json.elements || [];
             
             const frameElements = elements.filter((el: any) => el.type === "frame")
@@ -88,28 +133,43 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
       try {
         const { exportToSvg } = await import("@excalidraw/excalidraw");
         
-        const renderElements = data.elements.map((el: any) => {
-            if (el.type === 'frame') {
-                return { ...el, strokeColor: '#00000000', backgroundColor: 'transparent', name: '' };
-            }
-            return el;
-        });
+        // Filter out deleted elements to ensure accurate bounds and rendering
+        const activeElements = data.elements.filter((el: any) => !el.isDeleted);
 
-        // Calculate JSON Min Bounds
+        // Calculate raw bounding box of active elements (including frames)
         let minX = Infinity, minY = Infinity;
-        renderElements.forEach((el: any) => {
+        activeElements.forEach((el: any) => {
             if (el.x < minX) minX = el.x;
             if (el.y < minY) minY = el.y;
         });
         if (minX === Infinity) { minX = 0; minY = 0; }
 
+        // Dynamic Frame Rendering Options
+        const frameRendering = viewMode === 'overview'
+            ? { enabled: true, name: true, outline: true, clip: true }
+            : { enabled: false, name: false, outline: false, clip: true };
+
         const svg = await exportToSvg({
-          elements: renderElements,
-          appState: { ...data.appState, exportBackground: true, viewBackgroundColor: "#ffffff" },
+          elements: activeElements,
+          appState: { 
+              ...data.appState, 
+              exportBackground: true, 
+              viewBackgroundColor: "#ffffff",
+              frameRendering
+          },
           files: data.files || {},
-          exportPadding: 10, // Restored padding to look nice, we will account for offset
+          exportPadding: 10,
         });
         
+        // Inject Custom Font
+        const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+        style.textContent = `
+            text {
+                font-family: ${fontFamily}, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif !important;
+            }
+        `;
+        svg.prepend(style);
+
         svg.removeAttribute('width'); 
         svg.removeAttribute('height');
         svg.style.width = "100%"; 
@@ -122,8 +182,6 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
             setRawViewBox(vb);
             currentViewBoxRef.current = vb;
             
-            // Calculate Offset: SVG ViewBox Origin - JSON Element Origin
-            // This accounts for padding or any normalization Excalidraw did.
             setCoordinateOffset({
                 x: vb[0] - minX,
                 y: vb[1] - minY
@@ -137,7 +195,7 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
     } catch (e) { console.error(e); }
     }
     renderSvg();
-  }, [data]);
+  }, [data, viewMode]);
 
   const animate = useCallback((time: number) => {
     if (!transitionRef.current) return;
@@ -267,12 +325,13 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
 
   if (!isClient) return <div style={containerStyle} className="bg-gray-50 flex items-center justify-center border-2 border-gray-200 rounded-xl">Initializing...</div>;
 
+  const hasFrames = frames.length > 0;
+
   return (
     <div className="flex flex-col w-full my-6 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
       <div className="bg-gray-50 border-b border-gray-100 px-6 py-2.5 flex items-center justify-between">
           <div className="flex flex-col">
               <h3 className="text-sm font-bold text-gray-800 m-0 leading-tight">{title || "Excalidraw"}</h3>
-              {subtitle && <span className="text-[10px] text-gray-400 mt-0.5 font-medium">{subtitle}</span>}
           </div>
           <div className="opacity-60 hover:opacity-100 transition-opacity">
               <ExcalidrawIcon className="w-5 h-5 text-purple-600" />
@@ -294,7 +353,7 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
         {loading && <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div></div>}
 
         {/* Frame Label (Slide Mode) */}
-        {viewMode === 'slide' && (
+        {hasFrames && viewMode === 'slide' && (
             <div className="absolute bottom-4 left-4 z-50 pointer-events-none">
                 <span className="px-2 py-1 bg-white/90 backdrop-blur text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded border border-gray-200 shadow-sm">
                     {frames[currentSlide]?.name || `Slide ${currentSlide + 1}`}
@@ -305,32 +364,46 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
 
       <div className="bg-gray-50 border-t border-gray-100 px-4 py-2 flex items-center justify-between h-10">
           <div className="w-24">
-             <button 
-                onClick={() => setViewMode(prev => prev === 'overview' ? 'slide' : 'overview')}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-colors px-2 py-1 rounded ${viewMode === 'overview' ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
-             >
-                 {viewMode === 'overview' ? 'Slides' : 'Overview'}
-             </button>
+             {hasFrames ? (
+                 <button 
+                    onClick={() => setViewMode(prev => prev === 'overview' ? 'slide' : 'overview')}
+                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors px-2 py-1 rounded ${
+                        viewMode === 'overview' 
+                        ? 'text-red-600 bg-red-50' 
+                        : 'text-blue-600 bg-blue-50'
+                    }`}
+                 >
+                     {viewMode === 'overview' ? 'Overview' : 'Slides'}
+                 </button>
+             ) : (
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-1 rounded cursor-not-allowed">
+                    Overview
+                </span>
+             )}
           </div>
 
-          <div className="flex items-center bg-white border border-gray-200 rounded-lg px-1.5 py-0.5 shadow-sm gap-1">
-              <button onClick={() => goToSlide((currentSlide - 1 + frames.length) % frames.length)} className="p-1 hover:bg-gray-50 rounded text-gray-500 transition-colors"><svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M8.84182 3.13514C9.04327 3.32401 9.05348 3.64042 8.86462 3.84188L5.43521 7.49991L8.86462 11.1579C9.05348 11.3594 9.04327 11.6758 8.84182 11.8647C8.64036 12.0535 8.32394 12.0433 8.13508 11.8419L4.38508 7.84188C4.20477 7.64955 4.20477 7.35027 4.38508 7.15794L8.13508 3.15794C8.32394 2.95648 8.64036 2.94628 8.84182 3.13514Z" fill="currentColor" fillRule="evenodd"></path></svg></button>
-              
-              <div className="flex items-center gap-1 px-1">
-                  <input 
-                      type="text" 
-                      value={currentSlide + 1} 
-                      onChange={(e) => {
-                          const val = parseInt(e.target.value);
-                          if (!isNaN(val)) goToSlide(val - 1);
-                      }}
-                      className="w-6 bg-transparent text-[10px] font-black text-center text-gray-800 border-none outline-none focus:ring-0 p-0"
-                  />
-                  <span className="text-[10px] font-black text-gray-300">/</span>
-                  <span className="text-[10px] font-black text-gray-400 w-6 text-center">{frames.length}</span>
-              </div>
+          <div className="flex-1 flex justify-center">
+            {hasFrames && (
+                <div className="flex items-center bg-white border border-gray-200 rounded-lg px-1.5 py-0.5 shadow-sm gap-1">
+                    <button onClick={() => goToSlide((currentSlide - 1 + frames.length) % frames.length)} className="p-1 hover:bg-gray-50 rounded text-gray-500 transition-colors"><svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M8.84182 3.13514C9.04327 3.32401 9.05348 3.64042 8.86462 3.84188L5.43521 7.49991L8.86462 11.1579C9.05348 11.3594 9.04327 11.6758 8.84182 11.8647C8.64036 12.0535 8.32394 12.0433 8.13508 11.8419L4.38508 7.84188C4.20477 7.64955 4.20477 7.35027 4.38508 7.15794L8.13508 3.15794C8.32394 2.95648 8.64036 2.94628 8.84182 3.13514Z" fill="currentColor" fillRule="evenodd"></path></svg></button>
+                    
+                    <div className="flex items-center gap-1 px-1">
+                        <input 
+                            type="text" 
+                            value={currentSlide + 1} 
+                            onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                if (!isNaN(val)) goToSlide(val - 1);
+                            }}
+                            className="w-6 bg-transparent text-[10px] font-black text-center text-gray-800 border-none outline-none focus:ring-0 p-0"
+                        />
+                        <span className="text-[10px] font-black text-gray-300">/</span>
+                        <span className="text-[10px] font-black text-gray-400 w-6 text-center">{frames.length}</span>
+                    </div>
 
-              <button onClick={() => goToSlide((currentSlide + 1) % frames.length)} className="p-1 hover:bg-gray-50 rounded text-gray-500 transition-colors"><svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M6.1584 3.13523C5.95694 3.32411 5.94673 3.64053 6.1356 3.84199L9.565 7.50003L6.1356 11.1581C5.94673 11.3596 5.95694 11.676 6.1584 11.8648C6.35986 12.0537 6.67628 12.0435 6.86514 11.842L10.6151 7.84201C10.7954 7.64968 10.7954 7.35038 10.6151 7.15805L6.86514 3.15805C6.67628 2.95659 6.35986 2.94638 6.1584 3.13523Z" fill="currentColor" fillRule="evenodd"></path></svg></button>
+                    <button onClick={() => goToSlide((currentSlide + 1) % frames.length)} className="p-1 hover:bg-gray-50 rounded text-gray-500 transition-colors"><svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M6.1584 3.13523C5.95694 3.32411 5.94673 3.64053 6.1356 3.84199L9.565 7.50003L6.1356 11.1581C5.94673 11.3596 5.95694 11.676 6.1584 11.8648C6.35986 12.0537 6.67628 12.0435 6.86514 11.842L10.6151 7.84201C10.7954 7.64968 10.7954 7.35038 10.6151 7.15805L6.86514 3.15805C6.67628 2.95659 6.35986 2.94638 6.1584 3.13523Z" fill="currentColor" fillRule="evenodd"></path></svg></button>
+                </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1 w-24 justify-end">
@@ -338,12 +411,16 @@ export function ExcalidrawSlides({ snapshotUrl, title, subtitle, height = 500, w
                   onClick={() => {
                       syncView();
                   }} 
-                  className="w-7 h-7 flex items-center justify-center hover:bg-gray-200 rounded transition-colors text-xs" 
+                  className="w-7 h-7 flex items-center justify-center hover:bg-gray-200 rounded transition-colors text-gray-500" 
                   title="Reset View"
               >
-                  🔄
+                  <ResetIcon />
               </button>
-              <button onClick={() => setViewMode('overview')} className="w-7 h-7 flex items-center justify-center hover:bg-red-100 rounded transition-colors text-[10px]" title="Overview">⏹️</button>
+              {hasFrames && (
+                  <button onClick={() => setViewMode('overview')} className="w-7 h-7 flex items-center justify-center hover:bg-red-100 rounded transition-colors text-gray-500 hover:text-red-500" title="Overview">
+                      <OverviewIcon />
+                  </button>
+              )}
           </div>
       </div>
     </div>
