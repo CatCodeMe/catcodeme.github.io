@@ -20,6 +20,8 @@ import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
 
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
   // Top-Level Options
@@ -68,10 +70,11 @@ export default defineConfig({
         devicon: ['*'],
         mingcute: ['*']
       }
-    }),
-    AstroPureIntegration(config),
-    fontSubsetting() // 构建后自动运行字体子集化
-  ],
+  }),
+  AstroPureIntegration(config), 
+  fontSubsetting(),
+  react()
+],
   // root: './my-project-directory',
 
   // Prefetch Options
@@ -143,6 +146,17 @@ export default defineConfig({
     contentIntellisense: true
   },
   vite: {
+    ssr: {
+      noExternal: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+    },
+    resolve: {
+      alias: {
+        'roughjs/bin/rough': 'roughjs/bin/rough.js',
+      },
+    },
+    optimizeDeps: {
+        include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+    },
     plugins: [
       //   visualizer({
       //     emitFile: true,
