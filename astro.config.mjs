@@ -29,7 +29,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'auto' 
+    inlineStylesheets: 'auto'
   },
 
   // Adapter
@@ -60,11 +60,11 @@ export default defineConfig({
         devicon: ['*'],
         mingcute: ['*']
       }
-  }),
-  AstroPureIntegration(config), 
-  fontSubsetting(),
-  react()
-],
+    }),
+    AstroPureIntegration(config),
+    fontSubsetting(),
+    react()
+  ],
   // root: './my-project-directory',
 
   // Prefetch Options
@@ -132,7 +132,6 @@ export default defineConfig({
     // }
   },
   experimental: {
-    svg: true,
     contentIntellisense: true
   },
   vite: {
@@ -145,7 +144,7 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-        include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+      include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
     },
     plugins: [
       //   visualizer({
