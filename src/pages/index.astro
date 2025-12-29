@@ -1,11 +1,10 @@
 ---
 import { Image } from 'astro:assets'
-import { Icon } from '@/custom/components/user'
+import Icon from '@/custom/components/user/Icon.astro'
 
 import { getBlogCollection } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
-import { getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import { calculateSiteAge, getHighlightColor, getLatestPosts, getTotalWords } from '@/components/home/utils'
 import HomeHeroImage from '@/components/home/HomeHeroImage.astro'
 import avatarImage from '@/assets/home.png'
 import config from '@/site-config'

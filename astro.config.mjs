@@ -3,7 +3,6 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
-import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 // Others
 import rehypeKatex from 'rehype-katex';
@@ -55,15 +54,6 @@ export default defineConfig({
   },
 
   integrations: [
-    mermaid({
-      autoTheme: true,
-      theme: 'forest',
-      mermaidConfig: {
-        startOnLoad: false,
-        logLevel: 'error',
-        securityLevel: 'strict'
-      }
-    }),
     expressiveCode(),
     icon({
       include: {

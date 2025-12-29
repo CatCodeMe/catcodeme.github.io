@@ -9,7 +9,9 @@ tags:
 language: 'english'
 slug: t3
 ---
-import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
+import MdxRepl from '@/custom/components/user/MdxRepl.astro'
+import TabItem from '@/custom/components/user/TabItem.astro'
+import Tabs from '@/custom/components/user/Tabs.astro'
 
 ```css title="site.css" icon="postcss"
 .flex {
@@ -27,7 +29,7 @@ console.log('Sorry, do you know what line I am on?')
 </TabItem>
 <TabItem label='MDX'>
 ```tsx
-import { MdxRepl } from 'astro-pure/user'
+import MdxRepl from '@/custom/components/user/MdxRepl.astro'
 ```
 </TabItem>
 </Tabs>

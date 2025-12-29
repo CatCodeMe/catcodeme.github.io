@@ -2,7 +2,7 @@
 //https://github.com/chiffonng/blog-astro/blob/a9f55ce2aa11ffb7d7b50cb13cb58f5f0e707ced/src/components/base/IconRenderer.astro
 import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
-import { Svg } from 'astro-pure/user'
+import Svg from '@/custom/components/user/Svg.astro'
 
 function isImageMetadata(obj: unknown): obj is ImageMetadata {
   return !!(obj && typeof obj === 'object' && 'src' in obj)

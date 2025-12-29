@@ -9,7 +9,7 @@ tags: ['component', '建站']
 import { MdxRepl, Aside } from '@/custom/components/user';
 import Banner from '@/components/banner/Banner.astro';
 import { Icon } from '@/custom/components/user';
-import bannerImage from '@/assets/shelf/desk1.png';
+import bannerImage from '@/assets/cats/banner.png';
 
 `Banner` 是一个通用的页面横幅组件,用于快速创建一个包含左侧内容和右侧图片的标题区域.
 
@@ -33,7 +33,7 @@ import bannerImage from '@/assets/shelf/desk1.png';
     ```jsx
     import Banner from '@/components/banner/Banner.astro';
     import { Icon } from '@/custom/components/user';
-    import bannerImage from '@/assets/shelf/desk1.png';
+    import bannerImage from '@/assets/cats/banner.png';
 
     <Banner image={bannerImage} imageAlt="示例图片">
       <div class="flex items-center gap-3">
@@ -60,7 +60,7 @@ import bannerImage from '@/assets/shelf/desk1.png';
   <Fragment slot="desc">
     ```mdx
     import Banner from '@/components/banner/Banner.astro';
-    import bannerImage from '@/assets/shelf/desk1.png';
+    import bannerImage from '@/assets/cats/banner.png';
 
     {/* 显然这里不适合有太多的太复杂的内容 */}
     <Banner image={bannerImage} imageAlt="MDX Example Image">

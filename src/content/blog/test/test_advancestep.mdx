@@ -6,7 +6,7 @@ slug: p1jz
 tags: ['documentation', 'astro', '建站']
 ---
 
-import { MdxRepl } from 'astro-pure/user'
+import MdxRepl from '@/custom/components/user/MdxRepl.astro'
 import Aside from '@/custom/components/user/Aside.astro'
 import AdvanceStep from '@/components/AdvanceStep.astro';
 
@@ -48,7 +48,7 @@ This is the most flexible mode. Use it when you want to style a standard Markdow
   <Fragment slot='desc'>
   ````jsx
   import AdvanceStep from '@/components/AdvanceStep.astro';
-  import { Aside } from 'astro-pure/user';
+  import Aside from '@/custom/components/user/Aside.astro';
 
   <AdvanceStep split="ol">
     1. **Install Dependencies**

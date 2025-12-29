@@ -5,12 +5,14 @@ import type { CollectionEntry } from 'astro:content'
 // Plugin styles
 import 'katex/dist/katex.min.css'
 
-import { ArticleBottom, TOC, Copyright, Hero } from '@/custom/components/pages'
+// 直接导入各个组件，避免 barrel export 导致的过度加载
+import ArticleBottom from '@/custom/components/pages/ArticleBottom.astro'
+import TOC from '@/custom/components/pages/TOC.astro'
+import Copyright from '@/custom/components/pages/Copyright.astro'
+import Hero from '@/custom/components/pages/Hero.astro'
 
-import { MediumZoom } from 'astro-pure/advanced'
-import { MermaidEnhanced } from '@/custom/components/advanced'
+import MediumZoom from '@/custom/components/advanced/MediumZoom.astro'
 import PageLayout from '@/layouts/ContentLayout.astro'
-import AccordionTOC from '@/components/toc/AccordionTOC.astro'
 import { Comment, PageInfo } from '@/components/waline'
 import { integ } from '@/site-config'
 
@@ -53,12 +55,8 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
   back='/blog'
   hasToc={!!headings.length}
 >
-  {/* 大屏幕：手风琴目录专用 slot，支持贴边布局 (仅在大屏幕显示) */}
-  {
-    tocType == 2 && (
-      <AccordionTOC headings={headings} position='right' slot='handletoc' class='hidden lg:block' />
-    )
-  }
+  {/* 手风琴目录 - 通过 slot 由需要的页面自行提供，避免加载未使用的组件 */}
+  <slot name='handletoc' slot='handletoc' />
 
   {tocType == 1 && <TOC {headings} slot='sidebar' />}
 
@@ -80,7 +78,7 @@ const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-tex
   </Fragment>
 
   <slot name='bottom-sidebar' slot='bottom-sidebar' />
-  <MermaidEnhanced />
 </PageLayout>
 
 {integ.mediumZoom.enable && <MediumZoom />}
+
