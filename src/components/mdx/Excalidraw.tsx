@@ -187,7 +187,6 @@ export function Excalidraw({
                     .exc-magic-ball {
                         fill: #ff1a1a !important;
                         filter: drop-shadow(0 0 10px #ff0000);
-                        opacity: 1 !important;
                     }
                 `;
                 svg.prepend(style);
@@ -221,13 +220,28 @@ export function Excalidraw({
                         ball.setAttribute("r", "8");
                         ball.setAttribute("class", "exc-magic-ball");
 
+                        const activeDur = 1.2 + (length / 450);
+                        const totalDur = activeDur / 0.8; // 20% of duration is pause
+                        const slice = 0.8; // Motion takes 80% of total time
+
                         const motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
                         motion.setAttribute("path", d);
-                        motion.setAttribute("dur", "1.8s");
+                        motion.setAttribute("dur", `${totalDur.toFixed(1)}s`);
                         motion.setAttribute("repeatCount", "indefinite");
                         motion.setAttribute("rotate", "auto");
+                        motion.setAttribute("keyPoints", "0;1;1");
+                        motion.setAttribute("keyTimes", `0;${slice};1`);
+                        motion.setAttribute("calcMode", "linear");
+
+                        const opacity = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+                        opacity.setAttribute("attributeName", "opacity");
+                        opacity.setAttribute("values", "1;1;0;0");
+                        opacity.setAttribute("keyTimes", `0;${slice - 0.05};${slice};1`);
+                        opacity.setAttribute("dur", `${totalDur.toFixed(1)}s`);
+                        opacity.setAttribute("repeatCount", "indefinite");
 
                         ball.appendChild(motion);
+                        ball.appendChild(opacity);
                         el.parentNode.insertBefore(ball, el.nextSibling);
 
                     } catch (e) { /* silent fail for malformed paths */ }
