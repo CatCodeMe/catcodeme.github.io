@@ -148,18 +148,16 @@ export function Excalidraw({
             try {
                 const { exportToSvg } = await import("@excalidraw/excalidraw");
 
-                // Filter out deleted elements to ensure accurate bounds and rendering
+                // 1. Export CLEAN SVG without any hacks
                 const activeElements = data.elements
                     .filter((el: any) => !el.isDeleted)
                     .map((el: any) => {
-                        // Map Obsidian's custom font (4) to Virgil (1) to prevent "Unregistered font" errors
                         if (el.type === "text" && el.fontFamily === 4) {
                             return { ...el, fontFamily: 1 };
                         }
                         return el;
                     });
 
-                // Calculate raw bounding box of active elements (including frames)
                 let minX = Infinity, minY = Infinity;
                 activeElements.forEach((el: any) => {
                     if (el.x < minX) minX = el.x;
@@ -167,117 +165,72 @@ export function Excalidraw({
                 });
                 if (minX === Infinity) { minX = 0; minY = 0; }
 
-                // Dynamic Frame Rendering Options
-                const frameRendering = viewMode === 'overview'
-                    ? { enabled: true, name: true, outline: true, clip: true }
-                    : { enabled: false, name: false, outline: false, clip: true };
-
                 const svg = await exportToSvg({
                     elements: activeElements,
-                    appState: {
-                        ...data.appState,
-                        exportBackground: true,
-                        viewBackgroundColor: "#ffffff",
-                        frameRendering
-                    },
+                    appState: { ...data.appState, exportBackground: true, viewBackgroundColor: "#ffffff", frameRendering: viewMode === 'overview' ? { enabled: true, name: true, outline: true, clip: true } : { enabled: false, name: false, outline: false, clip: true } },
                     files: data.files || {},
                     exportPadding: 10,
                 });
 
-                // Inject Custom Font & Magic Animations
+                // 2. CSS for the Magic Ball (Physical Object)
                 const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
                 style.textContent = `
-            @import url('${config.font4.cssUrl}');
-            text {
-                font-family: "${config.font4.name}", ${fontFamily}, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif !important;
-            }
-
-            /* Magic Animations */
-            @keyframes exc-flow-base {
-                from { stroke-dashoffset: 40; }
-                to { stroke-dashoffset: 0; }
-            }
-            @keyframes exc-flow-single {
-                from { stroke-dashoffset: var(--path-length); }
-                to { stroke-dashoffset: 0; }
-            }
-            @keyframes exc-flow-out-1 { /* Center to Start */
-                from { stroke-dashoffset: calc(0.5 * var(--path-length)); }
-                to { stroke-dashoffset: var(--path-length); }
-            }
-            @keyframes exc-flow-out-2 { /* Center to End */
-                from { stroke-dashoffset: calc(0.5 * var(--path-length)); }
-                to { stroke-dashoffset: 0; }
-            }
-            @keyframes exc-pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.4; }
-                100% { opacity: 1; }
-            }
-
-            /* 1. Base Flowing Line (Blue Dashed Paths) */
-            path[stroke="#0000ff"][stroke-dasharray], 
-            g[stroke="#0000ff"] path[stroke-dasharray] {
-                animation: exc-flow-base 1.5s linear infinite !important;
-                stroke-dasharray: 12, 8 !important;
-            }
-
-            /* 2. Magic Dots (Energy Ball) */
-            .exc-magic-dot {
-                /* Zero length dash + round cap = Perfect Circle */
-                stroke-dasharray: 0, var(--path-length) !important;
-                stroke-linecap: round !important;
-                stroke-width: 16 !important;
-                opacity: 1 !important;
-                filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.9));
-            }
-            .exc-dot-single { animation: exc-flow-single 1.8s linear infinite !important; }
-            .exc-dot-out-1 { animation: exc-flow-out-1 1.5s ease-out infinite !important; }
-            .exc-dot-out-2 { animation: exc-flow-out-2 1.5s ease-out infinite !important; }
-
-            /* 3. Pulsing Red */
-            path[stroke="#ff0000"][stroke-dasharray],
-            g[stroke="#ff0000"] path[stroke-dasharray] {
-                animation: exc-pulse 2s ease-in-out infinite !important;
-            }
-        `;
+                    @import url('${config.font4.cssUrl}');
+                    text { font-family: "${config.font4.name}", ${fontFamily}, sans-serif !important; }
+                    @keyframes exc-flow-base { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+                    
+                    path[stroke="#0000ff"][stroke-dasharray] { 
+                        animation: exc-flow-base 1.5s linear infinite !important; 
+                        stroke-dasharray: 12, 8 !important; 
+                    }
+                    
+                    .exc-magic-ball {
+                        fill: #ff1a1a !important;
+                        filter: drop-shadow(0 0 10px #ff0000);
+                        opacity: 1 !important;
+                    }
+                `;
                 svg.prepend(style);
 
-                // Post-process: Precise Signal Pulses
-                svg.querySelectorAll('path[stroke="#0000ff"]').forEach((el: any) => {
-                    if (!el.hasAttribute('stroke-dasharray')) return;
+                // 3. Post-process: Dynamic Motion Injection (Motion Engine)
+                const clusters: { length: number, firstPoint: string }[] = [];
+                const allPaths = svg.querySelectorAll('path[stroke="#0000ff"]');
+
+                allPaths.forEach((el: any) => {
+                    const isDashed = el.hasAttribute('stroke-dasharray');
+                    if (!isDashed) return;
 
                     try {
-                        const length = el.getTotalLength();
-                        if (length < 25) return; // Skip arrowhead tips
+                        const length = Math.round(el.getTotalLength());
+                        const d = el.getAttribute('d') || "";
+                        const firstCoord = d.split(/[ ,]/).slice(0, 4).join(" ");
 
-                        el.style.setProperty('--path-length', length.toString());
+                        if (length < 20) return;
 
-                        // Detect if this line belongs to a double arrow by checking sibling paths
-                        const parent = el.parentElement;
-                        let isDouble = false;
-                        if (parent && parent.tagName === 'g') {
-                            const paths = parent.querySelectorAll('path');
-                            // Excalidraw double arrows have 3+ paths (1 line + 2 arrowheads)
-                            if (paths.length >= 3) isDouble = true;
-                        }
+                        // Feature-based De-duplication (Prevents dots on overdrawn/sloppy segments)
+                        const isDuplicate = clusters.some(c =>
+                            Math.abs(c.length - length) < 2 && c.firstPoint === firstCoord
+                        );
 
-                        const createDot = (className: string) => {
-                            const dot = el.cloneNode(true) as SVGPathElement;
-                            dot.setAttribute('stroke', '#ff1a1a');
-                            dot.style.setProperty('--path-length', length.toString());
-                            dot.removeAttribute('stroke-dasharray');
-                            dot.classList.add('exc-magic-dot', className);
-                            el.parentNode.insertBefore(dot, el.nextSibling);
-                        };
+                        if (isDuplicate) return;
 
-                        if (isDouble) {
-                            createDot('exc-dot-out-1');
-                            createDot('exc-dot-out-2');
-                        } else {
-                            createDot('exc-dot-single');
-                        }
-                    } catch (e) { /* ignore */ }
+                        clusters.push({ length, firstPoint: firstCoord });
+
+                        // Inject specialized SVG Motion Object
+                        const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        ball.setAttribute("r", "8");
+                        ball.setAttribute("class", "exc-magic-ball");
+
+                        const motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+                        motion.setAttribute("path", d);
+                        motion.setAttribute("dur", "1.8s");
+                        motion.setAttribute("repeatCount", "indefinite");
+                        motion.setAttribute("rotate", "auto");
+
+                        ball.appendChild(motion);
+                        el.parentNode.insertBefore(ball, el.nextSibling);
+
+                    } catch (e) { /* silent fail for malformed paths */ }
                 });
 
                 svg.removeAttribute('width');
@@ -291,18 +244,17 @@ export function Excalidraw({
                 if (vb && vb.length === 4) {
                     setRawViewBox(vb);
                     currentViewBoxRef.current = vb;
-
-                    setCoordinateOffset({
-                        x: vb[0] - minX,
-                        y: vb[1] - minY
-                    });
+                    setCoordinateOffset({ x: vb[0] - minX, y: vb[1] - minY });
                 }
 
                 svgContainerRef.current!.innerHTML = '';
                 svgContainerRef.current!.appendChild(svg);
                 svgRef.current = svg;
                 setLoading(false);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error("Excalidraw Render Error:", e);
+                setLoading(false);
+            }
         }
         renderSvg();
     }, [data, viewMode]);
