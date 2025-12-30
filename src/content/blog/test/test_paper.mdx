@@ -77,19 +77,8 @@ import Aside from '@/custom/components/user/Aside.astro'
 
 ### Encoder-Decoder 结构
 
-```mermaid
+```text
 graph TD
-    A[Input Embedding] --> B[Encoder Stack]
-    B --> C[Decoder Stack]
-    C --> D[Output Probabilities]
-    
-    subgraph "Encoder Block"
-    E[Self-Attention]
-    F[Feed Forward]
-    end
-    
-    subgraph "Decoder Block"
-    G[Masked Self-Attention]
     H[Encoder-Decoder Attention]
     I[Feed Forward]
     end

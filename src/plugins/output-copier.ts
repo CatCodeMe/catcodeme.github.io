@@ -47,13 +47,13 @@ async function sitemapCopier(logger: AstroIntegrationLogger) {
   try {
     const files = await readdir('./dist/client')
     const xmlFiles = files.filter(
-      (file) =>
+      (file: string) =>
         path.extname(file).toLowerCase() === '.xml' &&
         path.basename(file).toLowerCase().startsWith('sitemap')
     )
     logger.info(xmlFiles.join(', '))
     await Promise.all(
-      xmlFiles.map(async (file) => {
+      xmlFiles.map(async (file: string) => {
         const sourcePath = path.join('./dist/client', file)
         const destPath = path.join('./.vercel/output/static', file)
         await cp(sourcePath, destPath)

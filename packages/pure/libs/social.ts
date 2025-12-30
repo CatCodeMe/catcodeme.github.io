@@ -1,5 +1,3 @@
-import { Icons } from '../libs/icons'
-
 /**
  * Platform label mapping for common social platforms
  */
@@ -34,7 +32,7 @@ export const platformsWithIcons = Object.keys(platformLabels)
  * Check if a platform has an icon available
  */
 export function hasIcon(platform: string): boolean {
-  return platformsWithIcons.includes(platform) && platform in Icons
+  return platformsWithIcons.includes(platform)
 }
 
 /**

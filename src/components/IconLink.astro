@@ -6,8 +6,13 @@
  * <IconLink href="https://google.com">Google</IconLink>
  */
 
-import { Icons } from 'astro-pure/libs'
 import config from 'virtual:config'
+
+const icons = import.meta.glob<string>('/src/icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true
+})
 
 interface Props {
   href: string
@@ -28,7 +33,7 @@ const {
 } = Astro.props
 
 // 获取全局配置
-const globalCustomIcons = config.content?.externalLinks?.customIcons || {}
+const globalCustomIcons = (config as any).content?.externalLinks?.customIcons || {}
 const mergedCustomIcons = { ...globalCustomIcons, ...customIcons }
 const relString = Array.isArray(rel) ? rel.join(' ') : rel
 
@@ -61,7 +66,7 @@ if (protocolRelative || isAbsolute) {
     // 处理自定义图标
     const customIconKey = mergedCustomIcons[hostname]
     if (customIconKey) {
-      const iconSvg = Icons[customIconKey as keyof typeof Icons]
+      const iconSvg = icons[`/src/icons/${customIconKey}.svg`]
       if (iconSvg) {
         let svgString = iconSvg
         if (!svgString.trim().startsWith('<svg')) {

@@ -11,7 +11,7 @@ function isImageMetadata(obj: unknown): obj is ImageMetadata {
 const { icon, alt, className = '' } = Astro.props
 
 // Check if it's a CSS icon class (starts with 'i-')
-const isCssIcon = typeof icon === 'string' && icon.startsWith('i-')
+const isCssIcon = typeof icon === 'string' && icon.indexOf('i-') === 0
 ---
 
 {

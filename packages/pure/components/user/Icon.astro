@@ -1,8 +1,12 @@
 ---
-import { Icons } from '../../libs/icons'
+const icons = import.meta.glob<string>('/src/icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true
+})
 
 interface Props {
-  name: keyof typeof Icons
+  name: string
   label?: string
   color?: string
   size?: string
@@ -12,20 +16,19 @@ interface Props {
 const { name, label, size = '1em', color, class: className, ...props } = Astro.props
 const a11yAttrs = label ? ({ 'aria-label': label } as const) : ({ 'aria-hidden': 'true' } as const)
 
-let svgContent = Icons[name];
-let viewBox = '0 0 24 24'; // Default viewBox
+const svgContentRaw = icons[`/src/icons/${name}.svg`]
+let svgContent = ''
+let viewBox = '0 0 24 24'
 
-// Check if the SVG content starts with an <svg> tag
-if (typeof svgContent === 'string' && svgContent.trim().startsWith('<svg')) {
-  const viewBoxMatch = svgContent.match(/viewBox="([^"]*)"/);
+if (svgContentRaw) {
+  svgContent = svgContentRaw
+  const viewBoxMatch = svgContent.match(/viewBox="([^"]*)"/)
   if (viewBoxMatch && viewBoxMatch[1]) {
-    viewBox = viewBoxMatch[1];
+    viewBox = viewBoxMatch[1]
   }
-
-  // Extract content inside the <svg> tags
-  const contentMatch = svgContent.match(/<svg[^>]*>(.*?)<\/svg>/s);
+  const contentMatch = svgContent.match(/<svg[^>]*>(.*?)<\/svg>/s)
   if (contentMatch && contentMatch[1]) {
-    svgContent = contentMatch[1];
+    svgContent = contentMatch[1]
   }
 }
 ---

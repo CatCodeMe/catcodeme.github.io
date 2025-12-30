@@ -1,7 +1,6 @@
 ---
 import { AstroError } from 'astro/errors'
 
-import { Icons } from '../../libs/icons'
 import Icon from './Icon.astro'
 
 const asideVariants = [
@@ -15,9 +14,7 @@ const asideVariants = [
 ] as const
 const asideStyles = ['solid', 'card'] as const
 
-type IconName = keyof typeof Icons
-
-const defaultIcons: Record<(typeof asideVariants)[number], IconName> = {
+const defaultIcons: Record<(typeof asideVariants)[number], string> = {
   important: 'important',
   info: 'callout_info',
   note: 'note',
@@ -58,26 +55,19 @@ if (style && !asideStyles.includes(style)) {
 }
 
 // Determine the icon to render
-let iconToRender: IconName | undefined
+let iconToRender: string | undefined = undefined
 let isEmoji = false
 
 if (icon) {
   // Check if the provided icon is an emoji
   const emojiRegex = /\p{Emoji}/u // Unicode property escape for emoji
   if (emojiRegex.test(icon)) {
-    iconToRender = undefined // Set to undefined if it\'s an emoji, handled by isEmoji
     isEmoji = true
-  } else if (icon in Icons) {
-    iconToRender = icon as IconName
   } else {
-    // Fallback to default icon if provided icon name is not found in Icons
-    console.warn(
-      `Icon "${icon}" not found in icons.ts. Falling back to default icon for type "${type}".`
-    )
-    iconToRender = defaultIcons[type] as IconName
+    iconToRender = icon
   }
 } else {
-  iconToRender = defaultIcons[type] as IconName
+  iconToRender = defaultIcons[type]
 }
 ---
 

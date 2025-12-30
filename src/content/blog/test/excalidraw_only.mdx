@@ -22,7 +22,7 @@ import IconLink from '@/components/IconLink.astro'
 
 下图展示了组件加载和渲染 Excalidraw 文件的核心流程：
 
-```mermaid
+```text
 graph TD
     A[组件加载] --> B{获取 snapshotUrl};
     B -->|成功| C{解析文件格式};
@@ -70,7 +70,7 @@ graph TD
 
 <Excalidraw 
     snapshotUrl="/excalidraw/test.excalidraw" 
-    client:only="react" 
+    client:visible 
 >
   <div slot="exc-title" class="flex items-center gap-2">
     <IconLink href="https://github.com/excalidraw/excalidraw" class="text-sm font-semibold text-gray-700">
@@ -87,7 +87,7 @@ import IconLink from '@/components/IconLink.astro'
 
 <Excalidraw 
     snapshotUrl="/excalidraw-test.excalidraw" 
-    client:only="react" 
+    client:visible 
 >
   {/* 使用 exc-title 插槽避免冲突 */}
   <div slot="exc-title" class="flex items-center gap-2">
@@ -104,7 +104,7 @@ import IconLink from '@/components/IconLink.astro'
 
 <Excalidraw 
     snapshotUrl="/excalidraw/ob-e-m.md" 
-    client:only="react" 
+    client:visible 
 >
   <span slot="exc-title" class="flex items-center">Obsidian 导出的思维导图 (Markdown)</span>
 </Excalidraw>
@@ -112,7 +112,7 @@ import IconLink from '@/components/IconLink.astro'
 ```tsx
 <Excalidraw 
     snapshotUrl="/excalidraw/ob-e-m.md" 
-    client:only="react" 
+    client:visible 
 >
   <span slot="exc-title">Obsidian 导出的思维导图</span>
 </Excalidraw>
