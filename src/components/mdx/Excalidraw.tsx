@@ -71,6 +71,7 @@ export function Excalidraw({
 
     // The raw viewBox of the entire exported SVG
     const [rawViewBox, setRawViewBox] = useState<number[] | null>(null);
+    const overviewTargetRef = useRef<number[] | null>(null);
     const currentViewBoxRef = useRef<number[]>([0, 0, 100, 100]);
 
     const requestRef = useRef<number | null>(null);
@@ -138,12 +139,21 @@ export function Excalidraw({
         ${katexStyles}
         .katex-display { margin: 0; }
         .katex { font-size: 1.1em; }
+        /* Fallback for mathematical symbols like integrals when KaTeX fonts are not loaded in SVG data URLs */
+        .katex-mathml { display: none; }
+        .katex-html { font-family: KaTeX_Main, "Times New Roman", serif; }
+        .base { font-family: inherit; }
+        /* Target specific math symbols to use system math fonts if available */
+        .mop { font-family: "Cambria Math", "STIX Math", "Segoe UI Symbol", "Apple Symbols", serif !important; }
       </style>
       ${html}
     </div>
   </foreignObject>
 </svg>`.trim();
-                            const dataURL = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
+                            // Use modern TextEncoder instead of deprecated unescape for Base64 encoding
+                            const bytes = new TextEncoder().encode(svgString);
+                            const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+                            const dataURL = `data:image/svg+xml;base64,${btoa(binString)}`;
                             json.files[id] = {
                                 mimeType: "image/svg+xml",
                                 id,
@@ -182,12 +192,12 @@ export function Excalidraw({
         if (svgRef.current) {
             svgRef.current.setAttribute('viewBox', vb.join(' '));
             currentViewBoxRef.current = vb;
-            if (rawViewBox) {
-                const z = Math.round((rawViewBox[2] / vb[2]) * 100);
+            if (overviewTargetRef.current) {
+                const z = Math.round((overviewTargetRef.current[2] / vb[2]) * 100);
                 setZoom(z);
             }
         }
-    }, [rawViewBox]);
+    }, []);
 
     // 2. Render SVG
     useEffect(() => {
@@ -305,6 +315,10 @@ export function Excalidraw({
                 const vb = svg.getAttribute('viewBox')?.split(' ').map(parseFloat);
                 if (vb && vb.length === 4) {
                     setRawViewBox(vb);
+                    // Use initial overviewTargetRef to keep zoom reference stable
+                    if (!overviewTargetRef.current && viewMode === 'overview') {
+                        overviewTargetRef.current = vb;
+                    }
                     currentViewBoxRef.current = vb;
                     setCoordinateOffset({ x: vb[0] - minX, y: vb[1] - minY });
                 }
@@ -319,7 +333,7 @@ export function Excalidraw({
             }
         }
         renderSvg();
-    }, [data, viewMode]);
+    }, [data, viewMode, fontFamily]);
 
     const animate = useCallback((time: number) => {
         if (!transitionRef.current) return;
@@ -342,11 +356,11 @@ export function Excalidraw({
 
     // Sync View Logic
     const syncView = useCallback(() => {
-        if (!rawViewBox) return;
+        if (!rawViewBox || !overviewTargetRef.current) return;
 
         let target: number[];
         if (viewMode === 'overview') {
-            target = rawViewBox;
+            target = overviewTargetRef.current;
         } else {
             const frame = frames[currentSlide];
             if (frame) {
@@ -359,7 +373,7 @@ export function Excalidraw({
                     frame.height + p * 2
                 ];
             } else {
-                target = rawViewBox;
+                target = overviewTargetRef.current;
             }
         }
         updateCamera(target);
@@ -394,9 +408,14 @@ export function Excalidraw({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [viewMode, currentSlide, frames.length]);
 
-    // Drag Handlers
-    const handleMouseDown = (e: React.MouseEvent) => {
-        e.preventDefault();
+    // Unified Pointer Drag Handlers (Mouse, Touch, Pen)
+    const handlePointerDown = (e: React.PointerEvent) => {
+        // Only handle primary pointer (usually left click or first touch)
+        if (!e.isPrimary) return;
+
+        // Capture pointer so we continue receiving events even if the pointer leaves the container
+        e.currentTarget.setPointerCapture(e.pointerId);
+
         setIsDragging(true);
         dragStartRef.current = {
             x: e.clientX,
@@ -407,7 +426,7 @@ export function Excalidraw({
         if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handlePointerMove = (e: React.PointerEvent) => {
         if (!isDragging || !dragStartRef.current || !containerRef.current) return;
 
         const rect = containerRef.current.getBoundingClientRect();
@@ -417,10 +436,6 @@ export function Excalidraw({
         const dy = e.clientY - dragStartRef.current.y;
 
         const [vx, vy, vw, vh] = dragStartRef.current.vb;
-
-        // Calculate scale. Since we use 'meet', the SVG scale matches the constraining dimension.
-        // We use the MAX dimension ratio to approximate the zoom level for panning speed.
-        // This ensures 1px of drag ~= 1px of SVG movement regardless of aspect ratio letterboxing.
         const scale = Math.max(vw / rect.width, vh / rect.height);
 
         const newVB = [
@@ -433,9 +448,13 @@ export function Excalidraw({
         setSvgViewBox(newVB);
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = (e: React.PointerEvent) => {
         setIsDragging(false);
         dragStartRef.current = null;
+        // Release is automatic but good practice to clear state
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
     };
 
     // Zoom Handler
@@ -461,7 +480,13 @@ export function Excalidraw({
         return () => el.removeEventListener('wheel', onWheelPassive);
     }, [loading, setSvgViewBox]);
 
-    const containerStyle = { height: typeof height === 'number' ? `${height}px` : height, width: typeof width === 'number' ? `${width}px` : width };
+    const containerStyle = {
+        height: typeof height === 'number' ? `${height}px` : height,
+        maxHeight: '70vh',
+        minHeight: '300px',
+        width: typeof width === 'number' ? `${width}px` : width,
+        touchAction: 'none' // Prevent native browser gestures (scroll/pinch) from interfering
+    };
 
     if (!isClient) return <div style={containerStyle} className="bg-gray-50 flex items-center justify-center border-2 border-gray-200 rounded-xl">Initializing...</div>;
 
@@ -482,10 +507,11 @@ export function Excalidraw({
                 className={`relative bg-white overflow-hidden select-none group ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 style={containerStyle}
                 tabIndex={0}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onPointerLeave={handlePointerUp}
             >
                 <div ref={svgContainerRef} className="absolute inset-0 w-full h-full pointer-events-none" />
 
