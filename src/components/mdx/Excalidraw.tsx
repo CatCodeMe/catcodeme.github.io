@@ -67,6 +67,7 @@ export function Excalidraw({
     const [loading, setLoading] = useState(true);
     const [isClient, setIsClient] = useState(false);
     const [viewMode, setViewMode] = useState<'overview' | 'slide'>('overview');
+    const [zoom, setZoom] = useState(100);
 
     // The raw viewBox of the entire exported SVG
     const [rawViewBox, setRawViewBox] = useState<number[] | null>(null);
@@ -92,7 +93,6 @@ export function Excalidraw({
                 if (!res.ok) throw new Error(`Failed to load: ${res.status}`);
 
                 const textContent = await res.text();
-                let json;
                 // Match lines like "hash: $$formula$$" for LaTeX extraction
                 const latexMap: Record<string, string> = {};
                 const latexLines = textContent.match(/^[a-f0-9]{40}: \$\$.*?\$\$/gm);
@@ -107,32 +107,30 @@ export function Excalidraw({
                     });
                 }
 
-                // Try parsing as standard JSON first
-                try {
-                    json = JSON.parse(textContent);
-                } catch (e) {
-                    // If not JSON, try parsing as Obsidian-Excalidraw Markdown
-                    // Look for ```compressed-json ... ``` block
-                    const match = textContent.match(/```compressed-json\s*([\s\S]*?)```/);
-                    if (match) {
-                        // Remove all whitespace (newlines, spaces) as LZString expects a continuous string
-                        const compressed = match[1].replace(/\s/g, '');
-                        const decompressed = LZString.decompressFromBase64(compressed);
-                        if (decompressed) {
-                            json = JSON.parse(decompressed);
+                let json;
+                // Only support Obsidian-Excalidraw Markdown
+                const match = textContent.match(/```compressed-json\s*([\s\S]*?)```/);
+                if (!match) return;
 
-                            // Populate json.files with LaTeX renders if we found any
-                            if (Object.keys(latexMap).length > 0) {
-                                json.files = json.files || {};
-                                for (const [id, formula] of Object.entries(latexMap)) {
-                                    // Find corresponding image element to get its intended size
-                                    const el = json.elements?.find((e: any) => e.fileId === id && !e.isDeleted);
-                                    if (!el) continue;
+                // Remove all whitespace (newlines, spaces) as LZString expects a continuous string
+                const compressed = match[1].replace(/\s/g, '');
+                const decompressed = LZString.decompressFromBase64(compressed);
+                if (!decompressed) return;
 
-                                    try {
-                                        const html = katex.renderToString(formula, { displayMode: true, throwOnError: false });
-                                        // Create a self-contained SVG with inlined KaTeX CSS
-                                        const svgString = `
+                json = JSON.parse(decompressed);
+
+                // Populate json.files with LaTeX renders if we found any
+                if (Object.keys(latexMap).length > 0) {
+                    json.files = json.files || {};
+                    for (const [id, formula] of Object.entries(latexMap)) {
+                        // Find corresponding image element to get its intended size
+                        const el = json.elements?.find((e: any) => e.fileId === id && !e.isDeleted);
+                        if (!el) continue;
+
+                        try {
+                            const html = katex.renderToString(formula, { displayMode: true, throwOnError: false });
+                            // Create a self-contained SVG with inlined KaTeX CSS
+                            const svgString = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${el.width}" height="${el.height}">
   <foreignObject width="100%" height="100%">
     <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden;">
@@ -145,23 +143,16 @@ export function Excalidraw({
     </div>
   </foreignObject>
 </svg>`.trim();
-                                        const dataURL = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
-                                        json.files[id] = {
-                                            mimeType: "image/svg+xml",
-                                            id,
-                                            dataURL,
-                                            created: Date.now()
-                                        };
-                                    } catch (err) {
-                                        console.error("KaTeX rendering failed for ID:", id, err);
-                                    }
-                                }
-                            }
-                        } else {
-                            throw new Error("Failed to decompress Excalidraw data");
+                            const dataURL = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
+                            json.files[id] = {
+                                mimeType: "image/svg+xml",
+                                id,
+                                dataURL,
+                                created: Date.now()
+                            };
+                        } catch (err) {
+                            console.error("KaTeX rendering failed for ID:", id, err);
                         }
-                    } else {
-                        throw new Error("Invalid Excalidraw file format");
                     }
                 }
 
@@ -191,8 +182,12 @@ export function Excalidraw({
         if (svgRef.current) {
             svgRef.current.setAttribute('viewBox', vb.join(' '));
             currentViewBoxRef.current = vb;
+            if (rawViewBox) {
+                const z = Math.round((rawViewBox[2] / vb[2]) * 100);
+                setZoom(z);
+            }
         }
-    }, []);
+    }, [rawViewBox]);
 
     // 2. Render SVG
     useEffect(() => {
@@ -383,6 +378,22 @@ export function Excalidraw({
         }
     };
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (viewMode !== 'slide' || frames.length === 0) return;
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                goToSlide((currentSlide + 1) % frames.length);
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                goToSlide((currentSlide - 1 + frames.length) % frames.length);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [viewMode, currentSlide, frames.length]);
+
     // Drag Handlers
     const handleMouseDown = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -520,6 +531,7 @@ export function Excalidraw({
                 </div>
 
                 <div className="flex items-center gap-1 w-24 justify-end">
+                    <span className="text-[10px] font-black text-gray-400 mr-1">{zoom}%</span>
                     <button
                         onClick={() => {
                             syncView();

@@ -1,7 +1,7 @@
 ---
 title: '建站: Excalidraw 组件集成'
 publishDate: 2025-12-27
-description: '在 Astro MDX 中无缝集成 Excalidraw 绘图，支持标准格式与 Obsidian 压缩格式'
+description: '在 Astro MDX 中无缝集成 Excalidraw 绘图，专为 Obsidian Excalidraw 插件设计'
 tags:
   - excalidraw
   - obsidian
@@ -12,34 +12,35 @@ slug: wasd
 import { Excalidraw } from '@/components/mdx/Excalidraw'
 import IconLink from '@/components/IconLink.astro'
 
-本文介绍了如何在博客中集成自定义的 `Excalidraw` 组件，实现在 MDX 文档中直接渲染交互式的白板绘图。该组件不仅支持标准的 Excalidraw 文件，还完美兼容 Obsidian 插件导出的格式。
+本文介绍了如何在博客中集成自定义的 `Excalidraw` 组件，实现在 MDX 文档中直接渲染交互式的白板绘图。本组件**专注于支持 Obsidian Excalidraw 插件生成的 Markdown (.md) 文件**，实现了从双向链笔记到博客展示的无缝衔接。
 
 ## 简介
 
-`Excalidraw` 组件是一个基于 React 的轻量级渲染器，专为在 MDX 环境中展示白板绘图而设计。为了获得最佳的编辑体验和资源占用，本组件**专注于支持 Obsidian Excalidraw 插件生成的 Markdown (.md) 文件**。通过直接解析压缩的 JSON 场景数据，实现在现代 web 环境中的完美渲染。
+`Excalidraw` 组件是一个基于 React 的轻量级渲染器，专为在 MDX 环境中展示白板绘图而设计。为了获得最佳的编辑体验和资源占用，本组件抛弃了传统的 `.excalidraw` JSON 格式，直接解析 Obsidian 场景数据中的 `compressed-json` 块。
 
 ## 处理流程
 
-1. 在 obsidian 里编辑 excalidraw 源文件
-2. 复制该文件到 `public/excalidraw/` 文件夹下
-3. 在 mdx 或者任意页面使用 `Excalidraw` 组件引用
+1.  **编辑场景**: 在 Obsidian 中使用 Excalidraw 插件编辑绘图。
+2.  **文件分发**: 复制该 `.md` 文件到项目的 `public/excalidraw/` 文件夹下。
+3.  **组件引用**: 在 MDX 中通过 `<Excalidraw snapshotUrl="/excalidraw/your-file.md" />` 进行引用。
 
 ## 核心功能
 
-*   **Obsidian 原生支持**: 完美解析 Obsidian Excalidraw 插件生成的 `.md` 文件，无需导出。
-*   **幻灯片展示 (Frames)**: 自动识别绘图中的 "画框" (Frame)，并按标题或位置排序，支持平滑的演示导航。
-*   **Magic Animations (魔法动画)**: 通过特定的“颜色+线型”组合触发持续动画：
-    *   **蓝色 (#0000ff) + 虚线**: 自动触发“线条流动”效果（如模拟电流/水流）。
-    *   **红色 (#ff0000) + 虚线**: 自动触发“呼吸灯”效果（用于关键警告）。
-*   **极致性能**: 直接操作 SVG 的 `viewBox` 进行缩放 (Zoom) 与平移 (Pan)，避免 Canvas 重绘。
-*   **无感知集成**: 组件在客户端实时导出 SVG，完美融入站点背景与样式，文字可搜索。
-*   **告别 .excalidraw**: 废弃体积庞大且不便协作的原始 JSON 格式，全面转向 Markdown 工作流。
+*   **Obsidian 原生支持**: 完美解析 Obsidian Excalidraw 插件生成的 `.md` 文件，包含文本、几何图形及公式映射。
+*   **LaTeX 公式增强**: 自动识别并使用 KaTeX 渲染嵌入的 LaTeX 公式，确保数学排版精准美观。
+*   **Magic Flow 信号流动画**:
+    *   **蓝色虚线**: 自动触发“能量球轨迹流动”效果，常用于展示系统架构中的数据流向。
+*   **幻灯片演示 (Frames)**: 自动识别绘图中的 "Frame" (画框)，并支持通过快捷键或导航栏进行 PPT 式的演示切换。
+*   **沉浸式交互**:
+    *   **平移/缩放**: 支持平滑的拖拽和平移，控制台实时显示当前的 **缩放比例**。
+    *   **键盘驱动**: 支持使用键盘 **左/右方向键** 快速切换幻灯片页。
+*   **极致性能**: 直接操作 SVG DOM 节点，无 Canvas 负担，支持 SEO 抓取。
 
 ## 示例演示
 
 ### 1. 多画框演示 (Obsidian .md)
 
-这是最推荐的使用方式：在 Obsidian 中通过 Frame 组织内容，组件会自动生成导航控件。
+在 Obsidian 中通过 Frame 组织内容，组件会自动生成导航控件。你可以尝试使用 **键盘左右键** 切换。
 
 <Excalidraw 
     snapshotUrl="/excalidraw/test-2.md" 
@@ -47,48 +48,25 @@ import IconLink from '@/components/IconLink.astro'
 >
   <div slot="exc-title" class="flex items-center gap-2">
     <IconLink href="#" class="text-sm font-semibold text-gray-700">
-      多画框演示 (test-2.md)
+      excalidraw 动画效果
     </IconLink>
-    <span class="text-xs text-green-500 font-bold">New</span>
+    <span class="text-xs text-blue-500 font-bold">Zoom Enabled</span>
   </div>
 </Excalidraw>
-
-```tsx
-<Excalidraw 
-    snapshotUrl="/excalidraw/test-2.md" 
-    client:only="react" 
-/>
-```
-
-### 2. 基础方案图示例
-
-<Excalidraw 
-    snapshotUrl="/excalidraw/ob-e-m.md" 
-    client:only="react" 
->
-  <span slot="exc-title">系统架构草稿 (.md)</span>
-</Excalidraw>
-
-```tsx
-<Excalidraw 
-    snapshotUrl="/excalidraw/ob-e-m.md" 
-    client:only="react" 
-/>
-```
 
 ## 组件参数 (Props)
 
 | 属性名 | 类型 | 默认值 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `snapshotUrl` | `string` | **必填** | `.md` 文件或 JSON 数据路径 (放至 public 目录) |
+| `snapshotUrl` | `string` | **必填** | 仅支持 Obsidian 生成的 `.md` 文件路径 |
 | `height` | `number \| string` | `500` | 容器高度 |
 | `exc-title` | `ReactNode` | `undefined` | 标题栏内容 (推荐使用 `slot="exc-title"`) |
 | `fontFamily` | `string` | `system-ui...` | 文本渲染优先使用的字体栈 |
 
 ## 技术实现原理
 
-1.  **数据流**: 组件通过异步 `fetch` 获取文本，利用正则高效提取 `compressed-json` 代码块。
-2.  **透明渲染**: 利用官方 `@excalidraw/excalidraw` 库的导出接口，在浏览器端生成精准的 SVG DOM。
-3.  **坐标对齐**: 自动计算所有可见元素的边界框（Bounding Box），并应用偏移修正，确保 SVG `viewBox` 与实际绘图坐标系完美对齐。
-4.  **运镜系统**: 采用摄像机插值算法，在切换 Frame 时通过 `requestAnimationFrame` 实现平滑的缩放和位移。
-
+1.  **格式锁定**: 组件只接受包含 `compressed-json` 代码块的文件。解析器会提取该块并利用 `LZString` 还原场景数据。
+2.  **LaTeX 集成**: 组件会扫描 Markdown 头部元数据及 `Embedded Files` 区域，利用 KaTeX 生成独立的 SVG 图片对象并注入 Excalidraw 场景缓存。
+3.  **SVG 动力学引擎**: 针对 Magic Flow，通过在路径末尾动态插入 `<animateMotion>` 物理对象（红色小球），实现不丢帧的匀速流动感。
+4.  **视口感知**: 通过 `getBoundingClientRect` 与 SVG `viewBox` 的比例关系，精确计算并反馈当前的缩放百分比。
+5.  **全局监听**: 组件激活时会拦截方向键事件，优先响应幻灯片导航，提升演示体验。
