@@ -6,7 +6,7 @@ tags:
   - excalidraw
   - obsidian
   - astro
-slug: excalidraw-component-test
+slug: wasd
 ---
 
 import { Excalidraw } from '@/components/mdx/Excalidraw'
@@ -20,27 +20,9 @@ import IconLink from '@/components/IconLink.astro'
 
 ## 处理流程
 
-下图展示了组件加载和渲染核心流程：
-
-```mermaid
-graph TD
-    A[组件加载] --> B{获取 snapshotUrl};
-    B -->|成功| C{正则匹配 Markdown};
-    B -->|失败| Z[显示错误];
-    
-    C -->|发现 compressed-json| D[提取并解压];
-    C -->|纯 JSON| E[直接解析];
-    
-    D --> E;
-    
-    E --> G[提取 Elements & Frames];
-    G --> H[过滤已删除元素];
-    H --> I[Excalidraw exportToSvg];
-    
-    I --> J[生成 SVG DOM];
-    J --> K[注入组件容器];
-    K --> L[计算 ViewBox & 初始化摄像机];
-```
+1. 在 obsidian 里编辑 excalidraw 源文件
+2. 复制该文件到 `public/excalidraw/` 文件夹下
+3. 在 mdx 或者任意页面使用 `Excalidraw` 组件引用
 
 ## 核心功能
 
@@ -109,3 +91,4 @@ graph TD
 2.  **透明渲染**: 利用官方 `@excalidraw/excalidraw` 库的导出接口，在浏览器端生成精准的 SVG DOM。
 3.  **坐标对齐**: 自动计算所有可见元素的边界框（Bounding Box），并应用偏移修正，确保 SVG `viewBox` 与实际绘图坐标系完美对齐。
 4.  **运镜系统**: 采用摄像机插值算法，在切换 Frame 时通过 `requestAnimationFrame` 实现平滑的缩放和位移。
+
