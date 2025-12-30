@@ -3,7 +3,6 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
-import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 // Others
 import rehypeKatex from 'rehype-katex';
@@ -30,7 +29,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'auto' 
+    inlineStylesheets: 'auto'
   },
 
   // Adapter
@@ -55,26 +54,17 @@ export default defineConfig({
   },
 
   integrations: [
-    mermaid({
-      autoTheme: true,
-      theme: 'forest',
-      mermaidConfig: {
-        startOnLoad: false,
-        logLevel: 'error',
-        securityLevel: 'strict'
-      }
-    }),
     expressiveCode(),
     icon({
       include: {
         devicon: ['*'],
         mingcute: ['*']
       }
-  }),
-  AstroPureIntegration(config), 
-  fontSubsetting(),
-  react()
-],
+    }),
+    AstroPureIntegration(config),
+    fontSubsetting(),
+    react()
+  ],
   // root: './my-project-directory',
 
   // Prefetch Options
@@ -142,7 +132,6 @@ export default defineConfig({
     // }
   },
   experimental: {
-    svg: true,
     contentIntellisense: true
   },
   vite: {
@@ -155,7 +144,7 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-        include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+      include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
     },
     plugins: [
       //   visualizer({

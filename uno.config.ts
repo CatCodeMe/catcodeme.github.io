@@ -1,8 +1,7 @@
-import { defineConfig, presetTypography, presetUno } from 'unocss';
+import { defineConfig, presetTypography, presetWind3 } from 'unocss';
 
 const fg = 'hsl(var(--foreground) / var(--un-text-opacity, 1))'
 const fgMuted = 'hsl(var(--muted-foreground) / var(--un-text-opacity, 1))'
-const bgMuted = 'hsl(var(--muted) / var(--un-bg-opacity, 1))'
 
 const typographyConfig = {
   cssExtend: {
@@ -122,7 +121,7 @@ const typographyConfig = {
       'font-weight': '500',
       color: fg
     },
-    
+
     '.katex-html': {
       overflow: 'auto hidden',
       padding: '3px'
@@ -177,7 +176,7 @@ const themeColors = {
 
 export default defineConfig({
   presets: [
-    presetUno(), // required
+    presetWind3(), // required
     presetTypography(typographyConfig)
   ],
   rules: [],

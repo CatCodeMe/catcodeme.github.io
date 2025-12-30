@@ -26,13 +26,20 @@
   "exports": {
     ".": "./index.ts",
     "./user": "./components/user/index.ts",
+    "./user/*": "./components/user/*",
     "./advanced": "./components/advanced/index.ts",
+    "./advanced/*": "./components/advanced/*",
     "./components/pages": "./components/pages/index.ts",
+    "./components/pages/*": "./components/pages/*",
     "./components/basic": "./components/basic/index.ts",
+    "./components/basic/*": "./components/basic/*",
     "./utils": "./utils/index.ts",
+    "./utils/*": "./utils/*",
     "./server": "./utils/server.ts",
     "./types": "./types/index.ts",
-    "./libs": "./libs/index.ts"
+    "./types/*": "./types/*",
+    "./libs": "./libs/index.ts",
+    "./libs/*": "./libs/*"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

@@ -16,7 +16,7 @@ draft: true
 
 import Paper from '@/custom/components/pages/Paper.astro'
 
-import { Steps } from 'astro-pure/user'
+import Steps from '@/custom/components/user/Steps.astro'
 import { Timeline, TimelineItem } from '@/custom/components/user'
 
 > [!quote] Bloom Filter 简介
@@ -58,18 +58,20 @@ import { Timeline, TimelineItem } from '@/custom/components/user'
 
 
 
-import { MdxRepl, TabItem, Tabs } from 'astro-pure/user'
+import MdxRepl from '@/custom/components/user/MdxRepl.astro'
+import TabItem from '@/custom/components/user/TabItem.astro'
+import Tabs from '@/custom/components/user/Tabs.astro'
 
 Components let you easily reuse a piece of UI or styling consistently. You can use them not just in `.astro` files, but also in `.mdx` files.
 
 
-import { LinkPreview } from 'astro-pure/advanced'
+import LinkPreview from '@/custom/components/advanced/LinkPreview.astro'
 
 <LinkPreview href='https://www.baidu.com/' />
 <LinkPreview href='https://8cat.life' />
 
-import { GithubCard } from 'astro-pure/advanced'
-import { Button } from 'astro-pure/user'
+import GithubCard from '@/custom/components/advanced/GithubCard.astro'
+import Button from '@/custom/components/user/Button.astro'
 
 The astro-theme-pure theme is open source under the [Apache 2.0](https://github.com/cworld1/astro-theme-pure/blob/main/LICENSE) license. Please abide by this license for any further development.
 
@@ -164,7 +166,7 @@ import Signature from 'src/assets/signature.svg'
 <Signature mode='loop'/>
 
 
-{/* // import { MdxRepl } from 'astro-pure/user' */}
+{/* // import MdxRepl from '@/custom/components/user/MdxRepl.astro' */}
 
 # Signature
 

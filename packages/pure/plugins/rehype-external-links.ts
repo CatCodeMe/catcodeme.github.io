@@ -1,7 +1,8 @@
 // https://github.com/rehypejs/rehype-external-links
 import type { Element, Root } from 'hast'
 import { visit } from 'unist-util-visit'
-import { Icons } from '../libs/icons'
+import path from 'path'
+import { readFileSync, existsSync } from 'fs'
 import isAbsoluteUrl from '../utils/is-absolute-url'
 
 export interface ExternalLinkOptions {
@@ -30,7 +31,7 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
         if (node.properties['data-external-link-processed']) {
           return
         }
-        
+
         const href = node.properties.href
         const protocolRelative = href.startsWith('//')
         const protocol = protocolRelative ? 'http' : href.slice(0, href.indexOf(':'))
@@ -50,25 +51,29 @@ export default function rehypeExternalLinks(options: ExternalLinkOptions = {}) {
 
             const customIconKey = customIcons?.[hostname]
             if (customIconKey) {
-              let svgString = Icons[customIconKey as keyof typeof Icons]
-              if (svgString) {
-                if (!svgString.trim().startsWith('<svg')) {
-                  svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
-                }
-                const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgString).toString(
-                  'base64'
-                )}`
-                iconNode = {
-                  type: 'element',
-                  tagName: 'img',
-                  properties: {
-                    src: dataUri,
-                    className: ['external-link-icon'],
-                    alt: '', // Decorative
-                    width: 16,
-                    height: 16
-                  },
-                  children: []
+              // Try to read the icon from src/icons
+              const iconPath = path.join(process.cwd(), 'src/icons', `${customIconKey}.svg`)
+              if (existsSync(iconPath)) {
+                let svgString = readFileSync(iconPath, 'utf8')
+                if (svgString) {
+                  if (!svgString.trim().startsWith('<svg')) {
+                    svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${svgString}</svg>`
+                  }
+                  const dataUri = `data:image/svg+xml;base64,${Buffer.from(svgString).toString(
+                    'base64'
+                  )}`
+                  iconNode = {
+                    type: 'element',
+                    tagName: 'img',
+                    properties: {
+                      src: dataUri,
+                      className: ['external-link-icon'],
+                      alt: '', // Decorative
+                      width: 16,
+                      height: 16
+                    },
+                    children: []
+                  }
                 }
               }
             }

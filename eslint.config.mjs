@@ -4,7 +4,7 @@ import eslint from '@eslint/js'
 import eslintPluginAstro from 'eslint-plugin-astro'
 import tseslint from 'typescript-eslint'
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/** @type {import('eslint').Linter.Config[]} */
 const config = [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

@@ -4,7 +4,9 @@ import { render, type CollectionEntry, type CollectionKey } from 'astro:content'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
 import { cn } from '../../utils'
-import { Button, FormattedDate, Icon } from '../user'
+import Button from '../user/Button.astro'
+import FormattedDate from '../user/FormattedDate.astro'
+import Icon from '../user/Icon.astro'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
   post: CollectionEntry<CollectionKey>
