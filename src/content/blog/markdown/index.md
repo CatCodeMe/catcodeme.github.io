@@ -317,7 +317,7 @@ See [User Components](/docs/integrations/components) and [Advanced Components](/
 
 
 
-```mermaid
+```text
 ---
 config:
   sankey:

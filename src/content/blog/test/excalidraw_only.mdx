@@ -1,0 +1,143 @@
+---
+title: '建站: Excalidraw 组件集成'
+publishDate: 2025-12-27
+description: '在 Astro MDX 中无缝集成 Excalidraw 绘图，支持标准格式与 Obsidian 压缩格式'
+tags:
+  - excalidraw
+  - obsidian
+  - astro
+slug: excalidraw-component-test
+---
+
+import { Excalidraw } from '@/components/mdx/Excalidraw'
+import IconLink from '@/components/IconLink.astro'
+
+本文介绍了如何在博客中集成自定义的 `Excalidraw` 组件，实现在 MDX 文档中直接渲染交互式的白板绘图。该组件不仅支持标准的 Excalidraw 文件，还完美兼容 Obsidian 插件导出的格式。
+
+## 简介
+
+`Excalidraw` 组件是一个基于 React 的轻量级渲染器，专为在 MDX 环境中展示 Excalidraw 图形而设计。它不依赖 iframe，而是通过将 Excalidraw 数据直接转换为 SVG 进行渲染，从而提供更好的性能和无缝的页面融合体验。
+
+## 处理流程
+
+下图展示了组件加载和渲染 Excalidraw 文件的核心流程：
+
+```text
+graph TD
+    A[组件加载] --> B{获取 snapshotUrl};
+    B -->|成功| C{解析文件格式};
+    B -->|失败| Z[显示错误];
+    
+    C -->|标准 JSON| D[直接解析];
+    C -->|Markdown| E[提取 compressed-json];
+    E --> F[LZString 解压];
+    F --> D;
+    
+    D --> G[提取 Elements & Frames];
+    G --> H[过滤已删除元素];
+    H --> I[Excalidraw exportToSvg];
+    
+    I --> J[生成 SVG DOM];
+    J --> K[注入 DOM 容器];
+    K --> L[计算 ViewBox & 初始化视图];
+    
+    L --> M{用户交互};
+    M -->|拖拽/缩放| N[更新 ViewBox];
+    M -->|切换幻灯片| O[动画平滑过渡];
+```
+
+## 核心功能
+
+*   **多格式支持**:
+    *   原生 `.excalidraw` (JSON) 文件。
+    *   Obsidian Excalidraw 插件导出的压缩 `.md` 文件 (自动识别并解压)。
+*   **幻灯片演示 (Frames)**: 自动识别图纸中的 "Frame" (画框) 元素，提供类似 PPT 的幻灯片切换与导航功能。
+*   **交互式浏览**:
+    *   **平移 (Pan)**: 鼠标左键按住拖拽。
+    *   **缩放 (Zoom)**: 鼠标滚轮缩放视图。
+*   **视图模式切换**: 支持 "概览模式" (查看整张图) 和 "演示模式" (聚焦当前 Frame) 的无缝切换。
+*   **平滑动画**: 视图切换时采用 CSS/JS 混合动画，提供丝滑的摄像机运镜效果。
+
+## 使用指南
+
+组件已注册为 `@/components/mdx/Excalidraw`，可直接在 MDX 中引入使用。
+
+### 1. 基础用法 (标准 JSON)
+
+将 `.excalidraw` 文件放置在 `public` 目录下 (例如 `public/excalidraw-test.excalidraw`)，然后通过 `snapshotUrl` 属性引用。
+
+> **注意**: 必须添加 `client:only="react"` 指令，因为组件依赖浏览器 DOM API 进行 SVG 操作和事件监听。我们推荐使用 `slot="exc-title"` 来传递自定义标题，以避免潜在的插槽冲突。
+
+<Excalidraw 
+    snapshotUrl="/excalidraw/test.excalidraw" 
+    client:visible 
+>
+  <div slot="exc-title" class="flex items-center gap-2">
+    <IconLink href="https://github.com/excalidraw/excalidraw" class="text-sm font-semibold text-gray-700">
+      Excalidraw 架构图 (源码)
+    </IconLink>
+    <span class="text-xs text-gray-400">|</span>
+    <span class="text-xs text-blue-500">v1.0.0</span>
+  </div>
+</Excalidraw>
+
+```tsx
+import { Excalidraw } from '@/components/mdx/Excalidraw'
+import IconLink from '@/components/IconLink.astro'
+
+<Excalidraw 
+    snapshotUrl="/excalidraw-test.excalidraw" 
+    client:visible 
+>
+  {/* 使用 exc-title 插槽避免冲突 */}
+  <div slot="exc-title" class="flex items-center gap-2">
+    <IconLink href="#" class="text-sm font-semibold text-gray-700">
+      架构图示
+    </IconLink>
+  </div>
+</Excalidraw>
+```
+
+### 2. Obsidian 压缩格式支持
+
+如果你使用 Obsidian 的 Excalidraw 插件，可以直接使用其生成的 `.md` 文件。组件会自动识别并解压其中的 `compressed-json` 数据块。
+
+<Excalidraw 
+    snapshotUrl="/excalidraw/ob-e-m.md" 
+    client:visible 
+>
+  <span slot="exc-title" class="flex items-center">Obsidian 导出的思维导图 (Markdown)</span>
+</Excalidraw>
+
+```tsx
+<Excalidraw 
+    snapshotUrl="/excalidraw/ob-e-m.md" 
+    client:visible 
+>
+  <span slot="exc-title">Obsidian 导出的思维导图</span>
+</Excalidraw>
+```
+
+## 组件参数 (Props)
+
+| 属性名 | 类型 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `snapshotUrl` | `string` | **必填** | Excalidraw 文件的 URL 路径 (相对于 public) |
+| `height` | `string \| number` | `500` | 容器高度，默认 500px |
+| `width` | `string \| number` | `"100%"` | 容器宽度 |
+| `exc-title` | `ReactNode` | `undefined` | 标题栏内容 (推荐使用 `slot="exc-title"`) |
+| `title` | `ReactNode` | `undefined` | 标题栏内容 (旧版兼容) |
+| `fontFamily` | `string` | `system-ui...` | SVG 文本渲染使用的字体栈 |
+
+## 技术实现原理
+
+1.  **数据获取**: 组件加载时，异步 `fetch` 获取 `snapshotUrl` 指定的文件内容。
+2.  **智能解析**:
+    *   首先尝试作为标准 JSON 解析。
+    *   如果失败，则正则匹配 Markdown 中的 `compressed-json` 代码块，使用 `LZString` 算法进行解压还原。
+3.  **SVG 渲染**: 调用 `@excalidraw/excalidraw` 核心库的 `exportToSvg` 方法，将抽象的 Element 数据转换为标准的 SVG DOM 节点。
+    *   *优化*: 自动过滤 `isDeleted` 元素，并修正特定字体映射 (如将 Obsidian 插件的字体 4 映射为 Virgil)，防止渲染错误。
+4.  **视口控制 (Camera)**: 
+    *   组件并不使用 Excalidraw 的 Canvas 渲染，而是直接接管 SVG 的 `viewBox` 属性。
+    *   通过监听父容器的 `mousedown`, `mousemove`, `wheel` 事件，实时计算并更新 `viewBox`，从而实现高性能的拖拽和平移，无需重绘 DOM。
+    *   **幻灯片模式**: 计算目标 Frame 的坐标和尺寸，通过 `requestAnimationFrame` 对 `viewBox` 进行插值，实现平滑的运镜效果。

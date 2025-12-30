@@ -29,7 +29,8 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
 <meta name='msapplication-TileColor' content='#ffffff' />
 
 {/* Font Preload - 预加载关键字体以减少布局偏移 */}
-<link rel='preload' href='/fonts/NotoSerifCJK-Subset.woff2' as='font' type='font/woff2' crossorigin />
+{/* 使用 fetchpriority="high" 提升字体加载优先级 */}
+<link rel='preload' href='/fonts/NotoSerifCJK-Subset.woff2' as='font' type='font/woff2' crossorigin fetchpriority="high" />
 <link rel='preload' href='/fonts/LinBiolinum.woff2' as='font' type='font/woff2' crossorigin />
 
 {/* Font CSS - 内联以减少请求链 */}
@@ -38,14 +39,11 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
   @font-face {
     font-family: 'Noto Serif CJK';
     src: url('/fonts/NotoSerifCJK-Subset.woff2') format('woff2');
-    font-display: normal; /* 使用 optional 减少布局偏移，如果字体未加载完成则使用 fallback */
+    font-display: swap; /* 使用 swap 确保文本立即可见，字体加载后替换 */
     font-weight: normal;
     font-style: normal;
-    /* 使用 size-adjust 来匹配 fallback 字体的尺寸，减少布局偏移 */
-    /* size-adjust: 100%;
-    ascent-override: 100%;
-    descent-override: 0%;
-    line-gap-override: 0%; */
+    /* Unicode Range - 只匹配中文和标点，优化加载 */
+    unicode-range: U+4E00-9FFF, U+3400-4DBF, U+F900-FAFF, U+3000-303F, U+FF00-FFEF, U+2000-206F;
   }
 
   body {
@@ -58,7 +56,7 @@ const socialImageURL = new URL(ogImage ? ogImage : '/images/social-card.png', As
   @font-face {
     font-family: 'ZSFT-e';
     src: url('/fonts/LinBiolinum.woff2') format('woff2');
-    font-display: normal;
+    font-display: swap;
   }
 </style>
 

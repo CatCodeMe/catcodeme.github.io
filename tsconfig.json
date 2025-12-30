@@ -1,21 +1,21 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
   "compilerOptions": {
-    // Basic
     "allowJs": true,
-    //允许解析 package.json
     "resolveJsonModule": true,
-    // Building for a library
     "declaration": true,
-    // Code runs in the DOM
-    "lib": ["es2022", "dom", "dom.iterable"],
-    // Type Imports
+    "lib": [
+      "es2022",
+      "dom",
+      "dom.iterable"
+    ],
     "verbatimModuleSyntax": true,
-    // Others
     "baseUrl": ".",
     "strictNullChecks": true,
-    // Paths
     "paths": {
       "@/*": [
         "src/*"
@@ -56,11 +56,19 @@
       "@/custom/pure/*": [
         "packages/pure/*"
       ],
-      // 添加新的别名用于访问根目录文件
       "@root/*": [
         "./*"
       ]
-    }
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
-  "exclude": ["node_modules", "**/node_modules/*", ".vscode", "dist", "public/scripts/*", "test/*"]
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    ".vscode",
+    "dist",
+    "public/scripts/*",
+    "test/*"
+  ]
 }

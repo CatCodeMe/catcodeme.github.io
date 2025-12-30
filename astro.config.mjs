@@ -3,7 +3,6 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import remarkWikiLink from "@braindb/remark-wiki-link";
 import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
-import mermaid from 'astro-mermaid';
 import { defineConfig } from 'astro/config';
 // Others
 import rehypeKatex from 'rehype-katex';
@@ -20,6 +19,8 @@ import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts';
 // import { addCopyButton, addLanguage, addTitle, transformerNotationDiff, transformerNotationHighlight, updateStyle } from './src/plugins/shiki-transformers.ts';
 import config from './src/site.config.ts';
 
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
   // Top-Level Options
@@ -28,7 +29,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'auto' 
+    inlineStylesheets: 'auto'
   },
 
   // Adapter
@@ -53,15 +54,6 @@ export default defineConfig({
   },
 
   integrations: [
-    mermaid({
-      autoTheme: true,
-      theme: 'forest',
-      mermaidConfig: {
-        startOnLoad: false,
-        logLevel: 'error',
-        securityLevel: 'strict'
-      }
-    }),
     expressiveCode(),
     icon({
       include: {
@@ -70,7 +62,8 @@ export default defineConfig({
       }
     }),
     AstroPureIntegration(config),
-    fontSubsetting() // 构建后自动运行字体子集化
+    fontSubsetting(),
+    react()
   ],
   // root: './my-project-directory',
 
@@ -139,10 +132,20 @@ export default defineConfig({
     // }
   },
   experimental: {
-    svg: true,
     contentIntellisense: true
   },
   vite: {
+    ssr: {
+      noExternal: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+    },
+    resolve: {
+      alias: {
+        'roughjs/bin/rough': 'roughjs/bin/rough.js',
+      },
+    },
+    optimizeDeps: {
+      include: ['@excalidraw/excalidraw', 'roughjs', 'clsx'],
+    },
     plugins: [
       //   visualizer({
       //     emitFile: true,

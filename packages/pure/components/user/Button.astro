@@ -1,14 +1,6 @@
 ---
 import { cn } from '../../utils'
 
-interface Props {
-  as?: string
-  title?: string
-  href?: string
-  variant?: 'button' | 'pill' | 'back' | 'ahead'
-  class?: string
-}
-
 const { as: Tag = 'a', class: className, title, href, variant = 'button', ...props } = Astro.props
 ---
 

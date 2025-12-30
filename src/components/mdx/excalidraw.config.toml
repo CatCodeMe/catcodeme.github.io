@@ -1,0 +1,24 @@
+# Excalidraw Component Configuration
+# ==================================
+#
+# This file configures the behavior of the Excalidraw React component,
+# specifically handling custom font mappings for Obsidian-exported drawings.
+#
+# LOGIC OVERVIEW:
+# 1. The component intercepts Excalidraw elements with `fontFamily: 4`.
+#    (Font 4 is often used by Obsidian plugins for custom fonts).
+# 2. It maps these elements to `fontFamily: 1` (Virgil) internally to satisfy
+#    the Excalidraw engine and prevent "Unregistered font" errors.
+# 3. It then injects a CSS override into the generated SVG to force the
+#    font defined below to be displayed instead of Virgil.
+#
+# USAGE:
+# - 'name': The exact font-family name to use in the CSS.
+# - 'cssUrl': The URL (CDN or local) to the CSS file that defines the @font-face.
+#
+# NOTE: Changing these values will update the look of all Excalidraw diagrams
+# that use Font 4, without needing to modify the code.
+
+[font4]
+name = "Zhuque Fangsong (technical preview)"
+cssUrl = "https://fontsapi.zeoseven.com/7/main/result.css"

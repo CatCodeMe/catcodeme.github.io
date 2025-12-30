@@ -1,8 +1,10 @@
 ---
 import type { MarkdownHeading, MarkdownLayoutProps } from 'astro'
 
-import { BackToTop, TOC } from 'astro-pure/components/pages'
-import { Button, Icon } from 'astro-pure/user'
+import BackToTop from '@/custom/components/pages/BackToTop.astro'
+import TOC from '@/custom/components/pages/TOC.astro'
+import Button from '@/custom/components/user/Button.astro'
+import Icon from '@/custom/components/user/Icon.astro'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import { integ } from '@/site-config'

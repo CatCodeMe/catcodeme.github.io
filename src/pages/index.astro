@@ -1,11 +1,10 @@
 ---
 import { Image } from 'astro:assets'
-import { Icon } from '@/custom/components/user'
+import Icon from '@/custom/components/user/Icon.astro'
 
 import { getBlogCollection } from 'astro-pure/server'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { calculateSiteAge, getHighlightColor } from '@/components/home/utils'
-import { getLatestPosts, getTotalWords } from '@/components/shelf/utils'
+import { calculateSiteAge, getHighlightColor, getLatestPosts, getTotalWords } from '@/components/home/utils'
 import HomeHeroImage from '@/components/home/HomeHeroImage.astro'
 import avatarImage from '@/assets/home.png'
 import config from '@/site-config'
@@ -269,16 +268,6 @@ const highlightColor = getHighlightColor()
                 >
                   <Icon name='x' size='1.25em' />
                   <span class='hidden md:inline'>X</span>
-                </a>
-                <a
-                  href='https://bsky.app/profile/catcodeme.bsky.social'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-labelledby='Bluesky'
-                  class='flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground no-underline transition-colors hover:text-primary py-2 md:py-2'
-                >
-                  <Icon name='bluesky' size='1.25em' />
-                  <span class='hidden md:inline'>Bluesky</span>
                 </a>
                 <a
                   href='https://t.me/ccm_life'

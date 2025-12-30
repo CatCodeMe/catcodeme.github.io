@@ -61,7 +61,7 @@ const isRowLayout = layout === 'left' || layout === 'right';
       class:list={[
         'transition-all duration-300',
         {
-          'mt-2 text-sm': layout.startsWith('bottom'),
+          'mt-2 text-sm': layout && layout.indexOf('bottom') === 0,
           'text-center': layout === 'bottom-center',
           'text-left': layout === 'bottom-left',
           'text-right': layout === 'bottom-right',

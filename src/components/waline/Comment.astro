@@ -43,7 +43,6 @@ const isEnabled = enable !== undefined ? enable : config.integ.waline.enable
 
     connectedCallback() {
       // 组件已经渲染说明服务端已经判断为启用，直接初始化
-      // 这里保留检查以防御性编程
       const componentEnabled = this.dataset.enabled !== undefined 
         ? this.dataset.enabled === 'true'
         : undefined
@@ -52,6 +51,18 @@ const isEnabled = enable !== undefined ? enable : config.integ.waline.enable
       // 如果禁用了，则不初始化
       if (!isEnabled) return
 
+      // 使用 IntersectionObserver 实现懒加载
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          this.initWaline()
+          observer.disconnect()
+        }
+      }, { rootMargin: '200px' }) // 提前 200px 开始加载
+      
+      observer.observe(this)
+    }
+
+    initWaline() {
       // Prevent Vue log errors
       ;(globalThis as unknown as { __VUE_OPTIONS_API__: boolean }).__VUE_OPTIONS_API__ = true
       ;(globalThis as unknown as { __VUE_PROD_DEVTOOLS__: boolean }).__VUE_PROD_DEVTOOLS__ = false

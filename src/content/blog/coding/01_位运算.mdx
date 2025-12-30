@@ -18,9 +18,10 @@ slug: test
 
 import Aside from '@/custom/components/user/Aside.astro'
 
-import { LinkPreview } from 'astro-pure/advanced'
-import { TabItem, Tabs } from 'astro-pure/user'
-import { Collapse } from 'astro-pure/user'
+import LinkPreview from '@/custom/components/advanced/LinkPreview.astro'
+import TabItem from '@/custom/components/user/TabItem.astro'
+import Tabs from '@/custom/components/user/Tabs.astro'
+import Collapse from '@/custom/components/user/Collapse.astro'
 
 
 <Aside title='位运算技巧' type="tip" icons='tip'>
@@ -787,7 +788,8 @@ void testLog2WithDeBruijn() {
 
 ### **3. `log2WithDeBruijn(v)` 的原理**
 
-import { Steps, Timeline } from 'astro-pure/user'
+import Steps from '@/custom/components/user/Steps.astro'
+import Timeline from '@/custom/components/user/Timeline.astro'
 
 1. **步骤 1：`v |= v >>> 1 | v >>> 2 | ... | v >>> 16`**
 这段代码的目的是 **将 `v` 的最高有效位（MSB）以下的所有低位全部置 1**：
