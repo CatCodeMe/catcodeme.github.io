@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import LZString from 'lz-string';
 import { parse } from 'toml';
 import configRaw from './excalidraw.config.toml?raw';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+import katexStyles from 'katex/dist/katex.min.css?raw';
 
 const config = parse(configRaw);
 
@@ -90,6 +93,19 @@ export function Excalidraw({
 
                 const textContent = await res.text();
                 let json;
+                // Match lines like "hash: $$formula$$" for LaTeX extraction
+                const latexMap: Record<string, string> = {};
+                const latexLines = textContent.match(/^[a-f0-9]{40}: \$\$.*?\$\$/gm);
+                if (latexLines) {
+                    latexLines.forEach(line => {
+                        const colonIndex = line.indexOf(':');
+                        if (colonIndex > 0) {
+                            const id = line.slice(0, colonIndex).trim();
+                            const formula = line.slice(colonIndex + 1).trim().replace(/^\$\$/, '').replace(/\$\$$/, '');
+                            latexMap[id] = formula;
+                        }
+                    });
+                }
 
                 // Try parsing as standard JSON first
                 try {
@@ -104,6 +120,43 @@ export function Excalidraw({
                         const decompressed = LZString.decompressFromBase64(compressed);
                         if (decompressed) {
                             json = JSON.parse(decompressed);
+
+                            // Populate json.files with LaTeX renders if we found any
+                            if (Object.keys(latexMap).length > 0) {
+                                json.files = json.files || {};
+                                for (const [id, formula] of Object.entries(latexMap)) {
+                                    // Find corresponding image element to get its intended size
+                                    const el = json.elements?.find((e: any) => e.fileId === id && !e.isDeleted);
+                                    if (!el) continue;
+
+                                    try {
+                                        const html = katex.renderToString(formula, { displayMode: true, throwOnError: false });
+                                        // Create a self-contained SVG with inlined KaTeX CSS
+                                        const svgString = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${el.width}" height="${el.height}">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden;">
+      <style>
+        ${katexStyles}
+        .katex-display { margin: 0; }
+        .katex { font-size: 1.1em; }
+      </style>
+      ${html}
+    </div>
+  </foreignObject>
+</svg>`.trim();
+                                        const dataURL = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgString)))}`;
+                                        json.files[id] = {
+                                            mimeType: "image/svg+xml",
+                                            id,
+                                            dataURL,
+                                            created: Date.now()
+                                        };
+                                    } catch (err) {
+                                        console.error("KaTeX rendering failed for ID:", id, err);
+                                    }
+                                }
+                            }
                         } else {
                             throw new Error("Failed to decompress Excalidraw data");
                         }
