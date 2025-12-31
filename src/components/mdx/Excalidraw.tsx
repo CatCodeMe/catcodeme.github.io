@@ -83,7 +83,15 @@ export function Excalidraw({
     const overviewTargetRef = useRef<number[] | null>(null);
     const currentViewBoxRef = useRef<number[]>([0, 0, 100, 100]);
     // Store raw HTML strings and data URLs for inlining replacement
-    const formulaDataRef = useRef<Record<string, { html: string, dataURL: string }>>({});
+    const formulaDataRef = useRef<Record<string, {
+        html: string,
+        dataURL: string,
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        angle: number
+    }>>({});
 
     const requestRef = useRef<number | null>(null);
     const transitionRef = useRef<{ start: number[], end: number[], startTime: number, duration: number } | null>(null);
@@ -290,7 +298,7 @@ export function Excalidraw({
                 const PADDING = 10;
 
                 // Move through formulas and place them at absolute coordinates in SVG root
-                activeElements.forEach(el => {
+                activeElements.forEach((el: any) => {
                     if (el.type === "image" && el.fileId && formulaDataRef.current[el.fileId]) {
                         const matched = formulaDataRef.current[el.fileId];
 
@@ -330,7 +338,7 @@ export function Excalidraw({
                 });
 
                 // Clean up original tags that might be confusing or covering
-                svg.querySelectorAll('image').forEach(img => {
+                svg.querySelectorAll('image').forEach((img: any) => {
                     const href = (img.getAttribute('xlink:href') || img.getAttribute('href') || "").trim();
                     if (Object.values(formulaDataRef.current).some(f => f.dataURL === href)) {
                         img.remove();
