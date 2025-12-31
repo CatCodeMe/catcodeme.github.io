@@ -274,8 +274,7 @@ export function Excalidraw({
                         align-items: center;
                         justify-content: center;
                     }
-                    .katex-display { margin: 0; }
-                    .katex { font-size: 1.15em; line-height: 1.2; }
+                    .katex { font-size: 1.15em; line-height: 1; }
 
                     @keyframes exc-flow-base { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
                     
