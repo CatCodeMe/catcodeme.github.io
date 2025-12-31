@@ -8,6 +8,15 @@ import katexStyles from 'katex/dist/katex.min.css?raw';
 
 const config = parse(configRaw);
 
+const KATEX_FONT_FIX = `
+@font-face { font-family: 'KaTeX_Main'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Main-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'KaTeX_Math'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Math-Italic.woff2') format('woff2'); }
+@font-face { font-family: 'KaTeX_Size1'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Size1-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'KaTeX_Size2'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Size2-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'KaTeX_Size3'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Size3-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'KaTeX_Size4'; src: url('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/KaTeX_Size4-Regular.woff2') format('woff2'); }
+`;
+
 const ResetIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
@@ -73,6 +82,8 @@ export function Excalidraw({
     const [rawViewBox, setRawViewBox] = useState<number[] | null>(null);
     const overviewTargetRef = useRef<number[] | null>(null);
     const currentViewBoxRef = useRef<number[]>([0, 0, 100, 100]);
+    // Store raw HTML strings and data URLs for inlining replacement
+    const formulaDataRef = useRef<Record<string, { html: string, dataURL: string }>>({});
 
     const requestRef = useRef<number | null>(null);
     const transitionRef = useRef<{ start: number[], end: number[], startTime: number, duration: number } | null>(null);
@@ -123,43 +134,44 @@ export function Excalidraw({
                 // Populate json.files with LaTeX renders if we found any
                 if (Object.keys(latexMap).length > 0) {
                     json.files = json.files || {};
+                    formulaDataRef.current = {}; // Reset map
                     for (const [id, formula] of Object.entries(latexMap)) {
                         // Find corresponding image element to get its intended size
                         const el = json.elements?.find((e: any) => e.fileId === id && !e.isDeleted);
                         if (!el) continue;
 
                         try {
-                            const html = katex.renderToString(formula, { displayMode: true, throwOnError: false });
-                            // Create a self-contained SVG with inlined KaTeX CSS
-                            const svgString = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${el.width}" height="${el.height}">
-  <foreignObject width="100%" height="100%">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden;">
-      <style>
-        ${katexStyles}
-        .katex-display { margin: 0; }
-        .katex { font-size: 1.1em; }
-        /* Fallback for mathematical symbols like integrals when KaTeX fonts are not loaded in SVG data URLs */
-        .katex-mathml { display: none; }
-        .katex-html { font-family: KaTeX_Main, "Times New Roman", serif; }
-        .base { font-family: inherit; }
-        /* Target specific math symbols to use system math fonts if available */
-        .mop { font-family: "Cambria Math", "STIX Math", "Segoe UI Symbol", "Apple Symbols", serif !important; }
-      </style>
-      ${html}
-    </div>
-  </foreignObject>
-</svg>`.trim();
-                            // Use modern TextEncoder instead of deprecated unescape for Base64 encoding
-                            const bytes = new TextEncoder().encode(svgString);
+                            const html = katex.renderToString(formula, { displayMode: false, throwOnError: false });
+
+                            // Use a simple, valid SVG placeholder to ensure Excalidraw's exportToSvg 
+                            // produces an <image> tag that we can later find and replace.
+                            const placeholderSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${el.width}" height="${el.height}"><rect width="100%" height="100%" fill="none"/></svg>`;
+                            const bytes = new TextEncoder().encode(placeholderSvg);
                             const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
                             const dataURL = `data:image/svg+xml;base64,${btoa(binString)}`;
+
+                            // Save full metadata for absolute positioning
+                            formulaDataRef.current[id] = {
+                                html,
+                                dataURL,
+                                x: el.x,
+                                y: el.y,
+                                width: el.width,
+                                height: el.height,
+                                angle: el.angle || 0
+                            };
+
                             json.files[id] = {
                                 mimeType: "image/svg+xml",
                                 id,
                                 dataURL,
                                 created: Date.now()
                             };
+
+                            // Force status to success so it's rendered by the exporter
+                            if (el.type === "image") {
+                                el.status = "success";
+                            }
                         } catch (err) {
                             console.error("KaTeX rendering failed for ID:", id, err);
                         }
@@ -213,6 +225,10 @@ export function Excalidraw({
                         if (el.type === "text" && el.fontFamily === 4) {
                             return { ...el, fontFamily: 1 };
                         }
+                        // Ensure images have success status for export
+                        if (el.type === "image" && el.fileId && formulaDataRef.current[el.fileId]) {
+                            return { ...el, status: "success" };
+                        }
                         return el;
                     });
 
@@ -230,11 +246,29 @@ export function Excalidraw({
                     exportPadding: 10,
                 });
 
-                // 2. CSS for the Magic Ball (Physical Object)
+                // 2. CSS Style injection (Includes Global KaTeX fonts)
                 const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+
+                // Strip internal @font-face rules from KaTeX CSS to avoid 404s on relative paths
+                const cleanKatexStyles = katexStyles.replace(/@font-face\s*{[^}]*}/g, '');
+
                 style.textContent = `
                     @import url('${config.font4.cssUrl}');
+                    ${KATEX_FONT_FIX}
+                    ${cleanKatexStyles}
                     text { font-family: "${config.font4.name}", ${fontFamily}, sans-serif !important; }
+                    
+                    /* Custom styles for inlined KaTeX formulas */
+                    .katex-inline-host {
+                        font-family: KaTeX_Main, "Times New Roman", serif !important;
+                        color: #1a1a1a;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .katex-display { margin: 0; }
+                    .katex { font-size: 1.15em; line-height: 1.2; }
+
                     @keyframes exc-flow-base { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
                     
                     path[stroke="#0000ff"][stroke-dasharray] { 
@@ -249,7 +283,79 @@ export function Excalidraw({
                 `;
                 svg.prepend(style);
 
-                // 3. Post-process: Dynamic Motion Injection (Motion Engine)
+                // 3. NUCLEAR POSITIONING & CLEANUP
+                // Excalidraw's SVG export uses these offsets
+                const offsetX = minX;
+                const offsetY = minY;
+                const PADDING = 10;
+
+                // Move through formulas and place them at absolute coordinates in SVG root
+                activeElements.forEach(el => {
+                    if (el.type === "image" && el.fileId && formulaDataRef.current[el.fileId]) {
+                        const matched = formulaDataRef.current[el.fileId];
+
+                        // Calculate position relative to SVG viewBox
+                        const targetX = el.x - offsetX + PADDING;
+                        const targetY = el.y - offsetY + PADDING;
+
+                        const fo = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+                        fo.setAttribute("x", targetX.toString());
+                        fo.setAttribute("y", targetY.toString());
+                        fo.setAttribute("width", el.width.toString());
+                        fo.setAttribute("height", el.height.toString());
+                        fo.setAttribute("overflow", "visible");
+
+                        // Handle rotation if any
+                        if (el.angle !== 0) {
+                            const deg = (el.angle * 180) / Math.PI;
+                            const cx = targetX + el.width / 2;
+                            const cy = targetY + el.height / 2;
+                            fo.setAttribute("transform", `rotate(${deg} ${cx} ${cy})`);
+                        }
+
+                        const div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+                        div.className = "katex-inline-host";
+                        (div as any).style.cssText = `
+                            width: 100%; height: 100%; 
+                            display: flex; align-items: center; justify-content: center; 
+                            overflow: visible; color: #1a1a1a; 
+                            font-weight: normal;
+                        `;
+                        div.innerHTML = matched.html;
+                        fo.appendChild(div);
+
+                        // Append to end of SVG to be on top of everything
+                        svg.appendChild(fo);
+                    }
+                });
+
+                // Clean up original tags that might be confusing or covering
+                svg.querySelectorAll('image').forEach(img => {
+                    const href = (img.getAttribute('xlink:href') || img.getAttribute('href') || "").trim();
+                    if (Object.values(formulaDataRef.current).some(f => f.dataURL === href)) {
+                        img.remove();
+                    }
+                });
+
+                svg.querySelectorAll('rect').forEach((rect: any) => {
+                    const stroke = rect.getAttribute('stroke');
+                    // Protect Excalidraw frames: frames usually have fill="none" and a name or specific classes
+                    // We only want to remove the specific placeholder boxes that match formula dimensions
+                    const isFrame = rect.hasAttribute('aria-label') || rect.classList.contains('excalidraw-frame');
+
+                    if (!isFrame && (stroke === "#bbb" || stroke === "#cccccc")) {
+                        // Check if this rect matches any of our formula dimensions to be safe
+                        const w = parseFloat(rect.getAttribute('width') || "0");
+                        const h = parseFloat(rect.getAttribute('height') || "0");
+                        const isMatch = Object.values(formulaDataRef.current).some(f =>
+                            Math.abs(f.width - w) < 1 && Math.abs(f.height - h) < 1
+                        );
+                        if (isMatch) rect.remove();
+                    }
+                });
+
+
+                // 4. Post-process: Dynamic Motion Injection (Motion Engine)
                 const clusters: { length: number, firstPoint: string }[] = [];
                 const allPaths = svg.querySelectorAll('path[stroke="#0000ff"]');
 
