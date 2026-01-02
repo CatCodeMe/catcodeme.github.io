@@ -3,7 +3,7 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { pluginFileIcons } from "@xt0rted/expressive-code-file-icons";
 import { defineEcConfig, setAlpha, setLuminance } from 'astro-expressive-code';
 // 自定义插件
-import { pluginFocus } from './src/plugins/expressive-code/index.ts';
+import { pluginFocus, pluginFootnotes } from './src/plugins/expressive-code/index.ts';
 
 export default defineEcConfig({
   plugins: [
@@ -15,6 +15,7 @@ export default defineEcConfig({
     }),
     // 自定义插件
     pluginFocus(),
+    pluginFootnotes(),
   ],
   /* Basics */
   defaultLocale: 'en-US',
