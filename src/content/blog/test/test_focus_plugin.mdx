@@ -1,0 +1,156 @@
+---
+title: '测试: Focus 插件效果'
+publishDate: 2026-01-02
+description: '测试自定义 Expressive Code Focus 插件'
+tags:
+  - expressive-code
+  - test
+slug: focus-plugin-test
+draft: true
+---
+
+# Focus 插件测试
+
+这个页面用于测试自定义的 `plugin-focus` 插件效果。
+
+---
+
+## 1️⃣ Meta 参数方式
+
+使用 `focus={3-5}` 参数（注意花括号），指定**第 3、4、5 行**高亮聚焦：
+
+```js showLineNumbers focus={3-5}
+function calculateTotal(items) {
+  let total = 0
+  for (const item of items) {       // ← 第3行 聚焦
+    total += item.price * item.quantity  // ← 第4行 聚焦
+  }                                  // ← 第5行 聚焦
+  return total
+}
+```
+
+---
+
+## 2️⃣ 行内注释方式
+
+在代码行末尾添加 `// [!focus]` 注释，该行会被聚焦，注释本身会被自动移除：
+
+**写法：**
+```
+const result = doSomething() // [!focus]
+```
+
+**效果（第 3、4 行会聚焦，注释已移除）：**
+
+```js showLineNumbers
+function processData(data) {
+  const validated = validateInput(data)
+  const transformed = transformData(validated) // [!focus]
+  const result = saveToDatabase(transformed) // [!focus]
+  return result
+}
+```
+
+---
+
+## 3️⃣ 多行聚焦 `[!focus:N]`
+
+`// [!focus:3]` 表示从**当前行开始，连续聚焦 3 行**：
+
+**写法：**
+```
+// 关键代码开始 // [!focus:3]
+line1   ← 聚焦
+line2   ← 聚焦
+line3   ← 聚焦
+line4   ← 不聚焦
+```
+
+**效果（第 5、6、7 行会聚焦）：**
+
+```js showLineNumbers
+function getUserInfo(userId) {
+  const user = fetchUser(userId)
+  
+  // 以下是关键逻辑
+  const permissions = checkPermissions(user) // [!focus:3]
+  const profile = loadProfile(user)
+  const settings = getSettings(user)
+  
+  return { user, permissions, profile, settings }
+}
+```
+
+---
+
+## 4️⃣ Python 风格注释
+
+Python、Ruby 等语言用 `#` 作为注释符，所以支持 `# [!focus]` 格式：
+
+```python showLineNumbers
+def calculate_fibonacci(n):
+    if n <= 1:
+        return n
+    
+    a, b = 0, 1  # [!focus]
+    for _ in range(2, n + 1):  # [!focus]
+        a, b = b, a + b  # [!focus]
+    
+    return b
+```
+
+---
+
+## 5️⃣ 多个范围
+
+使用花括号内逗号分隔多个范围，如 `focus={1-2, 10-12}`：
+
+```typescript showLineNumbers focus={1-2, 10-12}
+import { useState, useEffect } from 'react'
+import { fetchData } from './api'
+
+function MyComponent() {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  
+  useEffect(() => {
+    fetchData()
+      .then(setData)
+      .finally(() => setLoading(false))
+  }, [])
+  
+  return loading ? 'Loading...' : JSON.stringify(data)
+}
+```
+
+---
+
+## 📌 效果说明
+
+| 特性 | 我们的实现 | Code Hike |
+|------|-----------|-----------|
+| 聚焦行高亮背景 | ✅ 淡蓝色背景 | ✅ 类似 |
+| 聚焦行左边框 | ✅ 蓝色 3px 边框 | ❌ Code Hike 没有 |
+| 非聚焦行淡化 | ✅ 40% 透明度 + 轻微模糊 | ✅ 类似（Code Hike 也有淡化） |
+| 悬浮恢复 | ✅ 鼠标悬浮时全部显示 | ✅ Code Hike 也有类似效果 |
+| meta 参数语法 | `focus={3-5}` | `// !focus(1:5)` |
+| 行内注释语法 | `// [!focus]` | `// !focus` |
+
+**主要差异：**
+- 我们用 `[!focus]` 而不是 `!focus`，更明确避免和其他注释冲突
+- 我们添加了蓝色左边框，视觉效果更明显
+- Code Hike 的 Focus 可以通过 React 状态动态切换（比如滚动时自动聚焦不同行），我们的是静态的
+
+---
+
+## 🎨 可配置选项
+
+```js
+// ec.config.mjs
+pluginFocus({
+  dimOpacity: 0.4,        // 淡化透明度
+  enableBlur: true,       // 是否模糊非聚焦行
+  borderColor: '#3b82f6', // 聚焦行左边框颜色
+  backgroundColor: 'rgba(59, 130, 246, 0.08)' // 聚焦行背景
+})
+```

@@ -2,6 +2,8 @@ import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-s
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { pluginFileIcons } from "@xt0rted/expressive-code-file-icons";
 import { defineEcConfig, setAlpha, setLuminance } from 'astro-expressive-code';
+// 自定义插件
+import { pluginFocus } from './src/plugins/expressive-code/index.ts';
 
 export default defineEcConfig({
   plugins: [
@@ -10,7 +12,9 @@ export default defineEcConfig({
     pluginFileIcons({
       iconClass: 'size-5',
       titleClass: 'flex items-center gap-1'
-    })
+    }),
+    // 自定义插件
+    pluginFocus(),
   ],
   /* Basics */
   defaultLocale: 'en-US',
