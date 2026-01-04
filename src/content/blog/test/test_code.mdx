@@ -13,6 +13,83 @@ import MdxRepl from '@/custom/components/user/MdxRepl.astro'
 import TabItem from '@/custom/components/user/TabItem.astro'
 import Tabs from '@/custom/components/user/Tabs.astro'
 
+## 📌 自定义插件
+
+### Focus 插件
+
+使用 `focus={3-5}` 参数或行内 `// [!focus]` 注释，指定行高亮聚焦，其他行淡化：
+
+```js showLineNumbers focus={3-5}
+function calculateTotal(items) {
+  let total = 0
+  for (const item of items) {       // ← 第3行 聚焦
+    total += item.price * item.quantity  // ← 第4行 聚焦
+  }                                  // ← 第5行 聚焦
+  return total
+}
+```
+
+行内注释方式（`// [!focus]` 会被自动移除）：
+
+```js showLineNumbers
+function processData(data) {
+  const validated = validateInput(data)
+  const transformed = transformData(validated) // [!focus]
+  const result = saveToDatabase(transformed) // [!focus]
+  return result
+}
+```
+
+Python 风格（`# [!focus]`）：
+
+```python showLineNumbers
+def calculate_fibonacci(n):
+    if n <= 1:
+        return n
+    
+    a, b = 0, 1  # [!focus]
+    for _ in range(2, n + 1):  # [!focus]
+        a, b = b, a + b  # [!focus]
+    
+    return b
+```
+
+---
+
+### Footnotes 插件
+
+使用 `// [!note:N] 注释内容` 添加代码脚注：
+
+```js showLineNumbers
+import express from 'express' // [!note:1] Express Web 框架
+import cors from 'cors' // [!note:3] 跨域处理
+
+const app = express() // [!note:2] 创建实例
+
+app.use(cors())
+app.use(express.json()) // [!note:4] 解析 JSON
+
+app.listen(3000)
+```
+
+自动编号（`// [!note]` 不指定编号）：
+
+```python showLineNumbers
+import pandas as pd  # [!note] Pandas 数据分析库
+import numpy as np  # [!note] NumPy 数组计算
+
+df = pd.read_csv('data.csv')  # [!note] 读取 CSV 文件
+df['norm'] = df['value'] / df['value'].max()  # [!note] 归一化处理
+
+print(df.head())
+```
+
+---
+
+## 📌 原生功能演示
+
+### 基础代码块
+
 ```css title="site.css" icon="postcss"
 .flex {
   display: flex;
@@ -34,6 +111,9 @@ import MdxRepl from '@/custom/components/user/MdxRepl.astro'
 </TabItem>
 </Tabs>
 
+---
+
+### 折叠代码块
 
 ```js collapse={1-5, 12-14, 21-24} showLineNumbers
 // All this boilerplate setup code will be collapsed
@@ -62,6 +142,10 @@ engine.freeMemory()
 engine.shutdown({ reason: 'End of example boilerplate code' })
 ```
 
+---
+
+### 行高亮标记
+
 ```zig {1, 4, 7-8}
 // Line 1 - targeted by line number
 // Line 2
@@ -72,6 +156,10 @@ engine.shutdown({ reason: 'End of example boilerplate code' })
 // Line 7 - targeted by range "7-8"
 // Line 8 - targeted by range "7-8"
 ```
+
+---
+
+### 带标签的行标记
 
 ```jsx {"1":5} del={"2":7-8} ins={"3":10-12} showLineNumbers /button/
 // labeled-line-markers.jsx
@@ -89,6 +177,10 @@ engine.shutdown({ reason: 'End of example boilerplate code' })
 </button>
 ```
 
+---
+
+### 行号控制
+
 ```js showLineNumbers
 // This code block will show line numbers
 console.log('Greetings from line 2!')
@@ -101,60 +193,9 @@ console.log('Hello?')
 console.log('Sorry, do you know what line I am on?')
 ```
 
-<Tabs>
-<TabItem label='Astro'>
-```js showLineNumbers=false
-// Line numbers are disabled for this block
-console.log('Hello?')
-console.log('Sorry, do you know what line I am on?')
-```
-</TabItem>
-<TabItem label='line-markers'>
-```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
-// labeled-line-markers.jsx
-<button
-  role="button"
-  {...props}
+---
 
-  value={value}
-  className={buttonClassName}
-
-  disabled={disabled}
-  active={active}
->
-
-  {children &&
-    !active &&
-    (typeof children === 'string' ? <span>{children}</span> : children)}
-</button>
-```
-</TabItem>
-</Tabs>
-
-
-[baidu](https://baidu.com)
-[gg](https://google.com)
-[bili](https://bilibili.com)
-[x](https://x.com)
-[deepseek](https://deepseek.com)
-[npm](https://npmjs.com)
-[baidu](https://jetbrains.com)
-[local](https://地理大家费老大劲堪萨斯的)
-[site](https://8cat.life)
-
-
-```css title="site.css" icon="postcss"
-.flex {
-  display: flex;
-}
-```
-
-```css title="site.css" no-icon
-.flex {
-  display: flex;
-}
-```
-
+### 多语言示例
 
 ```java title="site"
 public class HelloWorld {
@@ -177,17 +218,6 @@ dependencies:
 fatal: refusing to merge unrelated histories
 ```
 
-```zig {1, 4, 7-8} title="zig code" 
-const std = @import("std");
-
-test "hello world test" {
-    std.debug.print("Hello, test!\n", .{});
-    try std.testing.expect(true);
-}
-
-```
-
-
 ```json title="site.json" showLineNumbers
 {
   "name": "HelloWorld",
@@ -205,53 +235,16 @@ def hello_world():
     print("Hello, World!")    
 ```
 
-```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
-// labeled-line-markers.jsx
-<button
-  role="button"
-  {...props}
+---
 
-  value={value}
-  className={buttonClassName}
-
-  disabled={disabled}
-  active={active}
->
-
-  {children &&
-    !active &&
-    (typeof children === 'string' ? <span>{children}</span> : children)}
-</button>
-```
-
+### ANSI 颜色
 
 ```ansi
-[1;4mStandard ANSI colors:[0m
-- Dimmed:     [2;30m Black [2;31m Red [2;32m Green [2;33m Yellow [2;34m Blue [2;35m Magenta [2;36m Cyan [2;37m White [0m
-- Foreground: [30m Black [31m Red [32m Green [33m Yellow [34m Blue [35m Magenta [36m Cyan [37m White [0m
-- Background: [40m Black [41m Red [42m Green [43m Yellow [44m Blue [45m Magenta [46m Cyan [47m White [0m
-- Reversed:   [7;30m Black [7;31m Red [7;32m Green [7;33m Yellow [7;34m Blue [7;35m Magenta [7;36m Cyan [7;37m White [0m
-
-[1;4m8-bit colors (showing colors 160-171 as an example):[0m
-- Dimmed:     [2;38;5;160m 160 [2;38;5;161m 161 [2;38;5;162m 162 [2;38;5;163m 163 [2;38;5;164m 164 [2;38;5;165m 165 [2;38;5;166m 166 [2;38;5;167m 167 [2;38;5;168m 168 [2;38;5;169m 169 [2;38;5;170m 170 [2;38;5;171m 171 [0m
-- Foreground: [38;5;160m 160 [38;5;161m 161 [38;5;162m 162 [38;5;163m 163 [38;5;164m 164 [38;5;165m 165 [38;5;166m 166 [38;5;167m 167 [38;5;168m 168 [38;5;169m 169 [38;5;170m 170 [38;5;171m 171 [0m
-- Background: [48;5;160m 160 [48;5;161m 161 [48;5;162m 162 [48;5;163m 163 [48;5;164m 164 [48;5;165m 165 [48;5;166m 166 [48;5;167m 167 [48;5;168m 168 [48;5;169m 169 [48;5;170m 170 [48;5;171m 171 [0m
-- Reversed:   [7;38;5;160m 160 [7;38;5;161m 161 [7;38;5;162m 162 [7;38;5;163m 163 [7;38;5;164m 164 [7;38;5;165m 165 [7;38;5;166m 166 [7;38;5;167m 167 [7;38;5;168m 168 [7;38;5;169m 169 [7;38;5;170m 170 [7;38;5;171m 171 [0m
-
-[1;4m24-bit colors (full RGB):[0m
-- Dimmed:     [2;38;2;34;139;34m ForestGreen - RGB(34,139,34) [2;38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
-- Foreground: [38;2;34;139;34m ForestGreen - RGB(34,139,34) [38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
-- Background: [48;2;34;139;34m ForestGreen - RGB(34,139,34) [48;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
-- Reversed:   [7;38;2;34;139;34m ForestGreen - RGB(34,139,34) [7;38;2;102;51;153m RebeccaPurple - RGB(102,51,153) [0m
-
-[1;4mFont styles:[0m
-- Default
-- [1mBold[0m
-- [2mDimmed[0m
-- [3mItalic[0m
-- [4mUnderline[0m
-- [7mReversed[0m
-- [9mStrikethrough[0m
+[1;4mStandard ANSI colors:[0m
+- Dimmed:     [2;30m Black [2;31m Red [2;32m Green [2;33m Yellow [2;34m Blue [2;35m Magenta [2;36m Cyan [2;37m White [0m
+- Foreground: [30m Black [31m Red [32m Green [33m Yellow [34m Blue [35m Magenta [36m Cyan [37m White [0m
+- Background: [40m Black [41m Red [42m Green [43m Yellow [44m Blue [45m Magenta [46m Cyan [47m White [0m
+- Reversed:   [7;30m Black [7;31m Red [7;32m Green [7;33m Yellow [7;34m Blue [7;35m Magenta [7;36m Cyan [7;37m White [0m
 ```
 
 ```txt title='.gitignore'
