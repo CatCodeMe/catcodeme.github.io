@@ -10,7 +10,6 @@ const menu: { title: string; link: string; icon?: IconName; iconImg?: string }[]
   // { title: 'Projects', link: '/projects' },
   { title: '关于', link: '/about', icon: 'about' },
   { title: '友链', link: '/links', icon: 'friendLink' },
-  { title: '留言板', link: '/msgboard', icon: 'msgboard' },
   { title: '', link: '/cats', iconImg: '/favicon/favicon-32x32.png' }
 ]
 
