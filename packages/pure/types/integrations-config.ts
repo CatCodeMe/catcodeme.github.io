@@ -56,7 +56,7 @@ export const IntegrationConfigSchema = () =>
       emoji: z.array(z.string()).optional(),
       /** Additional configurations for the Waline comment system. */
       additionalConfigs: z.record(z.string(), z.any()).default({})
-    }),
+    }).optional(),
 
     /** The Giscus comment system */
     giscus: z.object({

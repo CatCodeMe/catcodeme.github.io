@@ -92,7 +92,6 @@ export const BuiltInIcons = {
   deep_seek: '',
   cake: '',
   sleep: '',
-  msgboard: '',
   archive: '',
   shelf: '',
   about: '',

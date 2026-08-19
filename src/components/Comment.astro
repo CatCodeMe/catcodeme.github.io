@@ -2,11 +2,12 @@
 import config from '../site.config'
 
 const giscus = config.integ.giscus
+const { class: className } = Astro.props
 ---
 
 {
   giscus && giscus.enable && (
-    <div class='giscus-container'>
+    <div class:list={['giscus-container', className]}>
       <script is:inline data-giscus-config={JSON.stringify(giscus)}>
         // Immediately-invoked function to avoid polluting the global scope
         ;(() => {

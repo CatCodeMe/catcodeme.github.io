@@ -13,7 +13,7 @@ import Hero from '@/custom/components/pages/Hero.astro'
 
 import MediumZoom from '@/custom/components/advanced/MediumZoom.astro'
 import PageLayout from '@/layouts/ContentLayout.astro'
-import { Comment, PageInfo } from '@/components/waline'
+import Comment from '@/components/Comment.astro'
 import { integ } from '@/site-config'
 
 interface Props {
@@ -60,9 +60,6 @@ const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
   {tocType == 1 && <TOC {headings} slot='sidebar' />}
 
   <Hero {data} {remarkPluginFrontmatter} slot='header'>
-    <Fragment slot='description'>
-      {!isDraft && enableComment && <PageInfo comment class='mt-1' />}
-    </Fragment>
   </Hero>
 
   <slot />
@@ -80,4 +77,3 @@ const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
 </PageLayout>
 
 {integ.mediumZoom.enable && <MediumZoom />}
-
