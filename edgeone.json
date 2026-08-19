@@ -1,0 +1,5 @@
+{
+  "installCommand": "npm ci --ignore-scripts",
+  "buildCommand": "npx astro build",
+  "outputDirectory": "dist"
+}
