@@ -153,35 +153,6 @@ export const integ: IntegrationUserConfig = {
     },
   },
   // Comment system
-  waline: {
-    enable: false,
-    server: 'https://waline.8cat.life',
-    emoji: ['qq'],
-    additionalConfigs: {
-      // turnstileKey: '0x4AAAAAAB2iD4bdDPvuzxk1',
-      search: false, //表情包搜索
-      lang: 'zh-CN',
-      meta: ['nick', 'mail'],
-      requiredMeta: ['nick'],
-      login: 'force',
-      wordlimit: 1024,
-      // withCredentials: true,
-      reaction: [
-        '/waline/1.png',
-        '/waline/2.png',
-        '/waline/3.png',
-        '/waline/4.png',
-        '/waline/5.png',
-      ],
-      pageview: true, //页面 pv
-      comment: true, //页面评论数
-      locale: {
-        placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
-        reactionTitle: '',
-        region: '',
-      },
-    },
-  },
   giscus: {
     enable: true,
     repo: 'CatCodeMe/catcodeme.github.io', // 仓库名
@@ -194,7 +165,7 @@ export const integ: IntegrationUserConfig = {
     emitMetadata: '0',
     inputPosition: 'top',
     theme: 'noborder_light', // 可选: light, dark, transparent_dark, preferred_color_scheme
-    lang: 'en',
+    lang: 'zh-CN',
   },
 };
 

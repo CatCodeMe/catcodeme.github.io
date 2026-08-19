@@ -1,9 +1,8 @@
 ---
 import PageLayout from '@/layouts/BaseLayout.astro'
-import DanmakuComments from '@/components/waline/DanmakuComments.astro'
 import bannerImage from '@/assets/msgboard/board2.png'
 import { Icon } from '@/custom/components/user'
-import { Comment } from '@/components/waline'
+import Comment from '@/components/Comment.astro'
 import Banner from '@/components/banner/Banner.astro'
 
 const meta = {
@@ -34,12 +33,10 @@ const meta = {
     </Banner>
 
     <div id='content' class='animate mt-8'>
-      <DanmakuComments />
       <div class="mt-8">
-        <Comment enable={true}/>
+        <Comment />
       </div>
     </div>
   </main>
 </PageLayout>
-
 
