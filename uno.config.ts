@@ -1,4 +1,5 @@
-import { defineConfig, presetTypography, presetWind3 } from 'unocss';
+import { defineConfig, presetTypography, presetWind3 } from 'unocss'
+import type { UserConfig } from 'unocss'
 
 const fg = 'hsl(var(--foreground) / var(--un-text-opacity, 1))'
 const fgMuted = 'hsl(var(--muted-foreground) / var(--un-text-opacity, 1))'
@@ -174,7 +175,7 @@ const themeColors = {
   }
 }
 
-export default defineConfig({
+const config: UserConfig = defineConfig({
   presets: [
     presetWind3(), // required
     presetTypography(typographyConfig)
@@ -193,3 +194,5 @@ export default defineConfig({
     'prose'
   ]
 })
+
+export default config

@@ -72,8 +72,8 @@ export const theme: ThemeUserConfig = {
     // year: `© 2019 - ${new Date().getFullYear()}`,
     links: [
       {
-        title: '京ICP备2025143479号-1',
-        link: 'https://beian.miit.gov.cn/',
+        title: '萌ICP备20261976号',
+        link: 'https://icp.gov.moe/?keyword=20261976',
         style: 'text-sm'
       },
       {
